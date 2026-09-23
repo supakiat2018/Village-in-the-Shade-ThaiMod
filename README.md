@@ -72,3 +72,8 @@ zig cc -shared -O2 -s src\text_dump.c src\addrsig.c src\minhook-master\src\buffe
 ## 📜 เครดิต (Credits)
 - **ผู้พัฒนาและแปลภาษาไทย:** supakiat2018
 - **เครื่องมือ Hooking:** MinHook Library
+
+---
+
+## 🔍 คำค้นหาที่เกี่ยวข้อง (Search Keywords)
+`Village in the Shade ไทย` • `Village in the Shade ภาษาไทย` • `Village in the Shade mod thai` • `Village in the Shade Mod ไทย` • `Village in the Shade mod ภาษาไทย` • `Village in the Shade แปลไทย` • `Village in the Shade Thai Patch` • `ほの暮しの庭 ภาษาไทย` • `ほの暮しの庭 Thai Mod`
