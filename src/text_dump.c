@@ -1312,6 +1312,7 @@ typedef struct {
     uint16_t width;
     uint16_t height;
     char filename[128];
+    BOOL is_texture_db_patch;
     BOOL in_use;
 } PendingIo;
 
@@ -1351,6 +1352,7 @@ static void add_pending_io(
             g_pending_io[i].height = height;
             strncpy(g_pending_io[i].filename, filename, 127);
             g_pending_io[i].filename[127] = '\0';
+            g_pending_io[i].is_texture_db_patch = (strstr(filename, "data/database/texture.dat") != NULL);
             LeaveCriticalSection(&g_cs);
             return;
         }
@@ -1429,6 +1431,63 @@ static void apply_vfs_payload(const PendingIo* pio)
     }
 }
 
+static void patch_texture_database_in_ram(void* buffer, DWORD size)
+{
+    if (!buffer || size < 1024) return;
+
+    static const struct {
+        const char* target;
+        size_t target_len;
+        const char* replacement;
+        size_t replacement_len;
+    } kTextureDbPatches[] = {
+        { "data/texture/fairy_ui_0070/ui_0070_buttonicon_text_JP.nltx", 58,
+          "data/texture/fairy_ui_0070/ui_0070_buttonicon_text_en.nltx", 58 },
+        { "data/texture/fairy_ui_5080/ui_5080_02_JP.nltx", 46,
+          "data/texture/fairy_ui_5080/ui_5080_02_en.nltx", 46 },
+        { "data/texture/minimap_01_spr.nltx\0\0\0\0", 35,
+          "data/texture/minimap_01_spr_en.nltx\0", 35 },
+        { "data/texture/minimap_01_aut.nltx\0\0\0\0", 35,
+          "data/texture/minimap_01_aut_en.nltx\0", 35 },
+        { "data/texture/minimap_01_sum.nltx\0\0\0\0", 35,
+          "data/texture/minimap_01_sum_en.nltx\0", 35 },
+        { "data/texture/minimap_01_win.nltx\0\0\0\0", 35,
+          "data/texture/minimap_01_win_en.nltx\0", 35 },
+        { "data/texture/minimap_11_spr.nltx\0\0\0\0", 35,
+          "data/texture/minimap_11_spr_en.nltx\0", 35 },
+        { "data/texture/minimap_11_aut.nltx\0\0\0\0", 35,
+          "data/texture/minimap_11_aut_en.nltx\0", 35 },
+        { "data/texture/minimap_11_sum.nltx\0\0\0\0", 35,
+          "data/texture/minimap_11_sum_en.nltx\0", 35 },
+        { "data/texture/minimap_11_win.nltx\0\0\0\0", 35,
+          "data/texture/minimap_11_win_en.nltx\0", 35 },
+    };
+
+    uint8_t* p = (uint8_t*)buffer;
+    size_t num_patches = sizeof(kTextureDbPatches) / sizeof(kTextureDbPatches[0]);
+    int total_applied = 0;
+
+    for (size_t i = 0; i < num_patches; i++) {
+        const char* tgt = kTextureDbPatches[i].target;
+        size_t tlen = kTextureDbPatches[i].target_len;
+        const char* rep = kTextureDbPatches[i].replacement;
+        size_t rlen = kTextureDbPatches[i].replacement_len;
+
+        if (size >= tlen) {
+            size_t max_search = size - tlen;
+            for (size_t off = 0; off <= max_search; off++) {
+                if (p[off] == (uint8_t)tgt[0] && memcmp(p + off, tgt, tlen) == 0) {
+                    memcpy(p + off, rep, rlen);
+                    total_applied++;
+                    off += tlen - 1;
+                }
+            }
+        }
+    }
+
+    log_msg("[Texture DB Patch] Applied %d texture redirections in RAM (data/database/texture.dat)!", total_applied);
+}
+
 static BOOL WINAPI hk_GetOverlappedResult(
     HANDLE hFile,
     LPOVERLAPPED lpOverlapped,
@@ -1443,7 +1502,12 @@ static BOOL WINAPI hk_GetOverlappedResult(
 
     PendingIo pio;
     if (find_and_remove_pending_io(lpOverlapped, &pio)) {
-        apply_vfs_payload(&pio);
+        if (pio.is_texture_db_patch) {
+            DWORD bytes = (lpNumberOfBytesTransferred ? *lpNumberOfBytesTransferred : pio.bytes_requested);
+            patch_texture_database_in_ram(pio.lpBuffer, bytes);
+        } else {
+            apply_vfs_payload(&pio);
+        }
     }
 
     return res;
@@ -1621,6 +1685,24 @@ static BOOL WINAPI hk_ReadFile(
                     pio.is_fad_desc = FALSE;
                     strncpy(pio.filename, entry->name, 127);
                     apply_vfs_payload(&pio);
+                }
+                return res;
+            }
+        } else if (strstr(entry->name, "data/database/texture.dat")) {
+            /* Patch texture database in memory to point to English/localized textures (as in Switch mod) */
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    L"", 0, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] Texture DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
+                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
+                    patch_texture_database_in_ram(lpBuffer, bytes);
                 }
                 return res;
             }
