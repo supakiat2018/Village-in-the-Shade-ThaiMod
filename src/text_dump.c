@@ -867,8 +867,85 @@ static VfsEntry* lookup_vfs_by_offset(int archive_id, uint64_t offset)
 }
 
 /* ==================================================================
- * FAD Container Sub-File Mapping (fairy_1_00.dat / resident_lang_jp.fad)
+ * FAD Container Dynamic Resolution & Sub-File Mapping
  * ================================================================== */
+typedef struct {
+    int toc_index;
+    const char* filename;
+    const char* alt_filename;
+    uint16_t width;
+    uint16_t height;
+} FadMappingDef;
+
+static const FadMappingDef g_fad_mapping_defs[] = {
+    {   0, "ui_0020_カレンダー.nltx", "ui_0020_カレンダー_thai.nltx", 1024, 1024 },
+    {  10, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx", 512, 256 },
+    {  22, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx", 512, 128 },
+    {  23, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300 },
+    {  26, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx", 512, 512 },
+    {  27, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024 },
+    {  34, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx", 512, 1024 },
+    {  36, "ui_5090_掲示板.nltx", "ui_5090_掲示板_thai.nltx", 2048, 2048 },
+    {  38, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048 },
+    {  40, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024, 512 },
+    {  47, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx", 512, 512 },
+    {  49, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048 },
+    {  51, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx", 256, 512 },
+    {  94, "タイトル白.nltx", "title_white.nltx", 2048, 1280 },
+    { 101, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 },
+    { 105, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 },
+    { 112, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx", 256, 256 },
+    { 117, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx", 256, 128 },
+    { 119, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx", 512, 256 },
+    { 120, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024 },
+    { 121, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024 },
+    { 122, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024 },
+    { 123, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024 },
+    { 124, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024 },
+    { 125, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024 },
+    { 126, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024 },
+    { 127, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024 },
+    { 128, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024 },
+    { 129, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024 },
+    { 130, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024 },
+    { 131, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024 },
+    { 132, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024 },
+    { 133, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024 },
+    { 134, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024 },
+    { 135, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024 },
+    { 136, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024 },
+    { 137, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024 },
+    { 138, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024 },
+    { 139, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024 },
+    { 140, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024 },
+    { 141, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024 },
+    { 142, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024 },
+    { 143, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024 },
+    { 144, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024 },
+    { 145, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024 },
+    { 146, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024 },
+    { 168, "鐘.nltx", "鐘_thai.nltx", 2200, 1300 },
+    { 171, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048 },
+    { 187, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx", 256, 1024 },
+    { 189, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048 },
+    { 191, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024, 256 },
+    { 195, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx", 512, 1024 },
+    { 196, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048 },
+    { 199, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024, 512 },
+    { 205, "ui_1000_title01.nltx", "ui_1000_タイトル01.nltx", 2048, 512 },
+    { 206, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024, 512 },
+    { 207, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048, 256 },
+    { 218, "ui_2100_00.nltx", "ui_2100_00_thai.nltx", 256, 256 },
+    { 226, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx", 512, 256 },
+    { 231, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx", 512, 256 },
+    { 232, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048 },
+    { 233, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048, 256 },
+    { 313, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024, 256 },
+    { 318, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024, 512 },
+    { 341, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx", 512, 256 },
+    { 342, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048, 512 },
+};
+
 typedef struct {
     uint64_t offset;          /* Offset in fairy_1_00.dat */
     const char* filename;      /* Canonical filename, e.g. "ui_1000_title01.nltx" */
@@ -878,212 +955,127 @@ typedef struct {
     BOOL has_fad_descriptor;  /* TRUE if offset is at 32-byte FAD descriptor */
 } FadSubFile;
 
-static const FadSubFile g_fad_subfiles[] = {
-    /* ui_0020_カレンダー (1024x1024, index 3) */
-    { 0x42970430ULL, "ui_0020_カレンダー.nltx", "ui_0020_カレンダー_thai.nltx", 1024, 1024, TRUE },
-    { 0x42970450ULL, "ui_0020_カレンダー.nltx", "ui_0020_カレンダー_thai.nltx", 1024, 1024, FALSE },
-    /* ui_0070_buttonicon_text (512x256, index 13) */
-    { 0x42B20E50ULL, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx", 512, 256, TRUE },
-    { 0x42B20E70ULL, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx", 512, 256, FALSE },
-    /* ui_1070_メッセージポップアップtext0 (512x128, index 25) */
-    { 0x42DC7DB0ULL, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx", 512, 128, TRUE },
-    { 0x42DC7DD0ULL, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx", 512, 128, FALSE },
-    /* 04_掟の張り紙A (2200x1300, index 26) */
-    { 0x42DC92E0ULL, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300, TRUE },
-    { 0x42DC9300ULL, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300, FALSE },
-    /* ui_2030_詳細ポップアップ (512x512, index 29) */
-    { 0x433B17F0ULL, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx", 512, 512, TRUE },
-    { 0x433B1810ULL, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx", 512, 512, FALSE },
-    /* ui_1153_ウィンドウ (1024x1024, index 30) */
-    { 0x433B9360ULL, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024, TRUE },
-    { 0x433B9380ULL, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024, FALSE },
-    /* ui_0010_itemcategory (512x1024, index 37) */
-    { 0x4340B5D0ULL, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx", 512, 1024, TRUE },
-    { 0x4340B5F0ULL, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx", 512, 1024, FALSE },
-    /* ui_5090_掲示板 (2048x2048, index 39) */
-    { 0x436BC540ULL, "ui_5090_掲示板.nltx", "ui_5090_掲示板_thai.nltx", 2048, 2048, TRUE },
-    { 0x436BC560ULL, "ui_5090_掲示板.nltx", "ui_5090_掲示板_thai.nltx", 2048, 2048, FALSE },
-    /* ui_9000_01 (1024x2048, index 41) */
-    { 0x43823280ULL, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048, TRUE },
-    { 0x438232A0ULL, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048, FALSE },
-    /* ui_0060_Charaname24pxB (1024x512, index 43) */
-    { 0x439199A0ULL, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024, 512, TRUE },
-    { 0x439199C0ULL, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024, 512, FALSE },
-    /* ui_0010_nameplate (512x512, index 50) */
-    { 0x4399D7C0ULL, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx", 512, 512, TRUE },
-    { 0x4399D7E0ULL, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx", 512, 512, FALSE },
-    /* ui_9000_02 (1024x2048, index 52) */
-    { 0x439AD5E0ULL, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048, TRUE },
-    { 0x439AD600ULL, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048, FALSE },
-    /* ui_0010_itemcategory03 (256x512, index 54) */
-    { 0x43A8B540ULL, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx", 256, 512, TRUE },
-    { 0x43A8B560ULL, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx", 256, 512, FALSE },
-    /* title_white / タイトル白 (2048x1280, index 97) */
-    { 0x46A6D1D0ULL, "タイトル白.nltx", "title_white.nltx", 2048, 1280, TRUE },
-    { 0x46A6D1F0ULL, "タイトル白.nltx", "title_white.nltx", 2048, 1280, FALSE },
-    /* 名前_steam版_04 (1024x2048, index 104) */
-    { 0x46AFB030ULL, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048, TRUE },
-    { 0x46AFB050ULL, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048, FALSE },
-    /* ui_5080_00 (2048x2048, index 108) */
-    { 0x46E697B0ULL, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048, TRUE },
-    { 0x46E697D0ULL, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048, FALSE },
-    /* ui_5100_bandolPU01 (256x256, index 115) */
-    { 0x470A7960ULL, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx", 256, 256, TRUE },
-    { 0x470A7980ULL, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx", 256, 256, FALSE },
-    /* ui_1170_投げ銭_text (256x128, index 120) */
-    { 0x470AE140ULL, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx", 256, 128, TRUE },
-    { 0x470AE160ULL, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx", 256, 128, FALSE },
-    /* ui_0120_汎用テキスト01 (512x256, index 122) */
-    { 0x470B29D0ULL, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx", 512, 256, TRUE },
-    { 0x470B29F0ULL, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx", 512, 256, FALSE },
-    /* ui_5010_チラシ01 (1024x1024, index 123) */
-    { 0x470B5A80ULL, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024, TRUE },
-    { 0x470B5AA0ULL, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ02 (1024x1024, index 124) */
-    { 0x4712D6E0ULL, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024, TRUE },
-    { 0x4712D700ULL, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ03 (1024x1024, index 125) */
-    { 0x4719BB00ULL, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024, TRUE },
-    { 0x4719BB20ULL, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ04 (1024x1024, index 126) */
-    { 0x4720C5D0ULL, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024, TRUE },
-    { 0x4720C5F0ULL, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ05 (1024x1024, index 127) */
-    { 0x4727EBF0ULL, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024, TRUE },
-    { 0x4727EC10ULL, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ06 (1024x1024, index 128) */
-    { 0x472F1C20ULL, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024, TRUE },
-    { 0x472F1C40ULL, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ07 (1024x1024, index 129) */
-    { 0x4736C9B0ULL, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024, TRUE },
-    { 0x4736C9D0ULL, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ08 (1024x1024, index 130) */
-    { 0x473EDC20ULL, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024, TRUE },
-    { 0x473EDC40ULL, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ09 (1024x1024, index 131) */
-    { 0x4746C830ULL, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024, TRUE },
-    { 0x4746C850ULL, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ10 (1024x1024, index 132) */
-    { 0x474EF4D0ULL, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024, TRUE },
-    { 0x474EF4F0ULL, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ11 (1024x1024, index 133) */
-    { 0x475792B0ULL, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024, TRUE },
-    { 0x475792D0ULL, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ12 (1024x1024, index 134) */
-    { 0x47603040ULL, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024, TRUE },
-    { 0x47603060ULL, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ13 (1024x1024, index 135) */
-    { 0x4768AB60ULL, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024, TRUE },
-    { 0x4768AB80ULL, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ14 (1024x1024, index 136) */
-    { 0x4770F380ULL, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024, TRUE },
-    { 0x4770F3A0ULL, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ15 (1024x1024, index 137) */
-    { 0x477966C0ULL, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024, TRUE },
-    { 0x477966E0ULL, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ16 (1024x1024, index 138) */
-    { 0x47820150ULL, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024, TRUE },
-    { 0x47820170ULL, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ17 (1024x1024, index 139) */
-    { 0x478A7FA0ULL, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024, TRUE },
-    { 0x478A7FC0ULL, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ18 (1024x1024, index 140) */
-    { 0x4792DB10ULL, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024, TRUE },
-    { 0x4792DB30ULL, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ19 (1024x1024, index 141) */
-    { 0x479B6560ULL, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024, TRUE },
-    { 0x479B6580ULL, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ20 (1024x1024, index 142) */
-    { 0x47A38870ULL, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024, TRUE },
-    { 0x47A38890ULL, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ30 (1024x1024, index 143) */
-    { 0x47AC15A0ULL, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024, TRUE },
-    { 0x47AC15C0ULL, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ31 (1024x1024, index 144) */
-    { 0x47B2F7A0ULL, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024, TRUE },
-    { 0x47B2F7C0ULL, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ32 (1024x1024, index 145) */
-    { 0x47B9D8D0ULL, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024, TRUE },
-    { 0x47B9D8F0ULL, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ33 (1024x1024, index 146) */
-    { 0x47C0B950ULL, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024, TRUE },
-    { 0x47C0B970ULL, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ34 (1024x1024, index 147) */
-    { 0x47C798A0ULL, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024, TRUE },
-    { 0x47C798C0ULL, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ35 (1024x1024, index 148) */
-    { 0x47CE7980ULL, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024, TRUE },
-    { 0x47CE79A0ULL, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024, FALSE },
-    /* ui_5010_チラシ36 (1024x1024, index 149) */
-    { 0x47D55AA0ULL, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024, TRUE },
-    { 0x47D55AC0ULL, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024, FALSE },
-    /* 鐘 (2200x1300, index 171) */
-    { 0x48207650ULL, "鐘.nltx", "鐘_thai.nltx", 2200, 1300, TRUE },
-    { 0x48207670ULL, "鐘.nltx", "鐘_thai.nltx", 2200, 1300, FALSE },
-    /* ui_3440_00 (4096x2048, index 174) */
-    { 0x485EFD80ULL, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048, TRUE },
-    { 0x485EFDA0ULL, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048, FALSE },
-    /* ui_5010_項目02 (256x1024, index 190) */
-    { 0x49B37EB0ULL, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx", 256, 1024, TRUE },
-    { 0x49B37ED0ULL, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx", 256, 1024, FALSE },
-    /* ui_5060_家畜一覧_01 (2048x2048, index 192) */
-    { 0x49B4BD00ULL, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048, TRUE },
-    { 0x49B4BD20ULL, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048, FALSE },
-    /* ui_0010_itemcategory2 (1024x256, index 194) */
-    { 0x49BC0AD0ULL, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024, 256, TRUE },
-    { 0x49BC0AF0ULL, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024, 256, FALSE },
-    /* ui_2220_post03 (512x1024, index 198) */
-    { 0x49BD78F0ULL, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx", 512, 1024, TRUE },
-    { 0x49BD7910ULL, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx", 512, 1024, FALSE },
-    /* ui_2220_post01 (2048x2048, index 199) */
-    { 0x49BF1390ULL, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048, TRUE },
-    { 0x49BF13B0ULL, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048, FALSE },
-    /* ui_0990_初回起動時ポエム (1024x512, index 202) */
-    { 0x49D19430ULL, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024, 512, TRUE },
-    { 0x49D19450ULL, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024, 512, FALSE },
-    /* ui_1000_title01 / ui_1000_タイトル01 (2048x512, index 208) */
-    { 0x4A3513B0ULL, "ui_1000_title01.nltx", "ui_1000_タイトル01.nltx", 2048, 512, TRUE },
-    { 0x4A3513D0ULL, "ui_1000_title01.nltx", "ui_1000_タイトル01.nltx", 2048, 512, FALSE },
-    /* ui_0990_localize_00 (1024x512, index 209) */
-    { 0x4A385850ULL, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024, 512, TRUE },
-    { 0x4A385870ULL, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024, 512, FALSE },
-    /* ui_1000_02 (2048x256, index 210) */
-    { 0x4A39F6D0ULL, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048, 256, TRUE },
-    { 0x4A39F6F0ULL, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048, 256, FALSE },
-    /* ui_2100_00 (256x256, index 221) */
-    { 0x4B7D0570ULL, "ui_2100_00.nltx", "ui_2100_00_thai.nltx", 256, 256, TRUE },
-    { 0x4B7D0590ULL, "ui_2100_00.nltx", "ui_2100_00_thai.nltx", 256, 256, FALSE },
-    /* ene_3020_1_02 (512x256, index 229) */
-    { 0x4B819910ULL, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx", 512, 256, TRUE },
-    { 0x4B819930ULL, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx", 512, 256, FALSE },
-    /* bg_8080_00_tex (512x256, index 234) */
-    { 0x4B8991F0ULL, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx", 512, 256, TRUE },
-    { 0x4B899210ULL, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx", 512, 256, FALSE },
-    /* bg_8080_04_tex (1024x2048, index 235) */
-    { 0x4B89E450ULL, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048, TRUE },
-    { 0x4B89E470ULL, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048, FALSE },
-    /* bg_8080_01_tex (2048x256, index 236) */
-    { 0x4B8DE9C0ULL, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048, 256, TRUE },
-    { 0x4B8DE9E0ULL, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048, 256, FALSE },
-    /* ui_2210_日リザルト02 (1024x256, index 316) */
-    { 0x4CCAF280ULL, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024, 256, TRUE },
-    { 0x4CCAF2A0ULL, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024, 256, FALSE },
-    /* ui_0030_汎用アイコン_はんこ (1024x512, index 321) */
-    { 0x4CE2EE50ULL, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024, 512, TRUE },
-    { 0x4CE2EE70ULL, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024, 512, FALSE },
-    /* ui_2020_コックピット_text (512x256, index 344) */
-    { 0x4D121580ULL, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx", 512, 256, TRUE },
-    { 0x4D1215A0ULL, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx", 512, 256, FALSE },
-    /* ui_3030_家具配置01 (2048x512, index 345) */
-    { 0x4D122B60ULL, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048, 512, TRUE },
-    { 0x4D122B80ULL, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048, 512, FALSE },
-};
+#define MAX_FAD_RUNTIME_SUBFILES 256
+static FadSubFile g_fad_runtime_subfiles[MAX_FAD_RUNTIME_SUBFILES];
+static int g_fad_runtime_count = 0;
+static uint64_t g_fad_base_offset = 0;
+static BOOL g_fad_resolved = FALSE;
+
+static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
+{
+    if (g_fad_resolved) return;
+
+    uint64_t resident_lang_jp_offset = 0;
+    for (int i = 0; i < g_vfs_count; i++) {
+        if (g_vfs[i].archive_id == 4 && strstr(g_vfs[i].name, "resident_lang_jp.fad") != NULL) {
+            resident_lang_jp_offset = g_vfs[i].offset;
+            break;
+        }
+    }
+
+    FILE* f = _wfopen(fairy_path_w, L"rb");
+    if (!f) {
+        log_msg("[FAD RESOLVER] Cannot open fairy_1_00.dat: %ls", fairy_path_w);
+        return;
+    }
+
+    if (resident_lang_jp_offset == 0) {
+        FAFULLFS_Header hdr;
+        if (fread(&hdr, 1, sizeof(hdr), f) == sizeof(hdr) && memcmp(hdr.magic, "FAFULLFS", 8) == 0) {
+            FAFULLFS_TocEntry* tocs = (FAFULLFS_TocEntry*)malloc(hdr.count * sizeof(FAFULLFS_TocEntry));
+            char* str_table = (char*)malloc(hdr.str_len);
+            if (tocs && str_table) {
+                _fseeki64(f, (int64_t)hdr.toc_off, SEEK_SET);
+                fread(tocs, sizeof(FAFULLFS_TocEntry), hdr.count, f);
+
+                _fseeki64(f, (int64_t)hdr.str_off, SEEK_SET);
+                fread(str_table, 1, hdr.str_len, f);
+
+                for (uint32_t i = 0; i < hdr.count; i++) {
+                    uint64_t n_off = tocs[i].name_off;
+                    if (n_off < hdr.str_len) {
+                        const char* name = str_table + n_off;
+                        if (strstr(name, "resident_lang_jp.fad") != NULL) {
+                            resident_lang_jp_offset = tocs[i].offset;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (tocs) free(tocs);
+            if (str_table) free(str_table);
+        }
+    }
+
+    if (resident_lang_jp_offset == 0) {
+        log_msg("[FAD RESOLVER] resident_lang_jp.fad not found in %ls TOC", fairy_path_w);
+        fclose(f);
+        return;
+    }
+
+    g_fad_base_offset = resident_lang_jp_offset;
+    log_msg("[FAD RESOLVER] Detected resident_lang_jp.fad base offset: 0x%llX", (unsigned long long)g_fad_base_offset);
+
+    /* Read FAD TOC (16 KB header) */
+    uint8_t fad_hdr[0x4000];
+    _fseeki64(f, (int64_t)g_fad_base_offset, SEEK_SET);
+    size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
+    fclose(f);
+
+    if (nread < 0x4000) {
+        log_msg("[FAD RESOLVER] Failed to read FAD header (read %zu bytes)", nread);
+        return;
+    }
+
+    EnterCriticalSection(&g_cs);
+    g_fad_runtime_count = 0;
+    size_t num_defs = sizeof(g_fad_mapping_defs) / sizeof(g_fad_mapping_defs[0]);
+
+    for (size_t i = 0; i < num_defs; i++) {
+        int idx = g_fad_mapping_defs[i].toc_index;
+        size_t pos = 0x1018 + (size_t)idx * 32;
+        if (pos + 12 > sizeof(fad_hdr)) continue;
+
+        uint64_t entry_sz = *(uint64_t*)(fad_hdr + pos + 0);
+        uint32_t rel_off = *(uint32_t*)(fad_hdr + pos + 8);
+        if (entry_sz == 0 && rel_off == 0) continue;
+
+        uint64_t desc_off = g_fad_base_offset + (uint64_t)rel_off + 32;
+        uint64_t data_off = g_fad_base_offset + (uint64_t)rel_off + 64;
+
+        if (g_fad_runtime_count + 2 <= MAX_FAD_RUNTIME_SUBFILES) {
+            /* Descriptor entry */
+            FadSubFile* e1 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
+            e1->offset = desc_off;
+            e1->filename = g_fad_mapping_defs[i].filename;
+            e1->alt_filename = g_fad_mapping_defs[i].alt_filename;
+            e1->width = g_fad_mapping_defs[i].width;
+            e1->height = g_fad_mapping_defs[i].height;
+            e1->has_fad_descriptor = TRUE;
+
+            /* Data entry */
+            FadSubFile* e2 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
+            e2->offset = data_off;
+            e2->filename = g_fad_mapping_defs[i].filename;
+            e2->alt_filename = g_fad_mapping_defs[i].alt_filename;
+            e2->width = g_fad_mapping_defs[i].width;
+            e2->height = g_fad_mapping_defs[i].height;
+            e2->has_fad_descriptor = FALSE;
+        }
+    }
+
+    g_fad_resolved = TRUE;
+    LeaveCriticalSection(&g_cs);
+
+    log_msg("[FAD RESOLVER] Dynamic resolution complete: %d subfile targets mapped in RAM (base=0x%llX)!",
+            g_fad_runtime_count, (unsigned long long)g_fad_base_offset);
+}
 
 static const FadSubFile* lookup_fad_subfile(uint64_t offset)
 {
-    for (size_t i = 0; i < sizeof(g_fad_subfiles) / sizeof(g_fad_subfiles[0]); i++) {
-        if (g_fad_subfiles[i].offset == offset) {
-            return &g_fad_subfiles[i];
+    for (int i = 0; i < g_fad_runtime_count; i++) {
+        if (g_fad_runtime_subfiles[i].offset == offset) {
+            return &g_fad_runtime_subfiles[i];
         }
     }
     return NULL;
@@ -1145,6 +1137,12 @@ static HANDLE WINAPI hk_CreateFileW(
 
         if (wcsstr(lower, L"data") || wcsstr(lower, L".dat") || wcsstr(lower, L".fad") || wcsstr(lower, L".nltx")) {
             log_file_access("[OPEN_FILE] %ls", lpFileName);
+        }
+
+        if (wcsstr(lower, L"fairy_1_00.dat")) {
+            if (!g_fad_resolved) {
+                resolve_dynamic_fad_offsets_w(lpFileName);
+            }
         }
 
         if (wcsstr(lower, L"misc_1_00.dat")) {
@@ -1602,7 +1600,7 @@ static BOOL WINAPI hk_ReadFile(
     }
 
     /* 1b. Check if the game is reading the FAD Header/TOC for resident_lang_jp.fad */
-    if (arch_id == 4 && offset == 0x42590C00ULL && nNumberOfBytesToRead >= 0x4000) {
+    if (arch_id == 4 && g_fad_base_offset != 0 && offset == g_fad_base_offset && nNumberOfBytesToRead >= 0x4000) {
         BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
         if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
             DWORD transferred = 0;
@@ -1616,19 +1614,19 @@ static BOOL WINAPI hk_ReadFile(
         }
         if (res && lpBuffer) {
             int patched = 0;
-            size_t fad_sub_count = sizeof(g_fad_subfiles) / sizeof(g_fad_subfiles[0]);
+            size_t fad_sub_count = (size_t)g_fad_runtime_count;
             for (size_t i = 0; i < fad_sub_count; i++) {
-                if (!g_fad_subfiles[i].has_fad_descriptor) continue;
+                if (!g_fad_runtime_subfiles[i].has_fad_descriptor) continue;
 
                 wchar_t override_path_w[MAX_PATH];
                 long ext_size = 0;
-                BOOL found = find_override_file_w(g_fad_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
-                if (!found && g_fad_subfiles[i].alt_filename) {
-                    found = find_override_file_w(g_fad_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
+                BOOL found = find_override_file_w(g_fad_runtime_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
+                if (!found && g_fad_runtime_subfiles[i].alt_filename) {
+                    found = find_override_file_w(g_fad_runtime_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
                 }
 
                 if (found && ext_size > 0) {
-                    uint32_t target_rel_off = (uint32_t)(g_fad_subfiles[i].offset - 0x42590C00ULL - 32);
+                    uint32_t target_rel_off = (uint32_t)(g_fad_runtime_subfiles[i].offset - g_fad_base_offset - 32);
 
                     /* Walk FAD entry table in lpBuffer between 0x1018 and 0x3B00 in 32-byte strides */
                     for (size_t pos = 0x1018; pos + 32 <= nNumberOfBytesToRead && pos < 0x4000; pos += 32) {
@@ -1639,7 +1637,7 @@ static BOOL WINAPI hk_ReadFile(
                             uint64_t needed_sz = ((uint64_t)ext_size + 64 + 63) & ~63ULL;
                             if (needed_sz > *p_sz) {
                                 log_msg("[VFS FAD TOC Patch] Expanding size for [%s]: %llu -> %llu bytes (rel_off=0x%X at TOC+0x%X)",
-                                        g_fad_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos);
+                                        g_fad_runtime_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos);
                                 *p_sz = needed_sz;
                                 patched++;
                             }
@@ -1649,7 +1647,8 @@ static BOOL WINAPI hk_ReadFile(
                 }
             }
             if (patched > 0) {
-                log_msg("[VFS FAD TOC Patch] Successfully patched %d / 65 FAD TOC entries in RAM!", patched);
+                log_msg("[VFS FAD TOC Patch] Successfully patched %d / %d FAD TOC entries in RAM!",
+                        patched, (int)(g_fad_runtime_count / 2));
             }
         }
         return res;
@@ -2035,6 +2034,9 @@ static DWORD WINAPI worker_thread(LPVOID param)
     load_archive_toc_w(tex_path_w, 3);
     load_archive_toc_w(fairy_path_w, 4);
     log_msg("[VFS] Total files indexed for redirection: %d", g_vfs_count);
+
+    /* Dynamically resolve FAD sub-file offsets across all game versions */
+    resolve_dynamic_fad_offsets_w(fairy_path_w);
 
     /* 2. Install CreateFileW & CreateFileA Archive Hooks immediately */
     HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
