@@ -11,6 +11,9 @@
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
 static char g_game_dir[MAX_PATH] = { 0 };
+static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
+static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
+
 static char g_log_path[MAX_PATH] = { 0 };
 static char g_dump_unique_path[MAX_PATH] = { 0 };
 static char g_dump_log_path[MAX_PATH] = { 0 };
@@ -19,6 +22,21 @@ static char g_session_dump_log_path[MAX_PATH] = { 0 };
 static char g_dump_missing_path[MAX_PATH] = { 0 };
 static char g_session_dump_missing_path[MAX_PATH] = { 0 };
 static char g_translation_path[MAX_PATH] = { 0 };
+static char g_file_access_log[MAX_PATH] = { 0 };
+static char g_tags_log_path[MAX_PATH] = { 0 };
+static char g_id_log_path[MAX_PATH] = { 0 };
+
+static wchar_t g_log_path_w[MAX_PATH] = { 0 };
+static wchar_t g_dump_unique_path_w[MAX_PATH] = { 0 };
+static wchar_t g_dump_log_path_w[MAX_PATH] = { 0 };
+static wchar_t g_session_dump_unique_path_w[MAX_PATH] = { 0 };
+static wchar_t g_session_dump_log_path_w[MAX_PATH] = { 0 };
+static wchar_t g_dump_missing_path_w[MAX_PATH] = { 0 };
+static wchar_t g_session_dump_missing_path_w[MAX_PATH] = { 0 };
+static wchar_t g_translation_path_w[MAX_PATH] = { 0 };
+static wchar_t g_file_access_log_w[MAX_PATH] = { 0 };
+static wchar_t g_tags_log_path_w[MAX_PATH] = { 0 };
+static wchar_t g_id_log_path_w[MAX_PATH] = { 0 };
 
 static CRITICAL_SECTION g_cs;
 static FILE* g_flog = NULL;
@@ -28,11 +46,8 @@ static FILE* g_fraw = NULL;
 static FILE* g_fraw_latest = NULL;
 static FILE* g_fmissing = NULL;
 static FILE* g_fmissing_latest = NULL;
-static char g_file_access_log[MAX_PATH] = { 0 };
 static FILE* g_faccess = NULL;
-static char g_tags_log_path[MAX_PATH] = { 0 };
 static FILE* g_ftags = NULL;
-static char g_id_log_path[MAX_PATH] = { 0 };
 static FILE* g_fidlog = NULL;
 static uint8_t g_logged_ids[65536 / 8] = { 0 };
 static char g_active_player_name[64] = { 0 };
@@ -50,7 +65,7 @@ static void log_id_access(uint32_t id)
 
     EnterCriticalSection(&g_cs);
     if (!g_fidlog) {
-        g_fidlog = fopen(g_id_log_path, "a+");
+        g_fidlog = _wfopen(g_id_log_path_w, L"a+");
     }
     if (g_fidlog) {
         SYSTEMTIME st;
@@ -75,7 +90,7 @@ static void log_file_access(const char* fmt, ...)
 
     EnterCriticalSection(&g_cs);
     if (!g_faccess) {
-        g_faccess = fopen(g_file_access_log, "a+");
+        g_faccess = _wfopen(g_file_access_log_w, L"a+");
     }
     if (g_faccess) {
         fprintf(g_faccess, "[%02d:%02d:%02d.%03d] %s\n",
@@ -106,7 +121,7 @@ static void log_msg(const char* fmt, ...)
 
     EnterCriticalSection(&g_cs);
     if (!g_flog) {
-        g_flog = fopen(g_log_path, "a+");
+        g_flog = _wfopen(g_log_path_w, L"a+");
     }
     if (g_flog) {
         fprintf(g_flog, "[%02d:%02d:%02d.%03d] %s\n",
@@ -350,7 +365,7 @@ static void unescape_string(char* dest, const char* src)
 
 static void load_translation_file(void)
 {
-    FILE* f = fopen(g_translation_path, "rb");
+    FILE* f = _wfopen(g_translation_path_w, L"rb");
     if (!f) return;
 
     EnterCriticalSection(&g_cs);
@@ -398,7 +413,7 @@ static void load_translation_file(void)
     fclose(f);
 
     WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExA(g_translation_path, GetFileExInfoStandard, &fad)) {
+    if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
         g_trans_filetime = fad.ftLastWriteTime;
     }
 
@@ -409,7 +424,7 @@ static void load_translation_file(void)
 static void check_hot_reload_translation(void)
 {
     WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExA(g_translation_path, GetFileExInfoStandard, &fad)) {
+    if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
         if (CompareFileTime(&fad.ftLastWriteTime, &g_trans_filetime) != 0) {
             log_msg("translation.txt changed on disk, hot-reloading...");
             load_translation_file();
@@ -441,8 +456,8 @@ static void process_captured_text(const char* str, const char* source)
     g_total_calls++;
 
     if (!g_fraw) {
-        g_fraw = fopen(g_session_dump_log_path, "w");
-        g_fraw_latest = fopen(g_dump_log_path, "w");
+        g_fraw = _wfopen(g_session_dump_log_path_w, L"w");
+        g_fraw_latest = _wfopen(g_dump_log_path_w, L"w");
     }
     if (g_fraw || g_fraw_latest) {
         SYSTEMTIME st;
@@ -462,8 +477,8 @@ static void process_captured_text(const char* str, const char* source)
     if (!is_seen_or_insert(str)) {
         g_unique_count++;
         if (!g_funique) {
-            g_funique = fopen(g_session_dump_unique_path, "w");
-            g_funique_latest = fopen(g_dump_unique_path, "w");
+            g_funique = _wfopen(g_session_dump_unique_path_w, L"w");
+            g_funique_latest = _wfopen(g_dump_unique_path_w, L"w");
         }
         if (g_funique) {
             fprintf(g_funique, "/* ID:%05d [%s] */ %s\n", g_unique_count, source, str);
@@ -477,7 +492,7 @@ static void process_captured_text(const char* str, const char* source)
 
     if (strchr(str, '<') != NULL && strchr(str, '>') != NULL) {
         if (!g_ftags) {
-            g_ftags = fopen(g_tags_log_path, "a+");
+            g_ftags = _wfopen(g_tags_log_path_w, L"a+");
         }
         if (g_ftags) {
             SYSTEMTIME st;
@@ -570,10 +585,10 @@ static void log_missing_text(const char* str, const char* source)
     if (!is_missing_seen_or_insert(str)) {
         g_missing_count++;
         if (!g_fmissing) {
-            g_fmissing = fopen(g_session_dump_missing_path, "a+");
+            g_fmissing = _wfopen(g_session_dump_missing_path_w, L"a+");
         }
         if (!g_fmissing_latest) {
-            g_fmissing_latest = fopen(g_dump_missing_path, "a+");
+            g_fmissing_latest = _wfopen(g_dump_missing_path_w, L"a+");
         }
         char escaped[8192];
         escape_string_for_dump(escaped, sizeof(escaped), str);
@@ -633,11 +648,11 @@ static uint64_t g_toc_off_misc = 0;
 static uint32_t g_count_dat = 0;
 static uint32_t g_count_misc = 0;
 
-static int load_archive_toc(const char* path, int archive_id)
+static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
 {
-    FILE* f = fopen(path, "rb");
+    FILE* f = _wfopen(path_w, L"rb");
     if (!f) {
-        log_msg("[VFS] Failed to open archive: %s", path);
+        log_msg("[VFS] Failed to open archive: %ls", path_w);
         return 0;
     }
 
@@ -692,14 +707,14 @@ static int load_archive_toc(const char* path, int archive_id)
 
     free(tocs);
     free(str_table);
-    log_msg("[VFS] Indexed %s: %d files (TOC off=0x%llX)", path, loaded, (unsigned long long)hdr.toc_off);
+    log_msg("[VFS] Indexed %ls: %d files (TOC off=0x%llX)", path_w, loaded, (unsigned long long)hdr.toc_off);
     return loaded;
 }
 
-static BOOL file_exists_and_size(const char* path, long* out_size)
+static BOOL file_exists_and_size_w(const wchar_t* path_w, long* out_size)
 {
     WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExA(path, GetFileExInfoStandard, &fad)) {
+    if (GetFileAttributesExW(path_w, GetFileExInfoStandard, &fad)) {
         if (!(fad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
             if (out_size) {
                 *out_size = (long)fad.nFileSizeLow;
@@ -718,79 +733,101 @@ static const char* get_basename(const char* path)
 }
 
 /* Search for override file in Mods directory structures */
-static BOOL find_override_file(const char* vfs_name, char* out_path, size_t out_max, long* out_size)
+static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size_t out_max, long* out_size)
 {
     const char* base_name = get_basename(vfs_name);
-    char candidate[MAX_PATH];
+    wchar_t base_name_w[MAX_PATH];
+    MultiByteToWideChar(CP_UTF8, 0, base_name, -1, base_name_w, MAX_PATH);
 
-    /* 1. Mods\TextDump\<basename> (e.g. Mods\TextDump\font.dat) */
-    snprintf(candidate, sizeof(candidate), "%s\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 1b. Mods\TextDump\textures\<basename> (e.g. Mods\TextDump\textures\ui_1000_title01.nltx) */
-    snprintf(candidate, sizeof(candidate), "%s\\textures\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 1c. Mods\TextDump\title_elements\<basename> */
-    snprintf(candidate, sizeof(candidate), "%s\\title_elements\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 2. Mods\Fonts\<basename> (e.g. Mods\Fonts\KiwiMaru-Regular.ttf) */
-    snprintf(candidate, sizeof(candidate), "%s\\..\\Fonts\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 2b. Mods\Textures\<basename> */
-    snprintf(candidate, sizeof(candidate), "%s\\..\\Textures\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 2c. Mods\TextDump\fonts\<basename> */
-    snprintf(candidate, sizeof(candidate), "%s\\fonts\\%s", g_mod_dir, base_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
-        return TRUE;
-    }
-
-    /* 3. Mods\TextDump\<vfs_name> (e.g. Mods\TextDump\data\database\font.dat) */
     char win_vfs_name[MAX_PATH];
     strncpy(win_vfs_name, vfs_name, sizeof(win_vfs_name) - 1);
     win_vfs_name[sizeof(win_vfs_name) - 1] = '\0';
     for (int k = 0; win_vfs_name[k]; k++) {
         if (win_vfs_name[k] == '/') win_vfs_name[k] = '\\';
     }
+    wchar_t win_vfs_name_w[MAX_PATH];
+    MultiByteToWideChar(CP_UTF8, 0, win_vfs_name, -1, win_vfs_name_w, MAX_PATH);
 
-    snprintf(candidate, sizeof(candidate), "%s\\%s", g_mod_dir, win_vfs_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
+    wchar_t candidate[MAX_PATH];
+
+    /* 1. Mods\TextDump\<basename> (e.g. Mods\TextDump\font.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 1b. Mods\TextDump\textures\<basename> (e.g. Mods\TextDump\textures\ui_1000_title01.nltx) */
+    swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 1c. Mods\TextDump\title_elements\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\title_elements\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2. Mods\Fonts\<basename> (e.g. Mods\Fonts\font.dat or Mods\Fonts\KiwiMaru-Regular.ttf) */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\Fonts\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2b. Mods\Textures\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\Textures\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2c. Mods\TextDump\fonts\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\fonts\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2d. Mods\<basename> (e.g. Mods\font.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 3. Mods\TextDump\<vfs_name> (e.g. Mods\TextDump\data\database\font.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, win_vfs_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
         return TRUE;
     }
 
     /* 4. Mods\<vfs_name> (e.g. Mods\data\database\font.dat) */
-    snprintf(candidate, sizeof(candidate), "%s\\..\\%s", g_mod_dir, win_vfs_name);
-    if (file_exists_and_size(candidate, out_size)) {
-        strncpy(out_path, candidate, out_max - 1);
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, win_vfs_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
         return TRUE;
     }
 
     /* 5. Fallback: User desktop extracted folder for font.dat ONLY (Exact match) */
     if (_stricmp(base_name, "font.dat") == 0) {
-        const char* dt = "C:\\Users\\Supakiat\\Desktop\\Mover\\QuickBMS\\Extracted_Data fonts\\data\\database\\font.dat";
-        if (file_exists_and_size(dt, out_size)) {
-            strncpy(out_path, dt, out_max - 1);
+        const wchar_t* dt = L"C:\\Users\\Supakiat\\Desktop\\Mover\\QuickBMS\\Extracted_Data fonts\\data\\database\\font.dat";
+        if (file_exists_and_size_w(dt, out_size)) {
+            wcsncpy(out_path_w, dt, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
             return TRUE;
         }
     }
@@ -1092,7 +1129,7 @@ static HANDLE WINAPI hk_CreateFileW(
 
         if (wcsstr(lower, L"misc_1_00.dat")) {
             wchar_t mod_misc[MAX_PATH];
-            swprintf(mod_misc, MAX_PATH, L"%hs\\Mods\\misc_1_00.dat", g_game_dir);
+            swprintf(mod_misc, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
             if (GetFileAttributesW(mod_misc) != INVALID_FILE_ATTRIBUTES) {
                 log_msg("[VFS] Redirecting CreateFileW: %ls -> %ls", lpFileName, mod_misc);
                 return fp_original_CreateFileW(
@@ -1138,12 +1175,12 @@ static HANDLE WINAPI hk_CreateFileA(
         lower[len] = '\0';
 
         if (strstr(lower, "misc_1_00.dat")) {
-            char mod_misc[MAX_PATH];
-            snprintf(mod_misc, MAX_PATH, "%s\\Mods\\misc_1_00.dat", g_game_dir);
-            if (GetFileAttributesA(mod_misc) != INVALID_FILE_ATTRIBUTES) {
-                log_msg("[VFS] Redirecting CreateFileA: %s -> %s", lpFileName, mod_misc);
-                return fp_original_CreateFileA(
-                    mod_misc,
+            wchar_t mod_misc_w[MAX_PATH];
+            swprintf(mod_misc_w, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
+            if (GetFileAttributesW(mod_misc_w) != INVALID_FILE_ATTRIBUTES) {
+                log_msg("[VFS] Redirecting CreateFileA: %s -> %ls", lpFileName, mod_misc_w);
+                return fp_original_CreateFileW(
+                    mod_misc_w,
                     dwDesiredAccess,
                     dwShareMode,
                     lpSecurityAttributes,
@@ -1200,23 +1237,23 @@ static int identify_archive_handle(HANDLE hFile)
     }
 
     int type = -1;
-    char path[MAX_PATH] = { 0 };
-    DWORD len = GetFinalPathNameByHandleA(hFile, path, sizeof(path) - 1, 0);
+    wchar_t path_w[MAX_PATH] = { 0 };
+    DWORD len = GetFinalPathNameByHandleW(hFile, path_w, MAX_PATH - 1, 0);
     if (len > 0) {
-        char lpath[MAX_PATH];
+        wchar_t lpath[MAX_PATH];
         for (DWORD i = 0; i <= len && i < MAX_PATH; i++) {
-            lpath[i] = (char)tolower((unsigned char)path[i]);
+            lpath[i] = (wchar_t)towlower(path_w[i]);
         }
-        if (strstr(lpath, "misc_1_00.dat")) {
+        if (wcsstr(lpath, L"misc_1_00.dat")) {
             type = 2;
             log_msg("[VFS] Cached misc_1_00.dat handle: 0x%p", hFile);
-        } else if (strstr(lpath, "data.dat")) {
+        } else if (wcsstr(lpath, L"data.dat")) {
             type = 1;
             log_msg("[VFS] Cached data.dat handle: 0x%p", hFile);
-        } else if (strstr(lpath, "texture_1_00.dat")) {
+        } else if (wcsstr(lpath, L"texture_1_00.dat")) {
             type = 3;
             log_msg("[VFS] Cached texture_1_00.dat handle: 0x%p", hFile);
-        } else if (strstr(lpath, "fairy_1_00.dat")) {
+        } else if (wcsstr(lpath, L"fairy_1_00.dat")) {
             type = 4;
             log_msg("[VFS] Cached fairy_1_00.dat handle: 0x%p", hFile);
         }
@@ -1249,7 +1286,7 @@ typedef struct {
     int arch_id;
     uint64_t offset;
     DWORD bytes_requested;
-    char override_path[MAX_PATH];
+    wchar_t override_path_w[MAX_PATH];
     long ext_size;
     BOOL is_fad_desc;
     uint16_t width;
@@ -1268,7 +1305,7 @@ static void add_pending_io(
     int arch_id,
     uint64_t offset,
     DWORD bytes_requested,
-    const char* override_path,
+    const wchar_t* override_path_w,
     long ext_size,
     BOOL is_fad_desc,
     uint16_t width,
@@ -1286,8 +1323,8 @@ static void add_pending_io(
             g_pending_io[i].arch_id = arch_id;
             g_pending_io[i].offset = offset;
             g_pending_io[i].bytes_requested = bytes_requested;
-            strncpy(g_pending_io[i].override_path, override_path, MAX_PATH - 1);
-            g_pending_io[i].override_path[MAX_PATH - 1] = '\0';
+            wcsncpy(g_pending_io[i].override_path_w, override_path_w, MAX_PATH - 1);
+            g_pending_io[i].override_path_w[MAX_PATH - 1] = L'\0';
             g_pending_io[i].ext_size = ext_size;
             g_pending_io[i].is_fad_desc = is_fad_desc;
             g_pending_io[i].width = width;
@@ -1320,9 +1357,9 @@ static BOOL find_and_remove_pending_io(LPOVERLAPPED lpOverlapped, PendingIo* out
 
 static void apply_vfs_payload(const PendingIo* pio)
 {
-    FILE* fext = fopen(pio->override_path, "rb");
+    FILE* fext = _wfopen(pio->override_path_w, L"rb");
     if (!fext) {
-        log_msg("[VFS ERROR] Could not open override file: %s", pio->override_path);
+        log_msg("[VFS ERROR] Could not open override file: %ls", pio->override_path_w);
         return;
     }
 
@@ -1351,8 +1388,8 @@ static void apply_vfs_payload(const PendingIo* pio)
             memset((char*)pio->lpBuffer + total_written, 0, pio->bytes_requested - (DWORD)total_written);
         }
 
-        log_msg("[VFS ASYNC SUCCESS] Applied FAD [%s] (0x%llX) -> %s (%u NLTX + 32 desc into buffer %u)",
-                pio->filename, (unsigned long long)pio->offset, pio->override_path,
+        log_msg("[VFS ASYNC SUCCESS] Applied FAD [%s] (0x%llX) -> %ls (%u NLTX + 32 desc into buffer %u)",
+                pio->filename, (unsigned long long)pio->offset, pio->override_path_w,
                 (unsigned int)actual_read, (unsigned int)pio->bytes_requested);
     } else {
         DWORD to_read = (DWORD)pio->ext_size;
@@ -1366,8 +1403,8 @@ static void apply_vfs_payload(const PendingIo* pio)
             memset((char*)pio->lpBuffer + actual_read, 0, pio->bytes_requested - (DWORD)actual_read);
         }
 
-        log_msg("[VFS ASYNC SUCCESS] Applied VFS [%s] (0x%llX) -> %s (read %u bytes into buffer %u)",
-                pio->filename, (unsigned long long)pio->offset, pio->override_path,
+        log_msg("[VFS ASYNC SUCCESS] Applied VFS [%s] (0x%llX) -> %ls (read %u bytes into buffer %u)",
+                pio->filename, (unsigned long long)pio->offset, pio->override_path_w,
                 (unsigned int)actual_read, (unsigned int)pio->bytes_requested);
     }
 }
@@ -1460,9 +1497,9 @@ static BOOL WINAPI hk_ReadFile(
             for (uint32_t i = 0; i < count; i++) {
                 VfsEntry* v = lookup_vfs_by_offset(arch_id, tocs[i].offset);
                 if (v) {
-                    char override_path[MAX_PATH];
+                    wchar_t override_path_w[MAX_PATH];
                     long ext_size = 0;
-                    if (find_override_file(v->name, override_path, sizeof(override_path), &ext_size)) {
+                    if (find_override_file_w(v->name, override_path_w, MAX_PATH, &ext_size)) {
                         if (ext_size > (long)tocs[i].size) {
                             log_msg("[VFS TOC Patch] Expanding TOC size for [%s]: %llu -> %ld bytes",
                                     v->name, (unsigned long long)tocs[i].size, ext_size);
@@ -1499,11 +1536,11 @@ static BOOL WINAPI hk_ReadFile(
             for (size_t i = 0; i < fad_sub_count; i++) {
                 if (!g_fad_subfiles[i].has_fad_descriptor) continue;
 
-                char override_path[MAX_PATH];
+                wchar_t override_path_w[MAX_PATH];
                 long ext_size = 0;
-                BOOL found = find_override_file(g_fad_subfiles[i].filename, override_path, sizeof(override_path), &ext_size);
+                BOOL found = find_override_file_w(g_fad_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
                 if (!found && g_fad_subfiles[i].alt_filename) {
-                    found = find_override_file(g_fad_subfiles[i].alt_filename, override_path, sizeof(override_path), &ext_size);
+                    found = find_override_file_w(g_fad_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
                 }
 
                 if (found && ext_size > 0) {
@@ -1542,16 +1579,16 @@ static BOOL WINAPI hk_ReadFile(
                     entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
         }
 
-        char override_path[MAX_PATH];
+        wchar_t override_path_w[MAX_PATH];
         long ext_size = 0;
-        if (find_override_file(entry->name, override_path, sizeof(override_path), &ext_size)) {
+        if (find_override_file_w(entry->name, override_path_w, MAX_PATH, &ext_size)) {
             if (lpOverlapped) {
                 add_pending_io(
                     hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                    override_path, ext_size, FALSE, 0, 0, entry->name
+                    override_path_w, ext_size, FALSE, 0, 0, entry->name
                 );
-                log_msg("[VFS ASYNC QUEUED] [%s] (0x%llX) -> %s (nBytes=%u)",
-                        entry->name, (unsigned long long)offset, override_path, nNumberOfBytesToRead);
+                log_msg("[VFS ASYNC QUEUED] [%s] (0x%llX) -> %ls (nBytes=%u)",
+                        entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
                 return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
             } else {
                 BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
@@ -1559,7 +1596,7 @@ static BOOL WINAPI hk_ReadFile(
                     PendingIo pio = { 0 };
                     pio.lpBuffer = lpBuffer;
                     pio.bytes_requested = nNumberOfBytesToRead;
-                    strncpy(pio.override_path, override_path, MAX_PATH - 1);
+                    wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
                     pio.ext_size = ext_size;
                     pio.is_fad_desc = FALSE;
                     strncpy(pio.filename, entry->name, 127);
@@ -1574,19 +1611,19 @@ static BOOL WINAPI hk_ReadFile(
     if (arch_id == 4) {
         const FadSubFile* fad_entry = lookup_fad_subfile(offset);
         if (fad_entry) {
-            char override_path[MAX_PATH];
+            wchar_t override_path_w[MAX_PATH];
             long ext_size = 0;
             BOOL found = FALSE;
             if (fad_entry->alt_filename) {
-                found = find_override_file(fad_entry->alt_filename, override_path, sizeof(override_path), &ext_size);
+                found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
             }
             if (!found) {
-                found = find_override_file(fad_entry->filename, override_path, sizeof(override_path), &ext_size);
+                found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
             }
 
             if (found) {
                 BOOL is_nltx = FALSE;
-                FILE* ftest = fopen(override_path, "rb");
+                FILE* ftest = _wfopen(override_path_w, L"rb");
                 if (ftest) {
                     char magic[8] = { 0 };
                     size_t nread = fread(magic, 1, 8, ftest);
@@ -1599,10 +1636,10 @@ static BOOL WINAPI hk_ReadFile(
                 if (lpOverlapped) {
                     add_pending_io(
                         hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                        override_path, ext_size, is_fad_desc, fad_entry->width, fad_entry->height, fad_entry->filename
+                        override_path_w, ext_size, is_fad_desc, fad_entry->width, fad_entry->height, fad_entry->filename
                     );
-                    log_msg("[VFS ASYNC QUEUED] FAD [%s] (0x%llX) -> %s (nBytes=%u)",
-                            fad_entry->filename, (unsigned long long)offset, override_path, nNumberOfBytesToRead);
+                    log_msg("[VFS ASYNC QUEUED] FAD [%s] (0x%llX) -> %ls (nBytes=%u)",
+                            fad_entry->filename, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
                     return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
                 } else {
                     BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
@@ -1610,7 +1647,7 @@ static BOOL WINAPI hk_ReadFile(
                         PendingIo pio = { 0 };
                         pio.lpBuffer = lpBuffer;
                         pio.bytes_requested = nNumberOfBytesToRead;
-                        strncpy(pio.override_path, override_path, MAX_PATH - 1);
+                        wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
                         pio.ext_size = ext_size;
                         pio.is_fad_desc = is_fad_desc;
                         pio.width = fad_entry->width;
@@ -1787,103 +1824,117 @@ static const AddrSig kSigs[] = {
 
 static void init_paths(void)
 {
-    char path[MAX_PATH];
-    GetModuleFileNameA(g_hinst, path, MAX_PATH);
-    char* last_slash = strrchr(path, '\\');
+    wchar_t path_w[MAX_PATH];
+    GetModuleFileNameW(g_hinst, path_w, MAX_PATH);
+    wchar_t* last_slash = wcsrchr(path_w, L'\\');
     if (last_slash) {
-        *last_slash = 0;
-        strncpy(g_mod_dir, path, sizeof(g_mod_dir) - 1);
+        *last_slash = L'\0';
+        wcsncpy(g_mod_dir_w, path_w, MAX_PATH - 1);
     } else {
-        strcpy(g_mod_dir, ".");
+        wcscpy(g_mod_dir_w, L".");
     }
 
     /* Game directory is parent of Mods: <game_root>\Mods\TextDump -> <game_root> */
-    char game_root[MAX_PATH];
-    strncpy(game_root, g_mod_dir, sizeof(game_root) - 1);
-    char* s1 = strrchr(game_root, '\\');
+    wchar_t game_root_w[MAX_PATH];
+    wcsncpy(game_root_w, g_mod_dir_w, MAX_PATH - 1);
+    wchar_t* s1 = wcsrchr(game_root_w, L'\\');
     if (s1) {
-        *s1 = 0;
-        char* s2 = strrchr(game_root, '\\');
+        *s1 = L'\0';
+        wchar_t* s2 = wcsrchr(game_root_w, L'\\');
         if (s2) {
-            *s2 = 0;
-            strncpy(g_game_dir, game_root, sizeof(g_game_dir) - 1);
+            *s2 = L'\0';
+            wcsncpy(g_game_dir_w, game_root_w, MAX_PATH - 1);
         } else {
-            strcpy(g_game_dir, ".");
+            wcscpy(g_game_dir_w, L".");
         }
     } else {
-        strcpy(g_game_dir, ".");
+        wcscpy(g_game_dir_w, L".");
     }
 
-    snprintf(g_log_path, sizeof(g_log_path), "%s\\text_dump.log", g_mod_dir);
-    snprintf(g_dump_unique_path, sizeof(g_dump_unique_path), "%s\\dump_unique.txt", g_mod_dir);
-    snprintf(g_dump_log_path, sizeof(g_dump_log_path), "%s\\dump_log.txt", g_mod_dir);
-    snprintf(g_tags_log_path, sizeof(g_tags_log_path), "%s\\tags_dump.log", g_mod_dir);
-    snprintf(g_translation_path, sizeof(g_translation_path), "%s\\translation.txt", g_mod_dir);
-    snprintf(g_file_access_log, sizeof(g_file_access_log), "%s\\file_access.log", g_mod_dir);
-    snprintf(g_id_log_path, sizeof(g_id_log_path), "%s\\id_dump.log", g_mod_dir);
+    /* Convert wide paths to UTF-8 for ANSI/display logging buffers */
+    WideCharToMultiByte(CP_UTF8, 0, g_mod_dir_w, -1, g_mod_dir, sizeof(g_mod_dir), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_game_dir_w, -1, g_game_dir, sizeof(g_game_dir), NULL, NULL);
+
+    /* Construct all wide paths */
+    swprintf(g_log_path_w, MAX_PATH, L"%ls\\text_dump.log", g_mod_dir_w);
+    swprintf(g_dump_unique_path_w, MAX_PATH, L"%ls\\dump_unique.txt", g_mod_dir_w);
+    swprintf(g_dump_log_path_w, MAX_PATH, L"%ls\\dump_log.txt", g_mod_dir_w);
+    swprintf(g_tags_log_path_w, MAX_PATH, L"%ls\\tags_dump.log", g_mod_dir_w);
+    swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+    swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
+    swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
+    swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
 
     /* Session-based timestamped dumps: Mods\TextDump\dumps\dump_..._YYYYMMDD_HHMMSS.txt */
     SYSTEMTIME st;
     GetLocalTime(&st);
-    char time_str[32];
-    snprintf(time_str, sizeof(time_str), "%04d%02d%02d_%02d%02d%02d",
+    wchar_t time_str_w[32];
+    swprintf(time_str_w, 32, L"%04d%02d%02d_%02d%02d%02d",
              st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 
-    char dumps_dir[MAX_PATH];
-    snprintf(dumps_dir, sizeof(dumps_dir), "%s\\dumps", g_mod_dir);
-    CreateDirectoryA(dumps_dir, NULL);
+    wchar_t dumps_dir_w[MAX_PATH];
+    swprintf(dumps_dir_w, MAX_PATH, L"%ls\\dumps", g_mod_dir_w);
+    CreateDirectoryW(dumps_dir_w, NULL);
 
-    snprintf(g_session_dump_unique_path, sizeof(g_session_dump_unique_path), "%s\\dumps\\dump_unique_%s.txt", g_mod_dir, time_str);
-    snprintf(g_session_dump_log_path, sizeof(g_session_dump_log_path), "%s\\dumps\\dump_log_%s.txt", g_mod_dir, time_str);
-    snprintf(g_dump_missing_path, sizeof(g_dump_missing_path), "%s\\dump_missing.txt", g_mod_dir);
-    snprintf(g_session_dump_missing_path, sizeof(g_session_dump_missing_path), "%s\\dumps\\dump_missing_%s.txt", g_mod_dir, time_str);
+    swprintf(g_session_dump_unique_path_w, MAX_PATH, L"%ls\\dumps\\dump_unique_%ls.txt", g_mod_dir_w, time_str_w);
+    swprintf(g_session_dump_log_path_w, MAX_PATH, L"%ls\\dumps\\dump_log_%ls.txt", g_mod_dir_w, time_str_w);
+    swprintf(g_session_dump_missing_path_w, MAX_PATH, L"%ls\\dumps\\dump_missing_%ls.txt", g_mod_dir_w, time_str_w);
+
+    /* Populate UTF-8 versions for backwards compatibility if needed */
+    WideCharToMultiByte(CP_UTF8, 0, g_log_path_w, -1, g_log_path, sizeof(g_log_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_dump_unique_path_w, -1, g_dump_unique_path, sizeof(g_dump_unique_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_dump_log_path_w, -1, g_dump_log_path, sizeof(g_dump_log_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_tags_log_path_w, -1, g_tags_log_path, sizeof(g_tags_log_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_file_access_log_w, -1, g_file_access_log, sizeof(g_file_access_log), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_id_log_path_w, -1, g_id_log_path, sizeof(g_id_log_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_unique_path_w, -1, g_session_dump_unique_path, sizeof(g_session_dump_unique_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_log_path_w, -1, g_session_dump_log_path, sizeof(g_session_dump_log_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_missing_path_w, -1, g_session_dump_missing_path, sizeof(g_session_dump_missing_path), NULL, NULL);
 
     /* Reset root dump_missing.txt so it reflects the current session */
-    FILE* f_init_miss = fopen(g_dump_missing_path, "w");
+    FILE* f_init_miss = _wfopen(g_dump_missing_path_w, L"w");
     if (f_init_miss) fclose(f_init_miss);
 }
 
 static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
-    Sleep(500); /* Wait for village.exe to initialize modules */
 
-    log_msg("==========================================================");
-    log_msg("=== Village in the Shade VFS & Translation Mod Active ===");
-    log_msg("==========================================================");
-    uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
-    log_msg("Main module base address: 0x%p", (void*)base);
-    log_msg("Mod directory: %s", g_mod_dir);
-    log_msg("Game directory: %s", g_game_dir);
-
-    load_translation_file();
-
-    /* 1. Index Archives for Virtual File System */
-    char dat_path[MAX_PATH];
-    char misc_path[MAX_PATH];
-    snprintf(dat_path, sizeof(dat_path), "%s\\data.dat", g_game_dir);
-    snprintf(misc_path, sizeof(misc_path), "%s\\Mods\\misc_1_00.dat", g_game_dir);
-    if (GetFileAttributesA(misc_path) == INVALID_FILE_ATTRIBUTES) {
-        snprintf(misc_path, sizeof(misc_path), "%s\\data\\misc_1_00.dat", g_game_dir);
-    }
-
-    load_archive_toc(dat_path, 1);
-    load_archive_toc(misc_path, 2);
-
-    char tex_path[MAX_PATH];
-    char fairy_path[MAX_PATH];
-    snprintf(tex_path, sizeof(tex_path), "%s\\data\\texture_1_00.dat", g_game_dir);
-    snprintf(fairy_path, sizeof(fairy_path), "%s\\data\\fairy_1_00.dat", g_game_dir);
-    load_archive_toc(tex_path, 3);
-    load_archive_toc(fairy_path, 4);
-    log_msg("[VFS] Total files indexed for redirection: %d", g_vfs_count);
-
+    /* Initialize MinHook immediately - zero delay */
     if (MH_Initialize() != MH_OK) {
         log_msg("FATAL: MinHook initialization failed.");
         return 0;
     }
 
-    /* 2. Install CreateFileW & CreateFileA Archive Hooks */
+    log_msg("==========================================================");
+    log_msg("=== Village in the Shade VFS & Translation Mod Active ===");
+    log_msg("==========================================================");
+    log_msg("Mod directory: %ls", g_mod_dir_w);
+    log_msg("Game directory: %ls", g_game_dir_w);
+
+    /* 1. Index Archives for Virtual File System FIRST */
+    wchar_t dat_path_w[MAX_PATH];
+    wchar_t misc_path_w[MAX_PATH];
+    swprintf(dat_path_w, MAX_PATH, L"%ls\\data.dat", g_game_dir_w);
+    swprintf(misc_path_w, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
+    if (GetFileAttributesW(misc_path_w) == INVALID_FILE_ATTRIBUTES) {
+        swprintf(misc_path_w, MAX_PATH, L"%ls\\data\\misc_1_00.dat", g_game_dir_w);
+    }
+
+    load_archive_toc_w(dat_path_w, 1);
+    load_archive_toc_w(misc_path_w, 2);
+
+    wchar_t tex_path_w[MAX_PATH];
+    wchar_t fairy_path_w[MAX_PATH];
+    swprintf(tex_path_w, MAX_PATH, L"%ls\\data\\texture_1_00.dat", g_game_dir_w);
+    swprintf(fairy_path_w, MAX_PATH, L"%ls\\data\\fairy_1_00.dat", g_game_dir_w);
+    load_archive_toc_w(tex_path_w, 3);
+    load_archive_toc_w(fairy_path_w, 4);
+    log_msg("[VFS] Total files indexed for redirection: %d", g_vfs_count);
+
+    /* 2. Install CreateFileW & CreateFileA Archive Hooks immediately */
     HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
     if (hKernel32) {
         FARPROC pCreateFileW = GetProcAddress(hKernel32, "CreateFileW");
@@ -1933,7 +1984,13 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    /* 3. Resolve & Hook Text Rendering Functions */
+    /* 4. Load translation file */
+    load_translation_file();
+
+    /* 5. Resolve & Hook Text Rendering Functions */
+    uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
+    log_msg("Main module base address: 0x%p", (void*)base);
+
     AddrRes res[sizeof(kSigs) / sizeof(kSigs[0])];
     int hits = addrsig_resolve(kSigs, (int)(sizeof(kSigs) / sizeof(kSigs[0])), base, res, log_msg);
     log_msg("Pattern scan complete: %d/%d signatures resolved", hits, (int)(sizeof(kSigs) / sizeof(kSigs[0])));
