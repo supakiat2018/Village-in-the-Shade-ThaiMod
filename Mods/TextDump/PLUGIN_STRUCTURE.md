@@ -1,5 +1,5 @@
 # โครงสร้างและสถาปัตยกรรมระบบปลั๊กอิน (Plugin Structure & Architecture)
-**เกม:** Village in the Shade (ほのぐらしの庭) PC Steam Version  
+**เกม:** Village in the Shade (ほの暮しの庭) PC Steam Version  
 **โมดูลหลัก:** `text_dump.dll` + `steam_api64.dll` (Proxy Loader)  
 
 ---

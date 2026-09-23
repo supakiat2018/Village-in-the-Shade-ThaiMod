@@ -1,5 +1,5 @@
 # คู่มือระบบบันทึกและดักจับข้อความ (Dump System Guide)
-**เกม:** Village in the Shade (ほのぐらしの庭) PC Steam Version  
+**เกม:** Village in the Shade (ほの暮しの庭) PC Steam Version  
 **โฟลเดอร์:** `Mods\TextDump\`  
 **โมดูลควบคุม:** `text_dump.dll` (Engine Hook & Live Translator)  
 
