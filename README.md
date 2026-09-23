@@ -1,4 +1,4 @@
-# Village in the Shade (ほの暮しの庭) - ม็อดภาษาไทย (Thai Localization Mod)
+# Village in the Shade (ほの暮しの庭) - ม็อดภาษาไทย (Thai Localization Mod) เดโม่
 
 ม็อดแปลภาษาไทยสมบูรณ์แบบสำหรับเกม **Village in the Shade (ほの暮しの庭)** เวอร์ชัน PC Steam  
 พัฒนาด้วยระบบ C In-Memory Text Hooking, Virtual File System (VFS) และระบบฟอนต์ภาษาไทย PUA สระไม่ลอย
