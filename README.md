@@ -45,13 +45,14 @@ Village-in-the-Shade-ThaiMod/
 
 ## 🎮 วิธีติดตั้งสำหรับผู้เล่น (How to Install)
 
-1. ดาวน์โหลดไฟล์ม็อดจากหน้า [Releases](https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases)
-2. นำไฟล์ `steam_api64.dll` และโฟลเดอร์ `Mods` ไปวางในโฟลเดอร์เกม:
+1. ไปที่หน้า [Releases](https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases) แล้วดาวน์โหลดไฟล์ **`Mod.rar`** เวอร์ชันล่าสุด
+2. แตกไฟล์ทั้งหมดใน `Mod.rar` ลงในโฟลเดอร์ที่ติดตั้งตัวเกมโดยตรง:
+   ```text
+   C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade
    ```
-   C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\
-   ```
-   *(อย่าลืมเปลี่ยนชื่อไฟล์ `steam_api64.dll` ตัวเดิมของเกมเป็น `steam_api64_org.dll` ก่อนวาง)*
-3. เปิดเข้าเกมผ่าน Steam ตามปกติ ตัวเกมจะกลายเป็นภาษาไทยทันที
+   *(หรือเปิดโฟลเดอร์เกมง่ายๆ โดยคลิกขวาที่ตัวเกมใน Steam -> **Manage (จัดการ)** -> **Browse local files (เปิดดูไฟล์ในเครื่อง)**)*  
+   *(หากระบบถามว่ามีไฟล์ซ้ำ ให้กดเลือก **เขียนทับ (Replace all)** ได้เลยทันที)*
+3. เปิดเข้าเล่นเกมผ่าน Steam ตามปกติ ตัวเกมจะกลายเป็นภาษาไทยทันที!
 
 ---
 
