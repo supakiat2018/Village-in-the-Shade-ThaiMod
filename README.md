@@ -69,8 +69,9 @@ zig cc -shared -O2 -s src\text_dump.c src\addrsig.c src\minhook-master\src\buffe
 
 ---
 
-## 📜 เครดิต (Credits)
+## 📜 เครดิตและช่องทางติดต่อ (Credits & Contact)
 - **ผู้พัฒนาและแปลภาษาไทย:** supakiat2018
+- **ติดต่อได้ที่:** [![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=flat-square&logo=facebook&logoColor=white)](http://fb.com/stob2013/)
 - **เครื่องมือ Hooking:** MinHook Library
 
 ---
