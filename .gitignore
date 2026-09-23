@@ -1,0 +1,19 @@
+# Git Ignore
+*.log
+*.bak
+*.tmp
+*_backup.txt
+dump_log*.txt
+dump_unique*.txt
+dump_missing*.txt
+dumps/
+
+# Large font archive (distribute via GitHub Releases)
+*.dat
+!Mods/Fonts/font.dat
+
+# OS Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
