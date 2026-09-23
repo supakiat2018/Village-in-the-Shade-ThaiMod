@@ -297,9 +297,29 @@ static const char* lookup_exact_translation(const char* orig)
     return NULL;
 }
 
+static ULONGLONG g_last_options_time = 0;
+
 static const char* lookup_translation(const char* orig)
 {
     if (!orig || g_trans_count == 0) return NULL;
+
+    /* Update options screen timestamp if options-related texts are drawn */
+    if (strstr(orig, "振動") != NULL || strstr(orig, "メッセージ設定") != NULL ||
+        strstr(orig, "音楽の音量") != NULL || strstr(orig, "主人公の向きにカメラを寄せる") != NULL) {
+        g_last_options_time = GetTickCount64();
+    }
+
+    /* Context-aware translation for なし:
+     * - In Options menu (Vibration etc.): なし -> "ปิด"
+     * - In Save screen (Empty save slot) or default: なし -> "ช่องว่าง"
+     */
+    if (strcmp(orig, "なし") == 0) {
+        ULONGLONG now = GetTickCount64();
+        if (now - g_last_options_time < 300) {
+            return "\xef\x81\x88\xe0\xb8\x94"; /* PUA for "ปิด" */
+        }
+        return "\xef\x85\xb9\xe0\xb8\xad\xe0\xb8\x87\xef\x86\x96\xe0\xb8\xb2\xe0\xb8\x87"; /* PUA for "ช่องว่าง" */
+    }
 
     /* 1. Exact Match */
     const char* rep = lookup_exact_translation(orig);
