@@ -1261,6 +1261,7 @@ typedef struct {
     char filename[128];
     BOOL is_texture_db_patch;
     BOOL is_font_db_patch;
+    BOOL is_string_db_patch;
     BOOL in_use;
 } PendingIo;
 
@@ -1302,6 +1303,7 @@ static void add_pending_io(
             g_pending_io[i].filename[127] = '\0';
             g_pending_io[i].is_texture_db_patch = (strstr(filename, "data/database/texture.dat") != NULL);
             g_pending_io[i].is_font_db_patch = (strstr(filename, "data/database/font.dat") != NULL);
+            g_pending_io[i].is_string_db_patch = (strstr(filename, "data/database/string.dat") != NULL);
             LeaveCriticalSection(&g_cs);
             return;
         }
@@ -1501,6 +1503,44 @@ static void patch_font_database_in_ram(void* buffer, DWORD size)
             patched_flags, replaced_strings);
 }
 
+static void patch_string_database_in_ram(void* buffer, DWORD size)
+{
+    if (!buffer || size < 34000) return;
+
+    uint8_t* p = (uint8_t*)buffer;
+    uint32_t count = *(uint32_t*)(p + 0);
+    uint32_t rec_sz = *(uint32_t*)(p + 12);
+
+    if (count < 100 || count > 2000) return;
+
+    size_t text_base = 16 + (size_t)(count - 1) * 84 + rec_sz;
+    if (text_base >= size) return;
+
+    /* PUA: "ช่องว่าง" = \uf179อง\uf196าง (18 bytes) */
+    static const char kThaiEmptySlot[] = "\xef\x85\xb9\xe0\xb8\xad\xe0\xb8\x87\xef\x86\x96\xe0\xb8\xb2\xe0\xb8\x87";
+    size_t empty_len = strlen(kThaiEmptySlot);
+
+    int patched = 0;
+    for (uint32_t r = 0; r < count; r++) {
+        size_t rec_off = 16 + (size_t)r * 84;
+        if (rec_off + 24 > text_base) break;
+
+        uint32_t id = *(uint32_t*)(p + rec_off);
+        if (id == 1006) { /* STR_ID_SAVE_NEW_SLOT_NAME */
+            uint32_t slot1_off = *(uint32_t*)(p + rec_off + 16);
+            if (text_base + slot1_off + empty_len + 1 <= size) {
+                memcpy(p + text_base + slot1_off, kThaiEmptySlot, empty_len);
+                p[text_base + slot1_off + empty_len] = '\0';
+                *(uint32_t*)(p + rec_off + 20) = (uint32_t)empty_len;
+                patched++;
+                log_msg("[String DB Patch] Patched Record 1006 (STR_ID_SAVE_NEW_SLOT_NAME) -> 'ช่องว่าง' (%u bytes) in RAM!",
+                        (unsigned int)empty_len);
+            }
+            break;
+        }
+    }
+}
+
 static BOOL WINAPI hk_GetOverlappedResult(
     HANDLE hFile,
     LPOVERLAPPED lpOverlapped,
@@ -1521,6 +1561,9 @@ static BOOL WINAPI hk_GetOverlappedResult(
         } else if (pio.is_font_db_patch) {
             DWORD bytes = (lpNumberOfBytesTransferred ? *lpNumberOfBytesTransferred : pio.bytes_requested);
             patch_font_database_in_ram(pio.lpBuffer, bytes);
+        } else if (pio.is_string_db_patch) {
+            DWORD bytes = (lpNumberOfBytesTransferred ? *lpNumberOfBytesTransferred : pio.bytes_requested);
+            patch_string_database_in_ram(pio.lpBuffer, bytes);
         } else {
             apply_vfs_payload(&pio);
         }
@@ -1696,6 +1739,27 @@ static BOOL WINAPI hk_ReadFile(
             }
         }
 
+        if (strstr(entry->name, "data/database/string.dat")) {
+            log_msg("[VFS DETECT] Game requested [%s] at offset 0x%llX (size=%u)",
+                    entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    L"", 0, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] String DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
+                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
+                    patch_string_database_in_ram(lpBuffer, bytes);
+                }
+                return res;
+            }
+        }
+
         wchar_t override_path_w[MAX_PATH];
         long ext_size = 0;
         if (find_override_file_w(entry->name, override_path_w, MAX_PATH, &ext_size)) {
@@ -1840,11 +1904,25 @@ static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str)
     fn(this_ptr, str);
 }
 
+static volatile uint32_t g_last_string_id = 0;
+static volatile DWORD g_last_string_id_time = 0;
+
+static const char* resolve_text_translation(const char* str)
+{
+    if (str && strcmp(str, "なし") == 0) {
+        DWORD now = GetTickCount();
+        if (g_last_string_id == 1006 && (now - g_last_string_id_time) < 1000) {
+            return "\xef\x85\xb9\xe0\xb8\xad\xe0\xb8\x87\xef\x86\x96\xe0\xb8\xb2\xe0\xb8\x87"; /* "ช่องว่าง" (PUA) */
+        }
+    }
+    return lookup_translation(str);
+}
+
 static void hk_putStr(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStr");
 
-    const char* rep = lookup_translation(str);
+    const char* rep = resolve_text_translation(str);
     if (rep) {
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
         str = rep;
@@ -1874,7 +1952,7 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         str = def_name;
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
     } else {
-        const char* rep = lookup_translation(str);
+        const char* rep = resolve_text_translation(str);
         if (rep) {
             InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
             str = rep;
@@ -1897,7 +1975,7 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
         str = def_name;
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
     } else {
-        const char* rep = lookup_translation(str);
+        const char* rep = resolve_text_translation(str);
         if (rep) {
             InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
             str = rep;
@@ -1919,6 +1997,8 @@ static t_GetStringByID fp_original_GetStringByID = NULL;
 
 static void* hk_GetStringByID(void* rcx, uint32_t string_id, void* r8)
 {
+    g_last_string_id = string_id;
+    g_last_string_id_time = GetTickCount();
     log_id_access(string_id);
     return fp_original_GetStringByID(rcx, string_id, r8);
 }
