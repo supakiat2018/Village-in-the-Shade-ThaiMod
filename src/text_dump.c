@@ -1474,6 +1474,51 @@ static BOOL WINAPI hk_ReadFile(
         }
     }
 
+    /* 0. Check if the game is reading the TOC table */
+    uint64_t toc_off = (arch_id == 1) ? g_toc_off_dat : g_toc_off_misc;
+    if (toc_off != 0 && offset == toc_off) {
+        BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+        if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
+            DWORD transferred = 0;
+            if (GetOverlappedResult(hFile, lpOverlapped, &transferred, TRUE)) {
+                res = TRUE;
+                if (lpNumberOfBytesRead) *lpNumberOfBytesRead = transferred;
+                if (lpOverlapped->hEvent) {
+                    SetEvent(lpOverlapped->hEvent);
+                }
+            }
+        }
+        if (res && lpBuffer) {
+            /* Patch TOC entries in RAM for any file that has a larger external override */
+            FAFULLFS_TocEntry* tocs = (FAFULLFS_TocEntry*)lpBuffer;
+            uint32_t count = (arch_id == 1) ? g_count_dat : g_count_misc;
+            DWORD max_entries = nNumberOfBytesToRead / sizeof(FAFULLFS_TocEntry);
+            if (count > max_entries) count = max_entries;
+
+            int patched = 0;
+            for (uint32_t i = 0; i < count; i++) {
+                VfsEntry* v = lookup_vfs_by_offset(arch_id, tocs[i].offset);
+                if (v) {
+                    wchar_t override_path_w[MAX_PATH];
+                    long ext_size = 0;
+                    if (find_override_file_w(v->name, override_path_w, MAX_PATH, &ext_size)) {
+                        if (ext_size > (long)tocs[i].size) {
+                            log_msg("[VFS TOC Patch] Expanding TOC size for [%s]: %llu -> %ld bytes",
+                                    v->name, (unsigned long long)tocs[i].size, ext_size);
+                            tocs[i].size = (uint64_t)ext_size;
+                            v->size = (uint64_t)ext_size;
+                            patched++;
+                        }
+                    }
+                }
+            }
+            if (patched > 0) {
+                log_msg("[VFS TOC Patch] Successfully patched %d TOC entries in RAM!", patched);
+            }
+        }
+        return res;
+    }
+
     /* 1. Check if this is an access to a file in data.dat or misc_1_00.dat */
     if (arch_id == 1 || arch_id == 2) {
         VfsEntry* v = lookup_vfs_by_offset(arch_id, offset);
