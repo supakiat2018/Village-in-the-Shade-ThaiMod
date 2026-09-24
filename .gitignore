@@ -11,6 +11,7 @@ dumps/
 # Large font archive (distribute via GitHub Releases)
 *.dat
 !Mods/Fonts/font.dat
+!Mods/TextDump/data/database/*.dat
 
 # OS Files
 Thumbs.db

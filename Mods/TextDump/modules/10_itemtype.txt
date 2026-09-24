@@ -1,0 +1,10 @@
+# Village in the Shade - Module 10: ItemType (PUA Encoded)
+# Total entries: 7
+
+消耗品=ของในเปอง
+道具=เคองอ
+帽子=หมวก
+履物=รองเา
+指輪=แหวน
+ギミック=กลไก
+アイテム種別総数=นวนประเภทไอเทมงหมด

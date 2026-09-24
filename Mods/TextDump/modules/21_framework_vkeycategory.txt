@@ -1,0 +1,7 @@
+# Module: 21_framework_vkeycategory.txt (PUA Encoded)
+# Total entries: 4
+
+全般=วไป
+パッド操作=การควบมวยเกมแพด
+マウス操作=การควบมวยเมา
+設定不許可=ไสามารถงาไ

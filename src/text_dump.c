@@ -21,10 +21,8 @@ static char g_session_dump_unique_path[MAX_PATH] = { 0 };
 static char g_session_dump_log_path[MAX_PATH] = { 0 };
 static char g_dump_missing_path[MAX_PATH] = { 0 };
 static char g_session_dump_missing_path[MAX_PATH] = { 0 };
-static char g_translation_path[MAX_PATH] = { 0 };
 static char g_file_access_log[MAX_PATH] = { 0 };
 static char g_tags_log_path[MAX_PATH] = { 0 };
-static char g_id_log_path[MAX_PATH] = { 0 };
 
 static wchar_t g_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_dump_unique_path_w[MAX_PATH] = { 0 };
@@ -33,10 +31,8 @@ static wchar_t g_session_dump_unique_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_dump_missing_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_missing_path_w[MAX_PATH] = { 0 };
-static wchar_t g_translation_path_w[MAX_PATH] = { 0 };
 static wchar_t g_file_access_log_w[MAX_PATH] = { 0 };
 static wchar_t g_tags_log_path_w[MAX_PATH] = { 0 };
-static wchar_t g_id_log_path_w[MAX_PATH] = { 0 };
 
 static CRITICAL_SECTION g_cs;
 static FILE* g_flog = NULL;
@@ -48,35 +44,13 @@ static FILE* g_fmissing = NULL;
 static FILE* g_fmissing_latest = NULL;
 static FILE* g_faccess = NULL;
 static FILE* g_ftags = NULL;
-static FILE* g_fidlog = NULL;
-static uint8_t g_logged_ids[65536 / 8] = { 0 };
-static char g_active_player_name[64] = { 0 };
 
-static void log_id_access(uint32_t id)
-{
-    if (id < 65536) {
-        int byte_idx = id / 8;
-        int bit_idx = id % 8;
-        if (g_logged_ids[byte_idx] & (1 << bit_idx)) {
-            return;
-        }
-        g_logged_ids[byte_idx] |= (1 << bit_idx);
-    }
+static int g_unique_count = 0;
+static uint64_t g_total_calls = 0;
 
-    EnterCriticalSection(&g_cs);
-    if (!g_fidlog) {
-        g_fidlog = _wfopen(g_id_log_path_w, L"a+");
-    }
-    if (g_fidlog) {
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-        fprintf(g_fidlog, "[%02d:%02d:%02d.%03d] [ID_QUERY] String ID = %u (0x%X)\n",
-                st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, id, id);
-        fflush(g_fidlog);
-    }
-    LeaveCriticalSection(&g_cs);
-}
-
+/* ==================================================================
+ * Logging Functions
+ * ================================================================== */
 static void log_file_access(const char* fmt, ...)
 {
     char buf[1024];
@@ -100,14 +74,6 @@ static void log_file_access(const char* fmt, ...)
     LeaveCriticalSection(&g_cs);
 }
 
-static int g_unique_count = 0;
-static uint64_t g_total_calls = 0;
-static uint64_t g_total_replacements = 0;
-static FILETIME g_trans_filetime = { 0 };
-
-/* ==================================================================
- * Logging Function
- * ================================================================== */
 static void log_msg(const char* fmt, ...)
 {
     char buf[1024];
@@ -200,258 +166,6 @@ static BOOL is_missing_seen_or_insert(const char* str)
     return FALSE;
 }
 
-/* ==================================================================
- * Translation Table & Hot Reloading
- * ================================================================== */
-typedef struct TransNode {
-    uint32_t hash;
-    char* orig;
-    char* trans;
-    struct TransNode* next;
-} TransNode;
-
-static TransNode* g_trans_table[HASH_TABLE_SIZE] = { 0 };
-static int g_trans_count = 0;
-
-static void clear_translation_table(void)
-{
-    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
-        TransNode* node = g_trans_table[i];
-        while (node) {
-            TransNode* next = node->next;
-            free(node->orig);
-            free(node->trans);
-            free(node);
-            node = next;
-        }
-        g_trans_table[i] = NULL;
-    }
-    g_trans_count = 0;
-}
-
-static void insert_translation(const char* orig, const char* trans)
-{
-    uint32_t h = hash_str(orig);
-    uint32_t bucket = h % HASH_TABLE_SIZE;
-
-    TransNode* node = g_trans_table[bucket];
-    while (node) {
-        if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            free(node->trans);
-            node->trans = _strdup(trans);
-            return;
-        }
-        node = node->next;
-    }
-
-    TransNode* new_node = (TransNode*)malloc(sizeof(TransNode));
-    if (new_node) {
-        new_node->hash = h;
-        new_node->orig = _strdup(orig);
-        new_node->trans = _strdup(trans);
-        new_node->next = g_trans_table[bucket];
-        g_trans_table[bucket] = new_node;
-        g_trans_count++;
-    }
-}
-
-static BOOL replace_str(const char* src, const char* from, const char* to, char* out, size_t out_sz)
-{
-    if (!src || !from || !to || !out || out_sz == 0) return FALSE;
-    size_t from_len = strlen(from);
-    size_t to_len = strlen(to);
-    if (from_len == 0) return FALSE;
-
-    const char* p = src;
-    char* d = out;
-    char* end = out + out_sz - 1;
-
-    while (*p) {
-        if (strncmp(p, from, from_len) == 0) {
-            if (d + to_len >= end) return FALSE;
-            memcpy(d, to, to_len);
-            d += to_len;
-            p += from_len;
-        } else {
-            if (d >= end) return FALSE;
-            *d++ = *p++;
-        }
-    }
-    *d = '\0';
-    return TRUE;
-}
-
-static const char* lookup_exact_translation(const char* orig)
-{
-    if (!orig || g_trans_count == 0) return NULL;
-    uint32_t h = hash_str(orig);
-    uint32_t bucket = h % HASH_TABLE_SIZE;
-
-    TransNode* node = g_trans_table[bucket];
-    while (node) {
-        if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            return node->trans;
-        }
-        node = node->next;
-    }
-    return NULL;
-}
-
-static ULONGLONG g_last_options_time = 0;
-
-static const char* lookup_translation(const char* orig)
-{
-    if (!orig || g_trans_count == 0) return NULL;
-
-    /* Update options screen timestamp if options-related texts are drawn */
-    if (strstr(orig, "振動") != NULL || strstr(orig, "メッセージ設定") != NULL ||
-        strstr(orig, "音楽の音量") != NULL || strstr(orig, "主人公の向きにカメラを寄せる") != NULL) {
-        g_last_options_time = GetTickCount64();
-    }
-
-    /* Context-aware translation for なし:
-     * - In Options menu (Vibration etc.): なし -> "ปิด"
-     * - In Save screen (Empty save slot) or default: なし -> "ช่องว่าง"
-     */
-    if (strcmp(orig, "なし") == 0) {
-        ULONGLONG now = GetTickCount64();
-        if (now - g_last_options_time < 300) {
-            return "\xef\x81\x88\xe0\xb8\x94"; /* PUA for "ปิด" */
-        }
-        return "\xef\x85\xb9\xe0\xb8\xad\xe0\xb8\x87\xef\x86\x96\xe0\xb8\xb2\xe0\xb8\x87"; /* PUA for "ช่องว่าง" */
-    }
-
-    /* 1. Exact Match */
-    const char* rep = lookup_exact_translation(orig);
-    if (rep) return rep;
-
-    /* 2. Dynamic Player Name Confirmation: 「<name>」でよろしいですか？ */
-    if (strncmp(orig, "\xe3\x80\x8c", 3) == 0) {
-        const char* p_close = strstr(orig, "\xe3\x80\x8d\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f");
-        if (p_close) {
-            size_t name_len = p_close - (orig + 3);
-            if (name_len > 0 && name_len < sizeof(g_active_player_name)) {
-                memcpy(g_active_player_name, orig + 3, name_len);
-                g_active_player_name[name_len] = '\0';
-                log_msg("[PLAYER NAME] Captured player name: %s", g_active_player_name);
-            }
-            static char name_confirm_buf[512];
-            const char* templ = lookup_exact_translation("「」でよろしいですか？");
-            if (templ) {
-                char name_in_quotes[128];
-                snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", g_active_player_name);
-                if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
-                    return name_confirm_buf;
-                }
-            }
-        }
-    }
-
-    /* 3. Dynamic Player Name Substitution */
-    if (g_active_player_name[0] != '\0' && strstr(orig, g_active_player_name) != NULL) {
-        char templ[8192];
-        if (replace_str(orig, g_active_player_name, "<player>", templ, sizeof(templ))) {
-            const char* rep_templ = lookup_exact_translation(templ);
-            if (rep_templ) {
-                static char dynamic_buf[8192];
-                if (replace_str(rep_templ, "<player>", g_active_player_name, dynamic_buf, sizeof(dynamic_buf))) {
-                    return dynamic_buf;
-                }
-            }
-        }
-    }
-
-    return NULL;
-}
-
-static void unescape_string(char* dest, const char* src)
-{
-    while (*src) {
-        if (*src == '\\' && *(src + 1) == 'n') {
-            *dest++ = '\n';
-            src += 2;
-        } else if (*src == '\\' && *(src + 1) == 't') {
-            *dest++ = '\t';
-            src += 2;
-        } else if (*src == '\\' && *(src + 1) == '\\') {
-            *dest++ = '\\';
-            src += 2;
-        } else {
-            *dest++ = *src++;
-        }
-    }
-    *dest = '\0';
-}
-
-static void load_translation_file(void)
-{
-    FILE* f = _wfopen(g_translation_path_w, L"rb");
-    if (!f) return;
-
-    EnterCriticalSection(&g_cs);
-    clear_translation_table();
-
-    char line[16384];
-    int loaded = 0;
-
-    /* Skip UTF-8 BOM if present */
-    int b0 = fgetc(f), b1 = fgetc(f), b2 = fgetc(f);
-    if (!(b0 == 0xEF && b1 == 0xBB && b2 == 0xBF)) {
-        rewind(f);
-    }
-
-    while (fgets(line, sizeof(line), f)) {
-        char* p = line;
-        while (*p == ' ' || *p == '\t') p++;
-        if (*p == '#' || *p == ';' || *p == '\r' || *p == '\n' || *p == '\0') continue;
-        if (p[0] == '/' && p[1] == '/') continue;
-
-        char* sep = strchr(p, '=');
-        if (!sep) continue;
-
-        *sep = '\0';
-        char* orig_raw = p;
-        char* trans_raw = sep + 1;
-
-        int len = (int)strlen(trans_raw);
-        while (len > 0 && (trans_raw[len - 1] == '\r' || trans_raw[len - 1] == '\n')) {
-            trans_raw[len - 1] = '\0';
-            len--;
-        }
-
-        if (strlen(orig_raw) == 0) continue;
-
-        char orig[16384];
-        char trans[16384];
-        unescape_string(orig, orig_raw);
-        unescape_string(trans, trans_raw);
-
-        insert_translation(orig, trans);
-        loaded++;
-    }
-
-    fclose(f);
-
-    WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
-        g_trans_filetime = fad.ftLastWriteTime;
-    }
-
-    LeaveCriticalSection(&g_cs);
-    log_msg("Loaded %d translation entries from %s", loaded, g_translation_path);
-}
-
-static void check_hot_reload_translation(void)
-{
-    WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
-        if (CompareFileTime(&fad.ftLastWriteTime, &g_trans_filetime) != 0) {
-            log_msg("translation.txt changed on disk, hot-reloading...");
-            load_translation_file();
-        }
-    }
-}
-
 static BOOL is_safe_str(const char* s, int max_len)
 {
     if (!s || (uintptr_t)s < 0x10000) return FALSE;
@@ -536,7 +250,7 @@ static BOOL has_japanese_utf8(const char* s)
     while (*p) {
         if (*p == 0xE3) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = *(p + 2);
+            unsigned char b2 = b1 ? *(p + 2) : 0;
             if (b1 != 0 && b2 != 0) {
                 /* Japanese punctuation (e.g. 、 。 「 」 『 』) U+3001..U+303F */
                 if (b1 == 0x80 && b2 >= 0x81 && b2 <= 0xBF) return TRUE;
@@ -548,11 +262,12 @@ static BOOL has_japanese_utf8(const char* s)
                 if (b1 == 0x83 && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
                 /* Katakana Phonetic Extensions U+31F0..U+31FF */
                 if (b1 == 0x87 && b2 >= 0xB0 && b2 <= 0xBF) return TRUE;
-                p += 2;
+                p += 3;
+                continue;
             }
         } else if (*p >= 0xE4 && *p <= 0xE9) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = *(p + 2);
+            unsigned char b2 = b1 ? *(p + 2) : 0;
             if (b1 != 0 && b2 != 0) {
                 /* CJK Unified Ideographs (Kanji) U+4E00..U+9FFF */
                 if (*p == 0xE4) {
@@ -560,15 +275,17 @@ static BOOL has_japanese_utf8(const char* s)
                 } else {
                     if (b1 >= 0x80 && b1 <= 0xBF && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
                 }
-                p += 2;
+                p += 3;
+                continue;
             }
         } else if (*p == 0xEF) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = *(p + 2);
+            unsigned char b2 = b1 ? *(p + 2) : 0;
             if (b1 != 0 && b2 != 0) {
                 /* Fullwidth & Halfwidth Forms U+FF00..U+FFEF (excludes PUA 0xEF 0x80..0xA3) */
                 if (b1 >= 0xBC && b1 <= 0xBF && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
-                p += 2;
+                p += 3;
+                continue;
             }
         }
         p++;
@@ -661,8 +378,6 @@ typedef struct {
 static VfsEntry g_vfs[MAX_VFS_ENTRIES];
 static int g_vfs_count = 0;
 
-static HANDLE g_hDataDat = INVALID_HANDLE_VALUE;
-static HANDLE g_hMiscDat = INVALID_HANDLE_VALUE;
 static uint64_t g_toc_off_dat = 0;
 static uint64_t g_toc_off_misc = 0;
 static uint32_t g_count_dat = 0;
@@ -770,7 +485,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
 
     wchar_t candidate[MAX_PATH];
 
-    /* 1. Mods\TextDump\<basename> (e.g. Mods\TextDump\font.dat) */
+    /* 1. Mods\TextDump\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -778,7 +493,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 1b. Mods\TextDump\textures\<basename> (e.g. Mods\TextDump\textures\ui_1000_title01.nltx) */
+    /* 1b. Mods\TextDump\textures\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -794,7 +509,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 2. Mods\Fonts\<basename> (e.g. Mods\Fonts\font.dat or Mods\Fonts\KiwiMaru-Regular.ttf) */
+    /* 2. Mods\Fonts\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\..\\Fonts\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -818,7 +533,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 2d. Mods\<basename> (e.g. Mods\font.dat) */
+    /* 2d. Mods\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -826,7 +541,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 3. Mods\TextDump\<vfs_name> (e.g. Mods\TextDump\data\database\font.dat) */
+    /* 3. Mods\TextDump\<vfs_name> (e.g. Mods\TextDump\data\database\talk.dat) */
     swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, win_vfs_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -834,15 +549,13 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 4. Mods\<vfs_name> (e.g. Mods\data\database\font.dat) */
+    /* 4. Mods\<vfs_name> (e.g. Mods\data\database\talk.dat) */
     swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, win_vfs_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
         out_path_w[out_max - 1] = L'\0';
         return TRUE;
     }
-
-    /* font.dat is patched dynamically in RAM to support all game versions */
 
     return FALSE;
 }
@@ -1617,153 +1330,66 @@ static BOOL WINAPI hk_ReadFile(
         return res;
     }
 
-    /* 1b. Check if the game is reading the FAD Header/TOC for resident_lang_jp.fad */
-    if (arch_id == 4 && g_fad_base_offset != 0 && offset == g_fad_base_offset && nNumberOfBytesToRead >= 0x4000) {
-        BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
-        if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
-            DWORD transferred = 0;
-            if (GetOverlappedResult(hFile, lpOverlapped, &transferred, TRUE)) {
-                res = TRUE;
-                if (lpNumberOfBytesRead) *lpNumberOfBytesRead = transferred;
-                if (lpOverlapped->hEvent) {
-                    SetEvent(lpOverlapped->hEvent);
-                }
-            }
-        }
-        if (res && lpBuffer) {
-            int patched = 0;
-            size_t fad_sub_count = (size_t)g_fad_runtime_count;
-            for (size_t i = 0; i < fad_sub_count; i++) {
-                if (!g_fad_runtime_subfiles[i].has_fad_descriptor) continue;
+    /* 2. Check if this is an access to a file in data.dat or misc_1_00.dat */
+    if (arch_id == 1 || arch_id == 2) {
+        VfsEntry* v = lookup_vfs_by_offset(arch_id, offset);
+        if (v) {
+            BOOL is_tex_db = (strstr(v->name, "data/database/texture.dat") != NULL);
+            BOOL is_font_db = (strstr(v->name, "data/database/font.dat") != NULL);
 
-                wchar_t override_path_w[MAX_PATH];
-                long ext_size = 0;
-                BOOL found = find_override_file_w(g_fad_runtime_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
-                if (!found && g_fad_runtime_subfiles[i].alt_filename) {
-                    found = find_override_file_w(g_fad_runtime_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
-                }
+            wchar_t override_path_w[MAX_PATH];
+            long ext_size = 0;
+            BOOL has_override = find_override_file_w(v->name, override_path_w, MAX_PATH, &ext_size);
 
-                if (found && ext_size > 0) {
-                    uint32_t target_rel_off = (uint32_t)(g_fad_runtime_subfiles[i].offset - g_fad_base_offset - 32);
-
-                    /* Walk FAD entry table in lpBuffer between 0x1018 and 0x3B00 in 32-byte strides */
-                    for (size_t pos = 0x1018; pos + 32 <= nNumberOfBytesToRead && pos < 0x4000; pos += 32) {
-                        uint32_t entry_off = *(uint32_t*)((char*)lpBuffer + pos + 8);
-                        if (entry_off == target_rel_off) {
-                            uint64_t* p_sz = (uint64_t*)((char*)lpBuffer + pos + 0);
-                            /* Needed entry size in table: ext_size + 64 bytes (aligned to 64 bytes) */
-                            uint64_t needed_sz = ((uint64_t)ext_size + 64 + 63) & ~63ULL;
-                            if (needed_sz > *p_sz) {
-                                log_msg("[VFS FAD TOC Patch] Expanding size for [%s]: %llu -> %llu bytes (rel_off=0x%X at TOC+0x%X)",
-                                        g_fad_runtime_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos);
-                                *p_sz = needed_sz;
-                                patched++;
-                            }
-                            break;
+            if (has_override || is_tex_db || is_font_db) {
+                if (lpOverlapped) {
+                    add_pending_io(
+                        hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                        override_path_w, ext_size, FALSE, 0, 0, v->name
+                    );
+                    log_msg("[VFS ASYNC QUEUED] Archive [%s] (0x%llX) -> %ls (nBytes=%u)",
+                            v->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
+                    return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+                } else {
+                    BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                    if (res && lpBuffer) {
+                        if (is_tex_db) {
+                            patch_texture_database_in_ram(lpBuffer, nNumberOfBytesToRead);
+                        } else if (is_font_db) {
+                            patch_font_database_in_ram(lpBuffer, nNumberOfBytesToRead);
+                        } else if (has_override) {
+                            PendingIo pio = { 0 };
+                            pio.lpBuffer = lpBuffer;
+                            pio.bytes_requested = nNumberOfBytesToRead;
+                            wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
+                            pio.ext_size = ext_size;
+                            pio.is_fad_desc = FALSE;
+                            strncpy(pio.filename, v->name, 127);
+                            apply_vfs_payload(&pio);
                         }
                     }
+                    return res;
                 }
-            }
-            if (patched > 0) {
-                log_msg("[VFS FAD TOC Patch] Successfully patched %d / %d FAD TOC entries in RAM!",
-                        patched, (int)(g_fad_runtime_count / 2));
-            }
-        }
-        return res;
-    }
-
-    /* 2. Check if the read offset matches an indexed resource file */
-    VfsEntry* entry = lookup_vfs_by_offset(arch_id, offset);
-    if (entry) {
-        if (strstr(entry->name, "data/database/font.dat")) {
-            log_msg("[VFS DETECT] Game requested [%s] at offset 0x%llX (size=%u)",
-                    entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
-            if (lpOverlapped) {
-                add_pending_io(
-                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                    L"", 0, FALSE, 0, 0, entry->name
-                );
-                log_msg("[VFS ASYNC QUEUED] Font DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
-                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
-                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
-            } else {
-                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
-                if (res && lpBuffer) {
-                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
-                    patch_font_database_in_ram(lpBuffer, bytes);
-                }
-                return res;
-            }
-        }
-
-        wchar_t override_path_w[MAX_PATH];
-        long ext_size = 0;
-        if (find_override_file_w(entry->name, override_path_w, MAX_PATH, &ext_size)) {
-            if (lpOverlapped) {
-                add_pending_io(
-                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                    override_path_w, ext_size, FALSE, 0, 0, entry->name
-                );
-                log_msg("[VFS ASYNC QUEUED] [%s] (0x%llX) -> %ls (nBytes=%u)",
-                        entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
-                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
-            } else {
-                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
-                if (res && lpBuffer) {
-                    PendingIo pio = { 0 };
-                    pio.lpBuffer = lpBuffer;
-                    pio.bytes_requested = nNumberOfBytesToRead;
-                    wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
-                    pio.ext_size = ext_size;
-                    pio.is_fad_desc = FALSE;
-                    strncpy(pio.filename, entry->name, 127);
-                    apply_vfs_payload(&pio);
-                }
-                return res;
-            }
-        } else if (strstr(entry->name, "data/database/texture.dat")) {
-            /* Patch texture database in memory to point to English/localized textures (as in Switch mod) */
-            if (lpOverlapped) {
-                add_pending_io(
-                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                    L"", 0, FALSE, 0, 0, entry->name
-                );
-                log_msg("[VFS ASYNC QUEUED] Texture DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
-                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
-                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
-            } else {
-                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
-                if (res && lpBuffer) {
-                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
-                    patch_texture_database_in_ram(lpBuffer, bytes);
-                }
-                return res;
             }
         }
     }
 
-    /* 3. Check for FAD sub-file redirections (fairy_1_00.dat / resident_lang_jp.fad) */
+    /* 3. Check if this is an access to a file inside fairy_1_00.dat */
     if (arch_id == 4) {
         const FadSubFile* fad_entry = lookup_fad_subfile(offset);
         if (fad_entry) {
             wchar_t override_path_w[MAX_PATH];
             long ext_size = 0;
-            BOOL found = FALSE;
-            if (fad_entry->alt_filename) {
-                found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
-            }
-            if (!found) {
-                found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+            BOOL has_override = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+            if (!has_override && fad_entry->alt_filename) {
+                has_override = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
             }
 
-            if (found) {
+            if (has_override) {
                 BOOL is_nltx = FALSE;
-                FILE* ftest = _wfopen(override_path_w, L"rb");
-                if (ftest) {
-                    char magic[8] = { 0 };
-                    size_t nread = fread(magic, 1, 8, ftest);
-                    fclose(ftest);
-                    is_nltx = (nread >= 8 && memcmp(magic, "NMPLTEX1", 8) == 0);
+                size_t flen = strlen(fad_entry->filename);
+                if (flen > 5 && strcmp(fad_entry->filename + flen - 5, ".nltx") == 0) {
+                    is_nltx = TRUE;
                 }
 
                 BOOL is_fad_desc = fad_entry->has_fad_descriptor && is_nltx;
@@ -1801,126 +1427,38 @@ static BOOL WINAPI hk_ReadFile(
 }
 
 /* ==================================================================
- * Hook Definitions: Text Rendering & Dynamic Font Scaling
+ * Hook Definitions: Text Rendering (Pure Pass-Through & Logging)
  * ================================================================== */
 typedef void (*t_putStr)(void* this_ptr, const char* str);
 static t_putStr fp_original_putStr = NULL;
 static t_putStr fp_original_putStrProp = NULL;
 static t_putStr fp_original_putStrAlign = NULL;
 
-static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str)
-{
-    if (!fn) return;
-    if (!this_ptr || (uintptr_t)this_ptr < 0x10000 || !str) {
-        fn(this_ptr, str);
-        return;
-    }
-
-    /* Auto-scale check for long UI button texts like "ข้อมูลลิขสิทธิ์"
-     * PUA UTF-8: \xef\x86\x9f\xe0\xb8\xad\xef\x84\xb4\xe0\xb8\xa5... (ข้อมู...)
-     * Standard Thai: \xe0\xb8\x82\xe0\xb9\x89\xe0\xb8\xad\xe0\xb8\xa1\xe0\xb8\xb9... (ข้อมู...)
-     */
-    BOOL is_copyright = FALSE;
-    if (strstr(str, "\xef\x86\x9f\xe0\xb8\xad\xef\x84\xb4") != NULL ||
-        strstr(str, "\xe0\xb8\x82\xe0\xb9\x89\xe0\xb8\xad\xe0\xb8\xa1\xe0\xb8\xb9\xe0\xb8\xa5\xe0\xb8\xa5\xe0\xb8\xb4") != NULL) {
-        is_copyright = TRUE;
-    }
-
-    if (is_copyright) {
-        float* pScaleX = (float*)((char*)this_ptr + 0x28);
-        float old_scale = *pScaleX;
-        if (old_scale > 0.001f && old_scale < 50.0f) {
-            *pScaleX = old_scale * 0.78f;
-            fn(this_ptr, str);
-            *pScaleX = old_scale;
-            return;
-        }
-    }
-
-    fn(this_ptr, str);
-}
-
 static void hk_putStr(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStr");
-
-    const char* rep = lookup_translation(str);
-    if (rep) {
-        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-        str = rep;
-    } else {
-        if (has_japanese_utf8(str)) {
-            log_missing_text(str, "putStr");
-        }
+    if (has_japanese_utf8(str)) {
+        log_missing_text(str, "putStr");
     }
-
-    call_with_auto_scale(fp_original_putStr, this_ptr, str);
-}
-
-static int g_name_screen_state = 0;
-
-static const char* check_default_name_screen(const char* str)
-{
-    (void)str;
-    return NULL;
+    fp_original_putStr(this_ptr, str);
 }
 
 static void hk_putStrProp(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStrProp");
-
-    const char* def_name = check_default_name_screen(str);
-    if (def_name) {
-        str = def_name;
-        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-    } else {
-        const char* rep = lookup_translation(str);
-        if (rep) {
-            InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-            str = rep;
-        } else {
-            if (has_japanese_utf8(str)) {
-                log_missing_text(str, "putStrProp");
-            }
-        }
+    if (has_japanese_utf8(str)) {
+        log_missing_text(str, "putStrProp");
     }
-
-    call_with_auto_scale(fp_original_putStrProp, this_ptr, str);
+    fp_original_putStrProp(this_ptr, str);
 }
 
 static void hk_putStrAlign(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStrAlign");
-
-    const char* def_name = check_default_name_screen(str);
-    if (def_name) {
-        str = def_name;
-        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-    } else {
-        const char* rep = lookup_translation(str);
-        if (rep) {
-            InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-            str = rep;
-        } else {
-            if (has_japanese_utf8(str)) {
-                log_missing_text(str, "putStrAlign");
-            }
-        }
+    if (has_japanese_utf8(str)) {
+        log_missing_text(str, "putStrAlign");
     }
-
-    call_with_auto_scale(fp_original_putStrAlign, this_ptr, str);
-}
-
-/* ==================================================================
- * Hook Definitions: Database String ID Interceptor
- * ================================================================== */
-typedef void* (*t_GetStringByID)(void* rcx, uint32_t string_id, void* r8);
-static t_GetStringByID fp_original_GetStringByID = NULL;
-
-static void* hk_GetStringByID(void* rcx, uint32_t string_id, void* r8)
-{
-    log_id_access(string_id);
-    return fp_original_GetStringByID(rcx, string_id, r8);
+    fp_original_putStrAlign(this_ptr, str);
 }
 
 /* ==================================================================
@@ -1946,13 +1484,6 @@ static const AddrSig kSigs[] = {
         .kind = ADDRSIG_FUNC,
         .pat_hex = "488bc4555357488d68a14881ecb00000006683792600488bf9",
         .mask_hex = "ffffffffffffffffffffffffffffffffffffffffffffffffff",
-        .off = 0
-    },
-    {
-        .name = "GetStringByID",
-        .kind = ADDRSIG_FUNC,
-        .pat_hex = "48895c240848897424104c89442418574883ec40",
-        .mask_hex = "ffffffffffffffffffffffffffffffffffffffff",
         .off = 0
     }
 };
@@ -1995,9 +1526,7 @@ static void init_paths(void)
     swprintf(g_dump_unique_path_w, MAX_PATH, L"%ls\\dump_unique.txt", g_mod_dir_w);
     swprintf(g_dump_log_path_w, MAX_PATH, L"%ls\\dump_log.txt", g_mod_dir_w);
     swprintf(g_tags_log_path_w, MAX_PATH, L"%ls\\tags_dump.log", g_mod_dir_w);
-    swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
     swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
-    swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
     swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
 
     /* Session-based timestamped dumps: Mods\TextDump\dumps\dump_..._YYYYMMDD_HHMMSS.txt */
@@ -2020,9 +1549,7 @@ static void init_paths(void)
     WideCharToMultiByte(CP_UTF8, 0, g_dump_unique_path_w, -1, g_dump_unique_path, sizeof(g_dump_unique_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_dump_log_path_w, -1, g_dump_log_path, sizeof(g_dump_log_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_tags_log_path_w, -1, g_tags_log_path, sizeof(g_tags_log_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_file_access_log_w, -1, g_file_access_log, sizeof(g_file_access_log), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_id_log_path_w, -1, g_id_log_path, sizeof(g_id_log_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_session_dump_unique_path_w, -1, g_session_dump_unique_path, sizeof(g_session_dump_unique_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_session_dump_log_path_w, -1, g_session_dump_log_path, sizeof(g_session_dump_log_path), NULL, NULL);
@@ -2037,14 +1564,14 @@ static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
 
-    /* Initialize MinHook immediately - zero delay */
+    /* Initialize MinHook immediately */
     if (MH_Initialize() != MH_OK) {
         log_msg("FATAL: MinHook initialization failed.");
         return 0;
     }
 
     log_msg("==========================================================");
-    log_msg("=== Village in the Shade VFS & Translation Mod Active ===");
+    log_msg("=== Village in the Shade VFS & Text Interceptor Active ===");
     log_msg("==========================================================");
     log_msg("Mod directory: %ls", g_mod_dir_w);
     log_msg("Game directory: %ls", g_game_dir_w);
@@ -2069,7 +1596,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
     /* Dynamically resolve FAD sub-file offsets across all game versions */
     resolve_dynamic_fad_offsets_w(fairy_path_w);
 
-    /* 2. Install CreateFileW & CreateFileA Archive Hooks immediately */
+    /* 2. Install CreateFileW & CreateFileA Archive Hooks */
     HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
     if (hKernel32) {
         FARPROC pCreateFileW = GetProcAddress(hKernel32, "CreateFileW");
@@ -2119,10 +1646,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    /* 4. Load translation file */
-    load_translation_file();
-
-    /* 5. Resolve & Hook Text Rendering Functions */
+    /* 4. Resolve & Hook Text Rendering Functions */
     uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
     log_msg("Main module base address: 0x%p", (void*)base);
 
@@ -2133,7 +1657,6 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uintptr_t addr_putStr = 0;
     uintptr_t addr_putStrProp = 0;
     uintptr_t addr_putStrAlign = 0;
-    uintptr_t addr_GetStringByID = 0;
 
     for (int i = 0; i < (int)(sizeof(kSigs) / sizeof(kSigs[0])); i++) {
         if (res[i].hit) {
@@ -2141,7 +1664,6 @@ static DWORD WINAPI worker_thread(LPVOID param)
             if (strcmp(res[i].name, "putStr") == 0) addr_putStr = res[i].addr;
             if (strcmp(res[i].name, "putStrProp") == 0) addr_putStrProp = res[i].addr;
             if (strcmp(res[i].name, "putStrAlign") == 0) addr_putStrAlign = res[i].addr;
-            if (strcmp(res[i].name, "GetStringByID") == 0) addr_GetStringByID = res[i].addr;
         } else {
             log_msg("  [MISS] %s", res[i].name);
         }
@@ -2171,32 +1693,19 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    if (addr_GetStringByID) {
-        if (MH_CreateHook((LPVOID)addr_GetStringByID, (LPVOID)&hk_GetStringByID, (LPVOID*)&fp_original_GetStringByID) == MH_OK) {
-            if (MH_EnableHook((LPVOID)addr_GetStringByID) == MH_OK) {
-                log_msg("SUCCESS: Hooked GetStringByID (ID Database Interceptor Active)!");
-            }
-        }
-    }
-
-    log_msg("System ready! Both VFS and Text Translation are active.");
+    log_msg("System ready! VFS Redirection and Text Logging are active.");
 
     int last_unique = 0;
     int last_missing = 0;
-    uint64_t last_rep = 0;
     while (1) {
         Sleep(1000);
-        check_hot_reload_translation();
-
-        if (g_unique_count != last_unique || g_missing_count != last_missing || g_total_replacements != last_rep) {
-            log_msg("Status: Unique texts=%d, Missing JP=%d, Replacements applied=%llu, Total calls=%llu",
+        if (g_unique_count != last_unique || g_missing_count != last_missing) {
+            log_msg("Status: Unique texts=%d, Missing JP=%d, Total calls=%llu",
                     g_unique_count,
                     g_missing_count,
-                    (unsigned long long)g_total_replacements,
                     (unsigned long long)g_total_calls);
             last_unique = g_unique_count;
             last_missing = g_missing_count;
-            last_rep = g_total_replacements;
         }
     }
 
@@ -2229,6 +1738,8 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         if (g_funique_latest) { fclose(g_funique_latest); g_funique_latest = NULL; }
         if (g_fraw) { fclose(g_fraw); g_fraw = NULL; }
         if (g_fraw_latest) { fclose(g_fraw_latest); g_fraw_latest = NULL; }
+        if (g_ftags) { fclose(g_ftags); g_ftags = NULL; }
+        if (g_faccess) { fclose(g_faccess); g_faccess = NULL; }
         if (g_flog) { fclose(g_flog); g_flog = NULL; }
         MH_Uninitialize();
         DeleteCriticalSection(&g_cs);
