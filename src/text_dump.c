@@ -842,15 +842,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 5. Fallback: User desktop extracted folder for font.dat ONLY (Exact match) */
-    if (_stricmp(base_name, "font.dat") == 0) {
-        const wchar_t* dt = L"C:\\Users\\Supakiat\\Desktop\\Mover\\QuickBMS\\Extracted_Data fonts\\data\\database\\font.dat";
-        if (file_exists_and_size_w(dt, out_size)) {
-            wcsncpy(out_path_w, dt, out_max - 1);
-            out_path_w[out_max - 1] = L'\0';
-            return TRUE;
-        }
-    }
+    /* font.dat is patched dynamically in RAM to support all game versions */
 
     return FALSE;
 }
@@ -1144,23 +1136,6 @@ static HANDLE WINAPI hk_CreateFileW(
                 resolve_dynamic_fad_offsets_w(lpFileName);
             }
         }
-
-        if (wcsstr(lower, L"misc_1_00.dat")) {
-            wchar_t mod_misc[MAX_PATH];
-            swprintf(mod_misc, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
-            if (GetFileAttributesW(mod_misc) != INVALID_FILE_ATTRIBUTES) {
-                log_msg("[VFS] Redirecting CreateFileW: %ls -> %ls", lpFileName, mod_misc);
-                return fp_original_CreateFileW(
-                    mod_misc,
-                    dwDesiredAccess,
-                    dwShareMode,
-                    lpSecurityAttributes,
-                    dwCreationDisposition,
-                    dwFlagsAndAttributes,
-                    hTemplateFile
-                );
-            }
-        }
     }
     return fp_original_CreateFileW(
         lpFileName,
@@ -1183,32 +1158,6 @@ static HANDLE WINAPI hk_CreateFileA(
     HANDLE hTemplateFile
 )
 {
-    if (lpFileName) {
-        char lower[MAX_PATH];
-        int len = 0;
-        while (lpFileName[len] && len < MAX_PATH - 1) {
-            lower[len] = (char)tolower((unsigned char)lpFileName[len]);
-            len++;
-        }
-        lower[len] = '\0';
-
-        if (strstr(lower, "misc_1_00.dat")) {
-            wchar_t mod_misc_w[MAX_PATH];
-            swprintf(mod_misc_w, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
-            if (GetFileAttributesW(mod_misc_w) != INVALID_FILE_ATTRIBUTES) {
-                log_msg("[VFS] Redirecting CreateFileA: %s -> %ls", lpFileName, mod_misc_w);
-                return fp_original_CreateFileW(
-                    mod_misc_w,
-                    dwDesiredAccess,
-                    dwShareMode,
-                    lpSecurityAttributes,
-                    dwCreationDisposition,
-                    dwFlagsAndAttributes,
-                    hTemplateFile
-                );
-            }
-        }
-    }
     return fp_original_CreateFileA(
         lpFileName,
         dwDesiredAccess,
@@ -1311,6 +1260,7 @@ typedef struct {
     uint16_t height;
     char filename[128];
     BOOL is_texture_db_patch;
+    BOOL is_font_db_patch;
     BOOL in_use;
 } PendingIo;
 
@@ -1351,6 +1301,7 @@ static void add_pending_io(
             strncpy(g_pending_io[i].filename, filename, 127);
             g_pending_io[i].filename[127] = '\0';
             g_pending_io[i].is_texture_db_patch = (strstr(filename, "data/database/texture.dat") != NULL);
+            g_pending_io[i].is_font_db_patch = (strstr(filename, "data/database/font.dat") != NULL);
             LeaveCriticalSection(&g_cs);
             return;
         }
@@ -1486,6 +1437,70 @@ static void patch_texture_database_in_ram(void* buffer, DWORD size)
     log_msg("[Texture DB Patch] Applied %d texture redirections in RAM (data/database/texture.dat)!", total_applied);
 }
 
+static void patch_font_database_in_ram(void* buffer, DWORD size)
+{
+    if (!buffer || size < 64) return;
+
+    uint8_t* p = (uint8_t*)buffer;
+    uint32_t num_records = *(uint32_t*)(p + 0);
+    uint32_t record_size = *(uint32_t*)(p + 12);
+
+    if (num_records == 0 || num_records > 32 || record_size < 100 || record_size > 4096) {
+        log_msg("[Font DB Patch WARN] Unexpected font.dat header: num_records=%u, record_size=%u",
+                num_records, record_size);
+        return;
+    }
+
+    /* 1. Configure Proportional spacing (flag1=1, flag2=5) across all records */
+    uint32_t stride = record_size + 4;
+    int patched_flags = 0;
+    for (uint32_t r = 0; r < num_records; r++) {
+        size_t rec_start = 16 + (size_t)r * stride;
+        if (rec_start + 0x68 <= size) {
+            *(uint32_t*)(p + rec_start + 0x60) = 1;
+            *(uint32_t*)(p + rec_start + 0x64) = 5;
+            patched_flags++;
+        }
+    }
+
+    /* 2. Replace KiwiMaru with Lora in string table */
+    static const struct {
+        const char* target;
+        size_t target_len;
+        const char* replacement;
+        size_t replacement_len;
+    } kFontDbPatches[] = {
+        /* data/misc/KiwiMaru-Medium.ttf (30 bytes with null) -> data/misc/Lora-Bold.ttf (pad to 30 bytes) */
+        { "data/misc/KiwiMaru-Medium.ttf\0", 30,
+          "data/misc/Lora-Bold.ttf\0\0\0\0\0\0\0", 30 },
+        /* data/misc/KiwiMaru-Regular.ttf (31 bytes with null) -> data/misc/Lora-Medium.ttf (pad to 31 bytes) */
+        { "data/misc/KiwiMaru-Regular.ttf\0", 31,
+          "data/misc/Lora-Medium.ttf\0\0\0\0\0\0", 31 }
+    };
+
+    int replaced_strings = 0;
+    for (size_t i = 0; i < sizeof(kFontDbPatches) / sizeof(kFontDbPatches[0]); i++) {
+        const char* tgt = kFontDbPatches[i].target;
+        size_t tlen = kFontDbPatches[i].target_len;
+        const char* rep = kFontDbPatches[i].replacement;
+        size_t rlen = kFontDbPatches[i].replacement_len;
+
+        if (size >= tlen) {
+            size_t max_search = size - tlen;
+            for (size_t off = 0; off <= max_search; off++) {
+                if (p[off] == (uint8_t)tgt[0] && memcmp(p + off, tgt, tlen) == 0) {
+                    memcpy(p + off, rep, rlen);
+                    replaced_strings++;
+                    off += tlen - 1;
+                }
+            }
+        }
+    }
+
+    log_msg("[Font DB Patch] Success: Configured Proportional flags (%d records) & redirected %d KiwiMaru instances to Lora in RAM!",
+            patched_flags, replaced_strings);
+}
+
 static BOOL WINAPI hk_GetOverlappedResult(
     HANDLE hFile,
     LPOVERLAPPED lpOverlapped,
@@ -1503,6 +1518,9 @@ static BOOL WINAPI hk_GetOverlappedResult(
         if (pio.is_texture_db_patch) {
             DWORD bytes = (lpNumberOfBytesTransferred ? *lpNumberOfBytesTransferred : pio.bytes_requested);
             patch_texture_database_in_ram(pio.lpBuffer, bytes);
+        } else if (pio.is_font_db_patch) {
+            DWORD bytes = (lpNumberOfBytesTransferred ? *lpNumberOfBytesTransferred : pio.bytes_requested);
+            patch_font_database_in_ram(pio.lpBuffer, bytes);
         } else {
             apply_vfs_payload(&pio);
         }
@@ -1657,9 +1675,25 @@ static BOOL WINAPI hk_ReadFile(
     /* 2. Check if the read offset matches an indexed resource file */
     VfsEntry* entry = lookup_vfs_by_offset(arch_id, offset);
     if (entry) {
-        if (strstr(entry->name, "font.dat")) {
+        if (strstr(entry->name, "data/database/font.dat")) {
             log_msg("[VFS DETECT] Game requested [%s] at offset 0x%llX (size=%u)",
                     entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    L"", 0, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] Font DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
+                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
+                    patch_font_database_in_ram(lpBuffer, bytes);
+                }
+                return res;
+            }
         }
 
         wchar_t override_path_w[MAX_PATH];
@@ -2019,10 +2053,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
     wchar_t dat_path_w[MAX_PATH];
     wchar_t misc_path_w[MAX_PATH];
     swprintf(dat_path_w, MAX_PATH, L"%ls\\data.dat", g_game_dir_w);
-    swprintf(misc_path_w, MAX_PATH, L"%ls\\Mods\\misc_1_00.dat", g_game_dir_w);
-    if (GetFileAttributesW(misc_path_w) == INVALID_FILE_ATTRIBUTES) {
-        swprintf(misc_path_w, MAX_PATH, L"%ls\\data\\misc_1_00.dat", g_game_dir_w);
-    }
+    swprintf(misc_path_w, MAX_PATH, L"%ls\\data\\misc_1_00.dat", g_game_dir_w);
 
     load_archive_toc_w(dat_path_w, 1);
     load_archive_toc_w(misc_path_w, 2);
