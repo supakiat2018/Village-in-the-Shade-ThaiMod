@@ -1,6 +1,6 @@
-# Village in the Shade (ほの暮しの庭) - ม็อดภาษาไทย (Thai Localization Mod) เดโม่
+# Village in the Shade (ほのぐらしの庭) - ม็อดภาษาไทย (Thai Localization Mod)
 
-ม็อดแปลภาษาไทยสมบูรณ์แบบสำหรับเกม **Village in the Shade (ほの暮しの庭)** เวอร์ชัน PC Steam  
+ม็อดแปลภาษาไทยสำหรับเกม **Village in the Shade (ほのぐらしの庭)** เวอร์ชัน PC Steam  
 พัฒนาด้วยระบบ C In-Memory Text Hooking, Virtual File System (VFS) และระบบฟอนต์ภาษาไทย PUA สระไม่ลอย
 
 > [!NOTE]
@@ -45,14 +45,13 @@ Village-in-the-Shade-ThaiMod/
 
 ## 🎮 วิธีติดตั้งสำหรับผู้เล่น (How to Install)
 
-1. ไปที่หน้า [Releases](https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases) แล้วดาวน์โหลดไฟล์ **`Mod.rar`** เวอร์ชันล่าสุด
-2. แตกไฟล์ทั้งหมดใน `Mod.rar` ลงในโฟลเดอร์ที่ติดตั้งตัวเกมโดยตรง:
-   ```text
-   C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade
+1. ดาวน์โหลดไฟล์ม็อดจากหน้า [Releases](https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases)
+2. นำไฟล์ `steam_api64.dll` และโฟลเดอร์ `Mods` ไปวางในโฟลเดอร์เกม:
    ```
-   *(หรือเปิดโฟลเดอร์เกมง่ายๆ โดยคลิกขวาที่ตัวเกมใน Steam -> **Manage (จัดการ)** -> **Browse local files (เปิดดูไฟล์ในเครื่อง)**)*  
-   *(หากระบบถามว่ามีไฟล์ซ้ำ ให้กดเลือก **เขียนทับ (Replace all)** ได้เลยทันที)*
-3. เปิดเข้าเล่นเกมผ่าน Steam ตามปกติ ตัวเกมจะกลายเป็นภาษาไทยทันที!
+   C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\
+   ```
+   *(อย่าลืมเปลี่ยนชื่อไฟล์ `steam_api64.dll` ตัวเดิมของเกมเป็น `steam_api64_org.dll` ก่อนวาง)*
+3. เปิดเข้าเกมผ่าน Steam ตามปกติ ตัวเกมจะกลายเป็นภาษาไทยทันที
 
 ---
 
@@ -69,12 +68,6 @@ zig cc -shared -O2 -s src\text_dump.c src\addrsig.c src\minhook-master\src\buffe
 
 ---
 
-## 📜 เครดิตและช่องทางติดต่อ (Credits & Contact)
+## 📜 เครดิต (Credits)
 - **ผู้พัฒนาและแปลภาษาไทย:** supakiat2018
-- **ติดต่อได้ที่:** [![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=flat-square&logo=facebook&logoColor=white)](http://fb.com/stob2013/)
 - **เครื่องมือ Hooking:** MinHook Library
-
----
-
-## 🔍 คำค้นหาที่เกี่ยวข้อง (Search Keywords)
-`Village in the Shade ไทย` • `Village in the Shade ภาษาไทย` • `Village in the Shade mod thai` • `Village in the Shade Mod ไทย` • `Village in the Shade mod ภาษาไทย` • `Village in the Shade แปลไทย` • `Village in the Shade Thai Patch` • `ほの暮しの庭 ภาษาไทย` • `ほの暮しの庭 Thai Mod`

@@ -1,21 +1,41 @@
-# Git Ignore
+# Git Ignore for Village in the Shade Thai Mod
+
+# Logs and Dumps
 *.log
 *.bak
-*.tmp
 *_backup.txt
 dump_log*.txt
 dump_unique*.txt
 dump_missing*.txt
 dumps/
 
-# Large font archive (distribute via GitHub Releases)
-*.dat
-!Mods/Fonts/font.dat
-!Mods/TextDump/data/database/*.dat
+# Temporary and Scratch Directories
+scratch/
+temp_dds_batch/
+extracted_*/
+37 ภาพให้ ai ทำ/
+01_ภาพที่ม็อดเดิมแก้ไข_ทั้งหมด_65ภาพ/
+02_ภาพที่ปลั๊กอินดักจับเจอขณะเล่นเกม/
 
-# OS Files
+# Large temporary files (>15MB)
+minimap_01_spr_en.png
+minimap_11_spr_en.png
+data/misc_1_00.dat
+
+
+# Python bytecode & cache
+__pycache__/
+*.pyc
+
+# Local game binary / data
+talk.dat
+
+# Root temporary test crops and preview images
+/*.png
+
+# OS Specific
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
-*.lib
+

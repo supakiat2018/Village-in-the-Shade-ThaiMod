@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
+#include "pua_mapping.h"
 
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
@@ -24,6 +25,7 @@ static char g_session_dump_missing_path[MAX_PATH] = { 0 };
 static char g_translation_path[MAX_PATH] = { 0 };
 static char g_file_access_log[MAX_PATH] = { 0 };
 static char g_tags_log_path[MAX_PATH] = { 0 };
+static char g_id_log_path[MAX_PATH] = { 0 };
 
 static wchar_t g_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_dump_unique_path_w[MAX_PATH] = { 0 };
@@ -35,6 +37,7 @@ static wchar_t g_session_dump_missing_path_w[MAX_PATH] = { 0 };
 static wchar_t g_translation_path_w[MAX_PATH] = { 0 };
 static wchar_t g_file_access_log_w[MAX_PATH] = { 0 };
 static wchar_t g_tags_log_path_w[MAX_PATH] = { 0 };
+static wchar_t g_id_log_path_w[MAX_PATH] = { 0 };
 
 static CRITICAL_SECTION g_cs;
 static FILE* g_flog = NULL;
@@ -46,6 +49,52 @@ static FILE* g_fmissing = NULL;
 static FILE* g_fmissing_latest = NULL;
 static FILE* g_faccess = NULL;
 static FILE* g_ftags = NULL;
+static FILE* g_fidlog = NULL;
+static uint8_t g_logged_ids[65536 / 8] = { 0 };
+static char g_active_player_name[64] = { 0 };
+static char g_active_dog_name[64] = { 0 };
+static char g_custom_thai_player_name[128] = { 0 };
+static char g_custom_thai_dog_name[128] = { 0 };
+static wchar_t g_custom_thai_player_name_raw_w[128] = { 0 };
+static wchar_t g_custom_thai_dog_name_raw_w[128] = { 0 };
+static wchar_t g_custom_names_ini_path_w[MAX_PATH] = { 0 };
+static char g_custom_names_ini_path[MAX_PATH] = { 0 };
+
+static ULONGLONG g_last_name_screen_tick = 0;
+static BOOL g_is_dog_name_screen = FALSE;
+static BOOL g_thai_dialog_open = FALSE;
+static wchar_t g_thai_dialog_result[128] = { 0 };
+static WNDPROC g_prev_edit_proc = NULL;
+
+static void log_id_access(uint32_t id)
+{
+    if (id < 65536) {
+        int byte_idx = id / 8;
+        int bit_idx = id % 8;
+        if (g_logged_ids[byte_idx] & (1 << bit_idx)) {
+            return;
+        }
+        g_logged_ids[byte_idx] |= (1 << bit_idx);
+    }
+
+    EnterCriticalSection(&g_cs);
+    if (!g_fidlog) {
+        g_fidlog = _wfopen(g_id_log_path_w, L"a+");
+    }
+    if (g_fidlog) {
+        SYSTEMTIME st;
+        GetLocalTime(&st);
+        fprintf(g_fidlog, "[%02d:%02d:%02d.%03d] [ID_QUERY] String ID = %u (0x%X)\n",
+                st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, id, id);
+        fflush(g_fidlog);
+    }
+    LeaveCriticalSection(&g_cs);
+}
+
+static void log_file_access(const char* fmt, ...)
+{
+    (void)fmt;
+}
 
 static int g_unique_count = 0;
 static uint64_t g_total_calls = 0;
@@ -53,67 +102,8 @@ static uint64_t g_total_replacements = 0;
 static FILETIME g_trans_filetime = { 0 };
 
 /* ==================================================================
- * Scene Context Tracking for Duplicate/Ambiguous Strings
+ * Logging Function
  * ================================================================== */
-static volatile ULONGLONG g_last_settings_time = 0;
-static volatile ULONGLONG g_last_save_time = 0;
-
-static void update_scene_tracker(const char* str)
-{
-    if (!str) return;
-    ULONGLONG now = GetTickCount64();
-
-    /* Settings scene indicator keywords */
-    if (strstr(str, "表示言語") != NULL ||
-        strstr(str, "音楽の音量") != NULL ||
-        strstr(str, "振動") != NULL ||
-        strstr(str, "メッセージ設定") != NULL ||
-        strstr(str, "主人公の向きにカメラを寄せる") != NULL) {
-        g_last_settings_time = now;
-    }
-
-    /* Save scene indicator keywords */
-    if (strstr(str, "どのセーブデータで遊ぶ？") != NULL ||
-        strstr(str, "セーブデータ") != NULL ||
-        strstr(str, "年目") != NULL) {
-        g_last_save_time = now;
-    }
-}
-
-static const char* get_current_scene_name(void)
-{
-    ULONGLONG now = GetTickCount64();
-    if (now - g_last_settings_time < 600) return "SETTINGS";
-    if (now - g_last_save_time < 600) return "SAVE";
-    return "COMMON";
-}
-
-/* ==================================================================
- * Logging Functions
- * ================================================================== */
-static void log_file_access(const char* fmt, ...)
-{
-    char buf[1024];
-    va_list ap;
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-
-    va_start(ap, fmt);
-    vsnprintf(buf, sizeof(buf), fmt, ap);
-    va_end(ap);
-
-    EnterCriticalSection(&g_cs);
-    if (!g_faccess) {
-        g_faccess = _wfopen(g_file_access_log_w, L"a+");
-    }
-    if (g_faccess) {
-        fprintf(g_faccess, "[%02d:%02d:%02d.%03d] %s\n",
-                st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, buf);
-        fflush(g_faccess);
-    }
-    LeaveCriticalSection(&g_cs);
-}
-
 static void log_msg(const char* fmt, ...)
 {
     char buf[1024];
@@ -206,42 +196,60 @@ static BOOL is_missing_seen_or_insert(const char* str)
     return FALSE;
 }
 
-static BOOL is_safe_str(const char* s, int max_len)
-{
-    if (!s || (uintptr_t)s < 0x10000) return FALSE;
-    if (s[0] == '\0') return FALSE;
-    int len = 0;
-    int printable = 0;
-    while (len < max_len && s[len] != '\0') {
-        unsigned char c = (unsigned char)s[len];
-        if (c >= 0x20 || c >= 0x80) {
-            printable++;
-        }
-        len++;
-    }
-    return (len > 0 && printable > 0);
-}
-
 /* ==================================================================
- * Translation Table & Real-time Hot-Reloading
+ * Translation Table & Hot Reloading
  * ================================================================== */
 typedef struct TransNode {
     uint32_t hash;
     char* orig;
+    char* cond;
+    float scale;
     char* trans;
     struct TransNode* next;
 } TransNode;
 
 static TransNode* g_trans_table[HASH_TABLE_SIZE] = { 0 };
 static int g_trans_count = 0;
+static void clear_reassembler_table(void);
+
+/* ==================================================================
+ * Anchor-Based Context Ring Buffer (Order-Aware Anchor Tracking)
+ * ================================================================== */
+#define ANCHOR_HISTORY_CAP 64
+#define ANCHOR_MAX_AGE_MS  1500
+
+typedef struct {
+    char str[128];
+    ULONGLONG tick;
+} AnchorEntry;
+
+static AnchorEntry g_anchors[ANCHOR_HISTORY_CAP] = { 0 };
+static int g_anchor_idx = 0;
+
+static void record_recent_string(const char* s)
+{
+    if (!s || (uintptr_t)s < 0x10000 || s[0] == '\0') return;
+    ULONGLONG now = GetTickCount64();
+    EnterCriticalSection(&g_cs);
+
+    int idx = g_anchor_idx % ANCHOR_HISTORY_CAP;
+    strncpy(g_anchors[idx].str, s, sizeof(g_anchors[idx].str) - 1);
+    g_anchors[idx].str[sizeof(g_anchors[idx].str) - 1] = '\0';
+    g_anchors[idx].tick = now;
+    g_anchor_idx++;
+
+    LeaveCriticalSection(&g_cs);
+}
 
 static void clear_translation_table(void)
 {
+    clear_reassembler_table();
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         TransNode* node = g_trans_table[i];
         while (node) {
             TransNode* next = node->next;
             free(node->orig);
+            if (node->cond) free(node->cond);
             free(node->trans);
             free(node);
             node = next;
@@ -251,17 +259,25 @@ static void clear_translation_table(void)
     g_trans_count = 0;
 }
 
-static void insert_translation(const char* orig, const char* trans)
+static void insert_translation_ex(const char* orig, const char* cond, float scale, const char* trans, BOOL allow_overwrite)
 {
+    if (!orig || !trans || *orig == '\0' || *trans == '\0') return;
     uint32_t h = hash_str(orig);
     uint32_t bucket = h % HASH_TABLE_SIZE;
 
     TransNode* node = g_trans_table[bucket];
     while (node) {
         if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            free(node->trans);
-            node->trans = _strdup(trans);
-            return;
+            BOOL same_cond = (node->cond == NULL && cond == NULL) ||
+                             (node->cond != NULL && cond != NULL && strcmp(node->cond, cond) == 0);
+            if (same_cond) {
+                if (allow_overwrite) {
+                    free(node->trans);
+                    node->trans = _strdup(trans);
+                    node->scale = scale;
+                }
+                return;
+            }
         }
         node = node->next;
     }
@@ -270,11 +286,1625 @@ static void insert_translation(const char* orig, const char* trans)
     if (new_node) {
         new_node->hash = h;
         new_node->orig = _strdup(orig);
+        new_node->cond = cond ? _strdup(cond) : NULL;
+        new_node->scale = scale;
         new_node->trans = _strdup(trans);
         new_node->next = g_trans_table[bucket];
         g_trans_table[bucket] = new_node;
         g_trans_count++;
     }
+}
+
+static void insert_translation(const char* orig, const char* cond, float scale, const char* trans)
+{
+    insert_translation_ex(orig, cond, scale, trans, TRUE);
+}
+
+static void trim_str(char* str)
+{
+    if (!str) return;
+    char* p = str;
+    while (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n') p++;
+    if (p != str) memmove(str, p, strlen(p) + 1);
+    int len = (int)strlen(str);
+    while (len > 0 && (str[len - 1] == ' ' || str[len - 1] == '\t' || str[len - 1] == '\r' || str[len - 1] == '\n')) {
+        str[len - 1] = '\0';
+        len--;
+    }
+}
+
+static BOOL replace_str(const char* src, const char* from, const char* to, char* out, size_t out_sz)
+{
+    if (!src || !from || !to || !out || out_sz == 0) return FALSE;
+    size_t from_len = strlen(from);
+    size_t to_len = strlen(to);
+    if (from_len == 0) return FALSE;
+
+    const char* p = src;
+    char* d = out;
+    char* end = out + out_sz - 1;
+
+    while (*p) {
+        if (strncmp(p, from, from_len) == 0) {
+            if (d + to_len >= end) return FALSE;
+            memcpy(d, to, to_len);
+            d += to_len;
+            p += from_len;
+        } else {
+            if (d >= end) return FALSE;
+            *d++ = *p++;
+        }
+    }
+    *d = '\0';
+    return TRUE;
+}
+
+/* ==================================================================
+ * Direct Thai Input System (F2 Modal Dialog & Clipboard Paste)
+ * ================================================================== */
+static void load_custom_names_ini(void)
+{
+    if (g_custom_names_ini_path[0] == '\0') return;
+
+    GetPrivateProfileStringA("Names", "PlayerName", "", g_custom_thai_player_name, sizeof(g_custom_thai_player_name), g_custom_names_ini_path);
+    GetPrivateProfileStringA("Names", "DogName", "", g_custom_thai_dog_name, sizeof(g_custom_thai_dog_name), g_custom_names_ini_path);
+    GetPrivateProfileStringA("Names", "ActivePlayerName", "", g_active_player_name, sizeof(g_active_player_name), g_custom_names_ini_path);
+    GetPrivateProfileStringA("Names", "ActiveDogName", "", g_active_dog_name, sizeof(g_active_dog_name), g_custom_names_ini_path);
+
+    GetPrivateProfileStringW(L"Names", L"PlayerNameRaw", L"", g_custom_thai_player_name_raw_w, 128, g_custom_names_ini_path_w);
+    GetPrivateProfileStringW(L"Names", L"DogNameRaw", L"", g_custom_thai_dog_name_raw_w, 128, g_custom_names_ini_path_w);
+
+    if (g_custom_thai_player_name[0] != '\0') {
+        log_msg("[NAMES] Loaded custom player name from INI: %s (active: %s)",
+                g_custom_thai_player_name, g_active_player_name);
+    }
+    if (g_custom_thai_dog_name[0] != '\0') {
+        log_msg("[NAMES] Loaded custom dog name from INI: %s (active: %s)",
+                g_custom_thai_dog_name, g_active_dog_name);
+    }
+}
+
+static void save_custom_names_ini(void)
+{
+    if (g_custom_names_ini_path[0] == '\0') return;
+
+    WritePrivateProfileStringA("Names", "PlayerName", g_custom_thai_player_name, g_custom_names_ini_path);
+    WritePrivateProfileStringA("Names", "DogName", g_custom_thai_dog_name, g_custom_names_ini_path);
+    WritePrivateProfileStringA("Names", "ActivePlayerName", g_active_player_name, g_custom_names_ini_path);
+    WritePrivateProfileStringA("Names", "ActiveDogName", g_active_dog_name, g_custom_names_ini_path);
+
+    WritePrivateProfileStringW(L"Names", L"PlayerNameRaw", g_custom_thai_player_name_raw_w, g_custom_names_ini_path_w);
+    WritePrivateProfileStringW(L"Names", L"DogNameRaw", g_custom_thai_dog_name_raw_w, g_custom_names_ini_path_w);
+}
+
+static BOOL read_clipboard_thai_wstr(wchar_t* out_wstr, size_t max_chars)
+{
+    if (!out_wstr || max_chars == 0) return FALSE;
+    out_wstr[0] = L'\0';
+    if (!OpenClipboard(NULL)) return FALSE;
+    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+    if (!hData) {
+        CloseClipboard();
+        return FALSE;
+    }
+    const wchar_t* pText = (const wchar_t*)GlobalLock(hData);
+    if (!pText) {
+        CloseClipboard();
+        return FALSE;
+    }
+    wcsncpy(out_wstr, pText, max_chars - 1);
+    out_wstr[max_chars - 1] = L'\0';
+    GlobalUnlock(hData);
+    CloseClipboard();
+
+    size_t len = wcslen(out_wstr);
+    while (len > 0 && (out_wstr[len - 1] == L'\r' || out_wstr[len - 1] == L'\n' || out_wstr[len - 1] == L' ' || out_wstr[len - 1] == L'\t')) {
+        out_wstr[--len] = L'\0';
+    }
+    wchar_t* p = out_wstr;
+    while (*p == L' ' || *p == L'\t' || *p == L'\r' || *p == L'\n') p++;
+    if (p != out_wstr) {
+        wmemmove(out_wstr, p, wcslen(p) + 1);
+    }
+    return wcslen(out_wstr) > 0;
+}
+
+static void trigger_thai_name_clipboard_paste(void)
+{
+    wchar_t wbuf[128] = { 0 };
+    if (!read_clipboard_thai_wstr(wbuf, 128)) {
+        log_msg("[CLIPBOARD PASTE] Clipboard was empty or contained no text.");
+        return;
+    }
+
+    char pua_buf[256] = { 0 };
+    convert_thai_wstr_to_pua_utf8(wbuf, pua_buf, sizeof(pua_buf));
+    if (pua_buf[0] == '\0') return;
+
+    if (g_is_dog_name_screen) {
+        strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
+        wcsncpy(g_custom_thai_dog_name_raw_w, wbuf, 127);
+        if (g_active_dog_name[0] == '\0') {
+            strncpy(g_active_dog_name, "\xe3\x83\x9d\xe3\x83\x81", sizeof(g_active_dog_name) - 1); // "ポチ"
+        }
+        log_msg("[CLIPBOARD PASTE] Set dog name from clipboard: %s", g_custom_thai_dog_name);
+    } else {
+        strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
+        wcsncpy(g_custom_thai_player_name_raw_w, wbuf, 127);
+        if (g_active_player_name[0] == '\0') {
+            strncpy(g_active_player_name, "\xe3\x82\xa2\xe3\x83\xa1", sizeof(g_active_player_name) - 1); // "アメ"
+        }
+        log_msg("[CLIPBOARD PASTE] Set player name from clipboard: %s", g_custom_thai_player_name);
+    }
+    save_custom_names_ini();
+    MessageBeep(MB_OK);
+}
+
+static LRESULT CALLBACK EditSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (uMsg == WM_KEYDOWN) {
+        if (wParam == VK_RETURN) {
+            SendMessageW(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)hWnd);
+            return 0;
+        } else if (wParam == VK_ESCAPE) {
+            SendMessageW(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)hWnd);
+            return 0;
+        }
+    }
+    return CallWindowProcW(g_prev_edit_proc, hWnd, uMsg, wParam, lParam);
+}
+
+static LRESULT CALLBACK ThaiInputDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg) {
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK) {
+            HWND hEdit = GetDlgItem(hWnd, 101);
+            if (hEdit) {
+                GetWindowTextW(hEdit, g_thai_dialog_result, 128);
+                int len = (int)wcslen(g_thai_dialog_result);
+                while (len > 0 && (g_thai_dialog_result[len - 1] == L' ' || g_thai_dialog_result[len - 1] == L'\t')) {
+                    g_thai_dialog_result[--len] = L'\0';
+                }
+                wchar_t* p = g_thai_dialog_result;
+                while (*p == L' ' || *p == L'\t') p++;
+                if (p != g_thai_dialog_result) {
+                    wmemmove(g_thai_dialog_result, p, wcslen(p) + 1);
+                }
+            }
+            g_thai_dialog_open = FALSE;
+            DestroyWindow(hWnd);
+            return 0;
+        } else if (LOWORD(wParam) == IDCANCEL) {
+            g_thai_dialog_result[0] = L'\0';
+            g_thai_dialog_open = FALSE;
+            DestroyWindow(hWnd);
+            return 0;
+        }
+        break;
+
+    case WM_CLOSE:
+        g_thai_dialog_result[0] = L'\0';
+        g_thai_dialog_open = FALSE;
+        DestroyWindow(hWnd);
+        return 0;
+
+    case WM_CTLCOLORSTATIC: {
+        HDC hdcStatic = (HDC)wParam;
+        SetBkMode(hdcStatic, TRANSPARENT);
+        return (LRESULT)GetSysColorBrush(COLOR_BTNFACE);
+    }
+
+    default:
+        break;
+    }
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+static void show_thai_name_input_dialog(void)
+{
+    if (g_thai_dialog_open) return;
+
+    HWND hGameWnd = GetActiveWindow();
+    if (!hGameWnd) hGameWnd = GetForegroundWindow();
+
+    static BOOL s_class_registered = FALSE;
+    static const wchar_t CLASS_NAME[] = L"VillageThaiNameInputWndClass";
+
+    if (!s_class_registered) {
+        WNDCLASSEXW wc = { 0 };
+        wc.cbSize = sizeof(WNDCLASSEXW);
+        wc.style = CS_HREDRAW | CS_VREDRAW;
+        wc.lpfnWndProc = ThaiInputDialogProc;
+        wc.hInstance = g_hinst ? g_hinst : GetModuleHandleW(NULL);
+        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+        wc.lpszClassName = CLASS_NAME;
+        if (!RegisterClassExW(&wc)) {
+            log_msg("[DIRECT THAI INPUT] Failed to register window class.");
+            return;
+        }
+        s_class_registered = TRUE;
+    }
+
+    int dlg_w = 480;
+    int dlg_h = 245;
+    int pos_x = (GetSystemMetrics(SM_CXSCREEN) - dlg_w) / 2;
+    int pos_y = (GetSystemMetrics(SM_CYSCREEN) - dlg_h) / 2;
+
+    if (hGameWnd) {
+        RECT rc;
+        if (GetWindowRect(hGameWnd, &rc)) {
+            pos_x = rc.left + ((rc.right - rc.left) - dlg_w) / 2;
+            pos_y = rc.top + ((rc.bottom - rc.top) - dlg_h) / 2;
+        }
+    }
+
+    const wchar_t* title = g_is_dog_name_screen ? 
+        L"ป้อนชื่อสุนัข (Dog Name Input) - Village in the Shade" : 
+        L"ป้อนชื่อตัวละคร (Player Name Input) - Village in the Shade";
+
+    HWND hDlg = CreateWindowExW(
+        WS_EX_DLGMODALFRAME | WS_EX_TOPMOST,
+        CLASS_NAME,
+        title,
+        WS_POPUP | WS_CAPTION | WS_SYSMENU,
+        pos_x, pos_y, dlg_w, dlg_h,
+        hGameWnd,
+        NULL,
+        g_hinst ? g_hinst : GetModuleHandleW(NULL),
+        NULL
+    );
+
+    if (!hDlg) {
+        log_msg("[DIRECT THAI INPUT] Failed to create dialog window.");
+        return;
+    }
+
+    HFONT hFont = CreateFontW(
+        18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Segoe UI"
+    );
+
+    const wchar_t* prompt_text = g_is_dog_name_screen ?
+        L"พิมพ์ชื่อสุนัขภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):" :
+        L"พิมพ์ชื่อตัวละครภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):";
+
+    HWND hLbl = CreateWindowW(
+        L"STATIC", prompt_text,
+        WS_CHILD | WS_VISIBLE,
+        25, 20, 420, 24,
+        hDlg, NULL, NULL, NULL
+    );
+
+    HWND hEdit = CreateWindowExW(
+        WS_EX_CLIENTEDGE, L"EDIT", L"",
+        WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_TABSTOP,
+        25, 50, 415, 28,
+        hDlg, (HMENU)101, NULL, NULL
+    );
+
+    HWND hHint = CreateWindowW(
+        L"STATIC",
+        L"คำแนะนำ: ชื่อห้ามเว้นว่าง ให้พิมพ์ภาษาญี่ปุ่นในเกม 1 ตัว\nแล้วกด F2 เพื่อตั้งชื่อไทย จากนั้นกด ตกลง และกดยืนยันในเกมทันที",
+        WS_CHILD | WS_VISIBLE,
+        25, 85, 430, 40,
+        hDlg, NULL, NULL, NULL
+    );
+
+    HWND hBtnOk = CreateWindowW(
+        L"BUTTON", L"ตกลง (OK)",
+        WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON | WS_TABSTOP,
+        125, 140, 105, 34,
+        hDlg, (HMENU)IDOK, NULL, NULL
+    );
+
+    HWND hBtnCancel = CreateWindowW(
+        L"BUTTON", L"ยกเลิก (Cancel)",
+        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_TABSTOP,
+        250, 140, 105, 34,
+        hDlg, (HMENU)IDCANCEL, NULL, NULL
+    );
+
+    if (hFont) {
+        SendMessageW(hLbl, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessageW(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessageW(hHint, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessageW(hBtnOk, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessageW(hBtnCancel, WM_SETFONT, (WPARAM)hFont, TRUE);
+    }
+
+    g_prev_edit_proc = (WNDPROC)SetWindowLongPtrW(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
+
+    if (g_is_dog_name_screen && g_custom_thai_dog_name_raw_w[0] != L'\0') {
+        SetWindowTextW(hEdit, g_custom_thai_dog_name_raw_w);
+        SendMessageW(hEdit, EM_SETSEL, 0, -1);
+    } else if (!g_is_dog_name_screen && g_custom_thai_player_name_raw_w[0] != L'\0') {
+        SetWindowTextW(hEdit, g_custom_thai_player_name_raw_w);
+        SendMessageW(hEdit, EM_SETSEL, 0, -1);
+    }
+
+    g_thai_dialog_result[0] = L'\0';
+    g_thai_dialog_open = TRUE;
+
+    if (hGameWnd) {
+        EnableWindow(hGameWnd, FALSE);
+    }
+
+    ShowWindow(hDlg, SW_SHOW);
+    SetForegroundWindow(hDlg);
+    SetFocus(hEdit);
+
+    MSG msg;
+    while (g_thai_dialog_open && GetMessageW(&msg, NULL, 0, 0)) {
+        if (!IsDialogMessageW(hDlg, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+    }
+
+    if (hGameWnd) {
+        EnableWindow(hGameWnd, TRUE);
+        SetForegroundWindow(hGameWnd);
+    }
+
+    if (hFont) {
+        DeleteObject(hFont);
+    }
+
+    if (g_thai_dialog_result[0] != L'\0') {
+        char pua_buf[256] = { 0 };
+        convert_thai_wstr_to_pua_utf8(g_thai_dialog_result, pua_buf, sizeof(pua_buf));
+        if (pua_buf[0] != '\0') {
+            if (g_is_dog_name_screen) {
+                strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
+                wcsncpy(g_custom_thai_dog_name_raw_w, g_thai_dialog_result, 127);
+                if (g_active_dog_name[0] == '\0') {
+                    strncpy(g_active_dog_name, "\xe3\x83\x9d\xe3\x83\x81", sizeof(g_active_dog_name) - 1); // "ポチ"
+                }
+                log_msg("[DIRECT THAI INPUT] Set dog name: %s", g_custom_thai_dog_name);
+            } else {
+                strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
+                wcsncpy(g_custom_thai_player_name_raw_w, g_thai_dialog_result, 127);
+                if (g_active_player_name[0] == '\0') {
+                    strncpy(g_active_player_name, "\xe3\x82\xa2\xe3\x83\xa1", sizeof(g_active_player_name) - 1); // "アメ"
+                }
+                log_msg("[DIRECT THAI INPUT] Set player name: %s", g_custom_thai_player_name);
+            }
+            save_custom_names_ini();
+            MessageBeep(MB_OK);
+        }
+    }
+}
+
+static void check_thai_name_input_hotkeys(ULONGLONG now)
+{
+    if (g_thai_dialog_open) return;
+    static ULONGLONG s_last_hotkey_tick = 0;
+    if (now - s_last_hotkey_tick < 400) return;
+
+    if (GetAsyncKeyState(VK_F2) & 0x8000) {
+        s_last_hotkey_tick = now;
+        show_thai_name_input_dialog();
+    } else if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState('V') & 0x8000)) {
+        s_last_hotkey_tick = now;
+        trigger_thai_name_clipboard_paste();
+    }
+}
+
+static void update_name_screen_state_and_hotkeys(const char* str)
+{
+    if (!str || str[0] == '\0') return;
+
+    if (strcmp(str, "あなたの名前") == 0 ||
+        strcmp(str, "\xe3\x81\x82\xe3\x81\xaa\xe3\x81\x9f\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") == 0) {
+        g_is_dog_name_screen = FALSE;
+        g_last_name_screen_tick = GetTickCount64();
+    } else if (strcmp(str, "犬の名前") == 0 ||
+               strcmp(str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") == 0) {
+        g_is_dog_name_screen = TRUE;
+        g_last_name_screen_tick = GetTickCount64();
+    } else if (strcmp(str, "ひら") == 0 || strcmp(str, "カタ") == 0 ||
+               strcmp(str, "1文字消す") == 0 || strcmp(str, "決定") == 0 ||
+               strcmp(str, "\xe3\x81\xb2\xe3\x82\x89") == 0 ||
+               strcmp(str, "\xe3\x82\xab\xe3\x82\xbf") == 0 ||
+               strcmp(str, "\x31\xe6\x96\x87\xe5\xad\x97\xe6\xb6\x88\xe3\x81\x99") == 0 ||
+               strcmp(str, "\xe6\xb1\xba\xe5\xae\x9a") == 0) {
+        g_last_name_screen_tick = GetTickCount64();
+    }
+
+    ULONGLONG now = GetTickCount64();
+    if ((now - g_last_name_screen_tick) <= 1500) {
+        check_thai_name_input_hotkeys(now);
+    }
+}
+
+/* ==================================================================
+ * Smart Sentence Re-assembler for Split Tagged Lines (<player>, <dog>, <strong>)
+ * ================================================================== */
+typedef struct {
+    char* orig_prefix;
+    char* orig_mid;
+    char* orig_suffix;
+    char* trans_prefix;
+    char* trans_mid;
+    char* trans_suffix;
+    char* cond;
+    float scale;
+    int is_strong;
+} ReassemblerEntry;
+
+static ReassemblerEntry* g_reassembler_table = NULL;
+static int g_reassembler_count = 0;
+static int g_reassembler_capacity = 0;
+
+static int g_active_reassembler_idx = -1;
+static ULONGLONG g_active_reassembler_tick = 0;
+static int g_active_reassembler_step = 0;
+
+static void clear_reassembler_table(void)
+{
+    if (g_reassembler_table) {
+        for (int i = 0; i < g_reassembler_count; i++) {
+            if (g_reassembler_table[i].orig_prefix) free(g_reassembler_table[i].orig_prefix);
+            if (g_reassembler_table[i].orig_mid) free(g_reassembler_table[i].orig_mid);
+            if (g_reassembler_table[i].orig_suffix) free(g_reassembler_table[i].orig_suffix);
+            if (g_reassembler_table[i].trans_prefix) free(g_reassembler_table[i].trans_prefix);
+            if (g_reassembler_table[i].trans_mid) free(g_reassembler_table[i].trans_mid);
+            if (g_reassembler_table[i].trans_suffix) free(g_reassembler_table[i].trans_suffix);
+            if (g_reassembler_table[i].cond) free(g_reassembler_table[i].cond);
+        }
+        free(g_reassembler_table);
+        g_reassembler_table = NULL;
+    }
+    g_reassembler_count = 0;
+    g_reassembler_capacity = 0;
+    g_active_reassembler_idx = -1;
+    g_active_reassembler_step = 0;
+}
+
+static void add_reassembler_entry(const char* orig_prefix, const char* orig_mid, const char* orig_suffix,
+                                  const char* trans_prefix, const char* trans_mid, const char* trans_suffix,
+                                  const char* cond, float scale, int is_strong)
+{
+    if (g_reassembler_count >= g_reassembler_capacity) {
+        int new_cap = g_reassembler_capacity == 0 ? 512 : g_reassembler_capacity * 2;
+        ReassemblerEntry* new_tbl = (ReassemblerEntry*)realloc(g_reassembler_table, new_cap * sizeof(ReassemblerEntry));
+        if (!new_tbl) return;
+        g_reassembler_table = new_tbl;
+        g_reassembler_capacity = new_cap;
+    }
+
+    ReassemblerEntry* e = &g_reassembler_table[g_reassembler_count++];
+    e->orig_prefix  = _strdup(orig_prefix ? orig_prefix : "");
+    e->orig_mid     = _strdup(orig_mid ? orig_mid : "");
+    e->orig_suffix  = _strdup(orig_suffix ? orig_suffix : "");
+    e->trans_prefix = _strdup(trans_prefix ? trans_prefix : "");
+    e->trans_mid    = _strdup(trans_mid ? trans_mid : "");
+    e->trans_suffix = _strdup(trans_suffix ? trans_suffix : "");
+    e->cond = (cond && cond[0] != '\0') ? _strdup(cond) : NULL;
+    e->scale = scale;
+    e->is_strong = is_strong;
+}
+
+static BOOL check_anchor_condition(const char* cond)
+{
+    if (!cond || cond[0] == '\0') return TRUE;
+    ULONGLONG now = GetTickCount64();
+    EnterCriticalSection(&g_cs);
+    int max_search = (g_anchor_idx < ANCHOR_HISTORY_CAP) ? g_anchor_idx : ANCHOR_HISTORY_CAP;
+    for (int dist = 1; dist <= max_search; dist++) {
+        int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+        if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= 8000) {
+            if (strstr(g_anchors[slot].str, cond) != NULL) {
+                LeaveCriticalSection(&g_cs);
+                return TRUE;
+            }
+        }
+    }
+    LeaveCriticalSection(&g_cs);
+    return FALSE;
+}
+
+static BOOL check_recent_anchor(const char* needle, ULONGLONG max_age_ms)
+{
+    if (!needle || needle[0] == '\0') return FALSE;
+    ULONGLONG now = GetTickCount64();
+    EnterCriticalSection(&g_cs);
+    int max_search = (g_anchor_idx < ANCHOR_HISTORY_CAP) ? g_anchor_idx : ANCHOR_HISTORY_CAP;
+    for (int dist = 1; dist <= max_search; dist++) {
+        int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+        if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= max_age_ms) {
+            if (strstr(g_anchors[slot].str, needle) != NULL) {
+                LeaveCriticalSection(&g_cs);
+                return TRUE;
+            }
+        }
+    }
+    LeaveCriticalSection(&g_cs);
+    return FALSE;
+}
+
+static const char* lookup_reassembler(const char* orig, float* out_scale)
+{
+    if (!orig || orig[0] == '\0' || g_reassembler_count == 0) return NULL;
+    ULONGLONG now = GetTickCount64();
+
+    /* 1. Check if active reassembler is currently waiting for suffix */
+    if (g_active_reassembler_idx >= 0 && g_active_reassembler_idx < g_reassembler_count) {
+        if (now - g_active_reassembler_tick <= 3000) {
+            ReassemblerEntry* e = &g_reassembler_table[g_active_reassembler_idx];
+
+            /* Check if this is the middle token */
+            BOOL is_mid = FALSE;
+            if (e->is_strong) {
+                if (e->orig_mid[0] != '\0' && strcmp(e->orig_mid, orig) == 0) is_mid = TRUE;
+            } else {
+                if (g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) is_mid = TRUE;
+                else if (strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0) is_mid = TRUE; /* "アメ" */
+                else if (g_custom_thai_player_name[0] != '\0' && strcmp(orig, g_custom_thai_player_name) == 0) is_mid = TRUE;
+                else if (g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) is_mid = TRUE;
+                else if (strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0) is_mid = TRUE; /* "ポチ" */
+                else if (g_custom_thai_dog_name[0] != '\0' && strcmp(orig, g_custom_thai_dog_name) == 0) is_mid = TRUE;
+            }
+
+            if (is_mid) {
+                g_active_reassembler_step = 2;
+                g_active_reassembler_tick = now;
+                if (e->is_strong && e->trans_mid[0] != '\0') {
+                    if (out_scale) *out_scale = e->scale;
+                    return e->trans_mid;
+                }
+                if (!e->is_strong && g_custom_thai_player_name[0] != '\0') {
+                    if (out_scale) *out_scale = 1.0f;
+                    return g_custom_thai_player_name;
+                }
+            }
+
+            /* Check if this is the suffix token (or prefix of suffix during layout measuring) */
+            if (e->orig_suffix[0] != '\0') {
+                if (strcmp(e->orig_suffix, orig) == 0) {
+                    g_active_reassembler_idx = -1;
+                    g_active_reassembler_step = 0;
+                    if (out_scale) *out_scale = e->scale;
+                    static const char s_empty[] = "";
+                    return (e->trans_suffix && e->trans_suffix[0] != '\0') ? e->trans_suffix : s_empty;
+                } else if (e->trans_suffix[0] == '\0' && strstr(e->orig_suffix, orig) != NULL) {
+                    /* Suppress partial Japanese suffix during word measurement */
+                    static const char s_empty[] = "";
+                    return s_empty;
+                }
+            }
+        } else {
+            g_active_reassembler_idx = -1;
+            g_active_reassembler_step = 0;
+        }
+    }
+
+    /* 2. Check if orig is a suffix of an entry whose prefix is EMPTY */
+    for (int i = 0; i < g_reassembler_count; i++) {
+        ReassemblerEntry* e = &g_reassembler_table[i];
+        if (e->orig_prefix[0] == '\0' && e->orig_suffix[0] != '\0') {
+            if (strcmp(e->orig_suffix, orig) == 0) {
+                if (e->cond && !check_anchor_condition(e->cond)) continue;
+                if (out_scale) *out_scale = e->scale;
+                return e->trans_suffix;
+            }
+        }
+    }
+
+    /* 3. Check if orig is the prefix of a Reassembler entry */
+    int matched_idx = -1;
+    int match_count = 0;
+    for (int i = 0; i < g_reassembler_count; i++) {
+        ReassemblerEntry* e = &g_reassembler_table[i];
+        if (e->orig_prefix[0] != '\0' && strcmp(e->orig_prefix, orig) == 0) {
+            if (e->cond) {
+                if (!check_anchor_condition(e->cond)) continue;
+            }
+            matched_idx = i;
+            match_count++;
+        }
+    }
+
+    if (match_count == 1) {
+        g_active_reassembler_idx = matched_idx;
+        g_active_reassembler_tick = now;
+        g_active_reassembler_step = 1;
+        if (out_scale) *out_scale = g_reassembler_table[matched_idx].scale;
+        return g_reassembler_table[matched_idx].trans_prefix;
+    } else if (match_count > 1) {
+        for (int i = 0; i < g_reassembler_count; i++) {
+            ReassemblerEntry* e = &g_reassembler_table[i];
+            if (e->orig_prefix[0] != '\0' && strcmp(e->orig_prefix, orig) == 0 && e->cond != NULL) {
+                if (check_anchor_condition(e->cond)) {
+                    g_active_reassembler_idx = i;
+                    g_active_reassembler_tick = now;
+                    g_active_reassembler_step = 1;
+                    if (out_scale) *out_scale = e->scale;
+                    return e->trans_prefix;
+                }
+            }
+        }
+    }
+
+    /* 4. Check if orig is a suffix of an entry whose prefix was seen recently in anchors */
+    for (int i = 0; i < g_reassembler_count; i++) {
+        ReassemblerEntry* e = &g_reassembler_table[i];
+        if (e->orig_suffix[0] != '\0' && strcmp(e->orig_suffix, orig) == 0) {
+            if (e->orig_prefix[0] != '\0' && check_recent_anchor(e->orig_prefix, 4000)) {
+                if (e->cond && !check_anchor_condition(e->cond)) continue;
+                if (out_scale) *out_scale = e->scale;
+                static const char s_empty[] = "";
+                return (e->trans_suffix && e->trans_suffix[0] != '\0') ? e->trans_suffix : s_empty;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+static const char* lookup_translation(const char* orig);
+static const char* try_match_dynamic_template(const char* orig);
+
+static const char* lookup_translation_ex(const char* orig, float* out_scale)
+{
+    if (out_scale) *out_scale = 1.0f;
+    if (!orig || g_trans_count == 0) return NULL;
+    update_name_screen_state_and_hotkeys(orig);
+
+    /* 0. Smart Sentence Re-assembler for split tagged dialogue */
+    const char* re_match = lookup_reassembler(orig, out_scale);
+    if (re_match != NULL) {
+        return re_match;
+    }
+
+    /* 0.5 Standalone Player & Dog Name Replacement (takes absolute precedence over default dictionary) */
+    if (g_custom_thai_player_name[0] != '\0') {
+        if ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
+            strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0) { /* "アメ" */
+            if (out_scale) *out_scale = 1.0f;
+            return g_custom_thai_player_name;
+        }
+    }
+    if (g_custom_thai_dog_name[0] != '\0') {
+        if ((g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) ||
+            strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0) { /* "ポチ" */
+            if (out_scale) *out_scale = 1.0f;
+            return g_custom_thai_dog_name;
+        }
+    }
+
+    uint32_t h = hash_str(orig);
+    uint32_t bucket = h % HASH_TABLE_SIZE;
+
+    TransNode* best_node = NULL;
+    int best_distance = 999999;
+    TransNode* default_node = NULL;
+
+    ULONGLONG now = GetTickCount64();
+    EnterCriticalSection(&g_cs);
+
+    /* 1. First pass: check anchor rules and find the CLOSEST anchor */
+    TransNode* node = g_trans_table[bucket];
+    while (node) {
+        if (node->hash == h && strcmp(node->orig, orig) == 0) {
+            if (node->cond != NULL) {
+#define ANCHOR_MAX_DISTANCE ANCHOR_HISTORY_CAP
+                int max_search = (g_anchor_idx < ANCHOR_MAX_DISTANCE) ? g_anchor_idx : ANCHOR_MAX_DISTANCE;
+                for (int dist = 1; dist <= max_search; dist++) {
+                    int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+                    if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= ANCHOR_MAX_AGE_MS) {
+                        if (strstr(g_anchors[slot].str, node->cond) != NULL) {
+                            if (dist < best_distance) {
+                                best_distance = dist;
+                                best_node = node;
+                            }
+                            break; /* Found closest occurrence for this rule */
+                        }
+                    }
+                }
+            } else {
+                default_node = node;
+            }
+        }
+        node = node->next;
+    }
+    LeaveCriticalSection(&g_cs);
+
+    /* Throttled debug logging for ambiguous keys (なし, うん) */
+    static ULONGLONG s_last_debug_log = 0;
+    if ((strcmp(orig, "なし") == 0 || strcmp(orig, "うん") == 0) && (now - s_last_debug_log > 2000)) {
+        s_last_debug_log = now;
+        log_msg("[ANCHOR DEBUG] lookup '%s': matched=%s (cond='%s', dist=%d)",
+                orig,
+                best_node ? best_node->trans : (default_node ? default_node->trans : "NULL"),
+                best_node && best_node->cond ? best_node->cond : "NONE",
+                best_distance);
+        for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
+            int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+            log_msg("   anchor[-d=%d, age=%llums]: '%s'", d, now - g_anchors[sl].tick, g_anchors[sl].str);
+        }
+    }
+
+    /* If a contextual anchor matched, return the closest one */
+    if (best_node) {
+        if (out_scale) *out_scale = best_node->scale;
+        return best_node->trans;
+    }
+
+    /* 2. Fallback to unconditional default translation */
+    if (default_node) {
+        if (out_scale) *out_scale = default_node->scale;
+        return default_node->trans;
+    }
+
+    /* 2.5 Standalone Player & Dog Name Replacement (menus, status, name screen) */
+    if (g_custom_thai_player_name[0] != '\0' && g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) {
+        if (out_scale) *out_scale = 1.0f;
+        return g_custom_thai_player_name;
+    }
+    if (g_custom_thai_dog_name[0] != '\0' && g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) {
+        if (out_scale) *out_scale = 1.0f;
+        return g_custom_thai_dog_name;
+    }
+
+    /* 3. Dynamic Name Confirmation: 「<name>」でよろしいですか？ */
+    if (strncmp(orig, "\xe3\x80\x8c", 3) == 0) {
+        const char* p_close = strstr(orig, "\xe3\x80\x8d\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f");
+        if (p_close) {
+            size_t name_len = p_close - (orig + 3);
+            char captured_name[64] = { 0 };
+            BOOL is_dog = FALSE;
+            if (name_len > 0 && name_len < sizeof(captured_name)) {
+                memcpy(captured_name, orig + 3, name_len);
+                captured_name[name_len] = '\0';
+
+                /* Check if recent anchor was "犬の名前" (\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d) */
+                for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
+                    int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+                    if (g_anchors[sl].tick > 0 && (now - g_anchors[sl].tick) <= 15000) {
+                        if (strstr(g_anchors[sl].str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") != NULL) {
+                            is_dog = TRUE;
+                            break;
+                        }
+                    }
+                }
+                if (is_dog) {
+                    strncpy(g_active_dog_name, captured_name, sizeof(g_active_dog_name) - 1);
+                    log_msg("[DOG NAME] Captured dog name: %s", g_active_dog_name);
+                    save_custom_names_ini();
+                } else {
+                    strncpy(g_active_player_name, captured_name, sizeof(g_active_player_name) - 1);
+                    log_msg("[PLAYER NAME] Captured player name: %s", g_active_player_name);
+                    save_custom_names_ini();
+                }
+            }
+            static char name_confirm_buf[512];
+            const char* templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
+            if (!templ) templ = lookup_translation_ex("「」でよろしいですか？", NULL);
+            if (templ) {
+                const char* cur_name = NULL;
+                if (is_dog) {
+                    if (g_custom_thai_dog_name[0] != '\0') {
+                        cur_name = g_custom_thai_dog_name;
+                    } else {
+                        cur_name = captured_name[0] != '\0' ? captured_name : g_active_dog_name;
+                    }
+                } else {
+                    if (g_custom_thai_player_name[0] != '\0') {
+                        cur_name = g_custom_thai_player_name;
+                    } else {
+                        cur_name = captured_name[0] != '\0' ? captured_name : g_active_player_name;
+                    }
+                }
+                if (strstr(templ, "<value 1>")) {
+                    if (replace_str(templ, "<value 1>", cur_name, name_confirm_buf, sizeof(name_confirm_buf))) {
+                        return name_confirm_buf;
+                    }
+                } else if (strstr(templ, "\"\"")) {
+                    char name_in_quotes[128];
+                    snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", cur_name);
+                    if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
+                        return name_confirm_buf;
+                    }
+                }
+            }
+        }
+    }
+
+    /* 4. Dynamic Player & Dog Name Substitution */
+    if ((g_active_player_name[0] != '\0' && strstr(orig, g_active_player_name) != NULL) ||
+        (g_active_dog_name[0] != '\0' && strstr(orig, g_active_dog_name) != NULL)) {
+        char templ[8192];
+        strncpy(templ, orig, sizeof(templ) - 1);
+        templ[sizeof(templ) - 1] = '\0';
+        if (g_active_player_name[0] != '\0' && strstr(templ, g_active_player_name) != NULL) {
+            char temp_sub[8192];
+            if (replace_str(templ, g_active_player_name, "<player>", temp_sub, sizeof(temp_sub))) {
+                strncpy(templ, temp_sub, sizeof(templ) - 1);
+                templ[sizeof(templ) - 1] = '\0';
+            }
+        }
+        if (g_active_dog_name[0] != '\0' && strstr(templ, g_active_dog_name) != NULL) {
+            char temp_sub[8192];
+            if (replace_str(templ, g_active_dog_name, "<dog>", temp_sub, sizeof(temp_sub))) {
+                strncpy(templ, temp_sub, sizeof(templ) - 1);
+                templ[sizeof(templ) - 1] = '\0';
+            }
+        }
+        const char* rep_templ = lookup_translation_ex(templ, NULL);
+        if (rep_templ) {
+            static char dynamic_buf[8192];
+            strncpy(dynamic_buf, rep_templ, sizeof(dynamic_buf) - 1);
+            dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
+            const char* player_rep = (g_custom_thai_player_name[0] != '\0') ? g_custom_thai_player_name : g_active_player_name;
+            const char* dog_rep = (g_custom_thai_dog_name[0] != '\0') ? g_custom_thai_dog_name : g_active_dog_name;
+            if (player_rep[0] != '\0' && strstr(dynamic_buf, "<player>") != NULL) {
+                char temp_sub[8192];
+                if (replace_str(dynamic_buf, "<player>", player_rep, temp_sub, sizeof(temp_sub))) {
+                    strncpy(dynamic_buf, temp_sub, sizeof(dynamic_buf) - 1);
+                    dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
+                }
+            }
+            if (dog_rep[0] != '\0' && strstr(dynamic_buf, "<dog>") != NULL) {
+                char temp_sub[8192];
+                if (replace_str(dynamic_buf, "<dog>", dog_rep, temp_sub, sizeof(temp_sub))) {
+                    strncpy(dynamic_buf, temp_sub, sizeof(dynamic_buf) - 1);
+                    dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
+                }
+            }
+            return dynamic_buf;
+        }
+    }
+
+    /* 5. Dynamic Template Matching (<value ...> patterns: save dates, currency, items) */
+    const char* dyn_match = try_match_dynamic_template(orig);
+    if (dyn_match) {
+        return dyn_match;
+    }
+
+    return NULL;
+}
+
+static const char* lookup_translation(const char* orig)
+{
+    return lookup_translation_ex(orig, NULL);
+}
+
+/* ==================================================================
+ * Dynamic Template Matching (<value ...> patterns)
+ * ================================================================== */
+static char s_dynamic_buffers[4][1024];
+static volatile LONG s_dynamic_buf_idx = 0;
+
+static const char* try_match_dynamic_template(const char* orig)
+{
+    if (!orig || orig[0] == '\0') return NULL;
+
+    size_t len = strlen(orig);
+    char temp1[1024];
+    char temp2[1024];
+
+    /* 1. Full Save Game Date: "%d年目 %s %d日" with optional suffix (e.g. "　深夜" or " 深夜") */
+    /* "年目 " in UTF-8: \xe5\xb9\xb4\xe7\x9b\xae\x20 (7 bytes) */
+    const char* p_nen = strstr(orig, "\xe5\xb9\xb4\xe7\x9b\xae ");
+    if (p_nen && p_nen > orig) {
+        char* end_yr = NULL;
+        long year = strtol(orig, &end_yr, 10);
+        if (year > 0 && end_yr == p_nen) {
+            const char* p_season = p_nen + 7; /* skip "年目 " */
+            const char* p_sp = strchr(p_season, ' ');
+            size_t skip_sp = 1;
+            if (!p_sp) {
+                p_sp = strstr(p_season, "\xe3\x80\x80");
+                skip_sp = 3;
+            }
+            if (p_sp && p_sp > p_season) {
+                char season_jp[32] = {0};
+                size_t slen = (size_t)(p_sp - p_season);
+                if (slen < sizeof(season_jp)) {
+                    memcpy(season_jp, p_season, slen);
+                    season_jp[slen] = '\0';
+                    char* end_day = NULL;
+                    long day = strtol(p_sp + skip_sp, &end_day, 10);
+                    /* "日" in UTF-8: \xe6\x97\xa5 (3 bytes) */
+                    if (day > 0 && end_day && strncmp(end_day, "\xe6\x97\xa5", 3) == 0) {
+                        const char* templ = lookup_translation("<value 1>年目 <value 2> <value 3>日");
+                        if (templ) {
+                            const char* season_th = lookup_translation(season_jp);
+                            if (!season_th) season_th = season_jp;
+                            char y_buf[16], d_buf[16];
+                            snprintf(y_buf, sizeof(y_buf), "%ld", year);
+                            snprintf(d_buf, sizeof(d_buf), "%ld", day);
+
+                            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                            char* buf = s_dynamic_buffers[b_idx & 3];
+
+                            if (replace_str(templ, "<value 1>", y_buf, temp1, sizeof(temp1)) &&
+                                replace_str(temp1, "<value 2>", season_th, temp2, sizeof(temp2)) &&
+                                replace_str(temp2, "<value 3>", d_buf, buf, sizeof(s_dynamic_buffers[0]))) {
+
+                                const char* p_extra = end_day + 3; /* skip "日" */
+                                while (*p_extra == ' ' || *p_extra == '\t' ||
+                                       ((unsigned char)p_extra[0] == 0xe3 && (unsigned char)p_extra[1] == 0x80 && (unsigned char)p_extra[2] == 0x80)) {
+                                    if ((unsigned char)p_extra[0] == 0xe3) p_extra += 3;
+                                    else p_extra++;
+                                }
+                                if (*p_extra != '\0') {
+                                    const char* extra_th = lookup_translation(p_extra);
+                                    if (!extra_th) extra_th = p_extra;
+                                    strncat(buf, " ", sizeof(s_dynamic_buffers[0]) - strlen(buf) - 1);
+                                    strncat(buf, extra_th, sizeof(s_dynamic_buffers[0]) - strlen(buf) - 1);
+                                }
+                                return buf;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* 2. Short / Prefixed Dates: "[prefix] <Season> <Day>日" */
+    const char* date_templ_key = NULL;
+    const char* p_date_start = orig;
+    if (strncmp(orig, "\xe8\xaa\x95\xe7\x94\x9f\xe6\x97\xa5 ", 10) == 0) {
+        /* "誕生日 " */
+        date_templ_key = "誕生日 <value 1> <value 2>日";
+        p_date_start = orig + 10;
+    } else if (strncmp(orig, "\xe6\x9c\x9f\xe9\x99\x90\xef\xbc\x9a", 9) == 0) {
+        /* "期限：" */
+        date_templ_key = "期限：<value 1> <value 2>日";
+        p_date_start = orig + 9;
+    } else {
+        date_templ_key = "<value 1> <value 2>日";
+        p_date_start = orig;
+    }
+
+    static const char* s_seasons[] = {
+        "\xe6\x98\xa5", /* 春 */
+        "\xe5\xa4\x8f", /* 夏 */
+        "\xe7\xa7\x8b", /* 秋 */
+        "\xe5\x86\xac"  /* 冬 */
+    };
+    for (int i = 0; i < 4; i++) {
+        if (strncmp(p_date_start, s_seasons[i], 3) == 0 && (p_date_start[3] == ' ' || (unsigned char)p_date_start[3] == 0xe3)) {
+            size_t s_sp = 1;
+            if ((unsigned char)p_date_start[3] == 0xe3 && (unsigned char)p_date_start[4] == 0x80 && (unsigned char)p_date_start[5] == 0x80) {
+                s_sp = 3;
+            }
+            char* end_day = NULL;
+            long day = strtol(p_date_start + 3 + s_sp, &end_day, 10);
+            if (day > 0 && end_day && strncmp(end_day, "\xe6\x97\xa5", 3) == 0) {
+                const char* templ = lookup_translation(date_templ_key);
+                if (templ) {
+                    const char* season_th = lookup_translation(s_seasons[i]);
+                    if (!season_th) season_th = s_seasons[i];
+                    char d_buf[16];
+                    snprintf(d_buf, sizeof(d_buf), "%ld", day);
+                    LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                    char* buf = s_dynamic_buffers[b_idx & 3];
+                    if (replace_str(templ, "<value 1>", season_th, temp1, sizeof(temp1)) &&
+                        replace_str(temp1, "<value 2>", d_buf, buf, sizeof(s_dynamic_buffers[0]))) {
+                        return buf;
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+    /* 3. Harvest Season List: "収穫季節：<Season>・..." */
+    /* "収穫季節：" in UTF-8: \xe5\x8f\x8e\xe7\xa9\xab\xe5\xad\xa3\xe7\xaf\x80\xef\xbc\x9a (15 bytes) */
+    if (strncmp(orig, "\xe5\x8f\x8e\xe7\xa9\xab\xe5\xad\xa3\xe7\xaf\x80\xef\xbc\x9a", 15) == 0) {
+        const char* p_cur = orig + 15;
+        char s1[32] = {0}, s2[32] = {0}, s3[32] = {0};
+        int season_count = 0;
+        /* Tokenize by "・" (\xe3\x83\xbb, 3 bytes) */
+        while (*p_cur && season_count < 3) {
+            const char* p_dot = strstr(p_cur, "\xe3\x83\xbb");
+            size_t seg_len = p_dot ? (size_t)(p_dot - p_cur) : strlen(p_cur);
+            if (season_count == 0 && seg_len < sizeof(s1)) {
+                memcpy(s1, p_cur, seg_len); s1[seg_len] = '\0';
+            } else if (season_count == 1 && seg_len < sizeof(s2)) {
+                memcpy(s2, p_cur, seg_len); s2[seg_len] = '\0';
+            } else if (season_count == 2 && seg_len < sizeof(s3)) {
+                memcpy(s3, p_cur, seg_len); s3[seg_len] = '\0';
+            }
+            season_count++;
+            if (!p_dot) break;
+            p_cur = p_dot + 3;
+        }
+        if (season_count == 1) {
+            const char* templ = lookup_translation("収穫季節：<value 1>");
+            if (templ) {
+                const char* th1 = lookup_translation(s1);
+                if (!th1) th1 = s1;
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", th1, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        } else if (season_count == 2) {
+            const char* templ = lookup_translation("収穫季節：<value 1>・<value 2>");
+            if (templ) {
+                const char* th1 = lookup_translation(s1); if (!th1) th1 = s1;
+                const char* th2 = lookup_translation(s2); if (!th2) th2 = s2;
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", th1, temp1, sizeof(temp1)) &&
+                    replace_str(temp1, "<value 2>", th2, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        } else if (season_count == 3) {
+            const char* templ = lookup_translation("収穫季節：<value 1>・<value 2>・<value 3>");
+            if (templ) {
+                const char* th1 = lookup_translation(s1); if (!th1) th1 = s1;
+                const char* th2 = lookup_translation(s2); if (!th2) th2 = s2;
+                const char* th3 = lookup_translation(s3); if (!th3) th3 = s3;
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", th1, temp1, sizeof(temp1)) &&
+                    replace_str(temp1, "<value 2>", th2, temp2, sizeof(temp2)) &&
+                    replace_str(temp2, "<value 3>", th3, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 4. Number + 円 (\xe5\x86\x86, 3 bytes) */
+    if (len > 3 && memcmp(orig + len - 3, "\xe5\x86\x86", 3) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig, &endptr, 10);
+        if (endptr == orig + len - 3 && val >= 0) {
+            const char* templ = lookup_translation("<value 1>円");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 5. Number + 個 (\xe5\x80\x8b, 3 bytes) */
+    if (len > 3 && memcmp(orig + len - 3, "\xe5\x80\x8b", 3) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig, &endptr, 10);
+        if (endptr == orig + len - 3 && val >= 0) {
+            const char* templ = lookup_translation("<value 1>個");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 6. 地下<number>階 (\xe5\x9c\xb0\xe4\xb8\x8b, 6 bytes ... \xe9\x9a\x8e, 3 bytes) */
+    if (len > 9 && memcmp(orig, "\xe5\x9c\xb0\xe4\xb8\x8b", 6) == 0 && memcmp(orig + len - 3, "\xe9\x9a\x8e", 3) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig + 6, &endptr, 10);
+        if (endptr == orig + len - 3 && val >= 0) {
+            const char* templ = lookup_translation("地下<value 1>階");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 7. 家畜小屋<number> (\xe5\xae\xb6\xe7\x95\x9c\xe5\xb0\x8f\xe5\xb1\x8b, 12 bytes) */
+    if (len > 12 && memcmp(orig, "\xe5\xae\xb6\xe7\x95\x9c\xe5\xb0\x8f\xe5\xb1\x8b", 12) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig + 12, &endptr, 10);
+        if (endptr == orig + len && val >= 0) {
+            const char* templ = lookup_translation("家畜小屋<value 1>");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 8. 鶏小屋<number> (\xe9\xb8\xa1\xe5\xb0\x8f\xe5\xb1\x8b, 9 bytes) */
+    if (len > 9 && memcmp(orig, "\xe9\xb8\xa1\xe5\xb0\x8f\xe5\xb1\x8b", 9) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig + 9, &endptr, 10);
+        if (endptr == orig + len && val >= 0) {
+            const char* templ = lookup_translation("鶏小屋<value 1>");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 9. <number>日後まで (\xe6\x97\xa5\xe5\xbe\x8c\xe3\x81\xbe\xe3\x81\xa7, 12 bytes) */
+    if (len > 12 && memcmp(orig + len - 12, "\xe6\x97\xa5\xe5\xbe\x8c\xe3\x81\xbe\xe3\x81\xa7", 12) == 0) {
+        char* endptr = NULL;
+        long val = strtol(orig, &endptr, 10);
+        if (endptr == orig + len - 12 && val >= 0) {
+            const char* templ = lookup_translation("<value 1>日後まで");
+            if (templ) {
+                char v_buf[32];
+                snprintf(v_buf, sizeof(v_buf), "%ld", val);
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 10. String templates with suffix: "<item><suffix>" */
+    struct SuffixRule {
+        const char* suffix_jp;
+        size_t suffix_len;
+        const char* templ_key;
+        int is_bracketed;
+    };
+    static const struct SuffixRule s_suffix_rules[] = {
+        { "\xe3\x80\x8d\xe3\x82\x92\xe4\xbd\x9c\xe6\x88\x90\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f", 27, "「<value 1>」を作成しますか？", 1 },
+        { "\xe3\x82\x92\xe6\x89\x8b\xe3\x81\xab\xe5\x85\xa5\xe3\x82\x8c\xe3\x81\x9f", 18, "<value 1>を手に入れた", 0 },
+        { "\xe3\x82\x92\xe3\x82\x82\xe3\x82\x89\xe3\x81\xa3\xe3\x81\x9f", 15, "<value 1>をもらった", 0 },
+        { "\xe3\x81\x8c\xe8\xb6\xb3\xe3\x82\x8a\xe3\x81\xaa\xe3\x81\x84\xe2\x80\xa6\xe2\x80\xa6", 21, "<value 1>が足りない……", 0 },
+        { "\xe3\x82\x92\xe6\x8f\x90\xe5\x87\xba\xe3\x81\x97\xe3\x81\x9f", 15, "<value 1>を提出した", 0 },
+        { "\xe3\x82\x92\xe3\x83\xa1\xe3\x83\xa2\xe3\x81\x97\xe3\x81\x9f", 15, "<value 1>をメモした", 0 },
+        { "\xe3\x82\x92\xe5\x90\xb9\xe3\x81\x84\xe3\x81\x9f", 12, "<value 1>を吹いた", 0 },
+        { "\xe3\x81\xa8\xe3\x81\xae\xe4\xbb\xb2\xe3\x81\x8c\xe6\xb7\xb1\xe3\x81\xbe\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81", 27, "<value 1>との仲が深まった！", 0 },
+        { "\xe3\x81\xae\xe8\xaa\x95\xe7\x94\x9f\xe6\x97\xa5", 12, "<value 1>の誕生日", 0 },
+        { "\xe3\x81\xae\xe3\x81\xaa\xe3\x81\xa4\xe3\x81\x8d\xe5\xba\xa6\xe3\x81\x8c\xe4\xb8\x8a\xe3\x81\x8c\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81", 33, "<value 1>のなつき度が上がった！", 0 },
+        { "\xe3\x81\xae\xe5\x93\x81\xe8\xb3\xaa\xe3\x81\x8c\xe4\xb8\x8a\xe3\x81\x8c\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81", 27, "<value 1>の品質が上がった！", 0 },
+        { "\xe3\x81\xae\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe3\x82\x92\xe5\x89\x8a\xe9\x99\xa4\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82", 42, "<value 1>のセーブデータを削除します。", 0 }
+    };
+    for (size_t i = 0; i < sizeof(s_suffix_rules) / sizeof(s_suffix_rules[0]); i++) {
+        const struct SuffixRule* r = &s_suffix_rules[i];
+        if (r->is_bracketed) {
+            if (len > 3 + r->suffix_len && memcmp(orig, "\xe3\x80\x8c", 3) == 0 &&
+                memcmp(orig + len - r->suffix_len, r->suffix_jp, r->suffix_len) == 0) {
+                size_t item_len = len - 3 - r->suffix_len;
+                if (item_len > 0 && item_len < 128) {
+                    char item_jp[128];
+                    memcpy(item_jp, orig + 3, item_len);
+                    item_jp[item_len] = '\0';
+                    const char* item_th = lookup_translation(item_jp);
+                    if (!item_th) item_th = item_jp;
+                    const char* templ = lookup_translation(r->templ_key);
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<value 1>", item_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+                    }
+                }
+            }
+        } else {
+            if (len > r->suffix_len && memcmp(orig + len - r->suffix_len, r->suffix_jp, r->suffix_len) == 0) {
+                size_t item_len = len - r->suffix_len;
+                if (item_len > 0 && item_len < 128) {
+                    char item_jp[128];
+                    memcpy(item_jp, orig, item_len);
+                    item_jp[item_len] = '\0';
+                    const char* item_th = lookup_translation(item_jp);
+                    if (!item_th) item_th = item_jp;
+                    const char* templ = lookup_translation(r->templ_key);
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<value 1>", item_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+                    }
+                }
+            }
+        }
+    }
+
+    /* 11. Dynamic <gamevalue> Matching */
+    /* Pattern A: NPC Count (...<digits>人...) -> <gamevalue GAME_VALUE_STORY_01_NPC_TALK_COUNT> */
+    const char* p_nin = strstr(orig, "\xe4\xba\xba"); /* "人" */
+    if (p_nin && p_nin > orig) {
+        const char* p_digit_start = p_nin - 1;
+        while (p_digit_start >= orig && *p_digit_start >= '0' && *p_digit_start <= '9') {
+            p_digit_start--;
+        }
+        p_digit_start++;
+        if (p_digit_start < p_nin) {
+            char num_str[16] = { 0 };
+            size_t nlen = (size_t)(p_nin - p_digit_start);
+            if (nlen < sizeof(num_str)) {
+                memcpy(num_str, p_digit_start, nlen);
+                num_str[nlen] = '\0';
+
+                char gv_templ_key[1024] = { 0 };
+                size_t pfx_len = (size_t)(p_digit_start - orig);
+                if (pfx_len + 45 + strlen(p_nin) < sizeof(gv_templ_key)) {
+                    memcpy(gv_templ_key, orig, pfx_len);
+                    strcpy(gv_templ_key + pfx_len, "<gamevalue GAME_VALUE_STORY_01_NPC_TALK_COUNT>");
+                    strcat(gv_templ_key, p_nin);
+
+                    const char* templ = lookup_translation(gv_templ_key);
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<gamevalue GAME_VALUE_STORY_01_NPC_TALK_COUNT>", num_str, buf, sizeof(s_dynamic_buffers[0]))) {
+                            return buf;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Pattern B: Talk Num (...<digits>日... or ...<digits>円...) -> <gamevalue GAME_VALUE_TALK_NUM> */
+    const char* p_target = strstr(orig, "\xe6\x97\xa5"); /* "日" */
+    if (!p_target) p_target = strstr(orig, "\xe5\x86\x86\xe3\x82\x92\xe6\xb8\xa1\xe3\x81\x95\xe3\x82\x8c\xe3\x81\x9f"); /* "円を渡された" */
+    if (p_target && p_target > orig) {
+        const char* p_digit_start = p_target - 1;
+        while (p_digit_start >= orig && *p_digit_start >= '0' && *p_digit_start <= '9') {
+            p_digit_start--;
+        }
+        p_digit_start++;
+        if (p_digit_start < p_target) {
+            char num_str[16] = { 0 };
+            size_t nlen = (size_t)(p_target - p_digit_start);
+            if (nlen < sizeof(num_str)) {
+                memcpy(num_str, p_digit_start, nlen);
+                num_str[nlen] = '\0';
+
+                char gv_templ_key[1024] = { 0 };
+                size_t pfx_len = (size_t)(p_digit_start - orig);
+                if (pfx_len + 35 + strlen(p_target) < sizeof(gv_templ_key)) {
+                    memcpy(gv_templ_key, orig, pfx_len);
+                    strcpy(gv_templ_key + pfx_len, "<gamevalue GAME_VALUE_TALK_NUM>");
+                    strcat(gv_templ_key, p_target);
+
+                    const char* templ = lookup_translation(gv_templ_key);
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<gamevalue GAME_VALUE_TALK_NUM>", num_str, buf, sizeof(s_dynamic_buffers[0]))) {
+                            return buf;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* 12. Dynamic <tmpstr> Quest Item Matching */
+    struct TmpstrRule {
+        const char* pfx;
+        size_t pfx_len;
+        const char* sfx;
+        size_t sfx_len;
+        const char* templ_key;
+    };
+    static const struct TmpstrRule s_tmpstr_rules[] = {
+        { "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8b\xe3\x82\x89\xe3\x82\x82", 15, "\xe3\x81\xae\xe7\x94\x9f\xe7\x94\xa3\xe3\x81\xab\xe5\x8a\xb1\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x8f\xe3\x82\x8c", 27, "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8b\xe3\x82\x89\xe3\x82\x82<tmpstr>\xe3\x81\xae\xe7\x94\x9f\xe7\x94\xa3\xe3\x81\xab\xe5\x8a\xb1\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x8f\xe3\x82\x8c" },
+        { "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8b\xe3\x82\x89\xe3\x82\x82", 15, "\xe3\x82\x92\xe8\x82\xb2\xe3\x81\xa6\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c", 18, "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8b\xe3\x82\x89\xe3\x82\x82<tmpstr>\xe3\x82\x92\xe8\x82\xb2\xe3\x81\xa6\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c" },
+        { "\xe3\x82\x82\xe3\x81\x97\xe3\x81\x8b\xe3\x81\x97\xe3\x81\xaa\xe3\x81\x8f\xe3\x81\xa6\xe3\x82\x82", 24, "\xe3\x81\xa7\xe3\x81\x99\xe3\x83\x8d\xef\xbc\x9f", 12, "\xe3\x82\x82\xe3\x81\x97\xe3\x81\x8b\xe3\x81\x97\xe3\x81\xaa\xe3\x81\x8f\xe3\x81\xa6\xe3\x82\x82<tmpstr>\xe3\x81\xa7\xe3\x81\x99\xe3\x83\x8d\xef\xbc\x9f" },
+        { "\xe4\xbb\x8a\xe3\x80\x81", 6, "\xe3\x82\x92\xe6\x8e\xa2\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x8b\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 27, "\xe4\xbb\x8a\xe3\x80\x81<tmpstr>\xe3\x82\x92\xe6\x8e\xa2\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x8b\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" },
+        { "\xe3\x81\x82\xe3\x81\xae\xe3\x81\xad\xe3\x80\x81", 12, "\xe3\x81\xa3\xe3\x81\xa6\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x82\x8b\xef\xbc\x9f", 21, "\xe3\x81\x82\xe3\x81\xae\xe3\x81\xad\xe3\x80\x81<tmpstr>\xe3\x81\xa3\xe3\x81\xa6\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x82\x8b\xef\xbc\x9f" },
+        { "\xe5\xae\x9f\xe3\x81\xaf", 6, "\xe3\x81\x8c\xe6\xac\xb2\xe3\x81\x97\xe3\x81\x84\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 24, "\xe5\xae\x9f\xe3\x81\xaf<tmpstr>\xe3\x81\x8c\xe6\xac\xb2\xe3\x81\x97\xe3\x81\x84\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f", 42, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xe3\x81\x8b\xe3\x81\x84\xef\xbc\x9f", 39, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xe3\x81\x8b\xe3\x81\x84\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x82\x93\xe3\x82\xb9\xe3\x81\x8b\xef\xbc\x9f", 39, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x82\x93\xe3\x82\xb9\xe3\x81\x8b\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe3\x81\x8a\xe6\x8c\x81\xe3\x81\xa1\xe3\x81\xa7\xe3\x81\xaf\xe3\x81\xaa\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f", 36, "<tmpstr>\xe3\x82\x92\xe3\x81\x8a\xe6\x8c\x81\xe3\x81\xa1\xe3\x81\xa7\xe3\x81\xaf\xe3\x81\xaa\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xe3\x81\x8b\xef\xbc\x9f", 36, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xe3\x81\x8b\xef\xbc\x9f" },
+        { "", 0, "\xe3\x81\x8c\xe3\x81\xbb\xe3\x81\x97\xe3\x81\x8f\xe3\x81\xa6\xe6\x8e\xa2\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x8b\xe3\x82\x93\xe3\x81\xa0", 33, "<tmpstr>\xe3\x81\x8c\xe3\x81\xbb\xe3\x81\x97\xe3\x81\x8f\xe3\x81\xa6\xe6\x8e\xa2\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x8b\xe3\x82\x93\xe3\x81\xa0" },
+        { "", 0, "\xe3\x81\xa3\xe3\x81\xa6\xe3\x80\x81\xe4\xbd\x99\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x9f\xe3\x82\x8a\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xef\xbc\x9f", 36, "<tmpstr>\xe3\x81\xa3\xe3\x81\xa6\xe3\x80\x81\xe4\xbd\x99\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x9f\xe3\x82\x8a\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xef\xbc\x9f", 33, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xef\xbc\x9f" },
+        { "\xe3\x81\x8a\xe3\x80\x81\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xa3\xe3\x81\xa6", 18, "\xef\xbc\x9f", 3, "\xe3\x81\x8a\xe3\x80\x81\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xa3\xe3\x81\xa6<tmpstr>\xef\xbc\x9f" },
+        { "\xe3\x81\xb2\xe3\x82\x87\xe3\x81\xa3\xe3\x81\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x80\x81", 21, "", 0, "\xe3\x81\xb2\xe3\x82\x87\xe3\x81\xa3\xe3\x81\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x80\x81<tmpstr>" },
+        { "", 0, "\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x8c\xe2\x80\xa6\xe2\x80\xa6", 27, "<tmpstr>\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x8c\xe2\x80\xa6\xe2\x80\xa6" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\x9f\xe3\x81\xae\xe3\x81\xad", 24, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\x9f\xe3\x81\xae\xe3\x81\xad" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xe3\x81\x8b\xef\xbc\x9f", 24, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xe3\x81\x8b\xef\xbc\x9f" },
+        { "\xe3\x83\xaf\xe3\x82\xb7\xe3\x81\xaf\xe4\xbb\x8a\xe3\x80\x81", 18, "\xe3\x81\x8c", 3, "\xe3\x83\xaf\xe3\x82\xb7\xe3\x81\xaf\xe4\xbb\x8a\xe3\x80\x81<tmpstr>\xe3\x81\x8c" },
+        { "\xe3\x83\xaf\xe3\x82\xbf\xe3\x82\xb7\xe3\x81\xaf\xe4\xbb\x8a\xe3\x80\x81", 21, "\xe3\x81\x8c", 3, "\xe3\x83\xaf\xe3\x82\xbf\xe3\x82\xb7\xe3\x81\xaf\xe4\xbb\x8a\xe3\x80\x81<tmpstr>\xe3\x81\x8c" },
+        { "", 0, "\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 24, "<tmpstr>\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" },
+        { "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8c", 9, "\xe3\x81\x8b\xe2\x80\xa6\xe2\x80\xa6", 9, "\xe3\x81\x93\xe3\x82\x8c\xe3\x81\x8c<tmpstr>\xe3\x81\x8b\xe2\x80\xa6\xe2\x80\xa6" },
+        { "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf", 9, "\xe3\x81\x8b\xef\xbc\x9f", 6, "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf<tmpstr>\xe3\x81\x8b\xef\xbc\x9f" },
+        { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xef\xbc\x9f", 21, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xef\xbc\x9f" },
+        { "\xe3\x81\xbe\xe3\x81\x95\xe3\x81\x8b", 9, "\xe3\x82\x92", 3, "\xe3\x81\xbe\xe3\x81\x95\xe3\x81\x8b<tmpstr>\xe3\x82\x92" },
+        { "\xe3\x81\x95\xe3\x81\x99\xe3\x81\x8c", 9, "\xe3\x81\xa0", 3, "\xe3\x81\x95\xe3\x81\x99\xe3\x81\x8c<tmpstr>\xe3\x81\xa0" },
+        { "", 0, "\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xa7\xe3\x81\x95", 15, "<tmpstr>\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xa7\xe3\x81\x95" },
+        { "", 0, "\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 15, "<tmpstr>\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" },
+        { "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf", 9, "", 0, "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf<tmpstr>" },
+        { "", 0, "\xe3\x81\xa0\xe3\x81\xad\xef\xbc\x81", 9, "<tmpstr>\xe3\x81\xa0\xe3\x81\xad\xef\xbc\x81" },
+        { "", 0, "\xe3\x80\x81", 3, "<tmpstr>\xe3\x80\x81" }
+    };
+    for (size_t i = 0; i < sizeof(s_tmpstr_rules) / sizeof(s_tmpstr_rules[0]); i++) {
+        const struct TmpstrRule* r = &s_tmpstr_rules[i];
+        if (len > r->pfx_len + r->sfx_len) {
+            if ((r->pfx_len == 0 || memcmp(orig, r->pfx, r->pfx_len) == 0) &&
+                (r->sfx_len == 0 || memcmp(orig + len - r->sfx_len, r->sfx, r->sfx_len) == 0)) {
+                size_t item_len = len - r->pfx_len - r->sfx_len;
+                if (item_len > 0 && item_len < 128) {
+                    char item_jp[128];
+                    memcpy(item_jp, orig + r->pfx_len, item_len);
+                    item_jp[item_len] = '\0';
+                    const char* item_th = lookup_translation(item_jp);
+                    if (!item_th) item_th = item_jp;
+                    const char* templ = lookup_translation(r->templ_key);
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<tmpstr>", item_th, buf, sizeof(s_dynamic_buffers[0]))) {
+                            return buf;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* 13. Dynamic <npcname> Matching */
+    /* Pattern A: <npc>と食事の約束をしたんだった！ */
+    /* "と食事の約束をしたんだった！" in UTF-8: \xe3\x81\xa8\xe9\xa3\x9f\xe4\xba\x8b\xe3\x81\xae\xe7\xb4\x84\xe6\x9d\x9f\xe3\x82\x92\xe3\x81\x97\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa0\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81 (39 bytes) */
+    static const char s_sfx_meal[] = "\xe3\x81\xa8\xe9\xa3\x9f\xe4\xba\x8b\xe3\x81\xae\xe7\xb4\x84\xe6\x9d\x9f\xe3\x82\x92\xe3\x81\x97\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa0\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81";
+    if (len > 39 && memcmp(orig + len - 39, s_sfx_meal, 39) == 0) {
+        size_t nlen = len - 39;
+        if (nlen > 0 && nlen < 64) {
+            char npc_jp[64];
+            memcpy(npc_jp, orig, nlen);
+            npc_jp[nlen] = '\0';
+            const char* npc_th = lookup_translation(npc_jp);
+            if (!npc_th) npc_th = npc_jp;
+            const char* templ = lookup_translation("<npcname>と食事の約束をしたんだった！");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<npcname>", npc_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* Pattern B: <npc>とお泊りの約束したんだった！ */
+    /* "とお泊りの約束したんだった！" in UTF-8: \xe3\x81\xa8\xe3\x81\x8a\xe6\xb3\x8a\xe3\x82\x8a\xe3\x81\xae\xe7\xb4\x84\xe6\x9d\x9f\xe3\x81\x97\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa0\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81 (42 bytes) */
+    static const char s_sfx_stay[] = "\xe3\x81\xa8\xe3\x81\x8a\xe6\xb3\x8a\xe3\x82\x8a\xe3\x81\xae\xe7\xb4\x84\xe6\x9d\x9f\xe3\x81\x97\xe3\x81\x9f\xe3\x82\x93\xe3\x81\xa0\xe3\x81\xa3\xe3\x81\x9f\xef\xbc\x81";
+    if (len > 42 && memcmp(orig + len - 42, s_sfx_stay, 42) == 0) {
+        size_t nlen = len - 42;
+        if (nlen > 0 && nlen < 64) {
+            char npc_jp[64];
+            memcpy(npc_jp, orig, nlen);
+            npc_jp[nlen] = '\0';
+            const char* npc_th = lookup_translation(npc_jp);
+            if (!npc_th) npc_th = npc_jp;
+            const char* templ = lookup_translation("<npcname>とお泊りの約束したんだった！");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<npcname>", npc_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* Pattern C: 今日は、<npc>と */
+    /* "今日は、" in UTF-8: \xe4\xbb\x8a\xe6\x97\xa5\xe3\x81\xaf\xe3\x80\x81 (12 bytes), "と" is \xe3\x81\xa8 (3 bytes) */
+    if (len > 15 && memcmp(orig, "\xe4\xbb\x8a\xe6\x97\xa5\xe3\x81\xaf\xe3\x80\x81", 12) == 0 &&
+        memcmp(orig + len - 3, "\xe3\x81\xa8", 3) == 0) {
+        size_t nlen = len - 15;
+        if (nlen > 0 && nlen < 64) {
+            char npc_jp[64];
+            memcpy(npc_jp, orig + 12, nlen);
+            npc_jp[nlen] = '\0';
+            const char* npc_th = lookup_translation(npc_jp);
+            if (!npc_th) npc_th = npc_jp;
+            const char* templ = lookup_translation("今日は、<npcname>と");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<npcname>", npc_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 14. Dynamic Dog Name Extraction & Patterns */
+    /* Pattern A: この子は<dog>ってお名前なの */
+    /* "この子は" in UTF-8: \xe3\x81\x93\xe3\x81\xae\xe5\xad\x90\xe3\x81\xaf (12 bytes) */
+    /* "ってお名前なの" in UTF-8: \xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8a\xe5\x90\x8d\xe5\x89\x8d\xe3\x81\xaa\xe3\x81\xae (21 bytes) */
+    if (len > 33 && memcmp(orig, "\xe3\x81\x93\xe3\x81\xae\xe5\xad\x90\xe3\x81\xaf", 12) == 0 &&
+        memcmp(orig + len - 21, "\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8a\xe5\x90\x8d\xe5\x89\x8d\xe3\x81\xaa\xe3\x81\xae", 21) == 0) {
+        size_t dlen = len - 33;
+        if (dlen > 0 && dlen < sizeof(g_active_dog_name)) {
+            memcpy(g_active_dog_name, orig + 12, dlen);
+            g_active_dog_name[dlen] = '\0';
+            log_msg("[DOG NAME] Learned active dog name: %s", g_active_dog_name);
+            const char* templ = lookup_translation("この子は<dog>ってお名前なの");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<dog>", g_active_dog_name, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* Pattern B: <dog>を育てることになった */
+    /* "を育てることになった" in UTF-8: \xe3\x82\x92\xe8\x82\xb2\xe3\x81\xa6\xe3\x82\x8b\xe3\x81\x93\xe3\x81\xa8\xe3\x81\xab\xe3\x81\xaa\xe3\x81\xa3\xe3\x81\x9f" (33 bytes) */
+    if (len > 33 && memcmp(orig + len - 33, "\xe3\x82\x92\xe8\x82\xb2\xe3\x81\xa6\xe3\x82\x8b\xe3\x81\x93\xe3\x81\xa8\xe3\x81\xab\xe3\x81\xaa\xe3\x81\xa3\xe3\x81\x9f", 33) == 0) {
+        size_t dlen = len - 33;
+        if (dlen > 0 && dlen < sizeof(g_active_dog_name)) {
+            memcpy(g_active_dog_name, orig, dlen);
+            g_active_dog_name[dlen] = '\0';
+            log_msg("[DOG NAME] Learned active dog name: %s", g_active_dog_name);
+            const char* templ = lookup_translation("<dog>を育てることになった");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<dog>", g_active_dog_name, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* Pattern C: <dog>が呼んでる…… */
+    /* "が呼んでる……" in UTF-8: \xe3\x81\x8c\xe5\x91\xbc\xe3\x82\x93\xe3\x81\xa7\xe3\x82\x8b\xe2\x80\xa6\xe2\x80\xa6 (21 bytes) */
+    if (len > 21 && memcmp(orig + len - 21, "\xe3\x81\x8c\xe5\x91\xbc\xe3\x82\x93\xe3\x81\xa7\xe3\x82\x8b\xe2\x80\xa6\xe2\x80\xa6", 21) == 0) {
+        size_t dlen = len - 21;
+        if (dlen > 0 && dlen < sizeof(g_active_dog_name)) {
+            memcpy(g_active_dog_name, orig, dlen);
+            g_active_dog_name[dlen] = '\0';
+            log_msg("[DOG NAME] Learned active dog name: %s", g_active_dog_name);
+            const char* templ = lookup_translation("<dog>が呼んでる……");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<dog>", g_active_dog_name, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* Pattern D: <dog>についていってみよう…… */
+    /* "についていってみよう……" in UTF-8: \xe3\x81\xab\xe3\x81\xa4\xe3\x81\x84\xe3\x81\xa6\xe3\x81\x84\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xbf\xe3\x82\x88\xe3\x81\x86\xe2\x80\xa6\xe2\x80\xa6 (33 bytes) */
+    if (len > 33 && memcmp(orig + len - 33, "\xe3\x81\xab\xe3\x81\xa4\xe3\x81\x84\xe3\x81\xa6\xe3\x81\x84\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xbf\xe3\x82\x88\xe3\x81\x86\xe2\x80\xa6\xe2\x80\xa6", 33) == 0) {
+        size_t dlen = len - 33;
+        if (dlen > 0 && dlen < sizeof(g_active_dog_name)) {
+            memcpy(g_active_dog_name, orig, dlen);
+            g_active_dog_name[dlen] = '\0';
+            log_msg("[DOG NAME] Learned active dog name: %s", g_active_dog_name);
+            const char* templ = lookup_translation("<dog>についていってみよう……");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<dog>", g_active_dog_name, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+
+    /* 15. Dynamic Bulletin Board Delivery Quest: "<item> <count>個の納品" */
+    /* "個の納品" in UTF-8: \xe5\x80\x8b\xe3\x81\xae\xe7\xb4\x8d\xe5\x93\x81 (15 bytes) */
+    if (len > 18 && memcmp(orig + len - 15, "\xe5\x80\x8b\xe3\x81\xae\xe7\xb4\x8d\xe5\x93\x81", 15) == 0) {
+        const char* p_ko = orig + len - 15;
+        const char* p_d = p_ko - 1;
+        while (p_d >= orig && *p_d >= '0' && *p_d <= '9') {
+            p_d--;
+        }
+        if (p_d < p_ko - 1 && p_d > orig && (*p_d == ' ' || (p_d >= orig + 2 && (unsigned char)p_d[-2] == 0xe3 && (unsigned char)p_d[-1] == 0x80 && (unsigned char)p_d[0] == 0x80))) {
+            const char* item_end = (*p_d == ' ') ? p_d : (p_d - 2);
+            size_t item_len = (size_t)(item_end - orig);
+            size_t cnt_len = (size_t)(p_ko - (p_d + 1));
+            if (item_len > 0 && item_len < 128 && cnt_len > 0 && cnt_len < 16) {
+                char item_jp[128];
+                memcpy(item_jp, orig, item_len);
+                item_jp[item_len] = '\0';
+                char cnt_str[16];
+                memcpy(cnt_str, p_d + 1, cnt_len);
+                cnt_str[cnt_len] = '\0';
+
+                const char* item_th = lookup_translation(item_jp);
+                if (!item_th) item_th = item_jp;
+
+                const char* templ = lookup_translation("<value 1> <value 2>個の納品");
+                if (templ) {
+                    LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                    char* buf = s_dynamic_buffers[b_idx & 3];
+                    if (replace_str(templ, "<value 1>", item_th, temp1, sizeof(temp1)) &&
+                        replace_str(temp1, "<value 2>", cnt_str, buf, sizeof(s_dynamic_buffers[0]))) {
+                        return buf;
+                    }
+                }
+            }
+        }
+    }
+
+    /* 16. Dynamic Bulletin Board Headers: 依頼人： / 物品： / 個数： / 一言： */
+    /* "依頼人：" in UTF-8: \xe4\xbe\x9d\xe9\xa0\xbc\xe4\xba\xba\xef\xbc\x9a (12 bytes) */
+    if (len > 12 && memcmp(orig, "\xe4\xbe\x9d\xe9\xa0\xbc\xe4\xba\xba\xef\xbc\x9a", 12) == 0) {
+        const char* val_jp = orig + 12;
+        const char* val_th = lookup_translation(val_jp);
+        if (!val_th) val_th = val_jp;
+        const char* templ = lookup_translation("依頼人：<value 1>");
+        if (templ) {
+            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+            char* buf = s_dynamic_buffers[b_idx & 3];
+            if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+        }
+    }
+    /* "物品：" in UTF-8: \xe7\x89\xa9\xe5\x93\x81\xef\xbc\x9a (9 bytes) */
+    if (len > 9 && memcmp(orig, "\xe7\x89\xa9\xe5\x93\x81\xef\xbc\x9a", 9) == 0) {
+        const char* val_jp = orig + 9;
+        const char* val_th = lookup_translation(val_jp);
+        if (!val_th) val_th = val_jp;
+        const char* templ = lookup_translation("物品：<value 1>");
+        if (templ) {
+            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+            char* buf = s_dynamic_buffers[b_idx & 3];
+            if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+        }
+    }
+    /* "個数：" in UTF-8: \xe5\x80\x8b\xe6\x95\xb0\xef\xbc\x9a (9 bytes) ... ends with "個" (\xe5\x80\x8b, 3 bytes) */
+    if (len > 12 && memcmp(orig, "\xe5\x80\x8b\xe6\x95\xb0\xef\xbc\x9a", 9) == 0 &&
+        memcmp(orig + len - 3, "\xe5\x80\x8b", 3) == 0) {
+        size_t nlen = len - 12;
+        if (nlen > 0 && nlen < 16) {
+            char num_str[16];
+            memcpy(num_str, orig + 9, nlen);
+            num_str[nlen] = '\0';
+            const char* templ = lookup_translation("個数：<value 1>個");
+            if (templ) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 3];
+                if (replace_str(templ, "<value 1>", num_str, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+            }
+        }
+    }
+    /* "一言：" in UTF-8: \xe4\xb8\x80\xe8\xa8\x80\xef\xbc\x9a (9 bytes) */
+    if (len > 9 && memcmp(orig, "\xe4\xb8\x80\xe8\xa8\x80\xef\xbc\x9a", 9) == 0) {
+        const char* val_jp = orig + 9;
+        const char* val_th = lookup_translation(val_jp);
+        if (!val_th) val_th = val_jp;
+        const char* templ = lookup_translation("一言：<value 1>");
+        if (templ) {
+            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+            char* buf = s_dynamic_buffers[b_idx & 3];
+            if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
+        }
+    }
+
+    /* 17. Dynamic Quest Tracker HUD: "<item>を<count>個<npc>へ届けよう" */
+    /* "へ届けよう" in UTF-8: \xe3\x81\xb8\xe5\xb1\x8a\xe3\x81\x91\xe3\x82\x88\xe3\x81\x86 (15 bytes) */
+    if (len > 24 && memcmp(orig + len - 15, "\xe3\x81\xb8\xe5\xb1\x8a\xe3\x81\x91\xe3\x82\x88\xe3\x81\x86", 15) == 0) {
+        /* Find "を" (\xe3\x82\x92, 3 bytes) and "個" (\xe5\x80\x8b, 3 bytes) */
+        const char* p_wo = strstr(orig, "\xe3\x82\x92");
+        if (p_wo && p_wo > orig) {
+            const char* p_ko = strstr(p_wo + 3, "\xe5\x80\x8b");
+            if (p_ko && p_ko > p_wo + 3) {
+                size_t item_len = (size_t)(p_wo - orig);
+                size_t cnt_len = (size_t)(p_ko - (p_wo + 3));
+                size_t npc_len = (size_t)((orig + len - 15) - (p_ko + 3));
+                if (item_len > 0 && item_len < 128 && cnt_len > 0 && cnt_len < 16 && npc_len > 0 && npc_len < 64) {
+                    char item_jp[128], cnt_str[16], npc_jp[64];
+                    memcpy(item_jp, orig, item_len); item_jp[item_len] = '\0';
+                    memcpy(cnt_str, p_wo + 3, cnt_len); cnt_str[cnt_len] = '\0';
+                    memcpy(npc_jp, p_ko + 3, npc_len); npc_jp[npc_len] = '\0';
+
+                    const char* item_th = lookup_translation(item_jp); if (!item_th) item_th = item_jp;
+                    const char* npc_th = lookup_translation(npc_jp); if (!npc_th) npc_th = npc_jp;
+
+                    const char* templ = lookup_translation("<value 1>を<value 2>個<value 3>へ届けよう");
+                    if (templ) {
+                        LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        if (replace_str(templ, "<value 1>", item_th, temp1, sizeof(temp1)) &&
+                            replace_str(temp1, "<value 2>", cnt_str, temp2, sizeof(temp2)) &&
+                            replace_str(temp2, "<value 3>", npc_th, buf, sizeof(s_dynamic_buffers[0]))) {
+                            return buf;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return NULL;
 }
 
 static void unescape_string(char* dest, const char* src)
@@ -296,13 +1926,280 @@ static void unescape_string(char* dest, const char* src)
     *dest = '\0';
 }
 
-static void load_translation_file(void)
+static void strip_br_tags(char* str)
 {
-    FILE* f = _wfopen(g_translation_path_w, L"rb");
-    if (!f) return;
+    char* src = str;
+    char* dst = str;
+    while (*src) {
+        if (_strnicmp(src, "<br/>", 5) == 0) {
+            src += 5;
+        } else if (_strnicmp(src, "</br>", 5) == 0) {
+            src += 5;
+        } else if (_strnicmp(src, "<br>", 4) == 0) {
+            src += 4;
+        } else {
+            *dst++ = *src++;
+        }
+    }
+    *dst = '\0';
+}
 
-    EnterCriticalSection(&g_cs);
-    clear_translation_table();
+static void strip_xml_tags(char* dst, const char* src, size_t dst_max)
+{
+    size_t d = 0;
+    while (*src && d + 1 < dst_max) {
+        if (*src == '<') {
+            const char* close = strchr(src, '>');
+            if (close) {
+                src = close + 1;
+                continue;
+            }
+        }
+        dst[d++] = *src++;
+    }
+    dst[d] = '\0';
+}
+
+static void strip_dialogue_tags(char* str)
+{
+    char* src = str;
+    char* dst = str;
+    while (*src) {
+        if (*src == '<') {
+            if (_strnicmp(src, "<cmd", 4) != 0) {
+                char* close = strchr(src, '>');
+                if (close) {
+                    src = close + 1;
+                    continue;
+                }
+            }
+        }
+        *dst++ = *src++;
+    }
+    *dst = '\0';
+}
+
+static void register_reassembler_entry(const char* orig, const char* trans_with_tags, const char* cond, float scale)
+{
+    if (!orig || !trans_with_tags || *orig == '\0' || *trans_with_tags == '\0') return;
+
+    /* 1. Handle <player> */
+    const char* p_orig_player = strstr(orig, "<player>");
+    if (p_orig_player) {
+        char op[1024] = { 0 };
+        char os[1024] = { 0 };
+        size_t op_len = (size_t)(p_orig_player - orig);
+        if (op_len < sizeof(op)) {
+            memcpy(op, orig, op_len);
+            op[op_len] = '\0';
+        }
+        strncpy(os, p_orig_player + 8, sizeof(os) - 1);
+
+        char tp[2048] = { 0 };
+        char ts[2048] = { 0 };
+        const char* p_trans_player = strstr(trans_with_tags, "<player>");
+        if (p_trans_player) {
+            size_t tp_len = (size_t)(p_trans_player - trans_with_tags);
+            if (tp_len < sizeof(tp)) {
+                memcpy(tp, trans_with_tags, tp_len);
+                tp[tp_len] = '\0';
+            }
+            strncpy(ts, p_trans_player + 8, sizeof(ts) - 1);
+        } else {
+            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
+            ts[0] = '\0';
+        }
+        strip_dialogue_tags(tp);
+        strip_dialogue_tags(ts);
+
+        add_reassembler_entry(op, "<player>", os, tp, "<player>", ts, cond, scale, 0);
+        return;
+    }
+
+    /* 2. Handle <dog> */
+    const char* p_orig_dog = strstr(orig, "<dog>");
+    if (p_orig_dog) {
+        char op[1024] = { 0 };
+        char os[1024] = { 0 };
+        size_t op_len = (size_t)(p_orig_dog - orig);
+        if (op_len < sizeof(op)) {
+            memcpy(op, orig, op_len);
+            op[op_len] = '\0';
+        }
+        strncpy(os, p_orig_dog + 5, sizeof(os) - 1);
+
+        char tp[2048] = { 0 };
+        char ts[2048] = { 0 };
+        const char* p_trans_dog = strstr(trans_with_tags, "<dog>");
+        if (p_trans_dog) {
+            size_t tp_len = (size_t)(p_trans_dog - trans_with_tags);
+            if (tp_len < sizeof(tp)) {
+                memcpy(tp, trans_with_tags, tp_len);
+                tp[tp_len] = '\0';
+            }
+            strncpy(ts, p_trans_dog + 5, sizeof(ts) - 1);
+        } else {
+            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
+            ts[0] = '\0';
+        }
+        strip_dialogue_tags(tp);
+        strip_dialogue_tags(ts);
+
+        add_reassembler_entry(op, "<dog>", os, tp, "<dog>", ts, cond, scale, 0);
+        return;
+    }
+
+    /* 3. Handle <strong>...</strong> */
+    const char* s1 = strstr(orig, "<strong>");
+    const char* s2 = s1 ? strstr(s1, "</strong>") : NULL;
+    if (s1 && s2 && s2 > s1 + 8) {
+        char op[1024] = { 0 };
+        char om[1024] = { 0 };
+        char os[1024] = { 0 };
+        size_t op_len = (size_t)(s1 - orig);
+        if (op_len < sizeof(op)) {
+            memcpy(op, orig, op_len);
+            op[op_len] = '\0';
+        }
+        size_t om_len = (size_t)(s2 - (s1 + 8));
+        if (om_len < sizeof(om)) {
+            memcpy(om, s1 + 8, om_len);
+            om[om_len] = '\0';
+        }
+        strncpy(os, s2 + 9, sizeof(os) - 1);
+
+        char tp[2048] = { 0 };
+        char tm[2048] = { 0 };
+        char ts[2048] = { 0 };
+        const char* t1 = strstr(trans_with_tags, "<strong>");
+        const char* t2 = t1 ? strstr(t1, "</strong>") : NULL;
+        if (t1 && t2 && t2 > t1 + 8) {
+            size_t tp_len = (size_t)(t1 - trans_with_tags);
+            if (tp_len < sizeof(tp)) {
+                memcpy(tp, trans_with_tags, tp_len);
+                tp[tp_len] = '\0';
+            }
+            size_t tm_len = (size_t)(t2 - (t1 + 8));
+            if (tm_len < sizeof(tm)) {
+                memcpy(tm, t1 + 8, tm_len);
+                tm[tm_len] = '\0';
+            }
+            strncpy(ts, t2 + 9, sizeof(ts) - 1);
+        } else {
+            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
+        }
+        strip_dialogue_tags(tp);
+        strip_dialogue_tags(tm);
+        strip_dialogue_tags(ts);
+
+        add_reassembler_entry(op, om, os, tp, tm, ts, cond, scale, 1);
+        if (om[0] != '\0' && tm[0] != '\0') {
+            insert_translation_ex(om, cond, scale, tm, FALSE);
+        }
+        return;
+    }
+}
+
+static void tokenize_and_insert_tags(const char* orig_in, const char* trans_in, const char* cond, float scale, int* p_loaded)
+{
+    if (!orig_in || !trans_in || *orig_in == '\0' || *trans_in == '\0') return;
+
+    /* 1. Tokenize <strong>...</strong> (Highlighted terms in dialogue) - Only index highlighted keywords */
+    if (strstr(orig_in, "<strong>") && strstr(trans_in, "<strong>")) {
+        const char* p_orig = orig_in;
+        const char* p_trans = trans_in;
+        while (p_orig && p_trans) {
+            const char* s1 = strstr(p_orig, "<strong>");
+            const char* t1 = strstr(p_trans, "<strong>");
+            if (!s1 || !t1) break;
+            const char* s2 = strstr(s1, "</strong>");
+            const char* t2 = strstr(t1, "</strong>");
+            if (!s2 || !t2) break;
+
+            size_t k_mid_len = s2 - (s1 + 8);
+            size_t v_mid_len = t2 - (t1 + 8);
+            if (k_mid_len >= 6 && k_mid_len < 4096 && v_mid_len > 0 && v_mid_len < 4096) {
+                char k_mid[4096] = { 0 };
+                char v_mid[4096] = { 0 };
+                memcpy(k_mid, s1 + 8, k_mid_len);
+                memcpy(v_mid, t1 + 8, v_mid_len);
+                trim_str(k_mid);
+                trim_str(v_mid);
+                if (k_mid[0] != '\0' && v_mid[0] != '\0') {
+                    insert_translation_ex(k_mid, cond, scale, v_mid, FALSE);
+                    (*p_loaded)++;
+                }
+            }
+
+            p_orig = s2 + 9;
+            p_trans = t2 + 9;
+        }
+    }
+
+    /* 2. Tokenize <c ...>...</c> (Color tags in text) - Only index highlighted keywords */
+    if (strstr(orig_in, "<c ") && strstr(orig_in, "</c>") && strstr(trans_in, "</c>")) {
+        const char* s1 = strstr(orig_in, "<c ");
+        const char* s1_close = s1 ? strchr(s1, '>') : NULL;
+        const char* s2 = s1_close ? strstr(s1_close, "</c>") : NULL;
+
+        const char* t1 = strstr(trans_in, "<c ");
+        const char* t1_close = t1 ? strchr(t1, '>') : NULL;
+        const char* t2 = t1_close ? strstr(t1_close, "</c>") : NULL;
+
+        if (s1_close && s2 && t1_close && t2) {
+            size_t k_mid_len = s2 - (s1_close + 1);
+            size_t v_mid_len = t2 - (t1_close + 1);
+            if (k_mid_len >= 6 && k_mid_len < 4096 && v_mid_len > 0 && v_mid_len < 4096) {
+                char k_mid[4096] = { 0 };
+                char v_mid[4096] = { 0 };
+                memcpy(k_mid, s1_close + 1, k_mid_len);
+                memcpy(v_mid, t1_close + 1, v_mid_len);
+                trim_str(k_mid);
+                trim_str(v_mid);
+                if (k_mid[0] != '\0' && v_mid[0] != '\0') {
+                    insert_translation_ex(k_mid, cond, scale, v_mid, FALSE);
+                    (*p_loaded)++;
+                }
+            }
+        }
+    }
+
+    /* 3. Tokenize <cmd ...> (Prompt after controller button icons) - Exclude short particles/punctuation */
+    const char* cmd_pos = strstr(orig_in, "<cmd");
+    if (cmd_pos) {
+        const char* last_gt = strrchr(cmd_pos, '>');
+        if (last_gt && *(last_gt + 1) != '\0') {
+            char k_cmd_post[4096] = { 0 };
+            strncpy(k_cmd_post, last_gt + 1, sizeof(k_cmd_post) - 1);
+            trim_str(k_cmd_post);
+            /* Only index meaningful phrases (at least 6 bytes), never bare particles like で、, か, で, に, etc. */
+            if (strlen(k_cmd_post) >= 6 &&
+                strcmp(k_cmd_post, "で、") != 0 &&
+                strcmp(k_cmd_post, "か") != 0 &&
+                strcmp(k_cmd_post, "で") != 0 &&
+                strcmp(k_cmd_post, "に") != 0 &&
+                strcmp(k_cmd_post, "を") != 0 &&
+                strcmp(k_cmd_post, "は") != 0 &&
+                strcmp(k_cmd_post, "と") != 0) {
+                const char* trans_cmd = strstr(trans_in, "<cmd");
+                const char* trans_last_gt = trans_cmd ? strrchr(trans_cmd, '>') : NULL;
+                const char* v_after = trans_last_gt ? (trans_last_gt + 1) : trans_in;
+                char v_cmd_post[4096] = { 0 };
+                strncpy(v_cmd_post, v_after, sizeof(v_cmd_post) - 1);
+                trim_str(v_cmd_post);
+                if (v_cmd_post[0] != '\0') {
+                    insert_translation_ex(k_cmd_post, cond, scale, v_cmd_post, FALSE);
+                    (*p_loaded)++;
+                }
+            }
+        }
+    }
+}
+
+static int parse_and_insert_translation_file(const wchar_t* path_w)
+{
+    FILE* f = _wfopen(path_w, L"rb");
+    if (!f) return 0;
 
     char line[16384];
     int loaded = 0;
@@ -339,11 +2236,125 @@ static void load_translation_file(void)
         unescape_string(orig, orig_raw);
         unescape_string(trans, trans_raw);
 
-        insert_translation(orig, trans);
+        char trans_with_tags[16384];
+        strncpy(trans_with_tags, trans, sizeof(trans_with_tags) - 1);
+        trans_with_tags[sizeof(trans_with_tags) - 1] = '\0';
+        strip_br_tags(trans_with_tags);
+
+        strip_br_tags(trans);
+        strip_dialogue_tags(trans);
+
+        char cond[256] = { 0 };
+        float scale = 1.0f;
+
+        /* Extract leading [ANCHOR] if present, e.g. [設定を初期状態に戻します] うん */
+        if (orig[0] == '[' && strncmp(orig, "[SCALE:", 7) != 0 && strncmp(orig, "[IF:", 4) != 0) {
+            char* tag_end = strchr(orig, ']');
+            if (tag_end && *(tag_end + 1) != '\0') {
+                size_t clen = tag_end - (orig + 1);
+                if (clen > 0 && clen < sizeof(cond)) {
+                    memcpy(cond, orig + 1, clen);
+                    cond[clen] = '\0';
+                }
+                char* after = tag_end + 1;
+                while (*after == ' ' || *after == '\t') after++;
+                memmove(orig, after, strlen(after) + 1);
+            }
+        }
+
+        /* Extract [IF:...] condition */
+        char* if_tag = strstr(orig, "[IF:");
+        if (if_tag) {
+            char* tag_end = strchr(if_tag, ']');
+            if (tag_end) {
+                size_t clen = tag_end - (if_tag + 4);
+                if (clen > 0 && clen < sizeof(cond)) {
+                    memcpy(cond, if_tag + 4, clen);
+                    cond[clen] = '\0';
+                }
+                memset(if_tag, ' ', (tag_end - if_tag + 1));
+            }
+        }
+
+        /* Extract [SCALE:...] factor */
+        char* sc_tag = strstr(orig, "[SCALE:");
+        if (sc_tag) {
+            char* tag_end = strchr(sc_tag, ']');
+            if (tag_end) {
+                float sc = (float)atof(sc_tag + 7);
+                if (sc > 0.05f && sc < 10.0f) {
+                    scale = sc;
+                }
+                memset(sc_tag, ' ', (tag_end - sc_tag + 1));
+            }
+        }
+
+        /* Trim trailing whitespace from orig after stripping tags */
+        int orig_len = (int)strlen(orig);
+        while (orig_len > 0 && (orig[orig_len - 1] == ' ' || orig[orig_len - 1] == '\t')) {
+            orig[orig_len - 1] = '\0';
+            orig_len--;
+        }
+
+        if (orig[0] == '\0') continue;
+
+        insert_translation(orig, cond[0] != '\0' ? cond : NULL, scale, trans);
         loaded++;
+
+        /* Register in Smart Sentence Reassembler (<player>, <dog>, <strong>) */
+        register_reassembler_entry(orig, trans_with_tags, cond[0] != '\0' ? cond : NULL, scale);
+
+        /* Auto-tokenize and index tags: <strong>, <c>, <player>, <cmd> */
+        tokenize_and_insert_tags(orig, trans_with_tags, cond[0] != '\0' ? cond : NULL, scale, &loaded);
+
+        /* Dual indexing: If orig has tags (e.g. <cmd ...>で、目の前にある), also index clean text */
+        if (strchr(orig, '<') && strchr(orig, '>')) {
+            char clean_orig[16384];
+            strip_xml_tags(clean_orig, orig, sizeof(clean_orig));
+            char* co_p = clean_orig;
+            while (*co_p == ' ' || *co_p == '\t') co_p++;
+            int co_len = (int)strlen(co_p);
+            while (co_len > 0 && (co_p[co_len - 1] == ' ' || co_p[co_len - 1] == '\t')) {
+                co_p[co_len - 1] = '\0';
+                co_len--;
+            }
+            if (co_len > 0 && strcmp(co_p, orig) != 0) {
+                char clean_trans[16384];
+                strip_xml_tags(clean_trans, trans, sizeof(clean_trans));
+                insert_translation(co_p, cond[0] != '\0' ? cond : NULL, scale, clean_trans);
+                loaded++;
+            }
+        }
     }
 
     fclose(f);
+    return loaded;
+}
+
+static void load_translation_file(void)
+{
+    EnterCriticalSection(&g_cs);
+    clear_translation_table();
+    int loaded = 0;
+
+    /* 1. Load primary translation.txt */
+    loaded += parse_and_insert_translation_file(g_translation_path_w);
+
+    /* 2. Load modular translations from translations\ folder if it exists */
+    wchar_t trans_pattern_w[MAX_PATH];
+    swprintf(trans_pattern_w, MAX_PATH, L"%ls\\translations\\*.txt", g_mod_dir_w);
+    WIN32_FIND_DATAW ffd;
+    HANDLE hFind = FindFirstFileW(trans_pattern_w, &ffd);
+    if (hFind != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                wchar_t sub_path_w[MAX_PATH];
+                swprintf(sub_path_w, MAX_PATH, L"%ls\\translations\\%ls", g_mod_dir_w, ffd.cFileName);
+                loaded += parse_and_insert_translation_file(sub_path_w);
+            }
+        } while (FindNextFileW(hFind, &ffd));
+        FindClose(hFind);
+    }
 
     WIN32_FILE_ATTRIBUTE_DATA fad;
     if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
@@ -351,7 +2362,7 @@ static void load_translation_file(void)
     }
 
     LeaveCriticalSection(&g_cs);
-    log_msg("Loaded %d translation entries from %ls", loaded, g_translation_path_w);
+    log_msg("Loaded %d translation entries, %d reassembler entries (translation.txt and translations folder)", loaded, g_reassembler_count);
 }
 
 static void check_hot_reload_translation(void)
@@ -359,130 +2370,37 @@ static void check_hot_reload_translation(void)
     WIN32_FILE_ATTRIBUTE_DATA fad;
     if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
         if (CompareFileTime(&fad.ftLastWriteTime, &g_trans_filetime) != 0) {
-            log_msg("translation.txt changed on disk! Hot-reloading translations...");
+            log_msg("translation.txt changed on disk, hot-reloading...");
             load_translation_file();
         }
     }
 }
 
-static const char* lookup_exact_translation(const char* orig)
+static BOOL is_safe_str(const char* s, int max_len)
 {
-    if (!orig || g_trans_count == 0) return NULL;
-    uint32_t h = hash_str(orig);
-    uint32_t bucket = h % HASH_TABLE_SIZE;
-
-    TransNode* node = g_trans_table[bucket];
-    while (node) {
-        if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            return node->trans;
+    if (!s || (uintptr_t)s < 0x10000) return FALSE;
+    if (s[0] == '\0') return FALSE;
+    int len = 0;
+    int printable = 0;
+    while (len < max_len && s[len] != '\0') {
+        unsigned char c = (unsigned char)s[len];
+        if (c >= 0x20 || c >= 0x80) {
+            printable++;
         }
-        node = node->next;
+        len++;
     }
-    return NULL;
-}
-
-static const char* lookup_translation(const char* orig)
-{
-    if (!orig) return NULL;
-
-    ULONGLONG now = GetTickCount64();
-    BOOL is_settings = (now - g_last_settings_time < 600);
-    BOOL is_save = (now - g_last_save_time < 600);
-
-    /* 1. Tagged scene match if defined in translation.txt:
-     * e.g. [SETTINGS] なし=ปิด
-     * e.g. [SAVE] なし=ช่องว่าง
-     */
-    if (is_settings) {
-        char tagged[512];
-        snprintf(tagged, sizeof(tagged), "[SETTINGS] %s", orig);
-        const char* rep = lookup_exact_translation(tagged);
-        if (rep) return rep;
-    } else if (is_save) {
-        char tagged[512];
-        snprintf(tagged, sizeof(tagged), "[SAVE] %s", orig);
-        const char* rep = lookup_exact_translation(tagged);
-        if (rep) return rep;
-    }
-
-    /* 2. Built-in contextual collision resolution for common duplicate words:
-     * - In Settings menu: なし -> "ปิด", あり -> "เปิด"
-     * - In Save screen: なし -> "ช่องว่าง"
-     */
-    if (strcmp(orig, "なし") == 0) {
-        if (is_settings) {
-            return "\xef\x81\x88\xe0\xb8\x94"; /* PUA: ปิด */
-        }
-        if (is_save) {
-            return "\xef\x85\xb9\xe0\xb8\xad\xe0\xb8\x87\xef\x86\x96\xe0\xb8\xb2\xe0\xb8\x87"; /* PUA: ช่องว่าง */
-        }
-    }
-    if (strcmp(orig, "あり") == 0 && is_settings) {
-        return "\xe0\xb9\x80\xef\x81\x88\xe0\xb8\x94"; /* PUA: เปิด */
-    }
-
-    /* 3. Regular exact match from translation.txt */
-    const char* rep = lookup_exact_translation(orig);
-    if (rep) return rep;
-
-    return NULL;
+    return (len > 0 && printable > 0);
 }
 
 static void process_captured_text(const char* str, const char* source)
 {
+    (void)source;
     if (!is_safe_str(str, 8192)) return;
+
+    update_name_screen_state_and_hotkeys(str);
 
     EnterCriticalSection(&g_cs);
     g_total_calls++;
-
-    if (!g_fraw) {
-        g_fraw = _wfopen(g_session_dump_log_path_w, L"w");
-        g_fraw_latest = _wfopen(g_dump_log_path_w, L"w");
-    }
-    if (g_fraw || g_fraw_latest) {
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-        if (g_fraw) {
-            fprintf(g_fraw, "[%02d:%02d:%02d] [%s] %s\n",
-                    st.wHour, st.wMinute, st.wSecond, source, str);
-            fflush(g_fraw);
-        }
-        if (g_fraw_latest) {
-            fprintf(g_fraw_latest, "[%02d:%02d:%02d] [%s] %s\n",
-                    st.wHour, st.wMinute, st.wSecond, source, str);
-            fflush(g_fraw_latest);
-        }
-    }
-
-    if (!is_seen_or_insert(str)) {
-        g_unique_count++;
-        if (!g_funique) {
-            g_funique = _wfopen(g_session_dump_unique_path_w, L"w");
-            g_funique_latest = _wfopen(g_dump_unique_path_w, L"w");
-        }
-        if (g_funique) {
-            fprintf(g_funique, "/* ID:%05d [%s] */ %s\n", g_unique_count, source, str);
-            fflush(g_funique);
-        }
-        if (g_funique_latest) {
-            fprintf(g_funique_latest, "/* ID:%05d [%s] */ %s\n", g_unique_count, source, str);
-            fflush(g_funique_latest);
-        }
-    }
-
-    if (strchr(str, '<') != NULL && strchr(str, '>') != NULL) {
-        if (!g_ftags) {
-            g_ftags = _wfopen(g_tags_log_path_w, L"a+");
-        }
-        if (g_ftags) {
-            SYSTEMTIME st;
-            GetLocalTime(&st);
-            fprintf(g_ftags, "[%02d:%02d:%02d] [%s] %s\n",
-                    st.wHour, st.wMinute, st.wSecond, source, str);
-            fflush(g_ftags);
-        }
-    }
-
     LeaveCriticalSection(&g_cs);
 }
 
@@ -496,7 +2414,7 @@ static BOOL has_japanese_utf8(const char* s)
     while (*p) {
         if (*p == 0xE3) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = b1 ? *(p + 2) : 0;
+            unsigned char b2 = *(p + 2);
             if (b1 != 0 && b2 != 0) {
                 /* Japanese punctuation (e.g. 、 。 「 」 『 』) U+3001..U+303F */
                 if (b1 == 0x80 && b2 >= 0x81 && b2 <= 0xBF) return TRUE;
@@ -508,12 +2426,11 @@ static BOOL has_japanese_utf8(const char* s)
                 if (b1 == 0x83 && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
                 /* Katakana Phonetic Extensions U+31F0..U+31FF */
                 if (b1 == 0x87 && b2 >= 0xB0 && b2 <= 0xBF) return TRUE;
-                p += 3;
-                continue;
+                p += 2;
             }
         } else if (*p >= 0xE4 && *p <= 0xE9) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = b1 ? *(p + 2) : 0;
+            unsigned char b2 = *(p + 2);
             if (b1 != 0 && b2 != 0) {
                 /* CJK Unified Ideographs (Kanji) U+4E00..U+9FFF */
                 if (*p == 0xE4) {
@@ -521,17 +2438,15 @@ static BOOL has_japanese_utf8(const char* s)
                 } else {
                     if (b1 >= 0x80 && b1 <= 0xBF && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
                 }
-                p += 3;
-                continue;
+                p += 2;
             }
         } else if (*p == 0xEF) {
             unsigned char b1 = *(p + 1);
-            unsigned char b2 = b1 ? *(p + 2) : 0;
+            unsigned char b2 = *(p + 2);
             if (b1 != 0 && b2 != 0) {
                 /* Fullwidth & Halfwidth Forms U+FF00..U+FFEF (excludes PUA 0xEF 0x80..0xA3) */
                 if (b1 >= 0xBC && b1 <= 0xBF && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
-                p += 3;
-                continue;
+                p += 2;
             }
         }
         p++;
@@ -562,38 +2477,37 @@ static void escape_string_for_dump(char* dest, size_t dest_sz, const char* src)
 
 static void log_missing_text(const char* str, const char* source)
 {
+    (void)source;
     if (!is_safe_str(str, 8192)) return;
 
     EnterCriticalSection(&g_cs);
     if (!is_missing_seen_or_insert(str)) {
         g_missing_count++;
-        if (!g_fmissing) {
-            g_fmissing = _wfopen(g_session_dump_missing_path_w, L"a+");
-        }
         if (!g_fmissing_latest) {
             g_fmissing_latest = _wfopen(g_dump_missing_path_w, L"a+");
         }
         char escaped[8192];
         escape_string_for_dump(escaped, sizeof(escaped), str);
 
-        const char* scene = get_current_scene_name();
-
-        if (g_fmissing) {
-            fprintf(g_fmissing, "// [MISSING:%05d %s Scene:%s]\n%s=\n\n", g_missing_count, source, scene, escaped);
-            fflush(g_fmissing);
-        }
+        SYSTEMTIME st;
+        GetLocalTime(&st);
         if (g_fmissing_latest) {
-            fprintf(g_fmissing_latest, "// [MISSING:%05d %s Scene:%s]\n%s=\n\n", g_missing_count, source, scene, escaped);
+            fprintf(g_fmissing_latest, "[%04d-%02d-%02d %02d:%02d:%02d] %s\n",
+                    st.wYear, st.wMonth, st.wDay,
+                    st.wHour, st.wMinute, st.wSecond,
+                    escaped);
             fflush(g_fmissing_latest);
         }
-        log_msg("[MISSING TEXT] Found untranslated Japanese text (count=%d, src=%s, scene=%s): %s",
-                g_missing_count, source, scene, escaped);
+        log_msg("[MISSING TEXT] [%04d-%02d-%02d %02d:%02d:%02d] %s",
+                st.wYear, st.wMonth, st.wDay,
+                st.wHour, st.wMinute, st.wSecond,
+                escaped);
     }
     LeaveCriticalSection(&g_cs);
 }
 
 /* ==================================================================
- * Virtual File System (VFS / File Redirection for Fonts & Textures)
+ * Virtual File System (VFS / File Redirection)
  * ================================================================== */
 #pragma pack(push, 1)
 typedef struct {
@@ -627,6 +2541,8 @@ typedef struct {
 static VfsEntry g_vfs[MAX_VFS_ENTRIES];
 static int g_vfs_count = 0;
 
+static HANDLE g_hDataDat = INVALID_HANDLE_VALUE;
+static HANDLE g_hMiscDat = INVALID_HANDLE_VALUE;
 static uint64_t g_toc_off_dat = 0;
 static uint64_t g_toc_off_misc = 0;
 static uint32_t g_count_dat = 0;
@@ -723,9 +2639,18 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
     wchar_t base_name_w[MAX_PATH];
     MultiByteToWideChar(CP_UTF8, 0, base_name, -1, base_name_w, MAX_PATH);
 
+    char win_vfs_name[MAX_PATH];
+    strncpy(win_vfs_name, vfs_name, sizeof(win_vfs_name) - 1);
+    win_vfs_name[sizeof(win_vfs_name) - 1] = '\0';
+    for (int k = 0; win_vfs_name[k]; k++) {
+        if (win_vfs_name[k] == '/') win_vfs_name[k] = '\\';
+    }
+    wchar_t win_vfs_name_w[MAX_PATH];
+    MultiByteToWideChar(CP_UTF8, 0, win_vfs_name, -1, win_vfs_name_w, MAX_PATH);
+
     wchar_t candidate[MAX_PATH];
 
-    /* 1. Mods\TextDump\<basename> */
+    /* 1. Mods\TextDump\<basename> (e.g. Mods\TextDump\font.dat) */
     swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -733,7 +2658,7 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 1b. Mods\TextDump\textures\<basename> */
+    /* 1b. Mods\TextDump\textures\<basename> (e.g. Mods\TextDump\textures\ui_1000_title01.nltx) */
     swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -741,7 +2666,23 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 2. Mods\Fonts\<basename> */
+    /* 1c. Mods\TextDump\title_elements\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\title_elements\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 1d. Mods\TextDump\database\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\database\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2. Mods\Fonts\<basename> (e.g. Mods\Fonts\font.dat or Mods\Fonts\KiwiMaru-Regular.ttf) */
     swprintf(candidate, MAX_PATH, L"%ls\\..\\Fonts\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -764,6 +2705,62 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         out_path_w[out_max - 1] = L'\0';
         return TRUE;
     }
+
+    /* 2d. Mods\<basename> (e.g. Mods\font.dat, Mods\talk.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2e. Mods\database\<basename> or Mods\Database\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\database\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\Database\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 3. Mods\TextDump\<vfs_name> (e.g. Mods\TextDump\data\database\font.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_mod_dir_w, win_vfs_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 4. Mods\<vfs_name> (e.g. Mods\data\database\font.dat) */
+    swprintf(candidate, MAX_PATH, L"%ls\\..\\%ls", g_mod_dir_w, win_vfs_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 5. <game_root>\script\<basename> (e.g. Village in the Shade\script\story_common.lub) */
+    swprintf(candidate, MAX_PATH, L"%ls\\script\\%ls", g_game_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 6. <game_root>\<vfs_name> */
+    swprintf(candidate, MAX_PATH, L"%ls\\%ls", g_game_dir_w, win_vfs_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* font.dat is patched dynamically in RAM to support all game versions */
 
     return FALSE;
 }
@@ -1463,6 +3460,25 @@ static BOOL WINAPI hk_ReadFile(
         return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
     }
 
+    uint64_t offset_log = 0;
+    if (lpOverlapped) {
+        offset_log = ((uint64_t)lpOverlapped->OffsetHigh << 32) | (uint64_t)lpOverlapped->Offset;
+    }
+    VfsEntry* v_log = lookup_vfs_by_offset(arch_id, offset_log);
+    if (v_log) {
+        log_file_access("[READ_ARCHIVE] %-16s Offset: 0x%08llX (%6u B) -> [%s]",
+                        get_arch_name(arch_id), (unsigned long long)offset_log, nNumberOfBytesToRead, v_log->name);
+    } else {
+        const FadSubFile* fs_log = (arch_id == 4) ? lookup_fad_subfile(offset_log) : NULL;
+        if (fs_log) {
+            log_file_access("[READ_ARCHIVE] %-16s Offset: 0x%08llX (%6u B) -> [%s]",
+                            get_arch_name(arch_id), (unsigned long long)offset_log, nNumberOfBytesToRead, fs_log->filename);
+        } else {
+            log_file_access("[READ_ARCHIVE] %-16s Offset: 0x%08llX (%6u B)",
+                            get_arch_name(arch_id), (unsigned long long)offset_log, nNumberOfBytesToRead);
+        }
+    }
+
     uint64_t offset = 0;
     if (lpOverlapped) {
         offset = ((uint64_t)lpOverlapped->OffsetHigh << 32) | (uint64_t)lpOverlapped->Offset;
@@ -1474,7 +3490,7 @@ static BOOL WINAPI hk_ReadFile(
         }
     }
 
-    /* 0. Check if the game is reading the TOC table */
+    /* 1. Check if the game is reading the TOC table */
     uint64_t toc_off = (arch_id == 1) ? g_toc_off_dat : g_toc_off_misc;
     if (toc_off != 0 && offset == toc_off) {
         BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
@@ -1519,64 +3535,155 @@ static BOOL WINAPI hk_ReadFile(
         return res;
     }
 
-    /* 1. Check if this is an access to a file in data.dat or misc_1_00.dat */
-    if (arch_id == 1 || arch_id == 2) {
-        VfsEntry* v = lookup_vfs_by_offset(arch_id, offset);
-        if (v) {
-            BOOL is_tex_db = (strstr(v->name, "data/database/texture.dat") != NULL);
-            BOOL is_font_db = (strstr(v->name, "data/database/font.dat") != NULL);
+    /* 1b. Check if the game is reading the FAD Header/TOC for resident_lang_jp.fad */
+    if (arch_id == 4 && g_fad_base_offset != 0 && offset == g_fad_base_offset && nNumberOfBytesToRead >= 0x4000) {
+        BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+        if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
+            DWORD transferred = 0;
+            if (GetOverlappedResult(hFile, lpOverlapped, &transferred, TRUE)) {
+                res = TRUE;
+                if (lpNumberOfBytesRead) *lpNumberOfBytesRead = transferred;
+                if (lpOverlapped->hEvent) {
+                    SetEvent(lpOverlapped->hEvent);
+                }
+            }
+        }
+        if (res && lpBuffer) {
+            int patched = 0;
+            size_t fad_sub_count = (size_t)g_fad_runtime_count;
+            for (size_t i = 0; i < fad_sub_count; i++) {
+                if (!g_fad_runtime_subfiles[i].has_fad_descriptor) continue;
 
-            wchar_t override_path_w[MAX_PATH];
-            long ext_size = 0;
-            BOOL has_override = find_override_file_w(v->name, override_path_w, MAX_PATH, &ext_size);
+                wchar_t override_path_w[MAX_PATH];
+                long ext_size = 0;
+                BOOL found = find_override_file_w(g_fad_runtime_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
+                if (!found && g_fad_runtime_subfiles[i].alt_filename) {
+                    found = find_override_file_w(g_fad_runtime_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
+                }
 
-            if (has_override || is_tex_db || is_font_db) {
-                if (lpOverlapped) {
-                    add_pending_io(
-                        hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
-                        override_path_w, ext_size, FALSE, 0, 0, v->name
-                    );
-                    return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
-                } else {
-                    BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
-                    if (res && lpBuffer) {
-                        if (is_tex_db) {
-                            patch_texture_database_in_ram(lpBuffer, nNumberOfBytesToRead);
-                        } else if (is_font_db) {
-                            patch_font_database_in_ram(lpBuffer, nNumberOfBytesToRead);
-                        } else if (has_override) {
-                            PendingIo pio = { 0 };
-                            pio.lpBuffer = lpBuffer;
-                            pio.bytes_requested = nNumberOfBytesToRead;
-                            wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
-                            pio.ext_size = ext_size;
-                            pio.is_fad_desc = FALSE;
-                            strncpy(pio.filename, v->name, 127);
-                            apply_vfs_payload(&pio);
+                if (found && ext_size > 0) {
+                    uint32_t target_rel_off = (uint32_t)(g_fad_runtime_subfiles[i].offset - g_fad_base_offset - 32);
+
+                    /* Walk FAD entry table in lpBuffer between 0x1018 and 0x3B00 in 32-byte strides */
+                    for (size_t pos = 0x1018; pos + 32 <= nNumberOfBytesToRead && pos < 0x4000; pos += 32) {
+                        uint32_t entry_off = *(uint32_t*)((char*)lpBuffer + pos + 8);
+                        if (entry_off == target_rel_off) {
+                            uint64_t* p_sz = (uint64_t*)((char*)lpBuffer + pos + 0);
+                            /* Needed entry size in table: ext_size + 64 bytes (aligned to 64 bytes) */
+                            uint64_t needed_sz = ((uint64_t)ext_size + 64 + 63) & ~63ULL;
+                            if (needed_sz > *p_sz) {
+                                log_msg("[VFS FAD TOC Patch] Expanding size for [%s]: %llu -> %llu bytes (rel_off=0x%X at TOC+0x%X)",
+                                        g_fad_runtime_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos);
+                                *p_sz = needed_sz;
+                                patched++;
+                            }
+                            break;
                         }
                     }
-                    return res;
                 }
+            }
+            if (patched > 0) {
+                log_msg("[VFS FAD TOC Patch] Successfully patched %d / %d FAD TOC entries in RAM!",
+                        patched, (int)(g_fad_runtime_count / 2));
+            }
+        }
+        return res;
+    }
+
+    /* 2. Check if the read offset matches an indexed resource file */
+    VfsEntry* entry = lookup_vfs_by_offset(arch_id, offset);
+    if (entry) {
+        if (strstr(entry->name, "data/database/font.dat")) {
+            log_msg("[VFS DETECT] Game requested [%s] at offset 0x%llX (size=%u)",
+                    entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    L"", 0, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] Font DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
+                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
+                    patch_font_database_in_ram(lpBuffer, bytes);
+                }
+                return res;
+            }
+        }
+
+        wchar_t override_path_w[MAX_PATH];
+        long ext_size = 0;
+        if (find_override_file_w(entry->name, override_path_w, MAX_PATH, &ext_size)) {
+            log_msg("[VFS OVERRIDE] Target [%s] (0x%llX) -> %ls (requested=%u, ext_size=%ld)",
+                    entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead, ext_size);
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    override_path_w, ext_size, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] [%s] (0x%llX) -> %ls (nBytes=%u)",
+                        entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    PendingIo pio = { 0 };
+                    pio.lpBuffer = lpBuffer;
+                    pio.bytes_requested = nNumberOfBytesToRead;
+                    wcsncpy(pio.override_path_w, override_path_w, MAX_PATH - 1);
+                    pio.ext_size = ext_size;
+                    pio.is_fad_desc = FALSE;
+                    strncpy(pio.filename, entry->name, 127);
+                    apply_vfs_payload(&pio);
+                }
+                return res;
+            }
+        } else if (strstr(entry->name, "data/database/texture.dat")) {
+            /* Patch texture database in memory to point to English/localized textures (as in Switch mod) */
+            if (lpOverlapped) {
+                add_pending_io(
+                    hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
+                    L"", 0, FALSE, 0, 0, entry->name
+                );
+                log_msg("[VFS ASYNC QUEUED] Texture DB memory patch queued for [%s] (0x%llX, nBytes=%u)",
+                        entry->name, (unsigned long long)offset, nNumberOfBytesToRead);
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+            } else {
+                BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                if (res && lpBuffer) {
+                    DWORD bytes = (lpNumberOfBytesRead ? *lpNumberOfBytesRead : nNumberOfBytesToRead);
+                    patch_texture_database_in_ram(lpBuffer, bytes);
+                }
+                return res;
             }
         }
     }
 
-    /* 2. Check if this is an access to a file inside fairy_1_00.dat */
+    /* 3. Check for FAD sub-file redirections (fairy_1_00.dat / resident_lang_jp.fad) */
     if (arch_id == 4) {
         const FadSubFile* fad_entry = lookup_fad_subfile(offset);
         if (fad_entry) {
             wchar_t override_path_w[MAX_PATH];
             long ext_size = 0;
-            BOOL has_override = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
-            if (!has_override && fad_entry->alt_filename) {
-                has_override = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
+            BOOL found = FALSE;
+            if (fad_entry->alt_filename) {
+                found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
+            }
+            if (!found) {
+                found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
             }
 
-            if (has_override) {
+            if (found) {
                 BOOL is_nltx = FALSE;
-                size_t flen = strlen(fad_entry->filename);
-                if (flen > 5 && strcmp(fad_entry->filename + flen - 5, ".nltx") == 0) {
-                    is_nltx = TRUE;
+                FILE* ftest = _wfopen(override_path_w, L"rb");
+                if (ftest) {
+                    char magic[8] = { 0 };
+                    size_t nread = fread(magic, 1, 8, ftest);
+                    fclose(ftest);
+                    is_nltx = (nread >= 8 && memcmp(magic, "NMPLTEX1", 8) == 0);
                 }
 
                 BOOL is_fad_desc = fad_entry->has_fad_descriptor && is_nltx;
@@ -1586,6 +3693,8 @@ static BOOL WINAPI hk_ReadFile(
                         hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
                         override_path_w, ext_size, is_fad_desc, fad_entry->width, fad_entry->height, fad_entry->filename
                     );
+                    log_msg("[VFS ASYNC QUEUED] FAD [%s] (0x%llX) -> %ls (nBytes=%u)",
+                            fad_entry->filename, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
                     return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
                 } else {
                     BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
@@ -1607,72 +3716,224 @@ static BOOL WINAPI hk_ReadFile(
         }
     }
 
+    /* Default: original ReadFile */
     return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
 }
 
 /* ==================================================================
- * Hook Definitions: Text Rendering (Context-Aware Pass-Through)
+ * Hook Definitions: Text Rendering & Dynamic Font Scaling
  * ================================================================== */
 typedef void (*t_putStr)(void* this_ptr, const char* str);
 static t_putStr fp_original_putStr = NULL;
 static t_putStr fp_original_putStrProp = NULL;
 static t_putStr fp_original_putStrAlign = NULL;
 
-static void hk_putStr(void* this_ptr, const char* str)
+static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, float scale)
 {
-    if (str) {
-        update_scene_tracker(str);
-        process_captured_text(str, "putStr");
+    if (!fn) return;
+    if (!this_ptr || (uintptr_t)this_ptr < 0x10000 || !str) {
+        fn(this_ptr, str);
+        return;
+    }
 
-        const char* rep = lookup_translation(str);
-        if (rep) {
-            InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-            str = rep;
-        } else {
-            if (has_japanese_utf8(str)) {
-                log_missing_text(str, "putStr");
-            }
+    if (scale > 0.05f && scale < 0.999f) {
+        float* pScaleX = (float*)((char*)this_ptr + 0x28);
+        float old_scale = *pScaleX;
+        if (old_scale > 0.001f && old_scale < 50.0f) {
+            *pScaleX = old_scale * scale;
+            fn(this_ptr, str);
+            *pScaleX = old_scale;
+            return;
         }
     }
-    fp_original_putStr(this_ptr, str);
+
+    fn(this_ptr, str);
+}
+
+/* ==================================================================
+ * Dynamic Word Replacements in RAM (Village Name Normalization)
+ * ================================================================== */
+typedef struct {
+    const char* pattern;
+    size_t pattern_len;
+    const char* replacement;
+    size_t replacement_len;
+} DynamicWordReplacement;
+
+static const DynamicWordReplacement kDynamicWordReplacements[] = {
+    /* 1. คาเรกัตสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 18,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 21,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 2. คาเระกัตสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 21,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 24,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 3. คาเรัตสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xef\x80\xa2\xe0\xb8\x95\xef\x82\xb3", 15,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 18,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 4. คาเระงะสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb0\xef\x82\xb3", 21,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb0\xe0\xb8\xaa\xe0\xb8\xb6", 24,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 5. คาเรงะสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x87\xe0\xb8\xb0\xef\x82\xb3", 18,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x87\xe0\xb8\xb0\xe0\xb8\xaa\xe0\xb8\xb6", 21,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 6. คางัตสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x86\xe0\xb8\x95\xef\x82\xb3", 12,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x87\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+
+    /* 7. คะงึสึ -> คากัตสึ */
+    { "\xe0\xb8\x84\xe0\xb8\xb0\xef\x82\x90\xef\x82\xb3", 9,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
+    { "\xe0\xb8\x84\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb6\xe0\xb8\xaa\xe0\xb8\xb6", 12,
+      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
+};
+
+static const char* apply_dynamic_word_replacements(const char* str)
+{
+    if (!str || str[0] == '\0') return str;
+
+    /* Fast check: all targets start with Thai 'ค' (\xe0\xb8\x84) */
+    if (strstr(str, "\xe0\xb8\x84") == NULL) {
+        return str;
+    }
+
+    /* Check if ANY target is actually present in str before modifying */
+    BOOL found_any = FALSE;
+    for (size_t i = 0; i < sizeof(kDynamicWordReplacements) / sizeof(kDynamicWordReplacements[0]); i++) {
+        if (strstr(str, kDynamicWordReplacements[i].pattern) != NULL) {
+            found_any = TRUE;
+            break;
+        }
+    }
+    if (!found_any) return str;
+
+    /* Perform replacement into a round-robin buffer */
+    #define NUM_REPLACE_BUFS 8
+    #define REPLACE_BUF_SIZE 4096
+    static char s_rep_bufs[NUM_REPLACE_BUFS][REPLACE_BUF_SIZE];
+    static LONG s_rep_idx = 0;
+
+    LONG idx = InterlockedIncrement(&s_rep_idx) & (NUM_REPLACE_BUFS - 1);
+    char* dst = s_rep_bufs[idx];
+    size_t dst_cap = REPLACE_BUF_SIZE - 1;
+    size_t dst_len = 0;
+
+    const char* src = str;
+    while (*src && dst_len < dst_cap) {
+        BOOL matched = FALSE;
+        for (size_t i = 0; i < sizeof(kDynamicWordReplacements) / sizeof(kDynamicWordReplacements[0]); i++) {
+            size_t pat_len = kDynamicWordReplacements[i].pattern_len;
+            if (strncmp(src, kDynamicWordReplacements[i].pattern, pat_len) == 0) {
+                size_t rep_len = kDynamicWordReplacements[i].replacement_len;
+                if (dst_len + rep_len <= dst_cap) {
+                    memcpy(dst + dst_len, kDynamicWordReplacements[i].replacement, rep_len);
+                    dst_len += rep_len;
+                }
+                src += pat_len;
+                matched = TRUE;
+                break;
+            }
+        }
+        if (!matched) {
+            dst[dst_len++] = *src++;
+        }
+    }
+    dst[dst_len] = '\0';
+    return dst;
+}
+
+static void hk_putStr(void* this_ptr, const char* str)
+{
+    process_captured_text(str, "putStr");
+    const char* orig_str = str;
+
+    float scale = 1.0f;
+    const char* rep = lookup_translation_ex(str, &scale);
+    if (rep) {
+        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
+        str = rep;
+    } else {
+        if (has_japanese_utf8(str)) {
+            log_missing_text(str, "putStr");
+        }
+    }
+
+    str = apply_dynamic_word_replacements(str);
+
+    call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
+    record_recent_string(orig_str);
 }
 
 static void hk_putStrProp(void* this_ptr, const char* str)
 {
-    if (str) {
-        update_scene_tracker(str);
-        process_captured_text(str, "putStrProp");
+    process_captured_text(str, "putStrProp");
+    const char* orig_str = str;
 
-        const char* rep = lookup_translation(str);
-        if (rep) {
-            InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-            str = rep;
-        } else {
-            if (has_japanese_utf8(str)) {
-                log_missing_text(str, "putStrProp");
-            }
+    float scale = 1.0f;
+    const char* rep = lookup_translation_ex(str, &scale);
+    if (rep) {
+        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
+        str = rep;
+    } else {
+        if (has_japanese_utf8(str)) {
+            log_missing_text(str, "putStrProp");
         }
     }
-    fp_original_putStrProp(this_ptr, str);
+
+    str = apply_dynamic_word_replacements(str);
+
+    call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
+    record_recent_string(orig_str);
 }
 
 static void hk_putStrAlign(void* this_ptr, const char* str)
 {
-    if (str) {
-        update_scene_tracker(str);
-        process_captured_text(str, "putStrAlign");
+    process_captured_text(str, "putStrAlign");
+    const char* orig_str = str;
 
-        const char* rep = lookup_translation(str);
-        if (rep) {
-            InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-            str = rep;
-        } else {
-            if (has_japanese_utf8(str)) {
-                log_missing_text(str, "putStrAlign");
-            }
+    float scale = 1.0f;
+    const char* rep = lookup_translation_ex(str, &scale);
+    if (rep) {
+        InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
+        str = rep;
+    } else {
+        if (has_japanese_utf8(str)) {
+            log_missing_text(str, "putStrAlign");
         }
     }
-    fp_original_putStrAlign(this_ptr, str);
+
+    str = apply_dynamic_word_replacements(str);
+
+    call_with_auto_scale(fp_original_putStrAlign, this_ptr, str, scale);
+    record_recent_string(orig_str);
+}
+
+/* ==================================================================
+ * Hook Definitions: Database String ID Interceptor
+ * ================================================================== */
+typedef void* (*t_GetStringByID)(void* rcx, uint32_t string_id, void* r8);
+static t_GetStringByID fp_original_GetStringByID = NULL;
+
+static void* hk_GetStringByID(void* rcx, uint32_t string_id, void* r8)
+{
+    log_id_access(string_id);
+    return fp_original_GetStringByID(rcx, string_id, r8);
 }
 
 /* ==================================================================
@@ -1699,6 +3960,13 @@ static const AddrSig kSigs[] = {
         .pat_hex = "488bc4555357488d68a14881ecb00000006683792600488bf9",
         .mask_hex = "ffffffffffffffffffffffffffffffffffffffffffffffffff",
         .off = 0
+    },
+    {
+        .name = "GetStringByID",
+        .kind = ADDRSIG_FUNC,
+        .pat_hex = "48895c240848897424104c89442418574883ec40",
+        .mask_hex = "ffffffffffffffffffffffffffffffffffffffff",
+        .off = 0
     }
 };
 
@@ -1714,6 +3982,7 @@ static void init_paths(void)
         wcscpy(g_mod_dir_w, L".");
     }
 
+    /* Game directory is parent of Mods: <game_root>\Mods\TextDump -> <game_root> */
     wchar_t game_root_w[MAX_PATH];
     wcsncpy(game_root_w, g_mod_dir_w, MAX_PATH - 1);
     wchar_t* s1 = wcsrchr(game_root_w, L'\\');
@@ -1730,63 +3999,45 @@ static void init_paths(void)
         wcscpy(g_game_dir_w, L".");
     }
 
+    /* Convert wide paths to UTF-8 for ANSI/display logging buffers */
     WideCharToMultiByte(CP_UTF8, 0, g_mod_dir_w, -1, g_mod_dir, sizeof(g_mod_dir), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_game_dir_w, -1, g_game_dir, sizeof(g_game_dir), NULL, NULL);
 
+    /* Construct all wide paths */
     swprintf(g_log_path_w, MAX_PATH, L"%ls\\text_dump.log", g_mod_dir_w);
     swprintf(g_dump_unique_path_w, MAX_PATH, L"%ls\\dump_unique.txt", g_mod_dir_w);
     swprintf(g_dump_log_path_w, MAX_PATH, L"%ls\\dump_log.txt", g_mod_dir_w);
     swprintf(g_tags_log_path_w, MAX_PATH, L"%ls\\tags_dump.log", g_mod_dir_w);
-    swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
-    swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
     swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+    swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
+    swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
+    swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
+    swprintf(g_custom_names_ini_path_w, MAX_PATH, L"%ls\\custom_names.ini", g_mod_dir_w);
 
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-    wchar_t time_str_w[32];
-    swprintf(time_str_w, 32, L"%04d%02d%02d_%02d%02d%02d",
-             st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-
-    wchar_t dumps_dir_w[MAX_PATH];
-    swprintf(dumps_dir_w, MAX_PATH, L"%ls\\dumps", g_mod_dir_w);
-    CreateDirectoryW(dumps_dir_w, NULL);
-
-    swprintf(g_session_dump_unique_path_w, MAX_PATH, L"%ls\\dumps\\dump_unique_%ls.txt", g_mod_dir_w, time_str_w);
-    swprintf(g_session_dump_log_path_w, MAX_PATH, L"%ls\\dumps\\dump_log_%ls.txt", g_mod_dir_w, time_str_w);
-    swprintf(g_session_dump_missing_path_w, MAX_PATH, L"%ls\\dumps\\dump_missing_%ls.txt", g_mod_dir_w, time_str_w);
-
+    /* Populate UTF-8 versions for display/logging if needed */
     WideCharToMultiByte(CP_UTF8, 0, g_log_path_w, -1, g_log_path, sizeof(g_log_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_dump_unique_path_w, -1, g_dump_unique_path, sizeof(g_dump_unique_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_dump_log_path_w, -1, g_dump_log_path, sizeof(g_dump_log_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_tags_log_path_w, -1, g_tags_log_path, sizeof(g_tags_log_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_file_access_log_w, -1, g_file_access_log, sizeof(g_file_access_log), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_unique_path_w, -1, g_session_dump_unique_path, sizeof(g_session_dump_unique_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_log_path_w, -1, g_session_dump_log_path, sizeof(g_session_dump_log_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_session_dump_missing_path_w, -1, g_session_dump_missing_path, sizeof(g_session_dump_missing_path), NULL, NULL);
-
-    /* Reset root dump_missing.txt so it reflects the current session */
-    FILE* f_init_miss = _wfopen(g_dump_missing_path_w, L"w");
-    if (f_init_miss) fclose(f_init_miss);
+    WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, g_custom_names_ini_path_w, -1, g_custom_names_ini_path, sizeof(g_custom_names_ini_path), NULL, NULL);
 }
 
 static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
 
+    /* Initialize MinHook immediately - zero delay */
     if (MH_Initialize() != MH_OK) {
         log_msg("FATAL: MinHook initialization failed.");
         return 0;
     }
 
     log_msg("==========================================================");
-    log_msg("=== Village in the Shade Translation & Hook Mod Active ===");
+    log_msg("=== Village in the Shade VFS & Translation Mod Active ===");
     log_msg("==========================================================");
     log_msg("Mod directory: %ls", g_mod_dir_w);
     log_msg("Game directory: %ls", g_game_dir_w);
 
-    /* 1. Index Archives for Virtual File System */
+    /* 1. Index Archives for Virtual File System FIRST */
     wchar_t dat_path_w[MAX_PATH];
     wchar_t misc_path_w[MAX_PATH];
     swprintf(dat_path_w, MAX_PATH, L"%ls\\data.dat", g_game_dir_w);
@@ -1803,16 +4054,17 @@ static DWORD WINAPI worker_thread(LPVOID param)
     load_archive_toc_w(fairy_path_w, 4);
     log_msg("[VFS] Total files indexed for redirection: %d", g_vfs_count);
 
+    /* Dynamically resolve FAD sub-file offsets across all game versions */
     resolve_dynamic_fad_offsets_w(fairy_path_w);
 
-    /* 2. Install CreateFileW & CreateFileA Archive Hooks */
+    /* 2. Install CreateFileW & CreateFileA Archive Hooks immediately */
     HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
     if (hKernel32) {
         FARPROC pCreateFileW = GetProcAddress(hKernel32, "CreateFileW");
         if (pCreateFileW) {
             if (MH_CreateHook((LPVOID)pCreateFileW, (LPVOID)&hk_CreateFileW, (LPVOID*)&fp_original_CreateFileW) == MH_OK) {
                 if (MH_EnableHook((LPVOID)pCreateFileW) == MH_OK) {
-                    log_msg("SUCCESS: Hooked CreateFileW!");
+                    log_msg("SUCCESS: Hooked CreateFileW (Archive Redirection Active)!");
                 }
             }
         }
@@ -1821,7 +4073,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
         if (pCreateFileA) {
             if (MH_CreateHook((LPVOID)pCreateFileA, (LPVOID)&hk_CreateFileA, (LPVOID*)&fp_original_CreateFileA) == MH_OK) {
                 if (MH_EnableHook((LPVOID)pCreateFileA) == MH_OK) {
-                    log_msg("SUCCESS: Hooked CreateFileA!");
+                    log_msg("SUCCESS: Hooked CreateFileA (Archive Redirection Active)!");
                 }
             }
         }
@@ -1831,8 +4083,12 @@ static DWORD WINAPI worker_thread(LPVOID param)
         if (pReadFile) {
             if (MH_CreateHook((LPVOID)pReadFile, (LPVOID)&hk_ReadFile, (LPVOID*)&fp_original_ReadFile) == MH_OK) {
                 if (MH_EnableHook((LPVOID)pReadFile) == MH_OK) {
-                    log_msg("SUCCESS: Hooked ReadFile!");
+                    log_msg("SUCCESS: Hooked ReadFile (VFS Redirection Active)!");
+                } else {
+                    log_msg("ERROR: Failed to enable ReadFile hook.");
                 }
+            } else {
+                log_msg("ERROR: Failed to create ReadFile hook.");
             }
         }
 
@@ -1841,14 +4097,19 @@ static DWORD WINAPI worker_thread(LPVOID param)
         if (pGetOverlappedResult) {
             if (MH_CreateHook((LPVOID)pGetOverlappedResult, (LPVOID)&hk_GetOverlappedResult, (LPVOID*)&fp_original_GetOverlappedResult) == MH_OK) {
                 if (MH_EnableHook((LPVOID)pGetOverlappedResult) == MH_OK) {
-                    log_msg("SUCCESS: Hooked GetOverlappedResult!");
+                    log_msg("SUCCESS: Hooked GetOverlappedResult (Async VFS Active)!");
+                } else {
+                    log_msg("ERROR: Failed to enable GetOverlappedResult hook.");
                 }
+            } else {
+                log_msg("ERROR: Failed to create GetOverlappedResult hook.");
             }
         }
     }
 
-    /* 4. Load initial translation file */
+    /* 4. Load translation file & saved custom names */
     load_translation_file();
+    load_custom_names_ini();
 
     /* 5. Resolve & Hook Text Rendering Functions */
     uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
@@ -1861,6 +4122,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uintptr_t addr_putStr = 0;
     uintptr_t addr_putStrProp = 0;
     uintptr_t addr_putStrAlign = 0;
+    uintptr_t addr_GetStringByID = 0;
 
     for (int i = 0; i < (int)(sizeof(kSigs) / sizeof(kSigs[0])); i++) {
         if (res[i].hit) {
@@ -1868,6 +4130,9 @@ static DWORD WINAPI worker_thread(LPVOID param)
             if (strcmp(res[i].name, "putStr") == 0) addr_putStr = res[i].addr;
             if (strcmp(res[i].name, "putStrProp") == 0) addr_putStrProp = res[i].addr;
             if (strcmp(res[i].name, "putStrAlign") == 0) addr_putStrAlign = res[i].addr;
+            if (strcmp(res[i].name, "GetStringByID") == 0) addr_GetStringByID = res[i].addr;
+        } else {
+            log_msg("  [MISS] %s", res[i].name);
         }
     }
 
@@ -1895,12 +4160,19 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    log_msg("System ready! Text Translation & Real-time Dumper active.");
+    if (addr_GetStringByID) {
+        if (MH_CreateHook((LPVOID)addr_GetStringByID, (LPVOID)&hk_GetStringByID, (LPVOID*)&fp_original_GetStringByID) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_GetStringByID) == MH_OK) {
+                log_msg("SUCCESS: Hooked GetStringByID (ID Database Interceptor Active)!");
+            }
+        }
+    }
+
+    log_msg("System ready! Both VFS and Text Translation are active.");
 
     int last_unique = 0;
     int last_missing = 0;
     uint64_t last_rep = 0;
-
     while (1) {
         Sleep(1000);
         check_hot_reload_translation();
@@ -1946,10 +4218,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         if (g_funique_latest) { fclose(g_funique_latest); g_funique_latest = NULL; }
         if (g_fraw) { fclose(g_fraw); g_fraw = NULL; }
         if (g_fraw_latest) { fclose(g_fraw_latest); g_fraw_latest = NULL; }
-        if (g_ftags) { fclose(g_ftags); g_ftags = NULL; }
-        if (g_faccess) { fclose(g_faccess); g_faccess = NULL; }
         if (g_flog) { fclose(g_flog); g_flog = NULL; }
-        clear_translation_table();
         MH_Uninitialize();
         DeleteCriticalSection(&g_cs);
     }
