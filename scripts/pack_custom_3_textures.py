@@ -77,8 +77,7 @@ def convert_png_to_nltx(png_path, out_nltx_path):
     struct.pack_into('<I', hdr, 0x10, 0x66)
     struct.pack_into('<I', hdr, 0x14, 0x00800006)
     struct.pack_into('<II', hdr, 0x18, width, height)
-    struct.pack_into('<I', hdr, 0x20, 0x00010004)
-    struct.pack_into('<I', hdr, 0x24, 0x00000101)
+    hdr[0x20:0x28] = bytes.fromhex('04 00 FF FF 00 01 01 00')
     struct.pack_into('<I', hdr, 0x2C, uncomp_sz)
     struct.pack_into('<II', hdr, 0x30, len(payload), 128)
 

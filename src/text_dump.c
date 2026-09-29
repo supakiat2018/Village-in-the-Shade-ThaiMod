@@ -8,6 +8,7 @@
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
 #include "pua_mapping.h"
+#include "cheats.h"
 
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
@@ -4170,12 +4171,16 @@ static DWORD WINAPI worker_thread(LPVOID param)
 
     log_msg("System ready! Both VFS and Text Translation are active.");
 
+    /* Initialize in-memory cheats system (monitors cheats.ini) */
+    cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
+
     int last_unique = 0;
     int last_missing = 0;
     uint64_t last_rep = 0;
     while (1) {
         Sleep(1000);
         check_hot_reload_translation();
+        cheats_tick();
 
         if (g_unique_count != last_unique || g_missing_count != last_missing || g_total_replacements != last_rep) {
             log_msg("Status: Unique texts=%d, Missing JP=%d, Replacements applied=%llu, Total calls=%llu",
@@ -4212,6 +4217,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         HANDLE hThread = CreateThread(NULL, 0, worker_thread, NULL, 0, NULL);
         if (hThread) CloseHandle(hThread);
     } else if (reason == DLL_PROCESS_DETACH) {
+        cheats_cleanup();
         if (g_fmissing) { fclose(g_fmissing); g_fmissing = NULL; }
         if (g_fmissing_latest) { fclose(g_fmissing_latest); g_fmissing_latest = NULL; }
         if (g_funique) { fclose(g_funique); g_funique = NULL; }

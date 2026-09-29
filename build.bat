@@ -20,6 +20,7 @@ echo [1/2] กำลังคอมไพล์ซอร์สโค้ดภา
 zig cc -shared -O2 -s ^
     src\text_dump.c ^
     src\addrsig.c ^
+    src\cheats.c ^
     src\minhook-master\src\buffer.c ^
     src\minhook-master\src\hook.c ^
     src\minhook-master\src\trampoline.c ^
