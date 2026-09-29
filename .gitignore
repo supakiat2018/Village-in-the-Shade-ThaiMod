@@ -18,8 +18,8 @@ extracted_*/
 02_ภาพที่ปลั๊กอินดักจับเจอขณะเล่นเกม/
 
 # Large temporary files (>15MB)
-minimap_01_spr_en.png
-minimap_11_spr_en.png
+/minimap_01_spr_en.png
+/minimap_11_spr_en.png
 data/misc_1_00.dat
 
 
