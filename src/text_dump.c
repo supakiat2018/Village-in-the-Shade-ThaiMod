@@ -426,14 +426,14 @@ static void trigger_thai_name_clipboard_paste(void)
         strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
         wcsncpy(g_custom_thai_dog_name_raw_w, wbuf, 127);
         if (g_active_dog_name[0] == '\0') {
-            strncpy(g_active_dog_name, "\xe3\x83\x9d\xe3\x83\x81", sizeof(g_active_dog_name) - 1); // "ポチ"
+            strncpy(g_active_dog_name, "\xe3\x81\x82", sizeof(g_active_dog_name) - 1); // "あ"
         }
         log_msg("[CLIPBOARD PASTE] Set dog name from clipboard: %s", g_custom_thai_dog_name);
     } else {
         strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
         wcsncpy(g_custom_thai_player_name_raw_w, wbuf, 127);
         if (g_active_player_name[0] == '\0') {
-            strncpy(g_active_player_name, "\xe3\x82\xa2\xe3\x83\xa1", sizeof(g_active_player_name) - 1); // "アメ"
+            strncpy(g_active_player_name, "\xe3\x81\x82", sizeof(g_active_player_name) - 1); // "あ"
         }
         log_msg("[CLIPBOARD PASTE] Set player name from clipboard: %s", g_custom_thai_player_name);
     }
@@ -543,7 +543,7 @@ static void show_thai_name_input_dialog(void)
 
     const wchar_t* title = g_is_dog_name_screen ? 
         L"ป้อนชื่อสุนัข (Dog Name Input) - Village in the Shade" : 
-        L"ป้อนชื่อตัวละคร (Player Name Input) - Village in the Shade";
+        L"ป้อนชื่อภาษาไทย (Thai Name Input) - Village in the Shade";
 
     HWND hDlg = CreateWindowExW(
         WS_EX_DLGMODALFRAME | WS_EX_TOPMOST,
@@ -570,7 +570,7 @@ static void show_thai_name_input_dialog(void)
 
     const wchar_t* prompt_text = g_is_dog_name_screen ?
         L"พิมพ์ชื่อสุนัขภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):" :
-        L"พิมพ์ชื่อตัวละครภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):";
+        L"พิมพ์ชื่อภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):";
 
     HWND hLbl = CreateWindowW(
         L"STATIC", prompt_text,
@@ -588,7 +588,7 @@ static void show_thai_name_input_dialog(void)
 
     HWND hHint = CreateWindowW(
         L"STATIC",
-        L"คำแนะนำ: ชื่อห้ามเว้นว่าง ให้พิมพ์ภาษาญี่ปุ่นในเกม 1 ตัว\nแล้วกด F2 เพื่อตั้งชื่อไทย จากนั้นกด ตกลง และกดยืนยันในเกมทันที",
+        L"คำแนะนำ: ชื่อห้ามเว้นว่าง ให้พิมพ์ภาษาญี่ปุ่นในเกม 1 ตัว\nแล้วกด ป้อนชื่อไทย (หรือกด F2) เพื่อตั้งชื่อไทย จากนั้นกด ตกลง และกดยืนยันในเกมทันที",
         WS_CHILD | WS_VISIBLE,
         25, 85, 430, 40,
         hDlg, NULL, NULL, NULL
@@ -662,14 +662,14 @@ static void show_thai_name_input_dialog(void)
                 strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
                 wcsncpy(g_custom_thai_dog_name_raw_w, g_thai_dialog_result, 127);
                 if (g_active_dog_name[0] == '\0') {
-                    strncpy(g_active_dog_name, "\xe3\x83\x9d\xe3\x83\x81", sizeof(g_active_dog_name) - 1); // "ポチ"
+                    strncpy(g_active_dog_name, "\xe3\x81\x82", sizeof(g_active_dog_name) - 1); // "あ"
                 }
                 log_msg("[DIRECT THAI INPUT] Set dog name: %s", g_custom_thai_dog_name);
             } else {
                 strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
                 wcsncpy(g_custom_thai_player_name_raw_w, g_thai_dialog_result, 127);
                 if (g_active_player_name[0] == '\0') {
-                    strncpy(g_active_player_name, "\xe3\x82\xa2\xe3\x83\xa1", sizeof(g_active_player_name) - 1); // "アメ"
+                    strncpy(g_active_player_name, "\xe3\x81\x82", sizeof(g_active_player_name) - 1); // "あ"
                 }
                 log_msg("[DIRECT THAI INPUT] Set player name: %s", g_custom_thai_player_name);
             }
@@ -688,9 +688,33 @@ static void check_thai_name_input_hotkeys(ULONGLONG now)
     if (GetAsyncKeyState(VK_F2) & 0x8000) {
         s_last_hotkey_tick = now;
         show_thai_name_input_dialog();
+        return;
     } else if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState('V') & 0x8000)) {
         s_last_hotkey_tick = now;
         trigger_thai_name_clipboard_paste();
+        return;
+    }
+
+    /* Check mouse click directly on the "ป้อนชื่อไทย" button (bottom-left of naming UI) */
+    if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
+        HWND hGameWnd = GetActiveWindow();
+        if (!hGameWnd) hGameWnd = GetForegroundWindow();
+        if (hGameWnd && GetForegroundWindow() == hGameWnd) {
+            POINT pt;
+            if (GetCursorPos(&pt) && ScreenToClient(hGameWnd, &pt)) {
+                RECT rc;
+                if (GetClientRect(hGameWnd, &rc) && rc.right > 0 && rc.bottom > 0) {
+                    float nx = (float)pt.x / (float)rc.right;
+                    float ny = (float)pt.y / (float)rc.bottom;
+                    /* Button "ป้อนชื่อไทย" relative coordinates: X = ~0.05..0.35, Y = ~0.74..0.93 */
+                    if (nx >= 0.05f && nx <= 0.35f && ny >= 0.74f && ny <= 0.93f) {
+                        s_last_hotkey_tick = now;
+                        show_thai_name_input_dialog();
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -712,7 +736,24 @@ static void update_name_screen_state_and_hotkeys(const char* str)
                strcmp(str, "\xe3\x82\xab\xe3\x82\xbf") == 0 ||
                strcmp(str, "\x31\xe6\x96\x87\xe5\xad\x97\xe6\xb6\x88\xe3\x81\x99") == 0 ||
                strcmp(str, "\xe6\xb1\xba\xe5\xae\x9a") == 0) {
-        g_last_name_screen_tick = GetTickCount64();
+        
+        /* If user activated the mode switch button via Gamepad or Keyboard Enter, the string toggles! */
+        static char s_last_mode_btn[16] = { 0 };
+        static ULONGLONG s_last_toggle_tick = 0;
+        ULONGLONG cur_t = GetTickCount64();
+
+        if (strcmp(str, "ひら") == 0 || strcmp(str, "カタ") == 0 ||
+            strcmp(str, "\xe3\x81\xb2\xe3\x82\x89") == 0 || strcmp(str, "\xe3\x82\xab\xe3\x82\xbf") == 0) {
+            if (s_last_mode_btn[0] != '\0' && strcmp(s_last_mode_btn, str) != 0) {
+                if (cur_t - s_last_toggle_tick > 600) {
+                    s_last_toggle_tick = cur_t;
+                    show_thai_name_input_dialog();
+                }
+            }
+            strncpy(s_last_mode_btn, str, sizeof(s_last_mode_btn) - 1);
+        }
+
+        g_last_name_screen_tick = cur_t;
     }
 
     ULONGLONG now = GetTickCount64();
@@ -844,9 +885,11 @@ static const char* lookup_reassembler(const char* orig, float* out_scale)
             } else {
                 if (g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) is_mid = TRUE;
                 else if (strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0) is_mid = TRUE; /* "アメ" */
+                else if (strcmp(orig, "\xe3\x82\xa2") == 0 || strcmp(orig, "\xe3\x81\x82") == 0) is_mid = TRUE; /* "ア" or "あ" */
                 else if (g_custom_thai_player_name[0] != '\0' && strcmp(orig, g_custom_thai_player_name) == 0) is_mid = TRUE;
                 else if (g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) is_mid = TRUE;
                 else if (strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0) is_mid = TRUE; /* "ポチ" */
+                else if (strcmp(orig, "\xe3\x82\xa2") == 0 || strcmp(orig, "\xe3\x81\x82") == 0) is_mid = TRUE; /* "ア" or "あ" */
                 else if (g_custom_thai_dog_name[0] != '\0' && strcmp(orig, g_custom_thai_dog_name) == 0) is_mid = TRUE;
             }
 
@@ -964,14 +1007,18 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
     /* 0.5 Standalone Player & Dog Name Replacement (takes absolute precedence over default dictionary) */
     if (g_custom_thai_player_name[0] != '\0') {
         if ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
-            strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0) { /* "アメ" */
+            strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0 ||
+            strcmp(orig, "\xe3\x82\xa2") == 0 || /* "ア" */
+            strcmp(orig, "\xe3\x81\x82") == 0) { /* "あ" */
             if (out_scale) *out_scale = 1.0f;
             return g_custom_thai_player_name;
         }
     }
     if (g_custom_thai_dog_name[0] != '\0') {
         if ((g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) ||
-            strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0) { /* "ポチ" */
+            strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0 ||
+            strcmp(orig, "\xe3\x82\xa2") == 0 || /* "ア" */
+            strcmp(orig, "\xe3\x81\x82") == 0) { /* "あ" */
             if (out_scale) *out_scale = 1.0f;
             return g_custom_thai_dog_name;
         }
@@ -1042,11 +1089,17 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
     }
 
     /* 2.5 Standalone Player & Dog Name Replacement (menus, status, name screen) */
-    if (g_custom_thai_player_name[0] != '\0' && g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) {
+    if (g_custom_thai_player_name[0] != '\0' &&
+        ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
+         strcmp(orig, "\xe3\x82\xa2") == 0 ||
+         strcmp(orig, "\xe3\x81\x82") == 0)) {
         if (out_scale) *out_scale = 1.0f;
         return g_custom_thai_player_name;
     }
-    if (g_custom_thai_dog_name[0] != '\0' && g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) {
+    if (g_custom_thai_dog_name[0] != '\0' &&
+        ((g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) ||
+         strcmp(orig, "\xe3\x82\xa2") == 0 ||
+         strcmp(orig, "\xe3\x81\x82") == 0)) {
         if (out_scale) *out_scale = 1.0f;
         return g_custom_thai_dog_name;
     }
@@ -1057,21 +1110,23 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         if (p_close) {
             size_t name_len = p_close - (orig + 3);
             char captured_name[64] = { 0 };
-            BOOL is_dog = FALSE;
+            BOOL is_dog = g_is_dog_name_screen;
+
+            /* Check if recent anchor was "犬の名前" (\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d) */
+            for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
+                int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
+                if (g_anchors[sl].tick > 0 && (now - g_anchors[sl].tick) <= 15000) {
+                    if (strstr(g_anchors[sl].str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") != NULL) {
+                        is_dog = TRUE;
+                        break;
+                    }
+                }
+            }
+
             if (name_len > 0 && name_len < sizeof(captured_name)) {
                 memcpy(captured_name, orig + 3, name_len);
                 captured_name[name_len] = '\0';
 
-                /* Check if recent anchor was "犬の名前" (\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d) */
-                for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
-                    int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-                    if (g_anchors[sl].tick > 0 && (now - g_anchors[sl].tick) <= 15000) {
-                        if (strstr(g_anchors[sl].str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") != NULL) {
-                            is_dog = TRUE;
-                            break;
-                        }
-                    }
-                }
                 if (is_dog) {
                     strncpy(g_active_dog_name, captured_name, sizeof(g_active_dog_name) - 1);
                     log_msg("[DOG NAME] Captured dog name: %s", g_active_dog_name);
@@ -1082,6 +1137,7 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
                     save_custom_names_ini();
                 }
             }
+
             static char name_confirm_buf[512];
             const char* templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
             if (!templ) templ = lookup_translation_ex("「」でよろしいですか？", NULL);
@@ -1090,25 +1146,41 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
                 if (is_dog) {
                     if (g_custom_thai_dog_name[0] != '\0') {
                         cur_name = g_custom_thai_dog_name;
+                    } else if (captured_name[0] != '\0') {
+                        cur_name = captured_name;
+                    } else if (g_active_dog_name[0] != '\0') {
+                        cur_name = g_active_dog_name;
                     } else {
-                        cur_name = captured_name[0] != '\0' ? captured_name : g_active_dog_name;
+                        cur_name = "\xe3\x83\x9d\xe3\x83\x81"; /* "ポチ" */
                     }
                 } else {
                     if (g_custom_thai_player_name[0] != '\0') {
                         cur_name = g_custom_thai_player_name;
+                    } else if (captured_name[0] != '\0') {
+                        cur_name = captured_name;
+                    } else if (g_active_player_name[0] != '\0') {
+                        cur_name = g_active_player_name;
                     } else {
-                        cur_name = captured_name[0] != '\0' ? captured_name : g_active_player_name;
+                        cur_name = "\xe3\x82\xa2\xe3\x83\xa1"; /* "アメ" */
                     }
                 }
-                if (strstr(templ, "<value 1>")) {
-                    if (replace_str(templ, "<value 1>", cur_name, name_confirm_buf, sizeof(name_confirm_buf))) {
-                        return name_confirm_buf;
-                    }
-                } else if (strstr(templ, "\"\"")) {
-                    char name_in_quotes[128];
-                    snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", cur_name);
-                    if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
-                        return name_confirm_buf;
+                if (cur_name && cur_name[0] != '\0') {
+                    if (strstr(templ, "<value 1>")) {
+                        if (replace_str(templ, "<value 1>", cur_name, name_confirm_buf, sizeof(name_confirm_buf))) {
+                            return name_confirm_buf;
+                        }
+                    } else if (strstr(templ, "\"\"")) {
+                        char name_in_quotes[128];
+                        snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", cur_name);
+                        if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
+                            return name_confirm_buf;
+                        }
+                    } else if (strstr(templ, "\xe3\x80\x8c\xe3\x80\x8d")) {
+                        char name_in_brackets[128];
+                        snprintf(name_in_brackets, sizeof(name_in_brackets), "「%s」", cur_name);
+                        if (replace_str(templ, "\xe3\x80\x8c\xe3\x80\x8d", name_in_brackets, name_confirm_buf, sizeof(name_confirm_buf))) {
+                            return name_confirm_buf;
+                        }
                     }
                 }
             }
