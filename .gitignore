@@ -22,6 +22,32 @@ extracted_*/
 /minimap_11_spr_en.png
 data/misc_1_00.dat
 
+# Raw and temporary image working folders
+04ภาพen/
+3ภาพที่แก้ใหม่/
+
+# Redundant textures & duplicate minimaps
+textures/english_nltx/
+textures/thai_edited_nltx/
+textures/minimap_01_sum.nltx
+textures/minimap_01_win.nltx
+textures/minimap_01_aut.nltx
+textures/minimap_01_spr.nltx
+textures/minimap_11_spr.nltx
+
+# Temporary scratch files and tools
+texconv.exe
+ตารางจับคู่*.txt
+ui_2021.bin
+all_keys_in_order.txt
+คำที่*.txt
+keyboard_calls.txt
+คำแปล*.txt
+data_database_*.dat
+สแกนและสร้างตารางจับคู่คำแปล_JP_TH.bat
+แปลงPUAและใส่ในปลั๊กอิน.bat
+สร้างและติดตั้งภาพUIไทย_28ภาพ.bat
+
 
 # Python bytecode & cache
 __pycache__/
