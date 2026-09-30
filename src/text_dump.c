@@ -3497,9 +3497,12 @@ static BOOL WINAPI hk_ReadFile(
 
                 wchar_t override_path_w[MAX_PATH];
                 long ext_size = 0;
-                BOOL found = find_override_file_w(g_fad_runtime_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
-                if (!found && g_fad_runtime_subfiles[i].alt_filename) {
+                BOOL found = FALSE;
+                if (g_fad_runtime_subfiles[i].alt_filename) {
                     found = find_override_file_w(g_fad_runtime_subfiles[i].alt_filename, override_path_w, MAX_PATH, &ext_size);
+                }
+                if (!found) {
+                    found = find_override_file_w(g_fad_runtime_subfiles[i].filename, override_path_w, MAX_PATH, &ext_size);
                 }
 
                 if (found && ext_size > 0) {
