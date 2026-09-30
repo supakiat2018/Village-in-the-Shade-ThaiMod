@@ -1,5 +1,9 @@
 # Village in the Shade  - ม็อดภาษาไทย (Thai Localization Mod)
 
+<p align="center">
+  <img src="assets/preview.jpg" alt="Village in the Shade Thai Mod Preview" width="100%">
+</p>
+
 ม็อดแปลภาษาไทยสำหรับเกม **Village in the Shade (ほのぐらしの庭)** เวอร์ชัน PC Steam  
 พัฒนาด้วยระบบ C In-Memory Text Hooking, Virtual File System (VFS) และระบบฟอนต์ภาษาไทย PUA สระไม่ลอย
 
