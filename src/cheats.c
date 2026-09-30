@@ -348,9 +348,14 @@ void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log
         cheat_log("[Cheats] Resolved global pointer dynamically at 0x%p (RVA: 0x%X)", 
                   (void*)g_global_ptr_addr, (uint32_t)(g_global_ptr_addr - base));
     } else {
-        /* Fallback to known static RVA for v1.10.0 */
-        g_global_ptr_addr = base + 0x10DFAD0;
-        cheat_log("[Cheats] Using fallback global pointer at 0x%p", (void*)g_global_ptr_addr);
+        /* Fallback to known static RVA: v1.20 = 0x10FCBB0, v1.10 = 0x10DFAD0 */
+        if (is_readable((const void*)(base + 0x10FCBB0), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x10FCBB0) != 0) {
+            g_global_ptr_addr = base + 0x10FCBB0;
+        } else {
+            g_global_ptr_addr = base + 0x10DFAD0;
+        }
+        cheat_log("[Cheats] Using fallback global pointer at 0x%p (RVA: 0x%X)", 
+                  (void*)g_global_ptr_addr, (uint32_t)(g_global_ptr_addr - base));
     }
 
     cheat_log("[Cheats] Memory signatures resolved: %d/%d available.", resolved, NUM_PATCHES);
