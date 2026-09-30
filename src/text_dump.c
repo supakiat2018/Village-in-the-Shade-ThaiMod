@@ -203,7 +203,6 @@ static BOOL is_missing_seen_or_insert(const char* str)
 typedef struct TransNode {
     uint32_t hash;
     char* orig;
-    char* cond;
     float scale;
     char* trans;
     struct TransNode* next;
@@ -211,46 +210,14 @@ typedef struct TransNode {
 
 static TransNode* g_trans_table[HASH_TABLE_SIZE] = { 0 };
 static int g_trans_count = 0;
-static void clear_reassembler_table(void);
-
-/* ==================================================================
- * Anchor-Based Context Ring Buffer (Order-Aware Anchor Tracking)
- * ================================================================== */
-#define ANCHOR_HISTORY_CAP 64
-#define ANCHOR_MAX_AGE_MS  1500
-
-typedef struct {
-    char str[128];
-    ULONGLONG tick;
-} AnchorEntry;
-
-static AnchorEntry g_anchors[ANCHOR_HISTORY_CAP] = { 0 };
-static int g_anchor_idx = 0;
-
-static void record_recent_string(const char* s)
-{
-    if (!s || (uintptr_t)s < 0x10000 || s[0] == '\0') return;
-    ULONGLONG now = GetTickCount64();
-    EnterCriticalSection(&g_cs);
-
-    int idx = g_anchor_idx % ANCHOR_HISTORY_CAP;
-    strncpy(g_anchors[idx].str, s, sizeof(g_anchors[idx].str) - 1);
-    g_anchors[idx].str[sizeof(g_anchors[idx].str) - 1] = '\0';
-    g_anchors[idx].tick = now;
-    g_anchor_idx++;
-
-    LeaveCriticalSection(&g_cs);
-}
 
 static void clear_translation_table(void)
 {
-    clear_reassembler_table();
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         TransNode* node = g_trans_table[i];
         while (node) {
             TransNode* next = node->next;
             free(node->orig);
-            if (node->cond) free(node->cond);
             free(node->trans);
             free(node);
             node = next;
@@ -260,7 +227,7 @@ static void clear_translation_table(void)
     g_trans_count = 0;
 }
 
-static void insert_translation_ex(const char* orig, const char* cond, float scale, const char* trans, BOOL allow_overwrite)
+static void insert_translation_ex(const char* orig, float scale, const char* trans, BOOL allow_overwrite)
 {
     if (!orig || !trans || *orig == '\0' || *trans == '\0') return;
     uint32_t h = hash_str(orig);
@@ -269,16 +236,12 @@ static void insert_translation_ex(const char* orig, const char* cond, float scal
     TransNode* node = g_trans_table[bucket];
     while (node) {
         if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            BOOL same_cond = (node->cond == NULL && cond == NULL) ||
-                             (node->cond != NULL && cond != NULL && strcmp(node->cond, cond) == 0);
-            if (same_cond) {
-                if (allow_overwrite) {
-                    free(node->trans);
-                    node->trans = _strdup(trans);
-                    node->scale = scale;
-                }
-                return;
+            if (allow_overwrite) {
+                free(node->trans);
+                node->trans = _strdup(trans);
+                node->scale = scale;
             }
+            return;
         }
         node = node->next;
     }
@@ -287,7 +250,6 @@ static void insert_translation_ex(const char* orig, const char* cond, float scal
     if (new_node) {
         new_node->hash = h;
         new_node->orig = _strdup(orig);
-        new_node->cond = cond ? _strdup(cond) : NULL;
         new_node->scale = scale;
         new_node->trans = _strdup(trans);
         new_node->next = g_trans_table[bucket];
@@ -296,9 +258,9 @@ static void insert_translation_ex(const char* orig, const char* cond, float scal
     }
 }
 
-static void insert_translation(const char* orig, const char* cond, float scale, const char* trans)
+static void insert_translation(const char* orig, float scale, const char* trans)
 {
-    insert_translation_ex(orig, cond, scale, trans, TRUE);
+    insert_translation_ex(orig, scale, trans, TRUE);
 }
 
 static void trim_str(char* str)
@@ -762,249 +724,16 @@ static void update_name_screen_state_and_hotkeys(const char* str)
     }
 }
 
-/* ==================================================================
- * Smart Sentence Re-assembler for Split Tagged Lines (<player>, <dog>, <strong>)
- * ================================================================== */
-typedef struct {
-    char* orig_prefix;
-    char* orig_mid;
-    char* orig_suffix;
-    char* trans_prefix;
-    char* trans_mid;
-    char* trans_suffix;
-    char* cond;
-    float scale;
-    int is_strong;
-} ReassemblerEntry;
-
-static ReassemblerEntry* g_reassembler_table = NULL;
-static int g_reassembler_count = 0;
-static int g_reassembler_capacity = 0;
-
-static int g_active_reassembler_idx = -1;
-static ULONGLONG g_active_reassembler_tick = 0;
-static int g_active_reassembler_step = 0;
-
-static void clear_reassembler_table(void)
-{
-    if (g_reassembler_table) {
-        for (int i = 0; i < g_reassembler_count; i++) {
-            if (g_reassembler_table[i].orig_prefix) free(g_reassembler_table[i].orig_prefix);
-            if (g_reassembler_table[i].orig_mid) free(g_reassembler_table[i].orig_mid);
-            if (g_reassembler_table[i].orig_suffix) free(g_reassembler_table[i].orig_suffix);
-            if (g_reassembler_table[i].trans_prefix) free(g_reassembler_table[i].trans_prefix);
-            if (g_reassembler_table[i].trans_mid) free(g_reassembler_table[i].trans_mid);
-            if (g_reassembler_table[i].trans_suffix) free(g_reassembler_table[i].trans_suffix);
-            if (g_reassembler_table[i].cond) free(g_reassembler_table[i].cond);
-        }
-        free(g_reassembler_table);
-        g_reassembler_table = NULL;
-    }
-    g_reassembler_count = 0;
-    g_reassembler_capacity = 0;
-    g_active_reassembler_idx = -1;
-    g_active_reassembler_step = 0;
-}
-
-static void add_reassembler_entry(const char* orig_prefix, const char* orig_mid, const char* orig_suffix,
-                                  const char* trans_prefix, const char* trans_mid, const char* trans_suffix,
-                                  const char* cond, float scale, int is_strong)
-{
-    if (g_reassembler_count >= g_reassembler_capacity) {
-        int new_cap = g_reassembler_capacity == 0 ? 512 : g_reassembler_capacity * 2;
-        ReassemblerEntry* new_tbl = (ReassemblerEntry*)realloc(g_reassembler_table, new_cap * sizeof(ReassemblerEntry));
-        if (!new_tbl) return;
-        g_reassembler_table = new_tbl;
-        g_reassembler_capacity = new_cap;
-    }
-
-    ReassemblerEntry* e = &g_reassembler_table[g_reassembler_count++];
-    e->orig_prefix  = _strdup(orig_prefix ? orig_prefix : "");
-    e->orig_mid     = _strdup(orig_mid ? orig_mid : "");
-    e->orig_suffix  = _strdup(orig_suffix ? orig_suffix : "");
-    e->trans_prefix = _strdup(trans_prefix ? trans_prefix : "");
-    e->trans_mid    = _strdup(trans_mid ? trans_mid : "");
-    e->trans_suffix = _strdup(trans_suffix ? trans_suffix : "");
-    e->cond = (cond && cond[0] != '\0') ? _strdup(cond) : NULL;
-    e->scale = scale;
-    e->is_strong = is_strong;
-}
-
-static BOOL check_anchor_condition(const char* cond)
-{
-    if (!cond || cond[0] == '\0') return TRUE;
-    ULONGLONG now = GetTickCount64();
-    EnterCriticalSection(&g_cs);
-    int max_search = (g_anchor_idx < ANCHOR_HISTORY_CAP) ? g_anchor_idx : ANCHOR_HISTORY_CAP;
-    for (int dist = 1; dist <= max_search; dist++) {
-        int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-        if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= 8000) {
-            if (strstr(g_anchors[slot].str, cond) != NULL) {
-                LeaveCriticalSection(&g_cs);
-                return TRUE;
-            }
-        }
-    }
-    LeaveCriticalSection(&g_cs);
-    return FALSE;
-}
-
-static BOOL check_recent_anchor(const char* needle, ULONGLONG max_age_ms)
-{
-    if (!needle || needle[0] == '\0') return FALSE;
-    ULONGLONG now = GetTickCount64();
-    EnterCriticalSection(&g_cs);
-    int max_search = (g_anchor_idx < ANCHOR_HISTORY_CAP) ? g_anchor_idx : ANCHOR_HISTORY_CAP;
-    for (int dist = 1; dist <= max_search; dist++) {
-        int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-        if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= max_age_ms) {
-            if (strstr(g_anchors[slot].str, needle) != NULL) {
-                LeaveCriticalSection(&g_cs);
-                return TRUE;
-            }
-        }
-    }
-    LeaveCriticalSection(&g_cs);
-    return FALSE;
-}
-
-static const char* lookup_reassembler(const char* orig, float* out_scale)
-{
-    if (!orig || orig[0] == '\0' || g_reassembler_count == 0) return NULL;
-    ULONGLONG now = GetTickCount64();
-
-    /* 1. Check if active reassembler is currently waiting for suffix */
-    if (g_active_reassembler_idx >= 0 && g_active_reassembler_idx < g_reassembler_count) {
-        if (now - g_active_reassembler_tick <= 3000) {
-            ReassemblerEntry* e = &g_reassembler_table[g_active_reassembler_idx];
-
-            /* Check if this is the middle token */
-            BOOL is_mid = FALSE;
-            if (e->is_strong) {
-                if (e->orig_mid[0] != '\0' && strcmp(e->orig_mid, orig) == 0) is_mid = TRUE;
-            } else {
-                if (g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) is_mid = TRUE;
-                else if (strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0) is_mid = TRUE; /* "アメ" */
-                else if (strcmp(orig, "\xe3\x82\xa2") == 0 || strcmp(orig, "\xe3\x81\x82") == 0) is_mid = TRUE; /* "ア" or "あ" */
-                else if (g_custom_thai_player_name[0] != '\0' && strcmp(orig, g_custom_thai_player_name) == 0) is_mid = TRUE;
-                else if (g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) is_mid = TRUE;
-                else if (strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0) is_mid = TRUE; /* "ポチ" */
-                else if (strcmp(orig, "\xe3\x82\xa2") == 0 || strcmp(orig, "\xe3\x81\x82") == 0) is_mid = TRUE; /* "ア" or "あ" */
-                else if (g_custom_thai_dog_name[0] != '\0' && strcmp(orig, g_custom_thai_dog_name) == 0) is_mid = TRUE;
-            }
-
-            if (is_mid) {
-                g_active_reassembler_step = 2;
-                g_active_reassembler_tick = now;
-                if (e->is_strong && e->trans_mid[0] != '\0') {
-                    if (out_scale) *out_scale = e->scale;
-                    return e->trans_mid;
-                }
-                if (!e->is_strong && g_custom_thai_player_name[0] != '\0') {
-                    if (out_scale) *out_scale = 1.0f;
-                    return g_custom_thai_player_name;
-                }
-            }
-
-            /* Check if this is the suffix token (or prefix of suffix during layout measuring) */
-            if (e->orig_suffix[0] != '\0') {
-                if (strcmp(e->orig_suffix, orig) == 0) {
-                    g_active_reassembler_idx = -1;
-                    g_active_reassembler_step = 0;
-                    if (out_scale) *out_scale = e->scale;
-                    static const char s_empty[] = "";
-                    return (e->trans_suffix && e->trans_suffix[0] != '\0') ? e->trans_suffix : s_empty;
-                } else if (e->trans_suffix[0] == '\0' && strstr(e->orig_suffix, orig) != NULL) {
-                    /* Suppress partial Japanese suffix during word measurement */
-                    static const char s_empty[] = "";
-                    return s_empty;
-                }
-            }
-        } else {
-            g_active_reassembler_idx = -1;
-            g_active_reassembler_step = 0;
-        }
-    }
-
-    /* 2. Check if orig is a suffix of an entry whose prefix is EMPTY */
-    for (int i = 0; i < g_reassembler_count; i++) {
-        ReassemblerEntry* e = &g_reassembler_table[i];
-        if (e->orig_prefix[0] == '\0' && e->orig_suffix[0] != '\0') {
-            if (strcmp(e->orig_suffix, orig) == 0) {
-                if (e->cond && !check_anchor_condition(e->cond)) continue;
-                if (out_scale) *out_scale = e->scale;
-                return e->trans_suffix;
-            }
-        }
-    }
-
-    /* 3. Check if orig is the prefix of a Reassembler entry */
-    int matched_idx = -1;
-    int match_count = 0;
-    for (int i = 0; i < g_reassembler_count; i++) {
-        ReassemblerEntry* e = &g_reassembler_table[i];
-        if (e->orig_prefix[0] != '\0' && strcmp(e->orig_prefix, orig) == 0) {
-            if (e->cond) {
-                if (!check_anchor_condition(e->cond)) continue;
-            }
-            matched_idx = i;
-            match_count++;
-        }
-    }
-
-    if (match_count == 1) {
-        g_active_reassembler_idx = matched_idx;
-        g_active_reassembler_tick = now;
-        g_active_reassembler_step = 1;
-        if (out_scale) *out_scale = g_reassembler_table[matched_idx].scale;
-        return g_reassembler_table[matched_idx].trans_prefix;
-    } else if (match_count > 1) {
-        for (int i = 0; i < g_reassembler_count; i++) {
-            ReassemblerEntry* e = &g_reassembler_table[i];
-            if (e->orig_prefix[0] != '\0' && strcmp(e->orig_prefix, orig) == 0 && e->cond != NULL) {
-                if (check_anchor_condition(e->cond)) {
-                    g_active_reassembler_idx = i;
-                    g_active_reassembler_tick = now;
-                    g_active_reassembler_step = 1;
-                    if (out_scale) *out_scale = e->scale;
-                    return e->trans_prefix;
-                }
-            }
-        }
-    }
-
-    /* 4. Check if orig is a suffix of an entry whose prefix was seen recently in anchors */
-    for (int i = 0; i < g_reassembler_count; i++) {
-        ReassemblerEntry* e = &g_reassembler_table[i];
-        if (e->orig_suffix[0] != '\0' && strcmp(e->orig_suffix, orig) == 0) {
-            if (e->orig_prefix[0] != '\0' && check_recent_anchor(e->orig_prefix, 4000)) {
-                if (e->cond && !check_anchor_condition(e->cond)) continue;
-                if (out_scale) *out_scale = e->scale;
-                static const char s_empty[] = "";
-                return (e->trans_suffix && e->trans_suffix[0] != '\0') ? e->trans_suffix : s_empty;
-            }
-        }
-    }
-
-    return NULL;
-}
-
 static const char* lookup_translation(const char* orig);
 static const char* try_match_dynamic_template(const char* orig);
 
 static const char* lookup_translation_ex(const char* orig, float* out_scale)
 {
     if (out_scale) *out_scale = 1.0f;
-    if (!orig || g_trans_count == 0) return NULL;
+    if (!orig || orig[0] == '\0' || g_trans_count == 0) return NULL;
     update_name_screen_state_and_hotkeys(orig);
 
-    /* 0. Smart Sentence Re-assembler for split tagged dialogue */
-    const char* re_match = lookup_reassembler(orig, out_scale);
-    if (re_match != NULL) {
-        return re_match;
-    }
-
-    /* 0.5 Standalone Player & Dog Name Replacement (takes absolute precedence over default dictionary) */
+    /* 1. Standalone Player & Dog Name Replacement (menus, status, name screen) */
     if (g_custom_thai_player_name[0] != '\0') {
         if ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
             strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0 ||
@@ -1024,85 +753,21 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         }
     }
 
+    /* 2. Direct Exact Match in Translation Table */
     uint32_t h = hash_str(orig);
     uint32_t bucket = h % HASH_TABLE_SIZE;
 
-    TransNode* best_node = NULL;
-    int best_distance = 999999;
-    TransNode* default_node = NULL;
-
-    ULONGLONG now = GetTickCount64();
     EnterCriticalSection(&g_cs);
-
-    /* 1. First pass: check anchor rules and find the CLOSEST anchor */
     TransNode* node = g_trans_table[bucket];
     while (node) {
         if (node->hash == h && strcmp(node->orig, orig) == 0) {
-            if (node->cond != NULL) {
-#define ANCHOR_MAX_DISTANCE ANCHOR_HISTORY_CAP
-                int max_search = (g_anchor_idx < ANCHOR_MAX_DISTANCE) ? g_anchor_idx : ANCHOR_MAX_DISTANCE;
-                for (int dist = 1; dist <= max_search; dist++) {
-                    int slot = (g_anchor_idx - dist + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-                    if (g_anchors[slot].tick > 0 && (now - g_anchors[slot].tick) <= ANCHOR_MAX_AGE_MS) {
-                        if (strstr(g_anchors[slot].str, node->cond) != NULL) {
-                            if (dist < best_distance) {
-                                best_distance = dist;
-                                best_node = node;
-                            }
-                            break; /* Found closest occurrence for this rule */
-                        }
-                    }
-                }
-            } else {
-                default_node = node;
-            }
+            LeaveCriticalSection(&g_cs);
+            if (out_scale) *out_scale = node->scale;
+            return node->trans;
         }
         node = node->next;
     }
     LeaveCriticalSection(&g_cs);
-
-    /* Throttled debug logging for ambiguous keys (なし, うん) */
-    static ULONGLONG s_last_debug_log = 0;
-    if ((strcmp(orig, "なし") == 0 || strcmp(orig, "うん") == 0) && (now - s_last_debug_log > 2000)) {
-        s_last_debug_log = now;
-        log_msg("[ANCHOR DEBUG] lookup '%s': matched=%s (cond='%s', dist=%d)",
-                orig,
-                best_node ? best_node->trans : (default_node ? default_node->trans : "NULL"),
-                best_node && best_node->cond ? best_node->cond : "NONE",
-                best_distance);
-        for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
-            int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-            log_msg("   anchor[-d=%d, age=%llums]: '%s'", d, now - g_anchors[sl].tick, g_anchors[sl].str);
-        }
-    }
-
-    /* If a contextual anchor matched, return the closest one */
-    if (best_node) {
-        if (out_scale) *out_scale = best_node->scale;
-        return best_node->trans;
-    }
-
-    /* 2. Fallback to unconditional default translation */
-    if (default_node) {
-        if (out_scale) *out_scale = default_node->scale;
-        return default_node->trans;
-    }
-
-    /* 2.5 Standalone Player & Dog Name Replacement (menus, status, name screen) */
-    if (g_custom_thai_player_name[0] != '\0' &&
-        ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
-         strcmp(orig, "\xe3\x82\xa2") == 0 ||
-         strcmp(orig, "\xe3\x81\x82") == 0)) {
-        if (out_scale) *out_scale = 1.0f;
-        return g_custom_thai_player_name;
-    }
-    if (g_custom_thai_dog_name[0] != '\0' &&
-        ((g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) ||
-         strcmp(orig, "\xe3\x82\xa2") == 0 ||
-         strcmp(orig, "\xe3\x81\x82") == 0)) {
-        if (out_scale) *out_scale = 1.0f;
-        return g_custom_thai_dog_name;
-    }
 
     /* 3. Dynamic Name Confirmation: 「<name>」でよろしいですか？ */
     if (strncmp(orig, "\xe3\x80\x8c", 3) == 0) {
@@ -1111,17 +776,6 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
             size_t name_len = p_close - (orig + 3);
             char captured_name[64] = { 0 };
             BOOL is_dog = g_is_dog_name_screen;
-
-            /* Check if recent anchor was "犬の名前" (\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d) */
-            for (int d = 1; d <= 8 && d <= g_anchor_idx; d++) {
-                int sl = (g_anchor_idx - d + ANCHOR_HISTORY_CAP * 100) % ANCHOR_HISTORY_CAP;
-                if (g_anchors[sl].tick > 0 && (now - g_anchors[sl].tick) <= 15000) {
-                    if (strstr(g_anchors[sl].str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") != NULL) {
-                        is_dog = TRUE;
-                        break;
-                    }
-                }
-            }
 
             if (name_len > 0 && name_len < sizeof(captured_name)) {
                 memcpy(captured_name, orig + 3, name_len);
@@ -1305,6 +959,55 @@ static const char* try_match_dynamic_template(const char* orig)
                                     if ((unsigned char)p_extra[0] == 0xe3) p_extra += 3;
                                     else p_extra++;
                                 }
+                                if (*p_extra != '\0') {
+                                    const char* extra_th = lookup_translation(p_extra);
+                                    if (!extra_th) extra_th = p_extra;
+                                    strncat(buf, " ", sizeof(s_dynamic_buffers[0]) - strlen(buf) - 1);
+                                    strncat(buf, extra_th, sizeof(s_dynamic_buffers[0]) - strlen(buf) - 1);
+                                }
+                                return buf;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* 1b. English Save Game Date: "Year %d - %s %d" with optional suffix (e.g. "Late Night" or "23Late Night") */
+    if (strncmp(orig, "Year ", 5) == 0) {
+        char* end_yr = NULL;
+        long year = strtol(orig + 5, &end_yr, 10);
+        if (year > 0 && end_yr && strncmp(end_yr, " - ", 3) == 0) {
+            const char* p_season = end_yr + 3; /* skip " - " */
+            const char* p_sp = strchr(p_season, ' ');
+            if (p_sp && p_sp > p_season) {
+                char season_en[32] = {0};
+                size_t slen = (size_t)(p_sp - p_season);
+                if (slen < sizeof(season_en)) {
+                    memcpy(season_en, p_season, slen);
+                    season_en[slen] = '\0';
+                    char* end_day = NULL;
+                    long day = strtol(p_sp + 1, &end_day, 10);
+                    if (day > 0 && end_day) {
+                        const char* templ = lookup_translation("Year <value 1> - <value 2> <value 3>");
+                        if (!templ) templ = lookup_translation("<value 1>年目 <value 2> <value 3>日");
+                        if (templ) {
+                            const char* season_th = lookup_translation(season_en);
+                            if (!season_th) season_th = season_en;
+                            char y_buf[16], d_buf[16];
+                            snprintf(y_buf, sizeof(y_buf), "%ld", year);
+                            snprintf(d_buf, sizeof(d_buf), "%ld", day);
+
+                            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                            char* buf = s_dynamic_buffers[b_idx & 3];
+
+                            if (replace_str(templ, "<value 1>", y_buf, temp1, sizeof(temp1)) &&
+                                replace_str(temp1, "<value 2>", season_th, temp2, sizeof(temp2)) &&
+                                replace_str(temp2, "<value 3>", d_buf, buf, sizeof(s_dynamic_buffers[0]))) {
+
+                                const char* p_extra = end_day;
+                                while (*p_extra == ' ' || *p_extra == '\t') p_extra++;
                                 if (*p_extra != '\0') {
                                     const char* extra_th = lookup_translation(p_extra);
                                     if (!extra_th) extra_th = p_extra;
@@ -1885,258 +1588,6 @@ static void strip_br_tags(char* str)
     *dst = '\0';
 }
 
-static void strip_xml_tags(char* dst, const char* src, size_t dst_max)
-{
-    size_t d = 0;
-    while (*src && d + 1 < dst_max) {
-        if (*src == '<') {
-            const char* close = strchr(src, '>');
-            if (close) {
-                src = close + 1;
-                continue;
-            }
-        }
-        dst[d++] = *src++;
-    }
-    dst[d] = '\0';
-}
-
-static void strip_dialogue_tags(char* str)
-{
-    char* src = str;
-    char* dst = str;
-    while (*src) {
-        if (*src == '<') {
-            if (_strnicmp(src, "<cmd", 4) != 0) {
-                char* close = strchr(src, '>');
-                if (close) {
-                    src = close + 1;
-                    continue;
-                }
-            }
-        }
-        *dst++ = *src++;
-    }
-    *dst = '\0';
-}
-
-static void register_reassembler_entry(const char* orig, const char* trans_with_tags, const char* cond, float scale)
-{
-    if (!orig || !trans_with_tags || *orig == '\0' || *trans_with_tags == '\0') return;
-
-    /* 1. Handle <player> */
-    const char* p_orig_player = strstr(orig, "<player>");
-    if (p_orig_player) {
-        char op[1024] = { 0 };
-        char os[1024] = { 0 };
-        size_t op_len = (size_t)(p_orig_player - orig);
-        if (op_len < sizeof(op)) {
-            memcpy(op, orig, op_len);
-            op[op_len] = '\0';
-        }
-        strncpy(os, p_orig_player + 8, sizeof(os) - 1);
-
-        char tp[2048] = { 0 };
-        char ts[2048] = { 0 };
-        const char* p_trans_player = strstr(trans_with_tags, "<player>");
-        if (p_trans_player) {
-            size_t tp_len = (size_t)(p_trans_player - trans_with_tags);
-            if (tp_len < sizeof(tp)) {
-                memcpy(tp, trans_with_tags, tp_len);
-                tp[tp_len] = '\0';
-            }
-            strncpy(ts, p_trans_player + 8, sizeof(ts) - 1);
-        } else {
-            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
-            ts[0] = '\0';
-        }
-        strip_dialogue_tags(tp);
-        strip_dialogue_tags(ts);
-
-        add_reassembler_entry(op, "<player>", os, tp, "<player>", ts, cond, scale, 0);
-        return;
-    }
-
-    /* 2. Handle <dog> */
-    const char* p_orig_dog = strstr(orig, "<dog>");
-    if (p_orig_dog) {
-        char op[1024] = { 0 };
-        char os[1024] = { 0 };
-        size_t op_len = (size_t)(p_orig_dog - orig);
-        if (op_len < sizeof(op)) {
-            memcpy(op, orig, op_len);
-            op[op_len] = '\0';
-        }
-        strncpy(os, p_orig_dog + 5, sizeof(os) - 1);
-
-        char tp[2048] = { 0 };
-        char ts[2048] = { 0 };
-        const char* p_trans_dog = strstr(trans_with_tags, "<dog>");
-        if (p_trans_dog) {
-            size_t tp_len = (size_t)(p_trans_dog - trans_with_tags);
-            if (tp_len < sizeof(tp)) {
-                memcpy(tp, trans_with_tags, tp_len);
-                tp[tp_len] = '\0';
-            }
-            strncpy(ts, p_trans_dog + 5, sizeof(ts) - 1);
-        } else {
-            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
-            ts[0] = '\0';
-        }
-        strip_dialogue_tags(tp);
-        strip_dialogue_tags(ts);
-
-        add_reassembler_entry(op, "<dog>", os, tp, "<dog>", ts, cond, scale, 0);
-        return;
-    }
-
-    /* 3. Handle <strong>...</strong> */
-    const char* s1 = strstr(orig, "<strong>");
-    const char* s2 = s1 ? strstr(s1, "</strong>") : NULL;
-    if (s1 && s2 && s2 > s1 + 8) {
-        char op[1024] = { 0 };
-        char om[1024] = { 0 };
-        char os[1024] = { 0 };
-        size_t op_len = (size_t)(s1 - orig);
-        if (op_len < sizeof(op)) {
-            memcpy(op, orig, op_len);
-            op[op_len] = '\0';
-        }
-        size_t om_len = (size_t)(s2 - (s1 + 8));
-        if (om_len < sizeof(om)) {
-            memcpy(om, s1 + 8, om_len);
-            om[om_len] = '\0';
-        }
-        strncpy(os, s2 + 9, sizeof(os) - 1);
-
-        char tp[2048] = { 0 };
-        char tm[2048] = { 0 };
-        char ts[2048] = { 0 };
-        const char* t1 = strstr(trans_with_tags, "<strong>");
-        const char* t2 = t1 ? strstr(t1, "</strong>") : NULL;
-        if (t1 && t2 && t2 > t1 + 8) {
-            size_t tp_len = (size_t)(t1 - trans_with_tags);
-            if (tp_len < sizeof(tp)) {
-                memcpy(tp, trans_with_tags, tp_len);
-                tp[tp_len] = '\0';
-            }
-            size_t tm_len = (size_t)(t2 - (t1 + 8));
-            if (tm_len < sizeof(tm)) {
-                memcpy(tm, t1 + 8, tm_len);
-                tm[tm_len] = '\0';
-            }
-            strncpy(ts, t2 + 9, sizeof(ts) - 1);
-        } else {
-            strncpy(tp, trans_with_tags, sizeof(tp) - 1);
-        }
-        strip_dialogue_tags(tp);
-        strip_dialogue_tags(tm);
-        strip_dialogue_tags(ts);
-
-        add_reassembler_entry(op, om, os, tp, tm, ts, cond, scale, 1);
-        if (om[0] != '\0' && tm[0] != '\0') {
-            insert_translation_ex(om, cond, scale, tm, FALSE);
-        }
-        return;
-    }
-}
-
-static void tokenize_and_insert_tags(const char* orig_in, const char* trans_in, const char* cond, float scale, int* p_loaded)
-{
-    if (!orig_in || !trans_in || *orig_in == '\0' || *trans_in == '\0') return;
-
-    /* 1. Tokenize <strong>...</strong> (Highlighted terms in dialogue) - Only index highlighted keywords */
-    if (strstr(orig_in, "<strong>") && strstr(trans_in, "<strong>")) {
-        const char* p_orig = orig_in;
-        const char* p_trans = trans_in;
-        while (p_orig && p_trans) {
-            const char* s1 = strstr(p_orig, "<strong>");
-            const char* t1 = strstr(p_trans, "<strong>");
-            if (!s1 || !t1) break;
-            const char* s2 = strstr(s1, "</strong>");
-            const char* t2 = strstr(t1, "</strong>");
-            if (!s2 || !t2) break;
-
-            size_t k_mid_len = s2 - (s1 + 8);
-            size_t v_mid_len = t2 - (t1 + 8);
-            if (k_mid_len >= 6 && k_mid_len < 4096 && v_mid_len > 0 && v_mid_len < 4096) {
-                char k_mid[4096] = { 0 };
-                char v_mid[4096] = { 0 };
-                memcpy(k_mid, s1 + 8, k_mid_len);
-                memcpy(v_mid, t1 + 8, v_mid_len);
-                trim_str(k_mid);
-                trim_str(v_mid);
-                if (k_mid[0] != '\0' && v_mid[0] != '\0') {
-                    insert_translation_ex(k_mid, cond, scale, v_mid, FALSE);
-                    (*p_loaded)++;
-                }
-            }
-
-            p_orig = s2 + 9;
-            p_trans = t2 + 9;
-        }
-    }
-
-    /* 2. Tokenize <c ...>...</c> (Color tags in text) - Only index highlighted keywords */
-    if (strstr(orig_in, "<c ") && strstr(orig_in, "</c>") && strstr(trans_in, "</c>")) {
-        const char* s1 = strstr(orig_in, "<c ");
-        const char* s1_close = s1 ? strchr(s1, '>') : NULL;
-        const char* s2 = s1_close ? strstr(s1_close, "</c>") : NULL;
-
-        const char* t1 = strstr(trans_in, "<c ");
-        const char* t1_close = t1 ? strchr(t1, '>') : NULL;
-        const char* t2 = t1_close ? strstr(t1_close, "</c>") : NULL;
-
-        if (s1_close && s2 && t1_close && t2) {
-            size_t k_mid_len = s2 - (s1_close + 1);
-            size_t v_mid_len = t2 - (t1_close + 1);
-            if (k_mid_len >= 6 && k_mid_len < 4096 && v_mid_len > 0 && v_mid_len < 4096) {
-                char k_mid[4096] = { 0 };
-                char v_mid[4096] = { 0 };
-                memcpy(k_mid, s1_close + 1, k_mid_len);
-                memcpy(v_mid, t1_close + 1, v_mid_len);
-                trim_str(k_mid);
-                trim_str(v_mid);
-                if (k_mid[0] != '\0' && v_mid[0] != '\0') {
-                    insert_translation_ex(k_mid, cond, scale, v_mid, FALSE);
-                    (*p_loaded)++;
-                }
-            }
-        }
-    }
-
-    /* 3. Tokenize <cmd ...> (Prompt after controller button icons) - Exclude short particles/punctuation */
-    const char* cmd_pos = strstr(orig_in, "<cmd");
-    if (cmd_pos) {
-        const char* last_gt = strrchr(cmd_pos, '>');
-        if (last_gt && *(last_gt + 1) != '\0') {
-            char k_cmd_post[4096] = { 0 };
-            strncpy(k_cmd_post, last_gt + 1, sizeof(k_cmd_post) - 1);
-            trim_str(k_cmd_post);
-            /* Only index meaningful phrases (at least 6 bytes), never bare particles like で、, か, で, に, etc. */
-            if (strlen(k_cmd_post) >= 6 &&
-                strcmp(k_cmd_post, "で、") != 0 &&
-                strcmp(k_cmd_post, "か") != 0 &&
-                strcmp(k_cmd_post, "で") != 0 &&
-                strcmp(k_cmd_post, "に") != 0 &&
-                strcmp(k_cmd_post, "を") != 0 &&
-                strcmp(k_cmd_post, "は") != 0 &&
-                strcmp(k_cmd_post, "と") != 0) {
-                const char* trans_cmd = strstr(trans_in, "<cmd");
-                const char* trans_last_gt = trans_cmd ? strrchr(trans_cmd, '>') : NULL;
-                const char* v_after = trans_last_gt ? (trans_last_gt + 1) : trans_in;
-                char v_cmd_post[4096] = { 0 };
-                strncpy(v_cmd_post, v_after, sizeof(v_cmd_post) - 1);
-                trim_str(v_cmd_post);
-                if (v_cmd_post[0] != '\0') {
-                    insert_translation_ex(k_cmd_post, cond, scale, v_cmd_post, FALSE);
-                    (*p_loaded)++;
-                }
-            }
-        }
-    }
-}
-
 static int parse_and_insert_translation_file(const wchar_t* path_w)
 {
     FILE* f = _wfopen(path_w, L"rb");
@@ -2177,45 +1628,9 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
         unescape_string(orig, orig_raw);
         unescape_string(trans, trans_raw);
 
-        char trans_with_tags[16384];
-        strncpy(trans_with_tags, trans, sizeof(trans_with_tags) - 1);
-        trans_with_tags[sizeof(trans_with_tags) - 1] = '\0';
-        strip_br_tags(trans_with_tags);
-
         strip_br_tags(trans);
-        strip_dialogue_tags(trans);
 
-        char cond[256] = { 0 };
         float scale = 1.0f;
-
-        /* Extract leading [ANCHOR] if present, e.g. [設定を初期状態に戻します] うん */
-        if (orig[0] == '[' && strncmp(orig, "[SCALE:", 7) != 0 && strncmp(orig, "[IF:", 4) != 0) {
-            char* tag_end = strchr(orig, ']');
-            if (tag_end && *(tag_end + 1) != '\0') {
-                size_t clen = tag_end - (orig + 1);
-                if (clen > 0 && clen < sizeof(cond)) {
-                    memcpy(cond, orig + 1, clen);
-                    cond[clen] = '\0';
-                }
-                char* after = tag_end + 1;
-                while (*after == ' ' || *after == '\t') after++;
-                memmove(orig, after, strlen(after) + 1);
-            }
-        }
-
-        /* Extract [IF:...] condition */
-        char* if_tag = strstr(orig, "[IF:");
-        if (if_tag) {
-            char* tag_end = strchr(if_tag, ']');
-            if (tag_end) {
-                size_t clen = tag_end - (if_tag + 4);
-                if (clen > 0 && clen < sizeof(cond)) {
-                    memcpy(cond, if_tag + 4, clen);
-                    cond[clen] = '\0';
-                }
-                memset(if_tag, ' ', (tag_end - if_tag + 1));
-            }
-        }
 
         /* Extract [SCALE:...] factor */
         char* sc_tag = strstr(orig, "[SCALE:");
@@ -2239,33 +1654,8 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
 
         if (orig[0] == '\0') continue;
 
-        insert_translation(orig, cond[0] != '\0' ? cond : NULL, scale, trans);
+        insert_translation(orig, scale, trans);
         loaded++;
-
-        /* Register in Smart Sentence Reassembler (<player>, <dog>, <strong>) */
-        register_reassembler_entry(orig, trans_with_tags, cond[0] != '\0' ? cond : NULL, scale);
-
-        /* Auto-tokenize and index tags: <strong>, <c>, <player>, <cmd> */
-        tokenize_and_insert_tags(orig, trans_with_tags, cond[0] != '\0' ? cond : NULL, scale, &loaded);
-
-        /* Dual indexing: If orig has tags (e.g. <cmd ...>で、目の前にある), also index clean text */
-        if (strchr(orig, '<') && strchr(orig, '>')) {
-            char clean_orig[16384];
-            strip_xml_tags(clean_orig, orig, sizeof(clean_orig));
-            char* co_p = clean_orig;
-            while (*co_p == ' ' || *co_p == '\t') co_p++;
-            int co_len = (int)strlen(co_p);
-            while (co_len > 0 && (co_p[co_len - 1] == ' ' || co_p[co_len - 1] == '\t')) {
-                co_p[co_len - 1] = '\0';
-                co_len--;
-            }
-            if (co_len > 0 && strcmp(co_p, orig) != 0) {
-                char clean_trans[16384];
-                strip_xml_tags(clean_trans, trans, sizeof(clean_trans));
-                insert_translation(co_p, cond[0] != '\0' ? cond : NULL, scale, clean_trans);
-                loaded++;
-            }
-        }
     }
 
     fclose(f);
@@ -2303,7 +1693,7 @@ static void load_translation_file(void)
     }
 
     LeaveCriticalSection(&g_cs);
-    log_msg("Loaded %d translation entries, %d reassembler entries (translation.txt and translations folder)", loaded, g_reassembler_count);
+    log_msg("Loaded %d translation entries (translation.txt and translations folder)", loaded);
 }
 
 static void check_hot_reload_translation(void)
@@ -3694,118 +3084,9 @@ static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, f
     fn(this_ptr, str);
 }
 
-/* ==================================================================
- * Dynamic Word Replacements in RAM (Village Name Normalization)
- * ================================================================== */
-typedef struct {
-    const char* pattern;
-    size_t pattern_len;
-    const char* replacement;
-    size_t replacement_len;
-} DynamicWordReplacement;
-
-static const DynamicWordReplacement kDynamicWordReplacements[] = {
-    /* 1. คาเรกัตสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 18,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 21,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 2. คาเระกัตสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 21,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 24,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 3. คาเรัตสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xef\x80\xa2\xe0\xb8\x95\xef\x82\xb3", 15,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 18,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 4. คาเระงะสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb0\xef\x82\xb3", 21,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb0\xe0\xb8\xaa\xe0\xb8\xb6", 24,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 5. คาเรงะสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x87\xe0\xb8\xb0\xef\x82\xb3", 18,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb9\x80\xe0\xb8\xa3\xe0\xb8\x87\xe0\xb8\xb0\xe0\xb8\xaa\xe0\xb8\xb6", 21,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 6. คางัตสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x86\xe0\xb8\x95\xef\x82\xb3", 12,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x87\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-
-    /* 7. คะงึสึ -> คากัตสึ */
-    { "\xe0\xb8\x84\xe0\xb8\xb0\xef\x82\x90\xef\x82\xb3", 9,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xef\x80\x80\xe0\xb8\x95\xef\x82\xb3", 12 }, /* PUA */
-    { "\xe0\xb8\x84\xe0\xb8\xb0\xe0\xb8\x87\xe0\xb8\xb6\xe0\xb8\xaa\xe0\xb8\xb6", 12,
-      "\xe0\xb8\x84\xe0\xb8\xb2\xe0\xb8\x81\xe0\xb8\xb1\xe0\xb8\x95\xe0\xb8\xaa\xe0\xb8\xb6", 15 }, /* Std */
-};
-
-static const char* apply_dynamic_word_replacements(const char* str)
-{
-    if (!str || str[0] == '\0') return str;
-
-    /* Fast check: all targets start with Thai 'ค' (\xe0\xb8\x84) */
-    if (strstr(str, "\xe0\xb8\x84") == NULL) {
-        return str;
-    }
-
-    /* Check if ANY target is actually present in str before modifying */
-    BOOL found_any = FALSE;
-    for (size_t i = 0; i < sizeof(kDynamicWordReplacements) / sizeof(kDynamicWordReplacements[0]); i++) {
-        if (strstr(str, kDynamicWordReplacements[i].pattern) != NULL) {
-            found_any = TRUE;
-            break;
-        }
-    }
-    if (!found_any) return str;
-
-    /* Perform replacement into a round-robin buffer */
-    #define NUM_REPLACE_BUFS 8
-    #define REPLACE_BUF_SIZE 4096
-    static char s_rep_bufs[NUM_REPLACE_BUFS][REPLACE_BUF_SIZE];
-    static LONG s_rep_idx = 0;
-
-    LONG idx = InterlockedIncrement(&s_rep_idx) & (NUM_REPLACE_BUFS - 1);
-    char* dst = s_rep_bufs[idx];
-    size_t dst_cap = REPLACE_BUF_SIZE - 1;
-    size_t dst_len = 0;
-
-    const char* src = str;
-    while (*src && dst_len < dst_cap) {
-        BOOL matched = FALSE;
-        for (size_t i = 0; i < sizeof(kDynamicWordReplacements) / sizeof(kDynamicWordReplacements[0]); i++) {
-            size_t pat_len = kDynamicWordReplacements[i].pattern_len;
-            if (strncmp(src, kDynamicWordReplacements[i].pattern, pat_len) == 0) {
-                size_t rep_len = kDynamicWordReplacements[i].replacement_len;
-                if (dst_len + rep_len <= dst_cap) {
-                    memcpy(dst + dst_len, kDynamicWordReplacements[i].replacement, rep_len);
-                    dst_len += rep_len;
-                }
-                src += pat_len;
-                matched = TRUE;
-                break;
-            }
-        }
-        if (!matched) {
-            dst[dst_len++] = *src++;
-        }
-    }
-    dst[dst_len] = '\0';
-    return dst;
-}
-
 static void hk_putStr(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStr");
-    const char* orig_str = str;
 
     float scale = 1.0f;
     const char* rep = lookup_translation_ex(str, &scale);
@@ -3818,16 +3099,12 @@ static void hk_putStr(void* this_ptr, const char* str)
         }
     }
 
-    str = apply_dynamic_word_replacements(str);
-
     call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
-    record_recent_string(orig_str);
 }
 
 static void hk_putStrProp(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStrProp");
-    const char* orig_str = str;
 
     float scale = 1.0f;
     const char* rep = lookup_translation_ex(str, &scale);
@@ -3840,16 +3117,12 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         }
     }
 
-    str = apply_dynamic_word_replacements(str);
-
     call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
-    record_recent_string(orig_str);
 }
 
 static void hk_putStrAlign(void* this_ptr, const char* str)
 {
     process_captured_text(str, "putStrAlign");
-    const char* orig_str = str;
 
     float scale = 1.0f;
     const char* rep = lookup_translation_ex(str, &scale);
@@ -3862,10 +3135,7 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
         }
     }
 
-    str = apply_dynamic_word_replacements(str);
-
     call_with_auto_scale(fp_original_putStrAlign, this_ptr, str, scale);
-    record_recent_string(orig_str);
 }
 
 /* ==================================================================
