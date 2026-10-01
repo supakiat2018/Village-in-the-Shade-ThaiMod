@@ -16,7 +16,7 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-echo [1/2] กำลังคอมไพล์ซอร์สโค้ดภาษา C ด้วย Zig CC...
+echo [1/2] กำลังคอมไพล์ซอร์สโค้ดภาษา C (text_dump.dll) ด้วย Zig CC...
 zig cc -shared -O2 -s ^
     src\text_dump.c ^
     src\addrsig.c ^
@@ -28,18 +28,23 @@ zig cc -shared -O2 -s ^
     -o bin\text_dump.dll ^
     -lkernel32 -luser32 -lgdi32
 
+echo [2/2] กำลังคอมไพล์ตัวสะพานเชื่อม (winmm.dll) ด้วย Zig CC...
+zig cc -shared -O2 -s src\proxy_winmm.c src\winmm.def -o bin\winmm.dll -lkernel32
+
 if %ERRORLEVEL% equ 0 (
     echo.
-    echo [SUCCESS] คอมไพล์สำเร็จเรียบร้อย!
-    echo ไฟล์ปลายทาง: bin\text_dump.dll
+    echo [SUCCESS] คอมไพล์สำเร็จเรียบร้อยทั้ง text_dump.dll และ winmm.dll!
+    echo ไฟล์ปลายทาง: bin\text_dump.dll, bin\winmm.dll
     echo.
     echo ต้องการก๊อปปี้ไปติดตั้งในโฟลเดอร์เกมทันทีหรือไม่? (Y/N)
     set /p INSTALL_CHOICE="เลือก (Y/N): "
     if /i "%INSTALL_CHOICE%"=="Y" (
-        set "GAME_MOD_DIR=C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\Mods\TextDump"
+        set "GAME_ROOT=C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade"
+        set "GAME_MOD_DIR=%GAME_ROOT%\Mods\TextDump"
         if exist "%GAME_MOD_DIR%" (
             copy /y bin\text_dump.dll "%GAME_MOD_DIR%\text_dump.dll" >nul
-            echo [INSTALLED] ติดตั้ง text_dump.dll ลงในโฟลเดอร์เกมเรียบร้อยแล้ว!
+            copy /y bin\winmm.dll "%GAME_ROOT%\winmm.dll" >nul
+            echo [INSTALLED] ติดตั้ง text_dump.dll และ winmm.dll ลงในโฟลเดอร์เกมเรียบร้อยแล้ว!
         ) else (
             echo [WARNING] ไม่พบโฟลเดอร์ Mods\TextDump ในเกม กรุณาก๊อปปี้ด้วยตนเอง
         )

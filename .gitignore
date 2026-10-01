@@ -73,3 +73,6 @@ scripts/repack_data_dat_for_keyboard.py
 scripts/patch_village_exe_keyboard.py
 scripts/repack_fairy_dat_with_textures.py
 
+# Deprecated proxy loaders
+steam_api64.dll
+
