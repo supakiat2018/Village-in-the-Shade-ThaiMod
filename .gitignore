@@ -66,3 +66,10 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
+# Large folders, binaries, and excluded scripts
+คียบอด/
+*.exe
+scripts/repack_data_dat_for_keyboard.py
+scripts/patch_village_exe_keyboard.py
+scripts/repack_fairy_dat_with_textures.py
+

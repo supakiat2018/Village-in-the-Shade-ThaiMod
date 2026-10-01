@@ -2261,3 +2261,36 @@ static void convert_thai_wstr_to_pua_utf8(const wchar_t* in_w, char* out_utf8, s
     pua_w[o] = L'\0';
     WideCharToMultiByte(CP_UTF8, 0, pua_w, -1, out_utf8, (int)out_max, NULL, NULL);
 }
+
+static void convert_pua_utf8_to_thai_wstr(const char* in_utf8, wchar_t* out_w, size_t out_max) {
+    if (!in_utf8 || !out_w || out_max == 0) return;
+    out_w[0] = L'\0';
+    wchar_t temp_w[512] = { 0 };
+    int wlen = MultiByteToWideChar(CP_UTF8, 0, in_utf8, -1, temp_w, 510);
+    if (wlen <= 0) return;
+
+    size_t o = 0;
+    for (int i = 0; i < wlen && temp_w[i] != L'\0' && o < out_max - 4; i++) {
+        wchar_t ch = temp_w[i];
+        if (ch >= 0xF000 && ch <= 0xF8FF) {
+            BOOL found = FALSE;
+            for (int k = 0; k < PUA_MAP_COUNT; k++) {
+                if (g_pua_map[k].val == ch) {
+                    size_t klen = wcslen(g_pua_map[k].key);
+                    if (o + klen < out_max - 1) {
+                        wcscpy(out_w + o, g_pua_map[k].key);
+                        o += klen;
+                    }
+                    found = TRUE;
+                    break;
+                }
+            }
+            if (!found) {
+                out_w[o++] = ch;
+            }
+        } else {
+            out_w[o++] = ch;
+        }
+    }
+    out_w[o] = L'\0';
+}

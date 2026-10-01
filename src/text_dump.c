@@ -4,11 +4,14 @@
 #include <string.h>
 #include <stdint.h>
 #include <time.h>
-#include <ctype.h>
+#include <intrin.h>
+#ifndef _ReturnAddress
+#define _ReturnAddress() __builtin_return_address(0)
+#endif
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
-#include "pua_mapping.h"
 #include "cheats.h"
+#include "keyboard_v120_patch.h"
 
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
@@ -35,6 +38,7 @@ static wchar_t g_session_dump_unique_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_dump_missing_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_missing_path_w[MAX_PATH] = { 0 };
+static wchar_t g_missing_latest_path_w[MAX_PATH] = { 0 };
 static wchar_t g_translation_path_w[MAX_PATH] = { 0 };
 static wchar_t g_file_access_log_w[MAX_PATH] = { 0 };
 static wchar_t g_tags_log_path_w[MAX_PATH] = { 0 };
@@ -46,26 +50,13 @@ static FILE* g_funique = NULL;
 static FILE* g_funique_latest = NULL;
 static FILE* g_fraw = NULL;
 static FILE* g_fraw_latest = NULL;
-static FILE* g_fmissing = NULL;
+static FILE* g_fmissing_session = NULL;
 static FILE* g_fmissing_latest = NULL;
+static FILE* g_fmissing_legacy = NULL;
 static FILE* g_faccess = NULL;
 static FILE* g_ftags = NULL;
 static FILE* g_fidlog = NULL;
 static uint8_t g_logged_ids[65536 / 8] = { 0 };
-static char g_active_player_name[64] = { 0 };
-static char g_active_dog_name[64] = { 0 };
-static char g_custom_thai_player_name[128] = { 0 };
-static char g_custom_thai_dog_name[128] = { 0 };
-static wchar_t g_custom_thai_player_name_raw_w[128] = { 0 };
-static wchar_t g_custom_thai_dog_name_raw_w[128] = { 0 };
-static wchar_t g_custom_names_ini_path_w[MAX_PATH] = { 0 };
-static char g_custom_names_ini_path[MAX_PATH] = { 0 };
-
-static ULONGLONG g_last_name_screen_tick = 0;
-static BOOL g_is_dog_name_screen = FALSE;
-static BOOL g_thai_dialog_open = FALSE;
-static wchar_t g_thai_dialog_result[128] = { 0 };
-static WNDPROC g_prev_edit_proc = NULL;
 
 static void log_id_access(uint32_t id)
 {
@@ -302,428 +293,6 @@ static BOOL replace_str(const char* src, const char* from, const char* to, char*
     return TRUE;
 }
 
-/* ==================================================================
- * Direct Thai Input System (F2 Modal Dialog & Clipboard Paste)
- * ================================================================== */
-static void load_custom_names_ini(void)
-{
-    if (g_custom_names_ini_path[0] == '\0') return;
-
-    GetPrivateProfileStringA("Names", "PlayerName", "", g_custom_thai_player_name, sizeof(g_custom_thai_player_name), g_custom_names_ini_path);
-    GetPrivateProfileStringA("Names", "DogName", "", g_custom_thai_dog_name, sizeof(g_custom_thai_dog_name), g_custom_names_ini_path);
-    GetPrivateProfileStringA("Names", "ActivePlayerName", "", g_active_player_name, sizeof(g_active_player_name), g_custom_names_ini_path);
-    GetPrivateProfileStringA("Names", "ActiveDogName", "", g_active_dog_name, sizeof(g_active_dog_name), g_custom_names_ini_path);
-
-    GetPrivateProfileStringW(L"Names", L"PlayerNameRaw", L"", g_custom_thai_player_name_raw_w, 128, g_custom_names_ini_path_w);
-    GetPrivateProfileStringW(L"Names", L"DogNameRaw", L"", g_custom_thai_dog_name_raw_w, 128, g_custom_names_ini_path_w);
-
-    if (g_custom_thai_player_name[0] != '\0') {
-        log_msg("[NAMES] Loaded custom player name from INI: %s (active: %s)",
-                g_custom_thai_player_name, g_active_player_name);
-    }
-    if (g_custom_thai_dog_name[0] != '\0') {
-        log_msg("[NAMES] Loaded custom dog name from INI: %s (active: %s)",
-                g_custom_thai_dog_name, g_active_dog_name);
-    }
-}
-
-static void save_custom_names_ini(void)
-{
-    if (g_custom_names_ini_path[0] == '\0') return;
-
-    WritePrivateProfileStringA("Names", "PlayerName", g_custom_thai_player_name, g_custom_names_ini_path);
-    WritePrivateProfileStringA("Names", "DogName", g_custom_thai_dog_name, g_custom_names_ini_path);
-    WritePrivateProfileStringA("Names", "ActivePlayerName", g_active_player_name, g_custom_names_ini_path);
-    WritePrivateProfileStringA("Names", "ActiveDogName", g_active_dog_name, g_custom_names_ini_path);
-
-    WritePrivateProfileStringW(L"Names", L"PlayerNameRaw", g_custom_thai_player_name_raw_w, g_custom_names_ini_path_w);
-    WritePrivateProfileStringW(L"Names", L"DogNameRaw", g_custom_thai_dog_name_raw_w, g_custom_names_ini_path_w);
-}
-
-static BOOL read_clipboard_thai_wstr(wchar_t* out_wstr, size_t max_chars)
-{
-    if (!out_wstr || max_chars == 0) return FALSE;
-    out_wstr[0] = L'\0';
-    if (!OpenClipboard(NULL)) return FALSE;
-    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
-    if (!hData) {
-        CloseClipboard();
-        return FALSE;
-    }
-    const wchar_t* pText = (const wchar_t*)GlobalLock(hData);
-    if (!pText) {
-        CloseClipboard();
-        return FALSE;
-    }
-    wcsncpy(out_wstr, pText, max_chars - 1);
-    out_wstr[max_chars - 1] = L'\0';
-    GlobalUnlock(hData);
-    CloseClipboard();
-
-    size_t len = wcslen(out_wstr);
-    while (len > 0 && (out_wstr[len - 1] == L'\r' || out_wstr[len - 1] == L'\n' || out_wstr[len - 1] == L' ' || out_wstr[len - 1] == L'\t')) {
-        out_wstr[--len] = L'\0';
-    }
-    wchar_t* p = out_wstr;
-    while (*p == L' ' || *p == L'\t' || *p == L'\r' || *p == L'\n') p++;
-    if (p != out_wstr) {
-        wmemmove(out_wstr, p, wcslen(p) + 1);
-    }
-    return wcslen(out_wstr) > 0;
-}
-
-static void trigger_thai_name_clipboard_paste(void)
-{
-    wchar_t wbuf[128] = { 0 };
-    if (!read_clipboard_thai_wstr(wbuf, 128)) {
-        log_msg("[CLIPBOARD PASTE] Clipboard was empty or contained no text.");
-        return;
-    }
-
-    char pua_buf[256] = { 0 };
-    convert_thai_wstr_to_pua_utf8(wbuf, pua_buf, sizeof(pua_buf));
-    if (pua_buf[0] == '\0') return;
-
-    if (g_is_dog_name_screen) {
-        strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
-        wcsncpy(g_custom_thai_dog_name_raw_w, wbuf, 127);
-        if (g_active_dog_name[0] == '\0') {
-            strncpy(g_active_dog_name, "\xe3\x81\x82", sizeof(g_active_dog_name) - 1); // "あ"
-        }
-        log_msg("[CLIPBOARD PASTE] Set dog name from clipboard: %s", g_custom_thai_dog_name);
-    } else {
-        strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
-        wcsncpy(g_custom_thai_player_name_raw_w, wbuf, 127);
-        if (g_active_player_name[0] == '\0') {
-            strncpy(g_active_player_name, "\xe3\x81\x82", sizeof(g_active_player_name) - 1); // "あ"
-        }
-        log_msg("[CLIPBOARD PASTE] Set player name from clipboard: %s", g_custom_thai_player_name);
-    }
-    save_custom_names_ini();
-    MessageBeep(MB_OK);
-}
-
-static LRESULT CALLBACK EditSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    if (uMsg == WM_KEYDOWN) {
-        if (wParam == VK_RETURN) {
-            SendMessageW(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)hWnd);
-            return 0;
-        } else if (wParam == VK_ESCAPE) {
-            SendMessageW(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)hWnd);
-            return 0;
-        }
-    }
-    return CallWindowProcW(g_prev_edit_proc, hWnd, uMsg, wParam, lParam);
-}
-
-static LRESULT CALLBACK ThaiInputDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg) {
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK) {
-            HWND hEdit = GetDlgItem(hWnd, 101);
-            if (hEdit) {
-                GetWindowTextW(hEdit, g_thai_dialog_result, 128);
-                int len = (int)wcslen(g_thai_dialog_result);
-                while (len > 0 && (g_thai_dialog_result[len - 1] == L' ' || g_thai_dialog_result[len - 1] == L'\t')) {
-                    g_thai_dialog_result[--len] = L'\0';
-                }
-                wchar_t* p = g_thai_dialog_result;
-                while (*p == L' ' || *p == L'\t') p++;
-                if (p != g_thai_dialog_result) {
-                    wmemmove(g_thai_dialog_result, p, wcslen(p) + 1);
-                }
-            }
-            g_thai_dialog_open = FALSE;
-            DestroyWindow(hWnd);
-            return 0;
-        } else if (LOWORD(wParam) == IDCANCEL) {
-            g_thai_dialog_result[0] = L'\0';
-            g_thai_dialog_open = FALSE;
-            DestroyWindow(hWnd);
-            return 0;
-        }
-        break;
-
-    case WM_CLOSE:
-        g_thai_dialog_result[0] = L'\0';
-        g_thai_dialog_open = FALSE;
-        DestroyWindow(hWnd);
-        return 0;
-
-    case WM_CTLCOLORSTATIC: {
-        HDC hdcStatic = (HDC)wParam;
-        SetBkMode(hdcStatic, TRANSPARENT);
-        return (LRESULT)GetSysColorBrush(COLOR_BTNFACE);
-    }
-
-    default:
-        break;
-    }
-    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-}
-
-static void show_thai_name_input_dialog(void)
-{
-    if (g_thai_dialog_open) return;
-
-    HWND hGameWnd = GetActiveWindow();
-    if (!hGameWnd) hGameWnd = GetForegroundWindow();
-
-    static BOOL s_class_registered = FALSE;
-    static const wchar_t CLASS_NAME[] = L"VillageThaiNameInputWndClass";
-
-    if (!s_class_registered) {
-        WNDCLASSEXW wc = { 0 };
-        wc.cbSize = sizeof(WNDCLASSEXW);
-        wc.style = CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc = ThaiInputDialogProc;
-        wc.hInstance = g_hinst ? g_hinst : GetModuleHandleW(NULL);
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-        wc.lpszClassName = CLASS_NAME;
-        if (!RegisterClassExW(&wc)) {
-            log_msg("[DIRECT THAI INPUT] Failed to register window class.");
-            return;
-        }
-        s_class_registered = TRUE;
-    }
-
-    int dlg_w = 480;
-    int dlg_h = 245;
-    int pos_x = (GetSystemMetrics(SM_CXSCREEN) - dlg_w) / 2;
-    int pos_y = (GetSystemMetrics(SM_CYSCREEN) - dlg_h) / 2;
-
-    if (hGameWnd) {
-        RECT rc;
-        if (GetWindowRect(hGameWnd, &rc)) {
-            pos_x = rc.left + ((rc.right - rc.left) - dlg_w) / 2;
-            pos_y = rc.top + ((rc.bottom - rc.top) - dlg_h) / 2;
-        }
-    }
-
-    const wchar_t* title = g_is_dog_name_screen ? 
-        L"ป้อนชื่อสุนัข (Dog Name Input) - Village in the Shade" : 
-        L"ป้อนชื่อภาษาไทย (Thai Name Input) - Village in the Shade";
-
-    HWND hDlg = CreateWindowExW(
-        WS_EX_DLGMODALFRAME | WS_EX_TOPMOST,
-        CLASS_NAME,
-        title,
-        WS_POPUP | WS_CAPTION | WS_SYSMENU,
-        pos_x, pos_y, dlg_w, dlg_h,
-        hGameWnd,
-        NULL,
-        g_hinst ? g_hinst : GetModuleHandleW(NULL),
-        NULL
-    );
-
-    if (!hDlg) {
-        log_msg("[DIRECT THAI INPUT] Failed to create dialog window.");
-        return;
-    }
-
-    HFONT hFont = CreateFontW(
-        18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Segoe UI"
-    );
-
-    const wchar_t* prompt_text = g_is_dog_name_screen ?
-        L"พิมพ์ชื่อสุนัขภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):" :
-        L"พิมพ์ชื่อภาษาไทยที่ต้องการ (หรือกด Ctrl+V เพื่อวาง):";
-
-    HWND hLbl = CreateWindowW(
-        L"STATIC", prompt_text,
-        WS_CHILD | WS_VISIBLE,
-        25, 20, 420, 24,
-        hDlg, NULL, NULL, NULL
-    );
-
-    HWND hEdit = CreateWindowExW(
-        WS_EX_CLIENTEDGE, L"EDIT", L"",
-        WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_TABSTOP,
-        25, 50, 415, 28,
-        hDlg, (HMENU)101, NULL, NULL
-    );
-
-    HWND hHint = CreateWindowW(
-        L"STATIC",
-        L"คำแนะนำ: ชื่อห้ามเว้นว่าง ให้พิมพ์ภาษาญี่ปุ่นในเกม 1 ตัว\nแล้วกด ป้อนชื่อไทย (หรือกด F2) เพื่อตั้งชื่อไทย จากนั้นกด ตกลง และกดยืนยันในเกมทันที",
-        WS_CHILD | WS_VISIBLE,
-        25, 85, 430, 40,
-        hDlg, NULL, NULL, NULL
-    );
-
-    HWND hBtnOk = CreateWindowW(
-        L"BUTTON", L"ตกลง (OK)",
-        WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON | WS_TABSTOP,
-        125, 140, 105, 34,
-        hDlg, (HMENU)IDOK, NULL, NULL
-    );
-
-    HWND hBtnCancel = CreateWindowW(
-        L"BUTTON", L"ยกเลิก (Cancel)",
-        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_TABSTOP,
-        250, 140, 105, 34,
-        hDlg, (HMENU)IDCANCEL, NULL, NULL
-    );
-
-    if (hFont) {
-        SendMessageW(hLbl, WM_SETFONT, (WPARAM)hFont, TRUE);
-        SendMessageW(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
-        SendMessageW(hHint, WM_SETFONT, (WPARAM)hFont, TRUE);
-        SendMessageW(hBtnOk, WM_SETFONT, (WPARAM)hFont, TRUE);
-        SendMessageW(hBtnCancel, WM_SETFONT, (WPARAM)hFont, TRUE);
-    }
-
-    g_prev_edit_proc = (WNDPROC)SetWindowLongPtrW(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
-
-    if (g_is_dog_name_screen && g_custom_thai_dog_name_raw_w[0] != L'\0') {
-        SetWindowTextW(hEdit, g_custom_thai_dog_name_raw_w);
-        SendMessageW(hEdit, EM_SETSEL, 0, -1);
-    } else if (!g_is_dog_name_screen && g_custom_thai_player_name_raw_w[0] != L'\0') {
-        SetWindowTextW(hEdit, g_custom_thai_player_name_raw_w);
-        SendMessageW(hEdit, EM_SETSEL, 0, -1);
-    }
-
-    g_thai_dialog_result[0] = L'\0';
-    g_thai_dialog_open = TRUE;
-
-    if (hGameWnd) {
-        EnableWindow(hGameWnd, FALSE);
-    }
-
-    ShowWindow(hDlg, SW_SHOW);
-    SetForegroundWindow(hDlg);
-    SetFocus(hEdit);
-
-    MSG msg;
-    while (g_thai_dialog_open && GetMessageW(&msg, NULL, 0, 0)) {
-        if (!IsDialogMessageW(hDlg, &msg)) {
-            TranslateMessage(&msg);
-            DispatchMessageW(&msg);
-        }
-    }
-
-    if (hGameWnd) {
-        EnableWindow(hGameWnd, TRUE);
-        SetForegroundWindow(hGameWnd);
-    }
-
-    if (hFont) {
-        DeleteObject(hFont);
-    }
-
-    if (g_thai_dialog_result[0] != L'\0') {
-        char pua_buf[256] = { 0 };
-        convert_thai_wstr_to_pua_utf8(g_thai_dialog_result, pua_buf, sizeof(pua_buf));
-        if (pua_buf[0] != '\0') {
-            if (g_is_dog_name_screen) {
-                strncpy(g_custom_thai_dog_name, pua_buf, sizeof(g_custom_thai_dog_name) - 1);
-                wcsncpy(g_custom_thai_dog_name_raw_w, g_thai_dialog_result, 127);
-                if (g_active_dog_name[0] == '\0') {
-                    strncpy(g_active_dog_name, "\xe3\x81\x82", sizeof(g_active_dog_name) - 1); // "あ"
-                }
-                log_msg("[DIRECT THAI INPUT] Set dog name: %s", g_custom_thai_dog_name);
-            } else {
-                strncpy(g_custom_thai_player_name, pua_buf, sizeof(g_custom_thai_player_name) - 1);
-                wcsncpy(g_custom_thai_player_name_raw_w, g_thai_dialog_result, 127);
-                if (g_active_player_name[0] == '\0') {
-                    strncpy(g_active_player_name, "\xe3\x81\x82", sizeof(g_active_player_name) - 1); // "あ"
-                }
-                log_msg("[DIRECT THAI INPUT] Set player name: %s", g_custom_thai_player_name);
-            }
-            save_custom_names_ini();
-            MessageBeep(MB_OK);
-        }
-    }
-}
-
-static void check_thai_name_input_hotkeys(ULONGLONG now)
-{
-    if (g_thai_dialog_open) return;
-    static ULONGLONG s_last_hotkey_tick = 0;
-    if (now - s_last_hotkey_tick < 400) return;
-
-    if (GetAsyncKeyState(VK_F2) & 0x8000) {
-        s_last_hotkey_tick = now;
-        show_thai_name_input_dialog();
-        return;
-    } else if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState('V') & 0x8000)) {
-        s_last_hotkey_tick = now;
-        trigger_thai_name_clipboard_paste();
-        return;
-    }
-
-    /* Check mouse click directly on the "ป้อนชื่อไทย" button (bottom-left of naming UI) */
-    if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-        HWND hGameWnd = GetActiveWindow();
-        if (!hGameWnd) hGameWnd = GetForegroundWindow();
-        if (hGameWnd && GetForegroundWindow() == hGameWnd) {
-            POINT pt;
-            if (GetCursorPos(&pt) && ScreenToClient(hGameWnd, &pt)) {
-                RECT rc;
-                if (GetClientRect(hGameWnd, &rc) && rc.right > 0 && rc.bottom > 0) {
-                    float nx = (float)pt.x / (float)rc.right;
-                    float ny = (float)pt.y / (float)rc.bottom;
-                    /* Button "ป้อนชื่อไทย" relative coordinates: X = ~0.05..0.35, Y = ~0.74..0.93 */
-                    if (nx >= 0.05f && nx <= 0.35f && ny >= 0.74f && ny <= 0.93f) {
-                        s_last_hotkey_tick = now;
-                        show_thai_name_input_dialog();
-                        return;
-                    }
-                }
-            }
-        }
-    }
-}
-
-static void update_name_screen_state_and_hotkeys(const char* str)
-{
-    if (!str || str[0] == '\0') return;
-
-    if (strcmp(str, "あなたの名前") == 0 ||
-        strcmp(str, "\xe3\x81\x82\xe3\x81\xaa\xe3\x81\x9f\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") == 0) {
-        g_is_dog_name_screen = FALSE;
-        g_last_name_screen_tick = GetTickCount64();
-    } else if (strcmp(str, "犬の名前") == 0 ||
-               strcmp(str, "\xe7\x8a\xac\xe3\x81\xae\xe5\x90\x8d\xe5\x89\x8d") == 0) {
-        g_is_dog_name_screen = TRUE;
-        g_last_name_screen_tick = GetTickCount64();
-    } else if (strcmp(str, "ひら") == 0 || strcmp(str, "カタ") == 0 ||
-               strcmp(str, "1文字消す") == 0 || strcmp(str, "決定") == 0 ||
-               strcmp(str, "\xe3\x81\xb2\xe3\x82\x89") == 0 ||
-               strcmp(str, "\xe3\x82\xab\xe3\x82\xbf") == 0 ||
-               strcmp(str, "\x31\xe6\x96\x87\xe5\xad\x97\xe6\xb6\x88\xe3\x81\x99") == 0 ||
-               strcmp(str, "\xe6\xb1\xba\xe5\xae\x9a") == 0) {
-        
-        /* If user activated the mode switch button via Gamepad or Keyboard Enter, the string toggles! */
-        static char s_last_mode_btn[16] = { 0 };
-        static ULONGLONG s_last_toggle_tick = 0;
-        ULONGLONG cur_t = GetTickCount64();
-
-        if (strcmp(str, "ひら") == 0 || strcmp(str, "カタ") == 0 ||
-            strcmp(str, "\xe3\x81\xb2\xe3\x82\x89") == 0 || strcmp(str, "\xe3\x82\xab\xe3\x82\xbf") == 0) {
-            if (s_last_mode_btn[0] != '\0' && strcmp(s_last_mode_btn, str) != 0) {
-                if (cur_t - s_last_toggle_tick > 600) {
-                    s_last_toggle_tick = cur_t;
-                    show_thai_name_input_dialog();
-                }
-            }
-            strncpy(s_last_mode_btn, str, sizeof(s_last_mode_btn) - 1);
-        }
-
-        g_last_name_screen_tick = cur_t;
-    }
-
-    ULONGLONG now = GetTickCount64();
-    if ((now - g_last_name_screen_tick) <= 1500) {
-        check_thai_name_input_hotkeys(now);
-    }
-}
-
 static const char* lookup_translation(const char* orig);
 static const char* try_match_dynamic_template(const char* orig);
 
@@ -731,29 +300,8 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
 {
     if (out_scale) *out_scale = 1.0f;
     if (!orig || orig[0] == '\0' || g_trans_count == 0) return NULL;
-    update_name_screen_state_and_hotkeys(orig);
 
-    /* 1. Standalone Player & Dog Name Replacement (menus, status, name screen) */
-    if (g_custom_thai_player_name[0] != '\0') {
-        if ((g_active_player_name[0] != '\0' && strcmp(orig, g_active_player_name) == 0) ||
-            strcmp(orig, "\xe3\x82\xa2\xe3\x83\xa1") == 0 ||
-            strcmp(orig, "\xe3\x82\xa2") == 0 || /* "ア" */
-            strcmp(orig, "\xe3\x81\x82") == 0) { /* "あ" */
-            if (out_scale) *out_scale = 1.0f;
-            return g_custom_thai_player_name;
-        }
-    }
-    if (g_custom_thai_dog_name[0] != '\0') {
-        if ((g_active_dog_name[0] != '\0' && strcmp(orig, g_active_dog_name) == 0) ||
-            strcmp(orig, "\xe3\x83\x9d\xe3\x83\x81") == 0 ||
-            strcmp(orig, "\xe3\x82\xa2") == 0 || /* "ア" */
-            strcmp(orig, "\xe3\x81\x82") == 0) { /* "あ" */
-            if (out_scale) *out_scale = 1.0f;
-            return g_custom_thai_dog_name;
-        }
-    }
-
-    /* 2. Direct Exact Match in Translation Table */
+    /* 1. Direct Exact Match in Translation Table */
     uint32_t h = hash_str(orig);
     uint32_t bucket = h % HASH_TABLE_SIZE;
 
@@ -769,124 +317,108 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
     }
     LeaveCriticalSection(&g_cs);
 
-    /* 3. Dynamic Name Confirmation: 「<name>」でよろしいですか？ */
+    /* 1.5. Whitespace Fallback: if exact match failed, match trimmed version and restore original spaces */
+    size_t orig_len = strlen(orig);
+    const char* sp_start = orig;
+    while (*sp_start == ' ' || *sp_start == '\t') sp_start++;
+    const char* sp_end = orig + orig_len;
+    while (sp_end > sp_start && (*(sp_end - 1) == ' ' || *(sp_end - 1) == '\t')) sp_end--;
+
+    if (sp_start > orig || sp_end < orig + orig_len) {
+        size_t trimmed_len = (size_t)(sp_end - sp_start);
+        if (trimmed_len > 0 && trimmed_len < 512) {
+            char trimmed[512];
+            memcpy(trimmed, sp_start, trimmed_len);
+            trimmed[trimmed_len] = '\0';
+
+            uint32_t th = hash_str(trimmed);
+            uint32_t tbucket = th % HASH_TABLE_SIZE;
+
+            EnterCriticalSection(&g_cs);
+            TransNode* tnode = g_trans_table[tbucket];
+            while (tnode) {
+                if (tnode->hash == th && strcmp(tnode->orig, trimmed) == 0) {
+                    LeaveCriticalSection(&g_cs);
+                    if (out_scale) *out_scale = tnode->scale;
+
+                    static char s_ws_buf[1024];
+                    size_t lead_sp = (size_t)(sp_start - orig);
+                    size_t trail_sp = (size_t)((orig + orig_len) - sp_end);
+                    size_t rep_len = strlen(tnode->trans);
+
+                    if (lead_sp + rep_len + trail_sp < sizeof(s_ws_buf) - 1) {
+                        memcpy(s_ws_buf, orig, lead_sp);
+                        memcpy(s_ws_buf + lead_sp, tnode->trans, rep_len);
+                        memcpy(s_ws_buf + lead_sp + rep_len, sp_end, trail_sp);
+                        s_ws_buf[lead_sp + rep_len + trail_sp] = '\0';
+                        return s_ws_buf;
+                    }
+                    return tnode->trans;
+                }
+                tnode = tnode->next;
+            }
+            LeaveCriticalSection(&g_cs);
+        }
+    }
+
+    /* 2. Dynamic Name Confirmation: 「<name>」でよろしいですか？ or Proceed with "<name>"? */
+    const char* p_name_start = NULL;
+    size_t name_len = 0;
+    BOOL is_confirm = FALSE;
+
     if (strncmp(orig, "\xe3\x80\x8c", 3) == 0) {
-        const char* p_close = strstr(orig, "\xe3\x80\x8d\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f");
+        const char* p_close = strstr(orig, "\xe3\x80\x8d\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f");
         if (p_close) {
-            size_t name_len = p_close - (orig + 3);
-            char captured_name[64] = { 0 };
-            BOOL is_dog = g_is_dog_name_screen;
+            p_name_start = orig + 3;
+            name_len = p_close - p_name_start;
+            is_confirm = TRUE;
+        }
+    } else if (strncmp(orig, "Proceed with ", 13) == 0) {
+        const char* p_cur = orig + 13;
+        if (*p_cur == '\"') p_cur++;
+        const char* p_q = strchr(p_cur, '?');
+        if (p_q) {
+            const char* p_end = p_q;
+            if (p_end > p_cur && *(p_end - 1) == '\"') p_end--;
+            p_name_start = p_cur;
+            name_len = p_end - p_name_start;
+            is_confirm = TRUE;
+        }
+    }
 
-            if (name_len > 0 && name_len < sizeof(captured_name)) {
-                memcpy(captured_name, orig + 3, name_len);
-                captured_name[name_len] = '\0';
+    if (is_confirm && p_name_start && name_len > 0) {
+        char captured_name[64] = { 0 };
+        if (name_len < sizeof(captured_name)) {
+            memcpy(captured_name, p_name_start, name_len);
+            captured_name[name_len] = '\0';
+        }
 
-                if (is_dog) {
-                    strncpy(g_active_dog_name, captured_name, sizeof(g_active_dog_name) - 1);
-                    log_msg("[DOG NAME] Captured dog name: %s", g_active_dog_name);
-                    save_custom_names_ini();
-                } else {
-                    strncpy(g_active_player_name, captured_name, sizeof(g_active_player_name) - 1);
-                    log_msg("[PLAYER NAME] Captured player name: %s", g_active_player_name);
-                    save_custom_names_ini();
+        static char name_confirm_buf[512];
+        const char* templ = lookup_translation_ex("Proceed with <value 1>?", NULL);
+        if (!templ) templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
+        if (!templ) templ = lookup_translation_ex("「」でよろしいですか？", NULL);
+        if (templ && captured_name[0] != '\0') {
+            if (strstr(templ, "<value 1>")) {
+                if (replace_str(templ, "<value 1>", captured_name, name_confirm_buf, sizeof(name_confirm_buf))) {
+                    return name_confirm_buf;
                 }
-            }
-
-            static char name_confirm_buf[512];
-            const char* templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
-            if (!templ) templ = lookup_translation_ex("「」でよろしいですか？", NULL);
-            if (templ) {
-                const char* cur_name = NULL;
-                if (is_dog) {
-                    if (g_custom_thai_dog_name[0] != '\0') {
-                        cur_name = g_custom_thai_dog_name;
-                    } else if (captured_name[0] != '\0') {
-                        cur_name = captured_name;
-                    } else if (g_active_dog_name[0] != '\0') {
-                        cur_name = g_active_dog_name;
-                    } else {
-                        cur_name = "\xe3\x83\x9d\xe3\x83\x81"; /* "ポチ" */
-                    }
-                } else {
-                    if (g_custom_thai_player_name[0] != '\0') {
-                        cur_name = g_custom_thai_player_name;
-                    } else if (captured_name[0] != '\0') {
-                        cur_name = captured_name;
-                    } else if (g_active_player_name[0] != '\0') {
-                        cur_name = g_active_player_name;
-                    } else {
-                        cur_name = "\xe3\x82\xa2\xe3\x83\xa1"; /* "アメ" */
-                    }
+            } else if (strstr(templ, "\"\"")) {
+                char name_in_quotes[128];
+                snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", captured_name);
+                if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
+                    return name_confirm_buf;
                 }
-                if (cur_name && cur_name[0] != '\0') {
-                    if (strstr(templ, "<value 1>")) {
-                        if (replace_str(templ, "<value 1>", cur_name, name_confirm_buf, sizeof(name_confirm_buf))) {
-                            return name_confirm_buf;
-                        }
-                    } else if (strstr(templ, "\"\"")) {
-                        char name_in_quotes[128];
-                        snprintf(name_in_quotes, sizeof(name_in_quotes), "\"%s\"", cur_name);
-                        if (replace_str(templ, "\"\"", name_in_quotes, name_confirm_buf, sizeof(name_confirm_buf))) {
-                            return name_confirm_buf;
-                        }
-                    } else if (strstr(templ, "\xe3\x80\x8c\xe3\x80\x8d")) {
-                        char name_in_brackets[128];
-                        snprintf(name_in_brackets, sizeof(name_in_brackets), "「%s」", cur_name);
-                        if (replace_str(templ, "\xe3\x80\x8c\xe3\x80\x8d", name_in_brackets, name_confirm_buf, sizeof(name_confirm_buf))) {
-                            return name_confirm_buf;
-                        }
-                    }
+            } else if (strstr(templ, "\xe3\x80\x8c\xe3\x80\x8d")) {
+                char name_in_brackets[128];
+                snprintf(name_in_brackets, sizeof(name_in_brackets), "「%s」", captured_name);
+                if (replace_str(templ, "\xe3\x80\x8c\xe3\x80\x8d", name_in_brackets, name_confirm_buf, sizeof(name_confirm_buf))) {
+                    return name_confirm_buf;
                 }
             }
         }
     }
 
-    /* 4. Dynamic Player & Dog Name Substitution */
-    if ((g_active_player_name[0] != '\0' && strstr(orig, g_active_player_name) != NULL) ||
-        (g_active_dog_name[0] != '\0' && strstr(orig, g_active_dog_name) != NULL)) {
-        char templ[8192];
-        strncpy(templ, orig, sizeof(templ) - 1);
-        templ[sizeof(templ) - 1] = '\0';
-        if (g_active_player_name[0] != '\0' && strstr(templ, g_active_player_name) != NULL) {
-            char temp_sub[8192];
-            if (replace_str(templ, g_active_player_name, "<player>", temp_sub, sizeof(temp_sub))) {
-                strncpy(templ, temp_sub, sizeof(templ) - 1);
-                templ[sizeof(templ) - 1] = '\0';
-            }
-        }
-        if (g_active_dog_name[0] != '\0' && strstr(templ, g_active_dog_name) != NULL) {
-            char temp_sub[8192];
-            if (replace_str(templ, g_active_dog_name, "<dog>", temp_sub, sizeof(temp_sub))) {
-                strncpy(templ, temp_sub, sizeof(templ) - 1);
-                templ[sizeof(templ) - 1] = '\0';
-            }
-        }
-        const char* rep_templ = lookup_translation_ex(templ, NULL);
-        if (rep_templ) {
-            static char dynamic_buf[8192];
-            strncpy(dynamic_buf, rep_templ, sizeof(dynamic_buf) - 1);
-            dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
-            const char* player_rep = (g_custom_thai_player_name[0] != '\0') ? g_custom_thai_player_name : g_active_player_name;
-            const char* dog_rep = (g_custom_thai_dog_name[0] != '\0') ? g_custom_thai_dog_name : g_active_dog_name;
-            if (player_rep[0] != '\0' && strstr(dynamic_buf, "<player>") != NULL) {
-                char temp_sub[8192];
-                if (replace_str(dynamic_buf, "<player>", player_rep, temp_sub, sizeof(temp_sub))) {
-                    strncpy(dynamic_buf, temp_sub, sizeof(dynamic_buf) - 1);
-                    dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
-                }
-            }
-            if (dog_rep[0] != '\0' && strstr(dynamic_buf, "<dog>") != NULL) {
-                char temp_sub[8192];
-                if (replace_str(dynamic_buf, "<dog>", dog_rep, temp_sub, sizeof(temp_sub))) {
-                    strncpy(dynamic_buf, temp_sub, sizeof(dynamic_buf) - 1);
-                    dynamic_buf[sizeof(dynamic_buf) - 1] = '\0';
-                }
-            }
-            return dynamic_buf;
-        }
-    }
-
-    /* 5. Dynamic Template Matching (<value ...> patterns: save dates, currency, items) */
+    /* 3. Dynamic Template Matching (<value ...> patterns: save dates, currency, items) */
     const char* dyn_match = try_match_dynamic_template(orig);
     if (dyn_match) {
         return dyn_match;
@@ -1603,16 +1135,18 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
     }
 
     while (fgets(line, sizeof(line), f)) {
+        if (line[0] == '\r' || line[0] == '\n' || line[0] == '\0') continue;
+
+        /* Check comments */
         char* p = line;
         while (*p == ' ' || *p == '\t') p++;
-        if (*p == '#' || *p == ';' || *p == '\r' || *p == '\n' || *p == '\0') continue;
-        if (p[0] == '/' && p[1] == '/') continue;
+        if (*p == '#' || *p == ';' || (p[0] == '/' && p[1] == '/')) continue;
 
-        char* sep = strchr(p, '=');
+        char* sep = strchr(line, '=');
         if (!sep) continue;
 
         *sep = '\0';
-        char* orig_raw = p;
+        char* orig_raw = line;
         char* trans_raw = sep + 1;
 
         int len = (int)strlen(trans_raw);
@@ -1641,15 +1175,8 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
                 if (sc > 0.05f && sc < 10.0f) {
                     scale = sc;
                 }
-                memset(sc_tag, ' ', (tag_end - sc_tag + 1));
+                memmove(sc_tag, tag_end + 1, strlen(tag_end + 1) + 1);
             }
-        }
-
-        /* Trim trailing whitespace from orig after stripping tags */
-        int orig_len = (int)strlen(orig);
-        while (orig_len > 0 && (orig[orig_len - 1] == ' ' || orig[orig_len - 1] == '\t')) {
-            orig[orig_len - 1] = '\0';
-            orig_len--;
         }
 
         if (orig[0] == '\0') continue;
@@ -1728,17 +1255,33 @@ static void process_captured_text(const char* str, const char* source)
     (void)source;
     if (!is_safe_str(str, 8192)) return;
 
-    update_name_screen_state_and_hotkeys(str);
-
     EnterCriticalSection(&g_cs);
     g_total_calls++;
     LeaveCriticalSection(&g_cs);
 }
 
 /* ==================================================================
- * Missing Japanese Text Detection & Logging
+ * Missing Text Detection (Japanese & English) & Logging
  * ================================================================== */
-static BOOL has_japanese_utf8(const char* s)
+static BOOL has_thai_utf8(const char* s)
+{
+    if (!s) return FALSE;
+    const unsigned char* p = (const unsigned char*)s;
+    while (*p) {
+        /* Standard Thai Unicode block U+0E00..U+0E7F: 0xE0 0xB8..0xB9 0x80..0xBF */
+        if (*p == 0xE0 && (*(p + 1) == 0xB8 || *(p + 1) == 0xB9)) {
+            return TRUE;
+        }
+        /* Thai PUA characters (Private Use Area U+F000..U+F8FF): 0xEF 0x80..0xA3 0x80..0xBF */
+        if (*p == 0xEF && (*(p + 1) >= 0x80 && *(p + 1) <= 0xA3)) {
+            return TRUE;
+        }
+        p++;
+    }
+    return FALSE;
+}
+
+static BOOL has_japanese_content(const char* s)
 {
     if (!s) return FALSE;
     const unsigned char* p = (const unsigned char*)s;
@@ -1747,8 +1290,6 @@ static BOOL has_japanese_utf8(const char* s)
             unsigned char b1 = *(p + 1);
             unsigned char b2 = *(p + 2);
             if (b1 != 0 && b2 != 0) {
-                /* Japanese punctuation (e.g. 、 。 「 」 『 』) U+3001..U+303F */
-                if (b1 == 0x80 && b2 >= 0x81 && b2 <= 0xBF) return TRUE;
                 /* Hiragana U+3040..U+309F */
                 if (b1 == 0x81 && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
                 if (b1 == 0x82 && b2 >= 0x80 && b2 <= 0x9F) return TRUE;
@@ -1771,14 +1312,41 @@ static BOOL has_japanese_utf8(const char* s)
                 }
                 p += 2;
             }
-        } else if (*p == 0xEF) {
-            unsigned char b1 = *(p + 1);
-            unsigned char b2 = *(p + 2);
-            if (b1 != 0 && b2 != 0) {
-                /* Fullwidth & Halfwidth Forms U+FF00..U+FFEF (excludes PUA 0xEF 0x80..0xA3) */
-                if (b1 >= 0xBC && b1 <= 0xBF && b2 >= 0x80 && b2 <= 0xBF) return TRUE;
-                p += 2;
+        }
+        p++;
+    }
+    return FALSE;
+}
+
+static BOOL has_english_content(const char* s)
+{
+    if (!s) return FALSE;
+    const unsigned char* p = (const unsigned char*)s;
+    int letter_streak = 0;
+    BOOL in_tag = FALSE;
+
+    while (*p) {
+        if (*p == '<') {
+            in_tag = TRUE;
+            p++;
+            continue;
+        }
+        if (in_tag) {
+            if (*p == '>') {
+                in_tag = FALSE;
             }
+            p++;
+            continue;
+        }
+
+        /* Check for ASCII Latin letters A-Z, a-z */
+        if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z')) {
+            letter_streak++;
+            if (letter_streak >= 2) {
+                return TRUE; /* Word with at least 2 letters */
+            }
+        } else {
+            letter_streak = 0;
         }
         p++;
     }
@@ -1806,7 +1374,17 @@ static void escape_string_for_dump(char* dest, size_t dest_sz, const char* src)
     *d = '\0';
 }
 
-static void log_missing_text(const char* str, const char* source)
+static void write_utf8_bom(FILE* f)
+{
+    if (!f) return;
+    fseek(f, 0, SEEK_END);
+    if (ftell(f) == 0) {
+        const unsigned char bom[3] = { 0xEF, 0xBB, 0xBF };
+        fwrite(bom, 1, 3, f);
+    }
+}
+
+static void log_missing_text(const char* str, const char* source, const char* lang_tag)
 {
     (void)source;
     if (!is_safe_str(str, 8192)) return;
@@ -1814,27 +1392,89 @@ static void log_missing_text(const char* str, const char* source)
     EnterCriticalSection(&g_cs);
     if (!is_missing_seen_or_insert(str)) {
         g_missing_count++;
-        if (!g_fmissing_latest) {
-            g_fmissing_latest = _wfopen(g_dump_missing_path_w, L"a+");
+
+        /* 1. Open session file: missing/missing_YYYY-MM-DD_HH-MM-SS.txt */
+        if (!g_fmissing_session && g_session_dump_missing_path_w[0]) {
+            g_fmissing_session = _wfopen(g_session_dump_missing_path_w, L"a+");
+            if (g_fmissing_session) write_utf8_bom(g_fmissing_session);
         }
+
+        /* 2. Open latest file: missing/missing_latest.txt */
+        static BOOL s_latest_opened = FALSE;
+        if (!s_latest_opened && g_missing_latest_path_w[0]) {
+            g_fmissing_latest = _wfopen(g_missing_latest_path_w, L"w");
+            if (g_fmissing_latest) write_utf8_bom(g_fmissing_latest);
+            s_latest_opened = TRUE;
+        } else if (!g_fmissing_latest && g_missing_latest_path_w[0]) {
+            g_fmissing_latest = _wfopen(g_missing_latest_path_w, L"a+");
+            if (g_fmissing_latest) write_utf8_bom(g_fmissing_latest);
+        }
+
+        /* 3. Open legacy cumulative file: dump_missing.txt */
+        if (!g_fmissing_legacy && g_dump_missing_path_w[0]) {
+            g_fmissing_legacy = _wfopen(g_dump_missing_path_w, L"a+");
+            if (g_fmissing_legacy) write_utf8_bom(g_fmissing_legacy);
+        }
+
         char escaped[8192];
         escape_string_for_dump(escaped, sizeof(escaped), str);
 
         SYSTEMTIME st;
         GetLocalTime(&st);
-        if (g_fmissing_latest) {
-            fprintf(g_fmissing_latest, "[%04d-%02d-%02d %02d:%02d:%02d] %s\n",
+
+        if (g_fmissing_session) {
+            fprintf(g_fmissing_session, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
                     st.wYear, st.wMonth, st.wDay,
                     st.wHour, st.wMinute, st.wSecond,
-                    escaped);
+                    lang_tag, escaped);
+            fflush(g_fmissing_session);
+        }
+
+        if (g_fmissing_latest) {
+            fprintf(g_fmissing_latest, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
+                    st.wYear, st.wMonth, st.wDay,
+                    st.wHour, st.wMinute, st.wSecond,
+                    lang_tag, escaped);
             fflush(g_fmissing_latest);
         }
-        log_msg("[MISSING TEXT] [%04d-%02d-%02d %02d:%02d:%02d] %s",
+
+        if (g_fmissing_legacy) {
+            fprintf(g_fmissing_legacy, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
+                    st.wYear, st.wMonth, st.wDay,
+                    st.wHour, st.wMinute, st.wSecond,
+                    lang_tag, escaped);
+            fflush(g_fmissing_legacy);
+        }
+
+        log_msg("[MISSING TEXT] [%s] [%04d-%02d-%02d %02d:%02d:%02d] %s",
+                lang_tag,
                 st.wYear, st.wMonth, st.wDay,
                 st.wHour, st.wMinute, st.wSecond,
                 escaped);
     }
     LeaveCriticalSection(&g_cs);
+}
+
+static void check_and_log_missing(const char* str, const char* source)
+{
+    if (!str || !*str) return;
+
+    /* Rule 1: Exclude already-translated Thai text (standard Thai or Thai PUA) */
+    if (has_thai_utf8(str)) {
+        return;
+    }
+
+    /* Rule 2: Check for Japanese text (Hiragana, Katakana, Kanji) */
+    if (has_japanese_content(str)) {
+        log_missing_text(str, source, "JP");
+        return;
+    }
+
+    /* Rule 3: Check for English text (>=2 ASCII letters outside tags) */
+    if (has_english_content(str)) {
+        log_missing_text(str, source, "EN");
+        return;
+    }
 }
 
 /* ==================================================================
@@ -2005,7 +1645,23 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 1d. Mods\TextDump\database\<basename> */
+    /* 1d. Mods\TextDump\dat\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\dat\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 1e. Mods\TextDump\data\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\data\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 1f. Mods\TextDump\database\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\database\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -2135,6 +1791,7 @@ static const FadMappingDef g_fad_mapping_defs[] = {
     {  94, "タイトル白.nltx", "title_white.nltx", 2048, 1280 },
     { 101, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 },
     { 105, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 },
+    { 110, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 },
     { 112, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx", 256, 256 },
     { 117, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx", 256, 128 },
     { 119, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx", 512, 256 },
@@ -2165,6 +1822,10 @@ static const FadMappingDef g_fad_mapping_defs[] = {
     { 144, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024 },
     { 145, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024 },
     { 146, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024 },
+    { 147, "ui_5010_チラシ37.nltx", "ui_5010_チラシ37_thai.nltx", 1024, 1024 },
+    { 148, "ui_5010_チラシ38.nltx", "ui_5010_チラシ38_thai.nltx", 1024, 1024 },
+    { 149, "ui_5010_チラシ39.nltx", "ui_5010_チラシ39_thai.nltx", 1024, 1024 },
+    { 150, "ui_5010_チラシ40.nltx", "ui_5010_チラシ40_thai.nltx", 1024, 1024 },
     { 168, "鐘.nltx", "鐘_thai.nltx", 2200, 1300 },
     { 171, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048 },
     { 187, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx", 256, 1024 },
@@ -3094,9 +2755,7 @@ static void hk_putStr(void* this_ptr, const char* str)
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
         str = rep;
     } else {
-        if (has_japanese_utf8(str)) {
-            log_missing_text(str, "putStr");
-        }
+        check_and_log_missing(str, "putStr");
     }
 
     call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
@@ -3112,9 +2771,7 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
         str = rep;
     } else {
-        if (has_japanese_utf8(str)) {
-            log_missing_text(str, "putStrProp");
-        }
+        check_and_log_missing(str, "putStrProp");
     }
 
     call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
@@ -3130,9 +2787,7 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
         str = rep;
     } else {
-        if (has_japanese_utf8(str)) {
-            log_missing_text(str, "putStrAlign");
-        }
+        check_and_log_missing(str, "putStrAlign");
     }
 
     call_with_auto_scale(fp_original_putStrAlign, this_ptr, str, scale);
@@ -3226,13 +2881,26 @@ static void init_paths(void)
     swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
     swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
     swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
-    swprintf(g_custom_names_ini_path_w, MAX_PATH, L"%ls\\custom_names.ini", g_mod_dir_w);
+
+    /* Missing files directory: Mods/TextDump/missing */
+    wchar_t missing_dir_w[MAX_PATH];
+    swprintf(missing_dir_w, MAX_PATH, L"%ls\\missing", g_mod_dir_w);
+    CreateDirectoryW(missing_dir_w, NULL);
+
+    /* Session missing file: missing/missing_YYYY-MM-DD_HH-MM-SS.txt */
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    swprintf(g_session_dump_missing_path_w, MAX_PATH, 
+             L"%ls\\missing\\missing_%04d-%02d-%02d_%02d-%02d-%02d.txt", 
+             g_mod_dir_w, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+    /* Latest missing file: missing/missing_latest.txt */
+    swprintf(g_missing_latest_path_w, MAX_PATH, L"%ls\\missing\\missing_latest.txt", g_mod_dir_w);
 
     /* Populate UTF-8 versions for display/logging if needed */
     WideCharToMultiByte(CP_UTF8, 0, g_log_path_w, -1, g_log_path, sizeof(g_log_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
-    WideCharToMultiByte(CP_UTF8, 0, g_custom_names_ini_path_w, -1, g_custom_names_ini_path, sizeof(g_custom_names_ini_path), NULL, NULL);
 }
 
 static DWORD WINAPI worker_thread(LPVOID param)
@@ -3321,9 +2989,8 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    /* 4. Load translation file & saved custom names */
+    /* 4. Load translation file */
     load_translation_file();
-    load_custom_names_ini();
 
     /* 5. Resolve & Hook Text Rendering Functions */
     uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
@@ -3382,6 +3049,9 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
+    /* 6. Patch In-Game Virtual Keyboard string table in memory (Thai Unicode Layout) */
+    patch_virtual_keyboard_in_memory(base, log_msg);
+
     log_msg("System ready! Both VFS and Text Translation are active.");
 
     /* Initialize in-memory cheats system (monitors cheats.ini) */
@@ -3396,7 +3066,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
         cheats_tick();
 
         if (g_unique_count != last_unique || g_missing_count != last_missing || g_total_replacements != last_rep) {
-            log_msg("Status: Unique texts=%d, Missing JP=%d, Replacements applied=%llu, Total calls=%llu",
+            log_msg("Status: Unique texts=%d, Missing texts=%d, Replacements applied=%llu, Total calls=%llu",
                     g_unique_count,
                     g_missing_count,
                     (unsigned long long)g_total_replacements,
@@ -3431,8 +3101,9 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         if (hThread) CloseHandle(hThread);
     } else if (reason == DLL_PROCESS_DETACH) {
         cheats_cleanup();
-        if (g_fmissing) { fclose(g_fmissing); g_fmissing = NULL; }
+        if (g_fmissing_session) { fclose(g_fmissing_session); g_fmissing_session = NULL; }
         if (g_fmissing_latest) { fclose(g_fmissing_latest); g_fmissing_latest = NULL; }
+        if (g_fmissing_legacy) { fclose(g_fmissing_legacy); g_fmissing_legacy = NULL; }
         if (g_funique) { fclose(g_funique); g_funique = NULL; }
         if (g_funique_latest) { fclose(g_funique_latest); g_funique_latest = NULL; }
         if (g_fraw) { fclose(g_fraw); g_fraw = NULL; }
