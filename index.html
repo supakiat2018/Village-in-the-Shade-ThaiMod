@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Village in the Shade - ม็อดภาษาไทย (Thai Localization Mod)</title>
+  <!-- Google Fonts: Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #090d16;
+      color: #e2e8f0;
+      font-family: 'Prompt', sans-serif;
+    }
+    .glow-effect {
+      box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.35);
+    }
+    .card-glass {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+  </style>
+</head>
+<body class="selection:bg-emerald-500 selection:text-white">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 card-glass border-b border-slate-800/80 px-6 py-4">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🏡</span>
+        <span class="font-bold text-lg md:text-xl tracking-wide text-white">Village in the Shade <span class="text-emerald-400 font-semibold text-sm md:text-base">| ม็อดภาษาไทย</span></span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#features" class="hidden md:inline-block text-slate-300 hover:text-emerald-400 text-sm transition">จุดเด่น</a>
+        <a href="#install" class="hidden md:inline-block text-slate-300 hover:text-emerald-400 text-sm transition">วิธีติดตั้ง</a>
+        <a href="#cheats" class="hidden md:inline-block text-slate-300 hover:text-emerald-400 text-sm transition">สูตรโกง</a>
+        <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod" target="_blank" class="text-slate-400 hover:text-white transition">
+          <i class="fa-brands fa-github text-2xl"></i>
+        </a>
+        <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition shadow-lg shadow-emerald-500/20">
+          <i class="fa-solid fa-download"></i> ดาวน์โหลด
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-16 pb-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/10 via-transparent to-transparent pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+      
+      <!-- Badges -->
+      <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
+          <i class="fa-brands fa-steam text-sm"></i> PC Steam Compatible
+        </span>
+        <span class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1 rounded-full text-xs font-medium">
+          ⚠️ ช่วงทดสอบ (Demo)
+        </span>
+        <span class="bg-blue-500/10 border border-blue-500/30 text-blue-400 px-3.5 py-1 rounded-full text-xs font-medium">
+          C In-Memory Hooking
+        </span>
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-4 leading-tight">
+        Village in the Shade
+        <span class="block text-2xl md:text-3xl font-medium text-slate-400 mt-2 font-sans">
+          (ほのぐらしの庭) — ม็อดภาษาไทยสมบูรณ์แบบ
+        </span>
+      </h1>
+
+      <p class="text-slate-300 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+        สัมผัสบรรยากาศทำฟาร์มในสวนเงียบสงบแบบเต็มอรรถรสภาษาไทย พัฒนาด้วยเทคโนโลยี C In-Memory Text Hooking, Virtual File System (VFS) และฟอนต์ไทย PUA สระไม่ลอย คมชัด สบายตา
+      </p>
+
+      <!-- Main Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases" target="_blank" 
+           class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-lg flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/25 transition-all transform hover:-translate-y-1">
+          <i class="fa-solid fa-download text-xl"></i>
+          <span>ดาวน์โหลดม็อด (Download Releases)</span>
+        </a>
+        <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod" target="_blank"
+           class="w-full sm:w-auto px-7 py-4 rounded-2xl card-glass hover:bg-slate-800 text-white font-medium text-base flex items-center justify-center gap-2 border border-slate-700 transition">
+          <i class="fa-brands fa-github text-lg"></i>
+          <span>ดูซอร์สโค้ดบน GitHub</span>
+        </a>
+      </div>
+
+      <!-- Preview Image -->
+      <div class="relative rounded-2xl overflow-hidden card-glass p-2 glow-effect border border-slate-700/60 max-w-4xl mx-auto">
+        <img src="assets/preview.jpg" alt="Village in the Shade Thai Mod Preview" class="rounded-xl w-full h-auto object-cover" onerror="this.parentElement.style.display='none'">
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Status Notice Banner -->
+  <section class="max-w-5xl mx-auto px-6 mb-16">
+    <div class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-4">
+      <i class="fa-solid fa-circle-exclamation text-amber-400 text-2xl mt-0.5"></i>
+      <div>
+        <h4 class="font-bold text-amber-300 text-base mb-1">สถานะโปรเจกต์ (Project Status)</h4>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          ปัจจุบันม็อดนี้ <strong>ยังอยู่ในช่วงทดสอบ (เวอร์ชันเดโม่)</strong> จึงอาจยังมีคำศัพท์หรือบทสนทนาภาษาญี่ปุ่นบางคำหลุดโผล่อยู่บ้างในบางฉาก หากพบเจอคำใดที่ยังไม่แปล ตัวปลั๊กอินจะดักจับลงในไฟล์ <code class="bg-slate-900 px-2 py-0.5 rounded text-amber-300 font-mono text-xs">dump_missing.txt</code> ให้อัตโนมัติเพื่อนำมาอัปเดตคำแปลต่อในอนาคตครับ
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-3">ฟีเจอร์และจุดเด่นของม็อด</h2>
+      <p class="text-slate-400 text-sm md:text-base">ออกแบบด้วยระบบที่เสถียรและทรงพลังที่สุด เพื่อประสบการณ์เล่นเกมที่ดีที่สุด</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Feature 1 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-4">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">เกมอัปเดต ม็อดก็ไม่พัง</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          ใช้เทคโนโลยี Pattern Signature Scanning สแกนหาคำสั่งใน RAM แบบไดนามิก ไม่ดัดแปลงไฟล์เกมแท้ แม้เกมอัปเดตแพตช์ใหม่ ม็อดก็ยังทำงานร่วมกับเกมได้ตามปกติ
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 text-xl mb-4">
+          <i class="fa-solid fa-language"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">แปลไทยกว่า 47,950 บรรทัด</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          แปลครอบคลุมครบถ้วนทั้งบทสนทนาเนื้อเรื่อง, เควสต์, ป้ายร้านค้า, เมนูการตั้งค่า และไอเทมทั้งหมดในเกม
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-4">
+          <i class="fa-solid fa-font"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">ฟอนต์ PUA สระไม่ลอย</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          ปรับแต่งระบบฟอนต์ PUA วรรณยุกต์ไม่ลอย ตัวอักษรคมชัด ไม่ซ้อนทับ อ่านง่าย สบายตาทุกความละเอียดหน้าจอ
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl mb-4">
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">ภาพ UI แปลไทย 70 ภาพ</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          รีทัชแปลภาพกราฟิกในเกมครบครัน ทั้งป้ายชื่อร้าน, ป้ายประกาศ, แผนที่, หน้าเมนูไตเติล และ UI หลักทั้งหมด
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-xl mb-4">
+          <i class="fa-solid fa-keyboard"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">ป้อนชื่อไทยได้โดยตรง</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          พิมพ์ชื่อตัวละคร สุนัข และสัตว์เลี้ยงเป็นภาษาไทยได้ทันทีผ่านกล่องข้อความ หรือกดปุ่ม F2 พร้อมนำไปแสดงผลในบทสนทนาทุกจุด
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="card-glass p-6 rounded-2xl hover:border-emerald-500/50 transition">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl mb-4">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">สูตรโกงในตัว (Hot-Reload)</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          ระบบสูตรโกงอิสระในตัว ไม่ต้องใช้โปรแกรมเสริม ปรับแต่งผ่าน <code class="text-amber-300 font-mono">cheats.ini</code> อัปเดตทันทีแบบเรียลไทม์
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How to Install -->
+  <section id="install" class="max-w-5xl mx-auto px-6 py-16">
+    <div class="card-glass p-8 md:p-12 rounded-3xl border border-slate-700/80">
+      
+      <div class="text-center mb-10">
+        <span class="text-emerald-400 text-xs font-bold tracking-widest uppercase">EASY INSTALLATION</span>
+        <h2 class="text-3xl md:text-4xl font-black text-white mt-1">วิธีติดตั้งสำหรับผู้เล่น</h2>
+        <p class="text-slate-400 text-sm mt-2">ติดตั้งง่ายมากใน 3 สเต็ป ไม่ต้องแก้ไฟล์แท้ของเกม</p>
+      </div>
+
+      <div class="space-y-6 max-w-3xl mx-auto">
+        
+        <!-- Step 1 -->
+        <div class="flex gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 font-black flex items-center justify-center flex-shrink-0 text-lg">
+            1
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-base">ดาวน์โหลดไฟล์ม็อด</h4>
+            <p class="text-slate-400 text-sm mt-1">
+              ไปที่หน้าดาวน์โหลดและโหลดไฟล์ม็อดเวอร์ชันล่าสุด:
+            </p>
+            <div class="mt-3">
+              <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases" target="_blank" 
+                 class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm transition">
+                <i class="fa-solid fa-download"></i> ไปที่หน้า Releases (ดาวน์โหลดที่นี่)
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 font-black flex items-center justify-center flex-shrink-0 text-lg">
+            2
+          </div>
+          <div class="w-full">
+            <h4 class="font-bold text-white text-base">วางไฟล์ลงในโฟลเดอร์เกม</h4>
+            <p class="text-slate-400 text-sm mt-1">
+              นำไฟล์ <code class="text-emerald-400 font-mono">winmm.dll</code> และโฟลเดอร์ <code class="text-emerald-400 font-mono">Mods</code> ไปวางไว้ในโฟลเดอร์เกม Steam:
+            </p>
+            <div class="mt-3 p-3 rounded-xl bg-black/60 border border-slate-800 font-mono text-xs md:text-sm text-slate-300 flex items-center justify-between overflow-x-auto">
+              <code>C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\</code>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">*(ไม่ต้องเปลี่ยนชื่อไฟล์เดิมใดๆ ของเกมทั้งสิ้น วางคู่กันได้เลย)*</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 font-black flex items-center justify-center flex-shrink-0 text-lg">
+            3
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-base">เปิดเข้าเล่นเกม</h4>
+            <p class="text-slate-400 text-sm mt-1">
+              เปิดเข้าเกมผ่านแอป Steam ตามปกติ ตัวเกมจะเปลี่ยนเป็นภาษาไทยโดยอัตโนมัติทันที
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Uninstall Box -->
+      <div class="mt-10 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 max-w-3xl mx-auto flex items-start gap-4">
+        <i class="fa-solid fa-trash-can text-rose-400 text-xl mt-1"></i>
+        <div>
+          <h5 class="font-bold text-rose-300 text-sm">วิธีถอนการติดตั้ง (Uninstall)</h5>
+          <p class="text-slate-400 text-xs mt-1 leading-relaxed">
+            เพียงลบไฟล์ <code class="font-mono text-slate-200">winmm.dll</code> และโฟลเดอร์ <code class="font-mono text-slate-200">Mods</code> ออกจากโฟลเดอร์เกม ตัวเกมจะกลับคืนสู่ภาษาดั้งเดิม 100% โดยไม่มีผลกระทบต่อไฟล์เซฟ
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Name Input Guide -->
+  <section class="max-w-5xl mx-auto px-6 py-10">
+    <div class="card-glass p-8 rounded-3xl border border-slate-800">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-3xl">✏️</span>
+        <div>
+          <h3 class="text-2xl font-bold text-white">วิธีใช้งานระบบป้อนชื่อภาษาไทย (Thai Name Input)</h3>
+          <p class="text-slate-400 text-sm">เมื่อถึงหน้าต่างตั้งชื่อตัวละคร, สุนัข หรือสัตว์เลี้ยงในฟาร์ม</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+          <span class="text-emerald-400 font-bold block mb-1">ขั้นตอนที่ 1:</span>
+          เลือกตัวอักษรภาษาญี่ปุ่นในเกม 1 ตัว (เช่น <code class="text-amber-300">あ</code> หรือ <code class="text-amber-300">ぎ</code>) เพื่อปลดล็อคให้ปุ่ม "ยืนยัน" ในเกมเปิดทำงาน
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+          <span class="text-emerald-400 font-bold block mb-1">ขั้นตอนที่ 2:</span>
+          คลิกปุ่ม <strong>"ป้อนชื่อไทย"</strong> ที่มุมซ้ายล่าง หรือกดปุ่มคีย์ลัด <strong>`F2`</strong> (สามารถกด Ctrl+V เพื่อวางข้อความได้)
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+          <span class="text-emerald-400 font-bold block mb-1">ขั้นตอนที่ 3:</span>
+          พิมพ์ชื่อที่ต้องการในกล่องข้อความภาษาไทย จากนั้นคลิก <strong>"ตกลง (OK)"</strong>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+          <span class="text-emerald-400 font-bold block mb-1">ขั้นตอนที่ 4:</span>
+          คลิกปุ่ม <strong>"ยืนยัน"</strong> ในเกม ➡️ กล่องข้อความจะแสดงชื่อภาษาไทยของคุณ ➡️ เลือก <strong>"ใช่"</strong>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 mt-4">
+        * ระบบจะบันทึกชื่อลงใน <code class="font-mono text-emerald-400">custom_names.ini</code> และนำชื่อภาษาไทยนี้ไปแทนที่ในบทสนทนาทุกบท เมนู ป้ายชื่อ และหน้าสเตตัสอย่างแนบเนียน
+      </p>
+    </div>
+  </section>
+
+  <!-- Cheats System -->
+  <section id="cheats" class="max-w-5xl mx-auto px-6 py-12">
+    <div class="card-glass p-8 rounded-3xl border border-slate-800">
+      <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">⚡</span>
+          <div>
+            <h3 class="text-2xl font-bold text-white">ระบบสูตรโกงในตัวเกม (In-Game Cheats)</h3>
+            <p class="text-slate-400 text-sm">ปรับแต่งเปิด/ปิดสูตรผ่านไฟล์ <code class="font-mono text-amber-300">cheats.ini</code> ได้อย่างอิสระ</p>
+          </div>
+        </div>
+        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold">
+          ⚡ รองรับ Hot-Reload ไม่ต้องปิดเกม
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-300">
+              <th class="py-3 px-4 font-semibold">ค่าใน cheats.ini</th>
+              <th class="py-3 px-4 font-semibold">คำอธิบายการทำงาน</th>
+              <th class="py-3 px-4 font-semibold text-center">ค่าเริ่มต้น</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 font-light">
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">god_mode = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">อมตะ:</strong> เลือดไม่ลด ไม่โดนดาเมจจากมอนสเตอร์และสิ่งกีดขวาง</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">infinite_items = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">ไอเทมไม่ลด:</strong> ใช้งานไอเทม, โยนของ, วางของ, ปลูกผัก จำนวนไม่ลด</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">no_materials_crafting = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">คราฟต์ของฟรี:</strong> สร้างสิ่งของได้ทันทีโดยไม่ต้องใช้วัตถุดิบ</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">no_materials_cooking = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">ทำอาหารฟรี:</strong> ปรุงอาหารได้ทุกเมนูโดยไม่ต้องใช้วัตถุดิบ</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">no_materials_smithing = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">ตีเหล็กฟรี:</strong> ตีเหล็กและอัปเกรดอุปกรณ์ได้ทันทีโดยไม่ต้องใช้วัตถุดิบ</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">infinite_stamina = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">พลังกายไม่จำกัด:</strong> Stamina เต็มตลอดเวลา ทำงานได้ทั้งวันไม่เหนื่อย</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">freeze_time = 0</td>
+              <td class="py-3 px-4"><strong class="text-white">หยุดเวลาในเกม:</strong> ล็อคเวลาไม่ให้เดิน (1 = หยุดเวลา, 0 = เดินปกติ)</td>
+              <td class="py-3 px-4 text-center font-mono">0</td>
+            </tr>
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-mono text-emerald-400">infinite_money = 1</td>
+              <td class="py-3 px-4"><strong class="text-white">เงินไม่จำกัด:</strong> ล็อคจำนวนเงินขั้นต่ำที่ 999,999 ตลอดเวลา</td>
+              <td class="py-3 px-4 text-center font-mono">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-slate-500 mt-4 leading-relaxed">
+        * หากต้องการปิดใช้งานสูตรทั้งหมดทันที เพียงเปลี่ยนชื่อไฟล์เป็น <code class="font-mono text-slate-300">_cheats.ini</code> ตัวเกมจะคืนค่าเดิมทั้งหมดทันที
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA Download Bottom Banner -->
+  <section class="max-w-5xl mx-auto px-6 py-16 text-center">
+    <div class="p-10 rounded-3xl bg-gradient-to-r from-emerald-600/30 via-slate-900 to-teal-600/30 border border-emerald-500/40 glow-effect">
+      <h3 class="text-3xl md:text-4xl font-black text-white mb-3">พร้อมสนุกกับเกมเวอร์ชันภาษาไทยหรือยัง?</h3>
+      <p class="text-slate-300 text-sm md:text-base mb-8 max-w-xl mx-auto">
+        ดาวน์โหลดม็อดไปทดลองเล่นได้ฟรีวันนี้ อัปเดตและพัฒนาอย่างต่อเนื่องโดย supakiat2018
+      </p>
+      <a href="https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases" target="_blank"
+         class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-lg shadow-xl shadow-emerald-500/30 transition transform hover:-translate-y-1">
+        <i class="fa-solid fa-download text-xl"></i>
+        <span>ดาวน์โหลดเลย (Download Releases)</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-10 px-6 text-center text-slate-500 text-xs">
+    <p class="mb-2">ผู้พัฒนาและแปลภาษาไทย: <strong class="text-slate-300">supakiat2018</strong> | เครื่องมือ Hooking: <strong class="text-slate-300">MinHook Library</strong></p>
+    <p>Village in the Shade เป็นลิขสิทธิ์ของผู้พัฒนาเกม ม็อดนี้จัดทำขึ้นเพื่อการแปลภาษาสำหรับผู้เล่นชาวไทยเท่านั้น</p>
+  </footer>
+
+</body>
+</html>
