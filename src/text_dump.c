@@ -1272,8 +1272,8 @@ static BOOL has_thai_utf8(const char* s)
         if (*p == 0xE0 && (*(p + 1) == 0xB8 || *(p + 1) == 0xB9)) {
             return TRUE;
         }
-        /* Thai PUA characters (Private Use Area U+F000..U+F8FF): 0xEF 0x80..0xA3 0x80..0xBF */
-        if (*p == 0xEF && (*(p + 1) >= 0x80 && *(p + 1) <= 0xA3)) {
+        /* Thai PUA characters (Private Use Area U+E000..U+F8FF): 0xEE or 0xEF */
+        if (*p == 0xEE || (*p == 0xEF && (*(p + 1) >= 0x80 && *(p + 1) <= 0xA3))) {
             return TRUE;
         }
         p++;
@@ -1518,6 +1518,10 @@ static uint64_t g_toc_off_dat = 0;
 static uint64_t g_toc_off_misc = 0;
 static uint32_t g_count_dat = 0;
 static uint32_t g_count_misc = 0;
+static uint64_t g_fsize_dat = 0;
+static uint64_t g_fsize_misc = 0;
+static uint64_t g_fsize_tex = 0;
+static uint64_t g_fsize_fairy = 0;
 
 static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
 {
@@ -1526,6 +1530,10 @@ static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
         log_msg("[VFS] Failed to open archive: %ls", path_w);
         return 0;
     }
+
+    _fseeki64(f, 0, SEEK_END);
+    uint64_t fsz = (uint64_t)_ftelli64(f);
+    _fseeki64(f, 0, SEEK_SET);
 
     FAFULLFS_Header hdr;
     if (fread(&hdr, 1, sizeof(hdr), f) != sizeof(hdr)) {
@@ -1539,11 +1547,17 @@ static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
     }
 
     if (archive_id == 1) {
+        g_fsize_dat = fsz;
         g_toc_off_dat = hdr.toc_off;
         g_count_dat = hdr.count;
     } else if (archive_id == 2) {
+        g_fsize_misc = fsz;
         g_toc_off_misc = hdr.toc_off;
         g_count_misc = hdr.count;
+    } else if (archive_id == 3) {
+        g_fsize_tex = fsz;
+    } else if (archive_id == 4) {
+        g_fsize_fairy = fsz;
     }
 
     FAFULLFS_TocEntry* tocs = (FAFULLFS_TocEntry*)malloc(hdr.count * sizeof(FAFULLFS_TocEntry));
@@ -1671,6 +1685,14 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
 
     /* 2. Mods\Fonts\<basename> (e.g. Mods\Fonts\font.dat or Mods\Fonts\KiwiMaru-Regular.ttf) */
     swprintf(candidate, MAX_PATH, L"%ls\\..\\Fonts\\%ls", g_mod_dir_w, base_name_w);
+    if (file_exists_and_size_w(candidate, out_size)) {
+        wcsncpy(out_path_w, candidate, out_max - 1);
+        out_path_w[out_max - 1] = L'\0';
+        return TRUE;
+    }
+
+    /* 2a2. <game_root>\Mods\Fonts\<basename> */
+    swprintf(candidate, MAX_PATH, L"%ls\\Mods\\Fonts\\%ls", g_game_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
         out_path_w[out_max - 1] = L'\0';
@@ -2116,6 +2138,10 @@ static int identify_archive_handle(HANDLE hFile)
     int type = -1;
     wchar_t path_w[MAX_PATH] = { 0 };
     DWORD len = GetFinalPathNameByHandleW(hFile, path_w, MAX_PATH - 1, 0);
+    if (len == 0) {
+        /* Fallback for non-standard volumes (exFAT/FAT32/network/junctions) */
+        len = GetFinalPathNameByHandleW(hFile, path_w, MAX_PATH - 1, 2 /* FILE_NAME_OPENED */);
+    }
     if (len > 0) {
         wchar_t lpath[MAX_PATH];
         for (DWORD i = 0; i <= len && i < MAX_PATH; i++) {
@@ -2133,6 +2159,26 @@ static int identify_archive_handle(HANDLE hFile)
         } else if (wcsstr(lpath, L"fairy_1_00.dat")) {
             type = 4;
             log_msg("[VFS] Cached fairy_1_00.dat handle: 0x%p", hFile);
+        }
+    }
+
+    /* Fallback: Match by exact archive file size if path lookup failed */
+    if (type == -1) {
+        LARGE_INTEGER fsz;
+        if (GetFileSizeEx(hFile, &fsz)) {
+            if (g_fsize_misc != 0 && (uint64_t)fsz.QuadPart == g_fsize_misc) {
+                type = 2;
+                log_msg("[VFS] Cached misc_1_00.dat handle by size (%llu B): 0x%p", g_fsize_misc, hFile);
+            } else if (g_fsize_dat != 0 && (uint64_t)fsz.QuadPart == g_fsize_dat) {
+                type = 1;
+                log_msg("[VFS] Cached data.dat handle by size (%llu B): 0x%p", g_fsize_dat, hFile);
+            } else if (g_fsize_tex != 0 && (uint64_t)fsz.QuadPart == g_fsize_tex) {
+                type = 3;
+                log_msg("[VFS] Cached texture_1_00.dat handle by size (%llu B): 0x%p", g_fsize_tex, hFile);
+            } else if (g_fsize_fairy != 0 && (uint64_t)fsz.QuadPart == g_fsize_fairy) {
+                type = 4;
+                log_msg("[VFS] Cached fairy_1_00.dat handle by size (%llu B): 0x%p", g_fsize_fairy, hFile);
+            }
         }
     }
 
@@ -2373,42 +2419,8 @@ static void patch_font_database_in_ram(void* buffer, DWORD size)
         }
     }
 
-    /* 2. Replace KiwiMaru with Lora in string table */
-    static const struct {
-        const char* target;
-        size_t target_len;
-        const char* replacement;
-        size_t replacement_len;
-    } kFontDbPatches[] = {
-        /* data/misc/KiwiMaru-Medium.ttf (30 bytes with null) -> data/misc/Lora-Bold.ttf (pad to 30 bytes) */
-        { "data/misc/KiwiMaru-Medium.ttf\0", 30,
-          "data/misc/Lora-Bold.ttf\0\0\0\0\0\0\0", 30 },
-        /* data/misc/KiwiMaru-Regular.ttf (31 bytes with null) -> data/misc/Lora-Medium.ttf (pad to 31 bytes) */
-        { "data/misc/KiwiMaru-Regular.ttf\0", 31,
-          "data/misc/Lora-Medium.ttf\0\0\0\0\0\0", 31 }
-    };
-
-    int replaced_strings = 0;
-    for (size_t i = 0; i < sizeof(kFontDbPatches) / sizeof(kFontDbPatches[0]); i++) {
-        const char* tgt = kFontDbPatches[i].target;
-        size_t tlen = kFontDbPatches[i].target_len;
-        const char* rep = kFontDbPatches[i].replacement;
-        size_t rlen = kFontDbPatches[i].replacement_len;
-
-        if (size >= tlen) {
-            size_t max_search = size - tlen;
-            for (size_t off = 0; off <= max_search; off++) {
-                if (p[off] == (uint8_t)tgt[0] && memcmp(p + off, tgt, tlen) == 0) {
-                    memcpy(p + off, rep, rlen);
-                    replaced_strings++;
-                    off += tlen - 1;
-                }
-            }
-        }
-    }
-
-    log_msg("[Font DB Patch] Success: Configured Proportional flags (%d records) & redirected %d KiwiMaru instances to Lora in RAM!",
-            patched_flags, replaced_strings);
+    log_msg("[Font DB Patch] Success: Configured Proportional flags (%d records) in RAM (KiwiMaru retained)!",
+            patched_flags);
 }
 
 static BOOL WINAPI hk_GetOverlappedResult(
@@ -2731,6 +2743,14 @@ static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, f
         return;
     }
 
+    /* Dynamic Proportional Kerning: Force proportional mode (flag=1) for Thai text */
+    uint16_t* pMode = (uint16_t*)((char*)this_ptr + 0x26);
+    uint16_t old_mode = *pMode;
+    BOOL is_thai = has_thai_utf8(str);
+    if (is_thai) {
+        *pMode = 1;
+    }
+
     if (scale > 0.05f && scale < 0.999f) {
         float* pScaleX = (float*)((char*)this_ptr + 0x28);
         float old_scale = *pScaleX;
@@ -2738,11 +2758,18 @@ static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, f
             *pScaleX = old_scale * scale;
             fn(this_ptr, str);
             *pScaleX = old_scale;
+            if (is_thai) {
+                *pMode = old_mode;
+            }
             return;
         }
     }
 
     fn(this_ptr, str);
+
+    if (is_thai) {
+        *pMode = old_mode;
+    }
 }
 
 static void hk_putStr(void* this_ptr, const char* str)
@@ -2851,21 +2878,33 @@ static void init_paths(void)
         wcscpy(g_mod_dir_w, L".");
     }
 
-    /* Game directory is parent of Mods: <game_root>\Mods\TextDump -> <game_root> */
-    wchar_t game_root_w[MAX_PATH];
-    wcsncpy(game_root_w, g_mod_dir_w, MAX_PATH - 1);
-    wchar_t* s1 = wcsrchr(game_root_w, L'\\');
-    if (s1) {
-        *s1 = L'\0';
-        wchar_t* s2 = wcsrchr(game_root_w, L'\\');
-        if (s2) {
-            *s2 = L'\0';
-            wcsncpy(g_game_dir_w, game_root_w, MAX_PATH - 1);
+    /* Primary: Get executable directory from current process main module */
+    wchar_t exe_path_w[MAX_PATH];
+    if (GetModuleFileNameW(NULL, exe_path_w, MAX_PATH) > 0) {
+        wchar_t* exe_slash = wcsrchr(exe_path_w, L'\\');
+        if (exe_slash) {
+            *exe_slash = L'\0';
+            wcsncpy(g_game_dir_w, exe_path_w, MAX_PATH - 1);
         } else {
             wcscpy(g_game_dir_w, L".");
         }
     } else {
-        wcscpy(g_game_dir_w, L".");
+        /* Fallback: Game directory is parent of Mods: <game_root>\Mods\TextDump -> <game_root> */
+        wchar_t game_root_w[MAX_PATH];
+        wcsncpy(game_root_w, g_mod_dir_w, MAX_PATH - 1);
+        wchar_t* s1 = wcsrchr(game_root_w, L'\\');
+        if (s1) {
+            *s1 = L'\0';
+            wchar_t* s2 = wcsrchr(game_root_w, L'\\');
+            if (s2) {
+                *s2 = L'\0';
+                wcsncpy(g_game_dir_w, game_root_w, MAX_PATH - 1);
+            } else {
+                wcscpy(g_game_dir_w, L".");
+            }
+        } else {
+            wcscpy(g_game_dir_w, L".");
+        }
     }
 
     /* Convert wide paths to UTF-8 for ANSI/display logging buffers */
