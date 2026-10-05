@@ -96,6 +96,7 @@ Village-in-the-Shade-ThaiMod/
 ## 🎮 วิธีติดตั้งสำหรับผู้เล่น (How to Install)
 
 1. ดาวน์โหลดไฟล์ม็อดจากหน้า [Releases](https://github.com/supakiat2018/Village-in-the-Shade-ThaiMod/releases)
+🌐 [ดาวน์โหลดและอ่านวิธีติดตั้งได้ที่เว็บไซต์](https://supakiat2018.github.io/Village-in-the-Shade-ThaiMod/)
 2. นำไฟล์ `winmm.dll` และโฟลเดอร์ `Mods` ไปวางในโฟลเดอร์เกม:
    ```
    C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\
