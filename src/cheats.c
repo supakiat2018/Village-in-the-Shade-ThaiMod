@@ -385,13 +385,15 @@ static void load_cheats_ini(void)
 static DWORD WINAPI hotkey_thread_proc(LPVOID param)
 {
     (void)param;
+    int stam_tick = 0;
+
     while (g_hotkey_running) {
         Sleep(25); /* ~40Hz polling rate with near-zero CPU usage */
 
-        if (!g_config.active || !g_config.enable_hotkeys) continue;
+        if (!g_config.active) continue;
 
         /* 1. Check NoClip Hotkey (Toggle) */
-        if (g_config.vk_noclip > 0 && (GetAsyncKeyState(g_config.vk_noclip) & 1)) {
+        if (g_config.enable_hotkeys && g_config.vk_noclip > 0 && (GetAsyncKeyState(g_config.vk_noclip) & 1)) {
             g_config.noclip = !g_config.noclip;
             if (g_config.noclip) {
                 apply_patch(&g_patches[8]);
@@ -401,6 +403,31 @@ static DWORD WINAPI hotkey_thread_proc(LPVOID param)
                 restore_patch(&g_patches[8]);
                 MessageBeep(MB_ICONASTERISK);
                 cheat_log("[Cheats] [HOTKEY %s] Noclip TOGGLED: OFF (Normal Collision)", g_config.str_noclip);
+            }
+        }
+
+        /* 2. Safe Infinite Stamina refresh (v1.30: Stamina 0x3A0, Stamina Max 0x3AC) */
+        if (g_config.infinite_stamina) {
+            if (++stam_tick >= 4) { /* ~100ms interval */
+                stam_tick = 0;
+                if (g_global_ptr_addr && is_readable((const void*)g_global_ptr_addr, sizeof(uintptr_t))) {
+                    uintptr_t gi = *(uintptr_t*)g_global_ptr_addr;
+                    if (is_readable((const void*)gi, 0x210)) {
+                        uintptr_t state = *(uintptr_t*)(gi + 0x208);
+                        if (state && is_readable((const void*)state, 0x3300)) {
+                            uintptr_t status = *(uintptr_t*)(state + 0x32B8);
+                            if (status && is_readable((const void*)status, 0x3C0)) {
+                                int32_t max_stamina = *(int32_t*)(status + 0x3AC);
+                                if (max_stamina > 0 && max_stamina <= 10000) {
+                                    int32_t cur = *(int32_t*)(status + 0x3A0);
+                                    if (cur < max_stamina) {
+                                        *(int32_t*)(status + 0x3A0) = max_stamina;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -477,8 +504,8 @@ void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log
                   (void*)g_global_ptr_addr, (uint32_t)(g_global_ptr_addr - base));
     } else {
         /* Fallback to known static RVA: v1.30 = 0x111CC90, v1.20 = 0x10FCBB0, v1.10 = 0x10DFAD0 */
-        if (is_readable((const void*)(base + 0x111CC90), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x111CC90) != 0) {
-            g_global_ptr_addr = base + 0x111CC90;
+        if (is_readable((const void*)(base + 0x111C090), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x111C090) != 0) {
+            g_global_ptr_addr = base + 0x111C090;
         } else if (is_readable((const void*)(base + 0x10FCBB0), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x10FCBB0) != 0) {
             g_global_ptr_addr = base + 0x10FCBB0;
         } else {
@@ -581,13 +608,16 @@ void cheats_tick(void)
 
     /* Apply pointer/value locks if cheats are active and state is valid */
     if (g_config.active && state) {
-        /* Infinite Stamina */
+        /* Infinite Stamina (v1.30: Stamina 0x3A0, Stamina Max 0x3AC) */
         if (g_config.infinite_stamina) {
             uintptr_t status = *(uintptr_t*)(state + 0x32B8);
-            if (is_readable((const void*)status, 0x3B0)) {
-                int32_t max_stamina = *(int32_t*)(status + 0x3A4);
-                if (max_stamina > 0) {
-                    *(int32_t*)(status + 0x398) = max_stamina;
+            if (is_readable((const void*)status, 0x3C0)) {
+                int32_t max_stamina = *(int32_t*)(status + 0x3AC);
+                if (max_stamina > 0 && max_stamina <= 10000) {
+                    int32_t cur = *(int32_t*)(status + 0x3A0);
+                    if (cur < max_stamina) {
+                        *(int32_t*)(status + 0x3A0) = max_stamina;
+                    }
                 }
             }
         }
