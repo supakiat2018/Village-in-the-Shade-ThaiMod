@@ -10,8 +10,13 @@
 #endif
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
+#ifdef ENABLE_CHEATS
 #include "cheats.h"
-#include "keyboard_v120_patch.h"
+#endif
+
+#ifdef ENABLE_THAI_KEYBOARD
+#include "keyboard_v130_patch.h"
+#endif
 
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
@@ -25,7 +30,6 @@ static char g_dump_log_path[MAX_PATH] = { 0 };
 static char g_session_dump_unique_path[MAX_PATH] = { 0 };
 static char g_session_dump_log_path[MAX_PATH] = { 0 };
 static char g_dump_missing_path[MAX_PATH] = { 0 };
-static char g_session_dump_missing_path[MAX_PATH] = { 0 };
 static char g_translation_path[MAX_PATH] = { 0 };
 static char g_file_access_log[MAX_PATH] = { 0 };
 static char g_tags_log_path[MAX_PATH] = { 0 };
@@ -37,7 +41,6 @@ static wchar_t g_dump_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_unique_path_w[MAX_PATH] = { 0 };
 static wchar_t g_session_dump_log_path_w[MAX_PATH] = { 0 };
 static wchar_t g_dump_missing_path_w[MAX_PATH] = { 0 };
-static wchar_t g_session_dump_missing_path_w[MAX_PATH] = { 0 };
 static wchar_t g_missing_latest_path_w[MAX_PATH] = { 0 };
 static wchar_t g_translation_path_w[MAX_PATH] = { 0 };
 static wchar_t g_file_access_log_w[MAX_PATH] = { 0 };
@@ -50,7 +53,6 @@ static FILE* g_funique = NULL;
 static FILE* g_funique_latest = NULL;
 static FILE* g_fraw = NULL;
 static FILE* g_fraw_latest = NULL;
-static FILE* g_fmissing_session = NULL;
 static FILE* g_fmissing_latest = NULL;
 static FILE* g_fmissing_legacy = NULL;
 static FILE* g_faccess = NULL;
@@ -367,11 +369,21 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
     BOOL is_confirm = FALSE;
 
     if (strncmp(orig, "\xe3\x80\x8c", 3) == 0) {
-        const char* p_close = strstr(orig, "\xe3\x80\x8d\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f");
+        /* Find closing bracket \xe3\x80\x8d */
+        const char* p_close = strstr(orig + 3, "\xe3\x80\x8d");
         if (p_close) {
-            p_name_start = orig + 3;
-            name_len = p_close - p_name_start;
-            is_confirm = TRUE;
+            const char* after = p_close + 3;
+            /* Skip ASCII and full-width Japanese spaces */
+            while (*after == ' ' || *after == '\t' || (strncmp(after, "\xe3\x80\x80", 3) == 0)) {
+                if (*after == ' ' || *after == '\t') after++;
+                else after += 3;
+            }
+            /* Check for \xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84 (でよろしい) */
+            if (strncmp(after, "\xe3\x81\xa7\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84", 15) == 0) {
+                p_name_start = orig + 3;
+                name_len = (size_t)(p_close - p_name_start);
+                is_confirm = TRUE;
+            }
         }
     } else if (strncmp(orig, "Proceed with ", 13) == 0) {
         const char* p_cur = orig + 13;
@@ -394,8 +406,8 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         }
 
         static char name_confirm_buf[512];
-        const char* templ = lookup_translation_ex("Proceed with <value 1>?", NULL);
-        if (!templ) templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
+        const char* templ = lookup_translation_ex("「<value 1>」でよろしいですか？", NULL);
+        if (!templ) templ = lookup_translation_ex("Proceed with <value 1>?", NULL);
         if (!templ) templ = lookup_translation_ex("「」でよろしいですか？", NULL);
         if (templ && captured_name[0] != '\0') {
             if (strstr(templ, "<value 1>")) {
@@ -1393,11 +1405,6 @@ static void log_missing_text(const char* str, const char* source, const char* la
     if (!is_missing_seen_or_insert(str)) {
         g_missing_count++;
 
-        /* 1. Open session file: missing/missing_YYYY-MM-DD_HH-MM-SS.txt */
-        if (!g_fmissing_session && g_session_dump_missing_path_w[0]) {
-            g_fmissing_session = _wfopen(g_session_dump_missing_path_w, L"a+");
-            if (g_fmissing_session) write_utf8_bom(g_fmissing_session);
-        }
 
         /* 2. Open latest file: missing/missing_latest.txt */
         static BOOL s_latest_opened = FALSE;
@@ -1422,13 +1429,6 @@ static void log_missing_text(const char* str, const char* source, const char* la
         SYSTEMTIME st;
         GetLocalTime(&st);
 
-        if (g_fmissing_session) {
-            fprintf(g_fmissing_session, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
-                    st.wYear, st.wMonth, st.wDay,
-                    st.wHour, st.wMinute, st.wSecond,
-                    lang_tag, escaped);
-            fflush(g_fmissing_session);
-        }
 
         if (g_fmissing_latest) {
             fprintf(g_fmissing_latest, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
@@ -1459,8 +1459,8 @@ static void check_and_log_missing(const char* str, const char* source)
 {
     if (!str || !*str) return;
 
-    /* Rule 1: Exclude already-translated Thai text (standard Thai or Thai PUA) */
-    if (has_thai_utf8(str)) {
+    /* Rule 1: Exclude already-translated Thai text (unless it still contains untranslated Japanese) */
+    if (has_thai_utf8(str) && !has_japanese_content(str)) {
         return;
     }
 
@@ -1796,78 +1796,152 @@ typedef struct {
     uint16_t height;
 } FadMappingDef;
 
-static const FadMappingDef g_fad_mapping_defs[] = {
-    {   0, "ui_0020_カレンダー.nltx", "ui_0020_カレンダー_thai.nltx", 1024, 1024 },
-    {  10, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx", 512, 256 },
-    {  22, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx", 512, 128 },
-    {  23, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300 },
-    {  26, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx", 512, 512 },
-    {  27, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024 },
-    {  34, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx", 512, 1024 },
-    {  36, "ui_5090_掲示板.nltx", "ui_5090_掲示板_thai.nltx", 2048, 2048 },
-    {  38, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048 },
-    {  40, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024, 512 },
-    {  47, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx", 512, 512 },
-    {  49, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048 },
-    {  51, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx", 256, 512 },
-    {  94, "タイトル白.nltx", "title_white.nltx", 2048, 1280 },
-    { 101, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 },
-    { 105, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 },
-    { 110, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 },
-    { 112, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx", 256, 256 },
-    { 117, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx", 256, 128 },
-    { 119, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx", 512, 256 },
-    { 120, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024 },
-    { 121, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024 },
-    { 122, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024 },
-    { 123, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024 },
-    { 124, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024 },
-    { 125, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024 },
-    { 126, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024 },
-    { 127, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024 },
-    { 128, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024 },
-    { 129, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024 },
-    { 130, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024 },
-    { 131, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024 },
-    { 132, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024 },
-    { 133, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024 },
-    { 134, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024 },
-    { 135, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024 },
-    { 136, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024 },
-    { 137, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024 },
-    { 138, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024 },
-    { 139, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024 },
-    { 140, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024 },
-    { 141, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024 },
-    { 142, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024 },
-    { 143, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024 },
-    { 144, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024 },
-    { 145, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024 },
-    { 146, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024 },
-    { 147, "ui_5010_チラシ37.nltx", "ui_5010_チラシ37_thai.nltx", 1024, 1024 },
-    { 148, "ui_5010_チラシ38.nltx", "ui_5010_チラシ38_thai.nltx", 1024, 1024 },
-    { 149, "ui_5010_チラシ39.nltx", "ui_5010_チラシ39_thai.nltx", 1024, 1024 },
-    { 150, "ui_5010_チラシ40.nltx", "ui_5010_チラシ40_thai.nltx", 1024, 1024 },
-    { 168, "鐘.nltx", "鐘_thai.nltx", 2200, 1300 },
-    { 171, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048 },
-    { 187, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx", 256, 1024 },
-    { 189, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048 },
-    { 191, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024, 256 },
-    { 195, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx", 512, 1024 },
-    { 196, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048 },
-    { 199, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024, 512 },
-    { 205, "ui_1000_title01.nltx", "ui_1000_タイトル01.nltx", 2048, 512 },
-    { 206, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024, 512 },
-    { 207, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048, 256 },
-    { 218, "ui_2100_00.nltx", "ui_2100_00_thai.nltx", 256, 256 },
-    { 226, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx", 512, 256 },
-    { 231, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx", 512, 256 },
-    { 232, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048 },
-    { 233, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048, 256 },
-    { 313, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024, 256 },
-    { 318, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024, 512 },
-    { 341, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx", 512, 256 },
-    { 342, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048, 512 },
+/* Generated JP FAD table: 71 entries */
+static const FadMappingDef g_fad_mapping_defs_jp[] = {
+    {   3, "ui_0020_カレンダー.nltx", "ui_0020_カレンダー_thai.nltx", 1024, 1024 }, /* RelOff=0x003E49C0 (ui_0020_カレンダー.tga) */
+    {  12, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024,  256 }, /* RelOff=0x0058D640 (ui_2210_日リザルト02.tga) */
+    {  13, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx",  512,  256 }, /* RelOff=0x005953E0 (ui_0070_buttonicon_text.tga) */
+    {  25, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx",  512,  128 }, /* RelOff=0x0083C340 (ui_1070_メッセージポップアップtext0.tga) */
+    {  26, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300 }, /* RelOff=0x0083D870 (04_掟の張り紙A.tga) */
+    {  29, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx",  512,  512 }, /* RelOff=0x00E25D80 (ui_2030_詳細ポップアップ.tga) */
+    {  30, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024 }, /* RelOff=0x00E2D8F0 (ui_1153_ウィンドウ.tga) */
+    {  37, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx",  512, 1024 }, /* RelOff=0x00E7FB60 (ui_0010_itemcategory.tga) */
+    {  41, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048 }, /* RelOff=0x01297810 (ui_9000_01.tga) */
+    {  43, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024,  512 }, /* RelOff=0x0138DF30 (ui_0060_Charaname24pxB.tga) */
+    {  50, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx",  512,  512 }, /* RelOff=0x01411D50 (ui_0010_nameplate.tga) */
+    {  52, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048 }, /* RelOff=0x01421B70 (ui_9000_02.tga) */
+    {  54, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx",  256,  512 }, /* RelOff=0x014FFAD0 (ui_0010_itemcategory03.tga) */
+    {  97, "タイトル白.nltx", "タイトル白_thai.nltx", 2048, 1280 }, /* RelOff=0x044E1760 (タイトル白.tga) */
+    { 105, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 }, /* RelOff=0x045853A0 (名前_steam版_04.tga) */
+    { 110, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 }, /* RelOff=0x049098F0 (ui_5080_00.tga) */
+    { 115, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 }, /* RelOff=0x04B26490 (ui_1100_名前入力_text.tga) */
+    { 117, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx",  256,  256 }, /* RelOff=0x04B47AA0 (ui_5100_bandolPU01.tga) */
+    { 122, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx",  256,  128 }, /* RelOff=0x04B4E280 (ui_1170_投げ銭_text.tga) */
+    { 124, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx",  512,  256 }, /* RelOff=0x04B52B10 (ui_0120_汎用テキスト01.tga) */
+    { 125, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024 }, /* RelOff=0x04B55BC0 (ui_5010_チラシ01.tga) */
+    { 126, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024 }, /* RelOff=0x04BCD820 (ui_5010_チラシ02.tga) */
+    { 127, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024 }, /* RelOff=0x04C3BC40 (ui_5010_チラシ03.tga) */
+    { 128, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024 }, /* RelOff=0x04CAC710 (ui_5010_チラシ04.tga) */
+    { 129, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024 }, /* RelOff=0x04D1ED30 (ui_5010_チラシ05.tga) */
+    { 130, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024 }, /* RelOff=0x04D91D60 (ui_5010_チラシ06.tga) */
+    { 131, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024 }, /* RelOff=0x04E0CAF0 (ui_5010_チラシ07.tga) */
+    { 132, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024 }, /* RelOff=0x04E8DD60 (ui_5010_チラシ08.tga) */
+    { 133, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024 }, /* RelOff=0x04F0C970 (ui_5010_チラシ09.tga) */
+    { 134, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024 }, /* RelOff=0x04F8F610 (ui_5010_チラシ10.tga) */
+    { 135, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024 }, /* RelOff=0x050193F0 (ui_5010_チラシ11.tga) */
+    { 136, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024 }, /* RelOff=0x050A3180 (ui_5010_チラシ12.tga) */
+    { 137, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024 }, /* RelOff=0x0512ACA0 (ui_5010_チラシ13.tga) */
+    { 138, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024 }, /* RelOff=0x051AF4C0 (ui_5010_チラシ14.tga) */
+    { 139, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024 }, /* RelOff=0x05236800 (ui_5010_チラシ15.tga) */
+    { 140, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024 }, /* RelOff=0x052C0290 (ui_5010_チラシ16.tga) */
+    { 141, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024 }, /* RelOff=0x053480E0 (ui_5010_チラシ17.tga) */
+    { 142, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024 }, /* RelOff=0x053CDC50 (ui_5010_チラシ18.tga) */
+    { 143, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024 }, /* RelOff=0x054566A0 (ui_5010_チラシ19.tga) */
+    { 144, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024 }, /* RelOff=0x054D89B0 (ui_5010_チラシ20.tga) */
+    { 145, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024 }, /* RelOff=0x055616E0 (ui_5010_チラシ30.tga) */
+    { 146, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024 }, /* RelOff=0x055CF8E0 (ui_5010_チラシ31.tga) */
+    { 147, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024 }, /* RelOff=0x0563DA10 (ui_5010_チラシ32.tga) */
+    { 148, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024 }, /* RelOff=0x056ABA90 (ui_5010_チラシ33.tga) */
+    { 149, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024 }, /* RelOff=0x057199E0 (ui_5010_チラシ34.tga) */
+    { 150, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024 }, /* RelOff=0x05787AC0 (ui_5010_チラシ35.tga) */
+    { 151, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024 }, /* RelOff=0x057F5BE0 (ui_5010_チラシ36.tga) */
+    { 152, "ui_5010_チラシ37.nltx", "ui_5010_チラシ37_thai.nltx", 1024, 1024 }, /* RelOff=0x058642B0 (ui_5010_チラシ101.tga) */
+    { 153, "ui_5010_チラシ38.nltx", "ui_5010_チラシ38_thai.nltx", 1024, 1024 }, /* RelOff=0x058DCF00 (ui_5010_チラシ102.tga) */
+    { 154, "ui_5010_チラシ39.nltx", "ui_5010_チラシ39_thai.nltx", 1024, 1024 }, /* RelOff=0x0594E050 (ui_5010_チラシ103.tga) */
+    { 155, "ui_5010_チラシ40.nltx", "ui_5010_チラシ40_thai.nltx", 1024, 1024 }, /* RelOff=0x059D3BB0 (ui_5010_チラシ104.tga) */
+    { 173, "鐘.nltx", "鐘_thai.nltx", 2200, 1300 }, /* RelOff=0x05E96A70 (鐘.tga) */
+    { 176, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048 }, /* RelOff=0x0627F1A0 (ui_3440_00.tga) */
+    { 192, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx",  256, 1024 }, /* RelOff=0x077C72D0 (ui_5010_項目02.tga) */
+    { 194, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048 }, /* RelOff=0x077DB120 (ui_5060_家畜一覧_01.tga) */
+    { 196, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024,  256 }, /* RelOff=0x0784FEF0 (ui_0010_itemcategory2.tga) */
+    { 200, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx",  512, 1024 }, /* RelOff=0x07866D10 (ui_2220_post03.tga) */
+    { 201, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048 }, /* RelOff=0x078807B0 (ui_2220_post01.tga) */
+    { 204, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024,  512 }, /* RelOff=0x079A8850 (ui_0990_初回起動時ポエム.tga) */
+    { 210, "ui_1000_タイトル01.nltx", "ui_1000_タイトル01_thai.nltx", 2048,  512 }, /* RelOff=0x07FE07D0 (ui_1000_タイトル01.tga) */
+    { 211, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024,  512 }, /* RelOff=0x08014C70 (ui_0990_localize_00.tga) */
+    { 212, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048,  256 }, /* RelOff=0x0802EAF0 (ui_1000_02.tga) */
+    { 223, "ui_2100_00.nltx", "ui_2100_00_thai.nltx",  256,  256 }, /* RelOff=0x0945F990 (ui_2100_00.tga) */
+    { 231, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx",  512,  256 }, /* RelOff=0x094A8D30 (ene_3020_1_02.tga) */
+    { 236, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx",  512,  256 }, /* RelOff=0x09528610 (bg_8080_00_tex.tga) */
+    { 237, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048 }, /* RelOff=0x0952D870 (bg_8080_04_tex.tga) */
+    { 238, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048,  256 }, /* RelOff=0x0956DDE0 (bg_8080_01_tex.tga) */
+    { 318, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024,  256 }, /* RelOff=0x0A93E6A0 (ui_2210_日リザルト02_バグ対応用.tga) */
+    { 323, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024,  512 }, /* RelOff=0x0AABE270 (ui_0030_汎用アイコン_はんこ.tga) */
+    { 346, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx",  512,  256 }, /* RelOff=0x0ADB09A0 (ui_2020_コックピット_text.tga) */
+    { 347, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048,  512 }, /* RelOff=0x0ADB1F80 (ui_3030_家具配置01.tga) */
+};
+
+/* Generated EN FAD table: 69 entries */
+static const FadMappingDef g_fad_mapping_defs_en[] = {
+    {   4, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024,  256 }, /* RelOff=0x0059F320 (ui_2210_日リザルト02.tga) */
+    {   5, "ui_0070_buttonicon_text.nltx", "ui_0070_buttonicon_text_thai.nltx",  512,  256 }, /* RelOff=0x005A6DD0 (ui_0070_buttonicon_text.tga) */
+    {  17, "ui_1070_メッセージポップアップtext0.nltx", "ui_1070_メッセージポップアップtext0_thai.nltx",  512,  128 }, /* RelOff=0x0084EA00 (ui_1070_メッセージポップアップtext0.tga) */
+    {  18, "04_掟の張り紙A.nltx", "04_掟の張り紙A_thai.nltx", 2200, 1300 }, /* RelOff=0x0084FF30 (04_掟の張り紙A.tga) */
+    {  21, "ui_2030_詳細ポップアップ.nltx", "ui_2030_詳細ポップアップ_thai.nltx",  512,  512 }, /* RelOff=0x00E38440 (ui_2030_詳細ポップアップ.tga) */
+    {  22, "ui_1153_ウィンドウ.nltx", "ui_1153_ウィンドウ_thai.nltx", 1024, 1024 }, /* RelOff=0x00E409F0 (ui_1153_ウィンドウ.tga) */
+    {  29, "ui_0010_itemcategory.nltx", "ui_0010_itemcategory_thai.nltx",  512, 1024 }, /* RelOff=0x00E93370 (ui_0010_itemcategory.tga) */
+    {  33, "ui_9000_01.nltx", "ui_9000_01_thai.nltx", 1024, 2048 }, /* RelOff=0x012B5950 (ui_9000_01.tga) */
+    {  35, "ui_0060_Charaname24pxB.nltx", "ui_0060_Charaname24pxB_thai.nltx", 1024,  512 }, /* RelOff=0x013AC070 (ui_0060_Charaname24pxB.tga) */
+    {  42, "ui_0010_nameplate.nltx", "ui_0010_nameplate_thai.nltx",  512,  512 }, /* RelOff=0x01431D70 (ui_0010_nameplate.tga) */
+    {  44, "ui_9000_02.nltx", "ui_9000_02_thai.nltx", 1024, 2048 }, /* RelOff=0x01441B90 (ui_9000_02.tga) */
+    {  48, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx",  256,  512 }, /* RelOff=0x01536170 (ui_0010_itemcategory03.tga) */
+    { 102, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 }, /* RelOff=0x04610B60 (名前_steam版_04.tga) */
+    { 109, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 }, /* RelOff=0x049B3BB0 (ui_5080_00.tga) */
+    { 114, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 }, /* RelOff=0x04BD0600 (ui_1100_名前入力_text.tga) */
+    { 116, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx",  256,  256 }, /* RelOff=0x04BEAC50 (ui_5100_bandolPU01.tga) */
+    { 121, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx",  256,  128 }, /* RelOff=0x04BF1290 (ui_1170_投げ銭_text.tga) */
+    { 123, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx",  512,  256 }, /* RelOff=0x04BF5B20 (ui_0120_汎用テキスト01.tga) */
+    { 124, "ui_5010_チラシ01.nltx", "ui_5010_チラシ01_thai.nltx", 1024, 1024 }, /* RelOff=0x04BF8BD0 (ui_5010_チラシ01.tga) */
+    { 125, "ui_5010_チラシ02.nltx", "ui_5010_チラシ02_thai.nltx", 1024, 1024 }, /* RelOff=0x04C72C80 (ui_5010_チラシ02.tga) */
+    { 126, "ui_5010_チラシ03.nltx", "ui_5010_チラシ03_thai.nltx", 1024, 1024 }, /* RelOff=0x04CE44F0 (ui_5010_チラシ03.tga) */
+    { 127, "ui_5010_チラシ04.nltx", "ui_5010_チラシ04_thai.nltx", 1024, 1024 }, /* RelOff=0x04D57C10 (ui_5010_チラシ04.tga) */
+    { 128, "ui_5010_チラシ05.nltx", "ui_5010_チラシ05_thai.nltx", 1024, 1024 }, /* RelOff=0x04DCCFA0 (ui_5010_チラシ05.tga) */
+    { 129, "ui_5010_チラシ06.nltx", "ui_5010_チラシ06_thai.nltx", 1024, 1024 }, /* RelOff=0x04E42BF0 (ui_5010_チラシ06.tga) */
+    { 130, "ui_5010_チラシ07.nltx", "ui_5010_チラシ07_thai.nltx", 1024, 1024 }, /* RelOff=0x04EBDBE0 (ui_5010_チラシ07.tga) */
+    { 131, "ui_5010_チラシ08.nltx", "ui_5010_チラシ08_thai.nltx", 1024, 1024 }, /* RelOff=0x04F40210 (ui_5010_チラシ08.tga) */
+    { 132, "ui_5010_チラシ09.nltx", "ui_5010_チラシ09_thai.nltx", 1024, 1024 }, /* RelOff=0x04FC0490 (ui_5010_チラシ09.tga) */
+    { 133, "ui_5010_チラシ10.nltx", "ui_5010_チラシ10_thai.nltx", 1024, 1024 }, /* RelOff=0x050444C0 (ui_5010_チラシ10.tga) */
+    { 134, "ui_5010_チラシ11.nltx", "ui_5010_チラシ11_thai.nltx", 1024, 1024 }, /* RelOff=0x050C96A0 (ui_5010_チラシ11.tga) */
+    { 135, "ui_5010_チラシ12.nltx", "ui_5010_チラシ12_thai.nltx", 1024, 1024 }, /* RelOff=0x0514E8D0 (ui_5010_チラシ12.tga) */
+    { 136, "ui_5010_チラシ13.nltx", "ui_5010_チラシ13_thai.nltx", 1024, 1024 }, /* RelOff=0x051D56D0 (ui_5010_チラシ13.tga) */
+    { 137, "ui_5010_チラシ14.nltx", "ui_5010_チラシ14_thai.nltx", 1024, 1024 }, /* RelOff=0x05259160 (ui_5010_チラシ14.tga) */
+    { 138, "ui_5010_チラシ15.nltx", "ui_5010_チラシ15_thai.nltx", 1024, 1024 }, /* RelOff=0x052DF610 (ui_5010_チラシ15.tga) */
+    { 139, "ui_5010_チラシ16.nltx", "ui_5010_チラシ16_thai.nltx", 1024, 1024 }, /* RelOff=0x05368960 (ui_5010_チラシ16.tga) */
+    { 140, "ui_5010_チラシ17.nltx", "ui_5010_チラシ17_thai.nltx", 1024, 1024 }, /* RelOff=0x053EF1D0 (ui_5010_チラシ17.tga) */
+    { 141, "ui_5010_チラシ18.nltx", "ui_5010_チラシ18_thai.nltx", 1024, 1024 }, /* RelOff=0x05473F60 (ui_5010_チラシ18.tga) */
+    { 142, "ui_5010_チラシ19.nltx", "ui_5010_チラシ19_thai.nltx", 1024, 1024 }, /* RelOff=0x054FD760 (ui_5010_チラシ19.tga) */
+    { 143, "ui_5010_チラシ20.nltx", "ui_5010_チラシ20_thai.nltx", 1024, 1024 }, /* RelOff=0x05580BC0 (ui_5010_チラシ20.tga) */
+    { 144, "ui_5010_チラシ30.nltx", "ui_5010_チラシ30_thai.nltx", 1024, 1024 }, /* RelOff=0x0560A6C0 (ui_5010_チラシ30.tga) */
+    { 145, "ui_5010_チラシ31.nltx", "ui_5010_チラシ31_thai.nltx", 1024, 1024 }, /* RelOff=0x0567BD20 (ui_5010_チラシ31.tga) */
+    { 146, "ui_5010_チラシ32.nltx", "ui_5010_チラシ32_thai.nltx", 1024, 1024 }, /* RelOff=0x056ED220 (ui_5010_チラシ32.tga) */
+    { 147, "ui_5010_チラシ33.nltx", "ui_5010_チラシ33_thai.nltx", 1024, 1024 }, /* RelOff=0x0575E880 (ui_5010_チラシ33.tga) */
+    { 148, "ui_5010_チラシ34.nltx", "ui_5010_チラシ34_thai.nltx", 1024, 1024 }, /* RelOff=0x057D0090 (ui_5010_チラシ34.tga) */
+    { 149, "ui_5010_チラシ35.nltx", "ui_5010_チラシ35_thai.nltx", 1024, 1024 }, /* RelOff=0x05841400 (ui_5010_チラシ35.tga) */
+    { 150, "ui_5010_チラシ36.nltx", "ui_5010_チラシ36_thai.nltx", 1024, 1024 }, /* RelOff=0x058B2570 (ui_5010_チラシ36.tga) */
+    { 151, "ui_5010_チラシ37.nltx", "ui_5010_チラシ37_thai.nltx", 1024, 1024 }, /* RelOff=0x05923B30 (ui_5010_チラシ101.tga) */
+    { 152, "ui_5010_チラシ38.nltx", "ui_5010_チラシ38_thai.nltx", 1024, 1024 }, /* RelOff=0x0599FD20 (ui_5010_チラシ102.tga) */
+    { 153, "ui_5010_チラシ39.nltx", "ui_5010_チラシ39_thai.nltx", 1024, 1024 }, /* RelOff=0x05A17590 (ui_5010_チラシ103.tga) */
+    { 154, "ui_5010_チラシ40.nltx", "ui_5010_チラシ40_thai.nltx", 1024, 1024 }, /* RelOff=0x05A9DE20 (ui_5010_チラシ104.tga) */
+    { 173, "鐘.nltx", "鐘_thai.nltx", 2200, 1300 }, /* RelOff=0x05F69040 (鐘.tga) */
+    { 176, "ui_3440_00.nltx", "ui_3440_00_thai.nltx", 4096, 2048 }, /* RelOff=0x06351770 (ui_3440_00.tga) */
+    { 193, "ui_5060_家畜一覧_01.nltx", "ui_5060_家畜一覧_01_thai.nltx", 2048, 2048 }, /* RelOff=0x078D8F70 (ui_5060_家畜一覧_01.tga) */
+    { 194, "ui_5010_項目02.nltx", "ui_5010_項目02_thai.nltx",  256, 1024 }, /* RelOff=0x07950950 (ui_5010_項目02.tga) */
+    { 196, "ui_0010_itemcategory2.nltx", "ui_0010_itemcategory2_thai.nltx", 1024,  256 }, /* RelOff=0x07961C00 (ui_0010_itemcategory2.tga) */
+    { 200, "ui_2220_post03.nltx", "ui_2220_post03_thai.nltx",  512, 1024 }, /* RelOff=0x07978A20 (ui_2220_post03.tga) */
+    { 201, "ui_2220_post01.nltx", "ui_2220_post01_thai.nltx", 2048, 2048 }, /* RelOff=0x0799A7B0 (ui_2220_post01.tga) */
+    { 205, "ui_0990_初回起動時ポエム.nltx", "ui_0990_初回起動時ポエム_thai.nltx", 1024,  512 }, /* RelOff=0x07C00FD0 (ui_0990_初回起動時ポエム.tga) */
+    { 211, "ui_1000_タイトル01.nltx", "ui_1000_タイトル01_thai.nltx", 2048,  512 }, /* RelOff=0x0823A310 (ui_1000_タイトル01.tga) */
+    { 212, "ui_0990_localize_00.nltx", "ui_0990_localize_00_thai.nltx", 1024,  512 }, /* RelOff=0x0825AE80 (ui_0990_localize_00.tga) */
+    { 213, "ui_1000_02.nltx", "ui_1000_02_thai.nltx", 2048,  256 }, /* RelOff=0x08274D00 (ui_1000_02.tga) */
+    { 224, "ui_2100_00.nltx", "ui_2100_00_thai.nltx",  256,  256 }, /* RelOff=0x096AFCB0 (ui_2100_00.tga) */
+    { 232, "ene_3020_1_02.nltx", "ene_3020_1_02_thai.nltx",  512,  256 }, /* RelOff=0x096F9050 (ene_3020_1_02.tga) */
+    { 237, "bg_8080_00_tex.nltx", "bg_8080_00_tex_thai.nltx",  512,  256 }, /* RelOff=0x09775E40 (bg_8080_00_tex.tga) */
+    { 238, "bg_8080_04_tex.nltx", "bg_8080_04_tex_thai.nltx", 1024, 2048 }, /* RelOff=0x0977B0A0 (bg_8080_04_tex.tga) */
+    { 239, "bg_8080_01_tex.nltx", "bg_8080_01_tex_thai.nltx", 2048,  512 }, /* RelOff=0x097C0B10 (bg_8080_01_tex.tga) */
+    { 319, "ui_2210_日リザルト02.nltx", "ui_2210_日リザルト02_thai.nltx", 1024,  256 }, /* RelOff=0x0AB9D5F0 (ui_2210_日リザルト02_バグ対応用.tga) */
+    { 324, "ui_0030_汎用アイコン_はんこ.nltx", "ui_0030_汎用アイコン_はんこ_thai.nltx", 1024,  512 }, /* RelOff=0x0AD1CED0 (ui_0030_汎用アイコン_はんこ.tga) */
+    { 349, "ui_2020_コックピット_text.nltx", "ui_2020_コックピット_text_thai.nltx",  512,  256 }, /* RelOff=0x0B09AD40 (ui_2020_コックピット_text.tga) */
+    { 350, "ui_3030_家具配置01.nltx", "ui_3030_家具配置01_thai.nltx", 2048,  512 }, /* RelOff=0x0B09C870 (ui_3030_家具配置01.tga) */
 };
 
 typedef struct {
@@ -1877,23 +1951,67 @@ typedef struct {
     uint16_t width;
     uint16_t height;
     BOOL has_fad_descriptor;  /* TRUE if offset is at 32-byte FAD descriptor */
+    uint64_t fad_base;         /* Base offset of parent FAD archive (JP or EN) */
 } FadSubFile;
 
-#define MAX_FAD_RUNTIME_SUBFILES 256
+#define MAX_FAD_RUNTIME_SUBFILES 1024
 static FadSubFile g_fad_runtime_subfiles[MAX_FAD_RUNTIME_SUBFILES];
 static int g_fad_runtime_count = 0;
-static uint64_t g_fad_base_offset = 0;
+static uint64_t g_fad_base_offset_jp = 0;
+static uint64_t g_fad_base_offset_en = 0;
 static BOOL g_fad_resolved = FALSE;
+
+static void populate_fad_targets(const uint8_t* fad_hdr, size_t hdr_len, uint64_t fad_base, const FadMappingDef* defs, size_t num_defs)
+{
+    for (size_t i = 0; i < num_defs; i++) {
+        int idx = defs[i].toc_index;
+        size_t pos = 0x0FB8 + (size_t)idx * 32;
+        if (pos + 32 > hdr_len) continue;
+
+        uint64_t entry_sz = *(uint64_t*)(fad_hdr + pos + 0);
+        uint32_t rel_off = *(uint32_t*)(fad_hdr + pos + 8);
+        if (entry_sz == 0 && rel_off == 0) continue;
+
+        uint64_t desc_off = fad_base + (uint64_t)rel_off + 32;
+        uint64_t data_off = fad_base + (uint64_t)rel_off + 64;
+
+        if (g_fad_runtime_count + 2 <= MAX_FAD_RUNTIME_SUBFILES) {
+            /* Descriptor entry */
+            FadSubFile* e1 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
+            e1->offset = desc_off;
+            e1->filename = defs[i].filename;
+            e1->alt_filename = defs[i].alt_filename;
+            e1->width = defs[i].width;
+            e1->height = defs[i].height;
+            e1->has_fad_descriptor = TRUE;
+            e1->fad_base = fad_base;
+
+            /* Data entry */
+            FadSubFile* e2 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
+            e2->offset = data_off;
+            e2->filename = defs[i].filename;
+            e2->alt_filename = defs[i].alt_filename;
+            e2->width = defs[i].width;
+            e2->height = defs[i].height;
+            e2->has_fad_descriptor = FALSE;
+            e2->fad_base = fad_base;
+        }
+    }
+}
 
 static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
 {
     if (g_fad_resolved) return;
 
     uint64_t resident_lang_jp_offset = 0;
+    uint64_t resident_lang_en_offset = 0;
     for (int i = 0; i < g_vfs_count; i++) {
-        if (g_vfs[i].archive_id == 4 && strstr(g_vfs[i].name, "resident_lang_jp.fad") != NULL) {
-            resident_lang_jp_offset = g_vfs[i].offset;
-            break;
+        if (g_vfs[i].archive_id == 4) {
+            if (strstr(g_vfs[i].name, "resident_lang_jp.fad") != NULL) {
+                resident_lang_jp_offset = g_vfs[i].offset;
+            } else if (strstr(g_vfs[i].name, "resident_lang_en.fad") != NULL) {
+                resident_lang_en_offset = g_vfs[i].offset;
+            }
         }
     }
 
@@ -1903,7 +2021,7 @@ static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
         return;
     }
 
-    if (resident_lang_jp_offset == 0) {
+    if (resident_lang_jp_offset == 0 || resident_lang_en_offset == 0) {
         FAFULLFS_Header hdr;
         if (fread(&hdr, 1, sizeof(hdr), f) == sizeof(hdr) && memcmp(hdr.magic, "FAFULLFS", 8) == 0) {
             FAFULLFS_TocEntry* tocs = (FAFULLFS_TocEntry*)malloc(hdr.count * sizeof(FAFULLFS_TocEntry));
@@ -1921,7 +2039,8 @@ static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
                         const char* name = str_table + n_off;
                         if (strstr(name, "resident_lang_jp.fad") != NULL) {
                             resident_lang_jp_offset = tocs[i].offset;
-                            break;
+                        } else if (strstr(name, "resident_lang_en.fad") != NULL) {
+                            resident_lang_en_offset = tocs[i].offset;
                         }
                     }
                 }
@@ -1931,68 +2050,42 @@ static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
         }
     }
 
-    if (resident_lang_jp_offset == 0) {
-        log_msg("[FAD RESOLVER] resident_lang_jp.fad not found in %ls TOC", fairy_path_w);
-        fclose(f);
-        return;
-    }
-
-    g_fad_base_offset = resident_lang_jp_offset;
-    log_msg("[FAD RESOLVER] Detected resident_lang_jp.fad base offset: 0x%llX", (unsigned long long)g_fad_base_offset);
-
-    /* Read FAD TOC (16 KB header) */
-    uint8_t fad_hdr[0x4000];
-    _fseeki64(f, (int64_t)g_fad_base_offset, SEEK_SET);
-    size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
-    fclose(f);
-
-    if (nread < 0x4000) {
-        log_msg("[FAD RESOLVER] Failed to read FAD header (read %zu bytes)", nread);
-        return;
-    }
+    g_fad_base_offset_jp = resident_lang_jp_offset;
+    g_fad_base_offset_en = resident_lang_en_offset;
+    log_msg("[FAD RESOLVER] Detected FAD bases: JP=0x%llX, EN=0x%llX",
+            (unsigned long long)g_fad_base_offset_jp, (unsigned long long)g_fad_base_offset_en);
 
     EnterCriticalSection(&g_cs);
     g_fad_runtime_count = 0;
-    size_t num_defs = sizeof(g_fad_mapping_defs) / sizeof(g_fad_mapping_defs[0]);
 
-    for (size_t i = 0; i < num_defs; i++) {
-        int idx = g_fad_mapping_defs[i].toc_index;
-        size_t pos = 0x1018 + (size_t)idx * 32;
-        if (pos + 12 > sizeof(fad_hdr)) continue;
-
-        uint64_t entry_sz = *(uint64_t*)(fad_hdr + pos + 0);
-        uint32_t rel_off = *(uint32_t*)(fad_hdr + pos + 8);
-        if (entry_sz == 0 && rel_off == 0) continue;
-
-        uint64_t desc_off = g_fad_base_offset + (uint64_t)rel_off + 32;
-        uint64_t data_off = g_fad_base_offset + (uint64_t)rel_off + 64;
-
-        if (g_fad_runtime_count + 2 <= MAX_FAD_RUNTIME_SUBFILES) {
-            /* Descriptor entry */
-            FadSubFile* e1 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
-            e1->offset = desc_off;
-            e1->filename = g_fad_mapping_defs[i].filename;
-            e1->alt_filename = g_fad_mapping_defs[i].alt_filename;
-            e1->width = g_fad_mapping_defs[i].width;
-            e1->height = g_fad_mapping_defs[i].height;
-            e1->has_fad_descriptor = TRUE;
-
-            /* Data entry */
-            FadSubFile* e2 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
-            e2->offset = data_off;
-            e2->filename = g_fad_mapping_defs[i].filename;
-            e2->alt_filename = g_fad_mapping_defs[i].alt_filename;
-            e2->width = g_fad_mapping_defs[i].width;
-            e2->height = g_fad_mapping_defs[i].height;
-            e2->has_fad_descriptor = FALSE;
+    /* Populate JP targets */
+    if (g_fad_base_offset_jp != 0) {
+        uint8_t fad_hdr[0x5000];
+        _fseeki64(f, (int64_t)g_fad_base_offset_jp, SEEK_SET);
+        size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
+        if (nread >= 0x4000) {
+            populate_fad_targets(fad_hdr, nread, g_fad_base_offset_jp, g_fad_mapping_defs_jp,
+                                 sizeof(g_fad_mapping_defs_jp) / sizeof(g_fad_mapping_defs_jp[0]));
         }
     }
 
+    /* Populate EN targets */
+    if (g_fad_base_offset_en != 0) {
+        uint8_t fad_hdr[0x5000];
+        _fseeki64(f, (int64_t)g_fad_base_offset_en, SEEK_SET);
+        size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
+        if (nread >= 0x4000) {
+            populate_fad_targets(fad_hdr, nread, g_fad_base_offset_en, g_fad_mapping_defs_en,
+                                 sizeof(g_fad_mapping_defs_en) / sizeof(g_fad_mapping_defs_en[0]));
+        }
+    }
+
+    fclose(f);
     g_fad_resolved = TRUE;
     LeaveCriticalSection(&g_cs);
 
-    log_msg("[FAD RESOLVER] Dynamic resolution complete: %d subfile targets mapped in RAM (base=0x%llX)!",
-            g_fad_runtime_count, (unsigned long long)g_fad_base_offset);
+    log_msg("[FAD RESOLVER] Dynamic resolution complete: %d subfile targets mapped in RAM (JP=0x%llX, EN=0x%llX)!",
+            g_fad_runtime_count, (unsigned long long)g_fad_base_offset_jp, (unsigned long long)g_fad_base_offset_en);
 }
 
 static const FadSubFile* lookup_fad_subfile(uint64_t offset)
@@ -2539,8 +2632,17 @@ static BOOL WINAPI hk_ReadFile(
         return res;
     }
 
-    /* 1b. Check if the game is reading the FAD Header/TOC for resident_lang_jp.fad */
-    if (arch_id == 4 && g_fad_base_offset != 0 && offset == g_fad_base_offset && nNumberOfBytesToRead >= 0x4000) {
+    /* 1b. Check if the game is reading the FAD Header/TOC for resident_lang_jp.fad or resident_lang_en.fad */
+    uint64_t current_fad_base = 0;
+    if (arch_id == 4 && nNumberOfBytesToRead >= 0x1000) {
+        if (g_fad_base_offset_jp != 0 && offset == g_fad_base_offset_jp) {
+            current_fad_base = g_fad_base_offset_jp;
+        } else if (g_fad_base_offset_en != 0 && offset == g_fad_base_offset_en) {
+            current_fad_base = g_fad_base_offset_en;
+        }
+    }
+
+    if (current_fad_base != 0) {
         BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
         if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
             DWORD transferred = 0;
@@ -2569,18 +2671,20 @@ static BOOL WINAPI hk_ReadFile(
                 }
 
                 if (found && ext_size > 0) {
-                    uint32_t target_rel_off = (uint32_t)(g_fad_runtime_subfiles[i].offset - g_fad_base_offset - 32);
+                    if (g_fad_runtime_subfiles[i].fad_base != current_fad_base) continue;
 
-                    /* Walk FAD entry table in lpBuffer between 0x1018 and 0x3B00 in 32-byte strides */
-                    for (size_t pos = 0x1018; pos + 32 <= nNumberOfBytesToRead && pos < 0x4000; pos += 32) {
+                    uint32_t target_rel_off = (uint32_t)(g_fad_runtime_subfiles[i].offset - current_fad_base - 32);
+
+                    /* Walk FAD entry table in lpBuffer starting at 0x0FB8 in 32-byte strides */
+                    for (size_t pos = 0x0FB8; pos + 32 <= nNumberOfBytesToRead && pos < 0x5000; pos += 32) {
                         uint32_t entry_off = *(uint32_t*)((char*)lpBuffer + pos + 8);
                         if (entry_off == target_rel_off) {
                             uint64_t* p_sz = (uint64_t*)((char*)lpBuffer + pos + 0);
                             /* Needed entry size in table: ext_size + 64 bytes (aligned to 64 bytes) */
                             uint64_t needed_sz = ((uint64_t)ext_size + 64 + 63) & ~63ULL;
                             if (needed_sz > *p_sz) {
-                                log_msg("[VFS FAD TOC Patch] Expanding size for [%s]: %llu -> %llu bytes (rel_off=0x%X at TOC+0x%X)",
-                                        g_fad_runtime_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos);
+                                log_msg("[VFS FAD TOC Patch] Expanding size for [%s]: %llu -> %llu bytes (rel_off=0x%X at TOC+0x%X, base=0x%llX)",
+                                        g_fad_runtime_subfiles[i].filename, *p_sz, needed_sz, target_rel_off, (unsigned int)pos, (unsigned long long)current_fad_base);
                                 *p_sz = needed_sz;
                                 patched++;
                             }
@@ -2590,8 +2694,8 @@ static BOOL WINAPI hk_ReadFile(
                 }
             }
             if (patched > 0) {
-                log_msg("[VFS FAD TOC Patch] Successfully patched %d / %d FAD TOC entries in RAM!",
-                        patched, (int)(g_fad_runtime_count / 2));
+                log_msg("[VFS FAD TOC Patch] Successfully patched %d FAD TOC entries in RAM (base=0x%llX)!",
+                        patched, (unsigned long long)current_fad_base);
             }
         }
         return res;
@@ -2738,38 +2842,7 @@ static t_putStr fp_original_putStrAlign = NULL;
 static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, float scale)
 {
     if (!fn) return;
-    if (!this_ptr || (uintptr_t)this_ptr < 0x10000 || !str) {
-        fn(this_ptr, str);
-        return;
-    }
-
-    /* Dynamic Proportional Kerning: Force proportional mode (flag=1) for Thai text */
-    uint16_t* pMode = (uint16_t*)((char*)this_ptr + 0x26);
-    uint16_t old_mode = *pMode;
-    BOOL is_thai = has_thai_utf8(str);
-    if (is_thai) {
-        *pMode = 1;
-    }
-
-    if (scale > 0.05f && scale < 0.999f) {
-        float* pScaleX = (float*)((char*)this_ptr + 0x28);
-        float old_scale = *pScaleX;
-        if (old_scale > 0.001f && old_scale < 50.0f) {
-            *pScaleX = old_scale * scale;
-            fn(this_ptr, str);
-            *pScaleX = old_scale;
-            if (is_thai) {
-                *pMode = old_mode;
-            }
-            return;
-        }
-    }
-
     fn(this_ptr, str);
-
-    if (is_thai) {
-        *pMode = old_mode;
-    }
 }
 
 static void hk_putStr(void* this_ptr, const char* str)
@@ -2785,7 +2858,20 @@ static void hk_putStr(void* this_ptr, const char* str)
         check_and_log_missing(str, "putStr");
     }
 
-    call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
+    if (this_ptr) {
+        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
+    }
+
+    /* Seamless Proportional Redirect: Send to putStrProp without any memory patching conflict */
+    if (fp_original_putStrProp) {
+        if (this_ptr) {
+        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
+    }
+
+    call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
+    } else {
+        call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
+    }
 }
 
 static void hk_putStrProp(void* this_ptr, const char* str)
@@ -2799,6 +2885,10 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         str = rep;
     } else {
         check_and_log_missing(str, "putStrProp");
+    }
+
+    if (this_ptr) {
+        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
     }
 
     call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
@@ -2815,6 +2905,10 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
         str = rep;
     } else {
         check_and_log_missing(str, "putStrAlign");
+    }
+
+    if (this_ptr) {
+        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
     }
 
     call_with_auto_scale(fp_original_putStrAlign, this_ptr, str, scale);
@@ -2926,12 +3020,6 @@ static void init_paths(void)
     swprintf(missing_dir_w, MAX_PATH, L"%ls\\missing", g_mod_dir_w);
     CreateDirectoryW(missing_dir_w, NULL);
 
-    /* Session missing file: missing/missing_YYYY-MM-DD_HH-MM-SS.txt */
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-    swprintf(g_session_dump_missing_path_w, MAX_PATH, 
-             L"%ls\\missing\\missing_%04d-%02d-%02d_%02d-%02d-%02d.txt", 
-             g_mod_dir_w, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 
     /* Latest missing file: missing/missing_latest.txt */
     swprintf(g_missing_latest_path_w, MAX_PATH, L"%ls\\missing\\missing_latest.txt", g_mod_dir_w);
@@ -2940,6 +3028,49 @@ static void init_paths(void)
     WideCharToMultiByte(CP_UTF8, 0, g_log_path_w, -1, g_log_path, sizeof(g_log_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
     WideCharToMultiByte(CP_UTF8, 0, g_dump_missing_path_w, -1, g_dump_missing_path, sizeof(g_dump_missing_path), NULL, NULL);
+}
+
+/* ==================================================================
+ * Proportional Font Kerning In-Memory Patch (v1.30)
+ * Forces text routing and text alignment to use proportional mode directly in RAM.
+ * None of these addresses collide with MinHook function entry points.
+ * ================================================================== */
+typedef struct {
+    uint32_t rva;
+    uint8_t orig[8];
+    uint8_t patch[8];
+    size_t size;
+    const char* desc;
+} KerningPatchEntry;
+
+static void patch_proportional_kerning_v130(uintptr_t base, void (*log_fn)(const char*, ...))
+{
+    const KerningPatchEntry patches[] = {
+        /* Point 2: Force call putStrProp */
+        { 0x0096AC62, { 0x74, 0x07 }, { 0x90, 0x90 }, 2, "Force call putStrProp" },
+        /* Point 3: Dispatcher -> jmp putStrProp */
+        { 0x009ACA4E, { 0x0F, 0x85, 0xBC, 0xEE, 0xFF, 0xFF }, { 0xE9, 0xBD, 0xEE, 0xFF, 0xFF, 0x90 }, 6, "Dispatcher -> jmp putStrProp" },
+        /* Point 4: putStrAlign -> jmp Proportional */
+        { 0x009ACC41, { 0x0F, 0x85, 0x9F, 0x01, 0x00, 0x00 }, { 0xE9, 0xA0, 0x01, 0x00, 0x00, 0x90 }, 6, "putStrAlign -> jmp Proportional" }
+    };
+
+    int count = 0;
+    for (size_t i = 0; i < sizeof(patches) / sizeof(patches[0]); i++) {
+        uint8_t* target = (uint8_t*)(base + patches[i].rva);
+        DWORD old_protect;
+        if (VirtualProtect(target, patches[i].size, PAGE_EXECUTE_READWRITE, &old_protect)) {
+            if (memcmp(target, patches[i].orig, patches[i].size) == 0 ||
+                memcmp(target, patches[i].patch, patches[i].size) == 0) {
+                memcpy(target, patches[i].patch, patches[i].size);
+                count++;
+            }
+            VirtualProtect(target, patches[i].size, old_protect, &old_protect);
+            FlushInstructionCache(GetCurrentProcess(), target, patches[i].size);
+        }
+    }
+    if (log_fn) {
+        log_fn("[KERNING V1.30] Applied %d/3 proportional engine branch patches in RAM!", count);
+    }
 }
 
 static DWORD WINAPI worker_thread(LPVOID param)
@@ -3088,13 +3219,22 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    /* 6. Patch In-Game Virtual Keyboard string table in memory (Thai Unicode Layout) */
-    patch_virtual_keyboard_in_memory(base, log_msg);
+    /* Apply Proportional Kerning internal branch patches (Clean village.exe supported) */
+    patch_proportional_kerning_v130(base, log_msg);
+
+    #ifdef ENABLE_THAI_KEYBOARD
+    /* 6. Patch In-Game Virtual Keyboard string table in memory (Thai Unicode Layout v1.30) */
+    patch_virtual_keyboard_v130(base, log_msg);
+#else
+    log_msg("[KEYBOARD] Original Keyboard retained (Thai Virtual Keyboard disabled).");
+#endif
 
     log_msg("System ready! Both VFS and Text Translation are active.");
 
+    #ifdef ENABLE_CHEATS
     /* Initialize in-memory cheats system (monitors cheats.ini) */
     cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
+#endif
 
     int last_unique = 0;
     int last_missing = 0;
@@ -3102,7 +3242,9 @@ static DWORD WINAPI worker_thread(LPVOID param)
     while (1) {
         Sleep(1000);
         check_hot_reload_translation();
+        #ifdef ENABLE_CHEATS
         cheats_tick();
+#endif
 
         if (g_unique_count != last_unique || g_missing_count != last_missing || g_total_replacements != last_rep) {
             log_msg("Status: Unique texts=%d, Missing texts=%d, Replacements applied=%llu, Total calls=%llu",
@@ -3139,8 +3281,9 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         HANDLE hThread = CreateThread(NULL, 0, worker_thread, NULL, 0, NULL);
         if (hThread) CloseHandle(hThread);
     } else if (reason == DLL_PROCESS_DETACH) {
+        #ifdef ENABLE_CHEATS
         cheats_cleanup();
-        if (g_fmissing_session) { fclose(g_fmissing_session); g_fmissing_session = NULL; }
+#endif
         if (g_fmissing_latest) { fclose(g_fmissing_latest); g_fmissing_latest = NULL; }
         if (g_fmissing_legacy) { fclose(g_fmissing_legacy); g_fmissing_legacy = NULL; }
         if (g_funique) { fclose(g_funique); g_funique = NULL; }

@@ -19,15 +19,21 @@ typedef struct {
     int no_materials_building;   /* 1 = Free Building */
     int no_materials_dyeing;     /* 1 = Free Dyeing */
     int submit_any_item;         /* 1 = Submit any item for bundles/quests */
+    int noclip;                  /* 1 = Walk through walls / Noclip */
     int infinite_stamina;        /* 1 = Lock Stamina to Max */
     int freeze_time;             /* 1 = Freeze in-game time */
     int infinite_money;          /* 1 = Money won't run out (>= 999,999) */
+
+    /* Hotkeys Configuration */
+    int enable_hotkeys;          /* 1 = enable hotkeys, 0 = disable */
+    int vk_noclip;               /* Virtual key for NoClip toggle (default VK_F3 = 0x72) */
+    char str_noclip[32];
 } CheatConfig;
 
 /* Initialize cheats system: scans memory patterns and prepares hooks */
 void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log_fn)(const char* fmt, ...));
 
-/* Called periodically (e.g. every 1 sec) to check cheats.ini toggle and apply pointer locks */
+/* Called periodically to check cheats.ini toggle and apply pointer locks */
 void cheats_tick(void);
 
 /* Restore all original game bytes safely upon mod unload or disable */
