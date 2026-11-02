@@ -15,7 +15,7 @@ static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
-ModSettings g_settings = { 1, 1, 1, 0, 1 };
+ModSettings g_settings = { 1, 1, 1, 0, 1, 1 };
 CheatConfig g_config = { 0 };
 
 
@@ -88,12 +88,29 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         else if (_stricmp(key, "enable_thai_keyboard") == 0) g_settings.enable_thai_keyboard = ival;
         else if (_stricmp(key, "enable_custom_textures") == 0) g_settings.enable_custom_textures = ival;
         else if (_stricmp(key, "use_english_textures") == 0) g_settings.use_english_textures = ival;
+        else if (_stricmp(key, "texture_mode") == 0) g_settings.texture_mode = ival;
         else if (_stricmp(key, "enable_speedhack") == 0) g_settings.enable_speedhack = ival;
     }
     fclose(f);
-    cheat_log("[Settings] Loaded settings.ini (Font=%d, Keyboard=%d, Textures=%d, EnglishTextures=%d, Speedhack=%d)",
+
+    /* Synchronize texture_mode with legacy flags */
+    if (g_settings.texture_mode == 0 || g_settings.enable_custom_textures == 0) {
+        g_settings.texture_mode = 0;
+        g_settings.enable_custom_textures = 0;
+        g_settings.use_english_textures = 0;
+    } else if (g_settings.texture_mode == 2 || g_settings.use_english_textures == 1) {
+        g_settings.texture_mode = 2;
+        g_settings.enable_custom_textures = 1;
+        g_settings.use_english_textures = 1;
+    } else {
+        g_settings.texture_mode = 1;
+        g_settings.enable_custom_textures = 1;
+        g_settings.use_english_textures = 0;
+    }
+
+    cheat_log("[Settings] Loaded settings.ini (Font=%d, Keyboard=%d, TextureMode=%d, Speedhack=%d)",
               g_settings.enable_proportional_font, g_settings.enable_thai_keyboard,
-              g_settings.enable_custom_textures, g_settings.use_english_textures, g_settings.enable_speedhack);
+              g_settings.texture_mode, g_settings.enable_speedhack);
 }
 
 

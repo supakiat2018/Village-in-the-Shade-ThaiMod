@@ -1643,8 +1643,8 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
     }
 
     /* 1b. Mods\TextDump\textures\<basename> (UI & Minimaps) */
-    if (g_settings.enable_custom_textures) {
-        if (g_settings.use_english_textures) {
+    if (g_settings.texture_mode != 0) {
+        if (g_settings.texture_mode == 2) {
             swprintf(candidate, MAX_PATH, L"%ls\\textures_en\\%ls", g_mod_dir_w, base_name_w);
             if (file_exists_and_size_w(candidate, out_size)) {
                 wcsncpy(out_path_w, candidate, out_max - 1);
@@ -1961,6 +1961,7 @@ typedef struct {
     uint16_t height;
     BOOL has_fad_descriptor;  /* TRUE if offset is at 32-byte FAD descriptor */
     uint64_t fad_base;         /* Base offset of parent FAD archive (JP or EN) */
+    uint64_t en_offset;        /* Offset in fairy_1_00.dat for English fallback */
 } FadSubFile;
 
 #define MAX_FAD_RUNTIME_SUBFILES 1024
@@ -1970,7 +1971,11 @@ static uint64_t g_fad_base_offset_jp = 0;
 static uint64_t g_fad_base_offset_en = 0;
 static BOOL g_fad_resolved = FALSE;
 
-static void populate_fad_targets(const uint8_t* fad_hdr, size_t hdr_len, uint64_t fad_base, const FadMappingDef* defs, size_t num_defs)
+static void populate_fad_targets(
+    const uint8_t* fad_hdr, size_t hdr_len, uint64_t fad_base,
+    const FadMappingDef* defs, size_t num_defs,
+    const uint8_t* en_fad_hdr, size_t en_hdr_len, uint64_t en_fad_base,
+    const FadMappingDef* en_defs, size_t num_en_defs)
 {
     for (size_t i = 0; i < num_defs; i++) {
         int idx = defs[i].toc_index;
@@ -1984,6 +1989,27 @@ static void populate_fad_targets(const uint8_t* fad_hdr, size_t hdr_len, uint64_
         uint64_t desc_off = fad_base + (uint64_t)rel_off + 32;
         uint64_t data_off = fad_base + (uint64_t)rel_off + 64;
 
+        /* Find matching EN offset for English fallback */
+        uint64_t en_desc_off = 0;
+        uint64_t en_data_off = 0;
+        if (en_fad_hdr && en_defs && en_fad_base != 0) {
+            for (size_t k = 0; k < num_en_defs; k++) {
+                if (strcmp(defs[i].filename, en_defs[k].filename) == 0) {
+                    int en_idx = en_defs[k].toc_index;
+                    size_t en_pos = 0x0FB8 + (size_t)en_idx * 32;
+                    if (en_pos + 32 <= en_hdr_len) {
+                        uint64_t en_sz = *(uint64_t*)(en_fad_hdr + en_pos + 0);
+                        uint32_t en_rel = *(uint32_t*)(en_fad_hdr + en_pos + 8);
+                        if (en_sz > 0 || en_rel > 0) {
+                            en_desc_off = en_fad_base + (uint64_t)en_rel + 32;
+                            en_data_off = en_fad_base + (uint64_t)en_rel + 64;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         if (g_fad_runtime_count + 2 <= MAX_FAD_RUNTIME_SUBFILES) {
             /* Descriptor entry */
             FadSubFile* e1 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
@@ -1994,6 +2020,7 @@ static void populate_fad_targets(const uint8_t* fad_hdr, size_t hdr_len, uint64_
             e1->height = defs[i].height;
             e1->has_fad_descriptor = TRUE;
             e1->fad_base = fad_base;
+            e1->en_offset = en_desc_off;
 
             /* Data entry */
             FadSubFile* e2 = &g_fad_runtime_subfiles[g_fad_runtime_count++];
@@ -2004,6 +2031,7 @@ static void populate_fad_targets(const uint8_t* fad_hdr, size_t hdr_len, uint64_
             e2->height = defs[i].height;
             e2->has_fad_descriptor = FALSE;
             e2->fad_base = fad_base;
+            e2->en_offset = en_data_off;
         }
     }
 }
@@ -2067,26 +2095,34 @@ static void resolve_dynamic_fad_offsets_w(const wchar_t* fairy_path_w)
     EnterCriticalSection(&g_cs);
     g_fad_runtime_count = 0;
 
-    /* Populate JP targets */
+    /* Read both JP and EN headers for dynamic cross-language fallback */
+    uint8_t jp_fad_hdr[0x5000];
+    uint8_t en_fad_hdr[0x5000];
+    size_t jp_read = 0;
+    size_t en_read = 0;
+
     if (g_fad_base_offset_jp != 0) {
-        uint8_t fad_hdr[0x5000];
         _fseeki64(f, (int64_t)g_fad_base_offset_jp, SEEK_SET);
-        size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
-        if (nread >= 0x4000) {
-            populate_fad_targets(fad_hdr, nread, g_fad_base_offset_jp, g_fad_mapping_defs_jp,
-                                 sizeof(g_fad_mapping_defs_jp) / sizeof(g_fad_mapping_defs_jp[0]));
-        }
+        jp_read = fread(jp_fad_hdr, 1, sizeof(jp_fad_hdr), f);
+    }
+    if (g_fad_base_offset_en != 0) {
+        _fseeki64(f, (int64_t)g_fad_base_offset_en, SEEK_SET);
+        en_read = fread(en_fad_hdr, 1, sizeof(en_fad_hdr), f);
+    }
+
+    /* Populate JP targets with EN fallback offsets */
+    if (jp_read >= 0x4000) {
+        populate_fad_targets(jp_fad_hdr, jp_read, g_fad_base_offset_jp,
+                             g_fad_mapping_defs_jp, sizeof(g_fad_mapping_defs_jp) / sizeof(g_fad_mapping_defs_jp[0]),
+                             (en_read >= 0x4000 ? en_fad_hdr : NULL), en_read, g_fad_base_offset_en,
+                             g_fad_mapping_defs_en, sizeof(g_fad_mapping_defs_en) / sizeof(g_fad_mapping_defs_en[0]));
     }
 
     /* Populate EN targets */
-    if (g_fad_base_offset_en != 0) {
-        uint8_t fad_hdr[0x5000];
-        _fseeki64(f, (int64_t)g_fad_base_offset_en, SEEK_SET);
-        size_t nread = fread(fad_hdr, 1, sizeof(fad_hdr), f);
-        if (nread >= 0x4000) {
-            populate_fad_targets(fad_hdr, nread, g_fad_base_offset_en, g_fad_mapping_defs_en,
-                                 sizeof(g_fad_mapping_defs_en) / sizeof(g_fad_mapping_defs_en[0]));
-        }
+    if (en_read >= 0x4000) {
+        populate_fad_targets(en_fad_hdr, en_read, g_fad_base_offset_en,
+                             g_fad_mapping_defs_en, sizeof(g_fad_mapping_defs_en) / sizeof(g_fad_mapping_defs_en[0]),
+                             NULL, 0, 0, NULL, 0);
     }
 
     fclose(f);
@@ -2761,7 +2797,7 @@ static BOOL WINAPI hk_ReadFile(
                 }
                 return res;
             }
-        } else if (strstr(entry->name, "data/database/texture.dat")) {
+        } else if (g_settings.texture_mode != 0 && strstr(entry->name, "data/database/texture.dat")) {
             /* Patch texture database in memory to point to English/localized textures (as in Switch mod) */
             if (lpOverlapped) {
                 add_pending_io(
@@ -2784,16 +2820,25 @@ static BOOL WINAPI hk_ReadFile(
 
     /* 3. Check for FAD sub-file redirections (fairy_1_00.dat / resident_lang_jp.fad) */
     if (arch_id == 4) {
+        if (g_settings.texture_mode == 0) {
+            /* Mode 0: Original game textures 100% (disable all texture replacements) */
+            return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+        }
+
         const FadSubFile* fad_entry = lookup_fad_subfile(offset);
         if (fad_entry) {
             wchar_t override_path_w[MAX_PATH];
             long ext_size = 0;
             BOOL found = FALSE;
-            if (fad_entry->alt_filename) {
-                found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
-            }
-            if (!found) {
-                found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+
+            /* Check for custom Thai texture (only in mode 1) */
+            if (g_settings.texture_mode == 1) {
+                if (fad_entry->alt_filename) {
+                    found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
+                }
+                if (!found) {
+                    found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+                }
             }
 
             if (found) {
@@ -2832,6 +2877,21 @@ static BOOL WINAPI hk_ReadFile(
                     }
                     return res;
                 }
+            } else if ((g_settings.texture_mode == 1 || g_settings.texture_mode == 2) &&
+                       fad_entry->en_offset != 0 && fad_entry->fad_base == g_fad_base_offset_jp) {
+                /* English Fallback: Redirect read to English offset in resident_lang_en.fad! */
+                uint64_t en_off = fad_entry->en_offset;
+                OVERLAPPED ov_en = { 0 };
+                if (lpOverlapped) {
+                    ov_en = *lpOverlapped;
+                }
+                ov_en.Offset = (DWORD)(en_off & 0xFFFFFFFF);
+                ov_en.OffsetHigh = (DWORD)(en_off >> 32);
+
+                log_msg("[VFS FAD -> EN FALLBACK] [%s] (JP 0x%llX -> EN 0x%llX, req=%u)",
+                        fad_entry->filename, (unsigned long long)offset, (unsigned long long)en_off, nNumberOfBytesToRead);
+
+                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, &ov_en);
             }
         }
     }
