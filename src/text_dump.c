@@ -1643,20 +1643,30 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return TRUE;
     }
 
-    /* 1b. Mods\TextDump\textures\<basename> (e.g. Mods\TextDump\textures\ui_1000_title01.nltx) */
-    swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
-    if (file_exists_and_size_w(candidate, out_size)) {
-        wcsncpy(out_path_w, candidate, out_max - 1);
-        out_path_w[out_max - 1] = L'\0';
-        return TRUE;
-    }
+    /* 1b. Mods\TextDump\textures\<basename> (UI & Minimaps) */
+    if (g_config.enable_custom_textures) {
+        if (g_config.use_english_textures) {
+            swprintf(candidate, MAX_PATH, L"%ls\\textures_en\\%ls", g_mod_dir_w, base_name_w);
+            if (file_exists_and_size_w(candidate, out_size)) {
+                wcsncpy(out_path_w, candidate, out_max - 1);
+                out_path_w[out_max - 1] = L'\0';
+                return TRUE;
+            }
+        }
+        swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
 
-    /* 1c. Mods\TextDump\title_elements\<basename> */
-    swprintf(candidate, MAX_PATH, L"%ls\\title_elements\\%ls", g_mod_dir_w, base_name_w);
-    if (file_exists_and_size_w(candidate, out_size)) {
-        wcsncpy(out_path_w, candidate, out_max - 1);
-        out_path_w[out_max - 1] = L'\0';
-        return TRUE;
+        /* 1c. Mods\TextDump\title_elements\<basename> */
+        swprintf(candidate, MAX_PATH, L"%ls\\title_elements\\%ls", g_mod_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
     }
 
     /* 1d. Mods\TextDump\dat\<basename> */
@@ -3219,22 +3229,30 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    /* Apply Proportional Kerning internal branch patches (Clean village.exe supported) */
-    patch_proportional_kerning_v130(base, log_msg);
+    #ifdef ENABLE_CHEATS
+    /* Initialize in-memory cheats and user settings (monitors cheats.ini) */
+    cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
+#endif
+
+    /* 1. Apply Proportional Kerning internal branch patches (Respects [Settings]) */
+    if (g_config.enable_proportional_font) {
+        patch_proportional_kerning_v130(base, log_msg);
+    } else {
+        log_msg("[SETTINGS] Proportional kerning DISABLED by user configuration.");
+    }
 
     #ifdef ENABLE_THAI_KEYBOARD
-    /* 6. Patch In-Game Virtual Keyboard string table in memory (Thai Unicode Layout v1.30) */
-    patch_virtual_keyboard_v130(base, log_msg);
+    /* 2. Patch In-Game Virtual Keyboard string table in memory (Respects [Settings]) */
+    if (g_config.enable_thai_keyboard) {
+        patch_virtual_keyboard_v130(base, log_msg);
+    } else {
+        log_msg("[SETTINGS] Thai virtual keyboard DISABLED by user configuration.");
+    }
 #else
     log_msg("[KEYBOARD] Original Keyboard retained (Thai Virtual Keyboard disabled).");
 #endif
 
     log_msg("System ready! Both VFS and Text Translation are active.");
-
-    #ifdef ENABLE_CHEATS
-    /* Initialize in-memory cheats system (monitors cheats.ini) */
-    cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
-#endif
 
     int last_unique = 0;
     int last_missing = 0;
