@@ -6,6 +6,7 @@ bin_no_kb   = r'D:\Users\Supakiat\Desktop\Village_in_the_Shade_ThaiMod_Dev\bin\t
 bin_full    = r'D:\Users\Supakiat\Desktop\Village_in_the_Shade_ThaiMod_Dev\bin\text_dump_full.dll'
 winmm_src   = r'D:\Users\Supakiat\Desktop\Village_in_the_Shade_ThaiMod_Dev\bin\winmm.dll'
 cheats_ini  = r'D:\Users\Supakiat\Desktop\Village_in_the_Shade_ThaiMod_Dev\cheats.ini'
+settings_ini = r'D:\Users\Supakiat\Desktop\Village_in_the_Shade_ThaiMod_Dev\settings.ini'
 ct_130      = r'D:\Users\Supakiat\Desktop\Village-in-the-Shade-Trainer\Village in the Shade1.30.CT'
 steam_game  = r'C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade'
 
@@ -38,9 +39,12 @@ for t in targets:
         os.makedirs(mod_textdump, exist_ok=True)
         os.makedirs(mod_fonts, exist_ok=True)
 
-        # Copy DLLs
+        # Copy DLLs and Settings
         shutil.copy2(src_dll, os.path.join(mod_textdump, 'text_dump.dll'))
         shutil.copy2(winmm_src, os.path.join(dest_dir, 'winmm.dll'))
+        if os.path.exists(settings_ini):
+            shutil.copy2(settings_ini, os.path.join(dest_dir, 'settings.ini'))
+            shutil.copy2(settings_ini, os.path.join(mod_textdump, 'settings.ini'))
 
         # Copy Fonts
         for f in os.listdir(fonts_src):

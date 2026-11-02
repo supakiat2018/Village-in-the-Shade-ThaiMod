@@ -1520,6 +1520,8 @@ static uint32_t g_count_misc = 0;
 static uint64_t g_fsize_dat = 0;
 static uint64_t g_fsize_misc = 0;
 static uint64_t g_fsize_tex = 0;
+static uint64_t g_toc_off_tex = 0;
+static uint32_t g_count_tex = 0;
 static uint64_t g_fsize_fairy = 0;
 
 static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
@@ -1555,6 +1557,8 @@ static int load_archive_toc_w(const wchar_t* path_w, int archive_id)
         g_count_misc = hdr.count;
     } else if (archive_id == 3) {
         g_fsize_tex = fsz;
+        g_toc_off_tex = hdr.toc_off;
+        g_count_tex = hdr.count;
     } else if (archive_id == 4) {
         g_fsize_fairy = fsz;
     }
@@ -1621,6 +1625,12 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
 {
     if (!g_settings.enable_thai_mod) return FALSE;
     const char* base_name = get_basename(vfs_name);
+
+    /* If Thai minimap is disabled, do not override any minimap texture */
+    if (!g_settings.enable_thai_minimap && strstr(base_name, "minimap_") != NULL) {
+        return FALSE;
+    }
+
     wchar_t base_name_w[MAX_PATH];
     MultiByteToWideChar(CP_UTF8, 0, base_name, -1, base_name_w, MAX_PATH);
 
@@ -2460,6 +2470,8 @@ static void apply_vfs_payload(const PendingIo* pio)
     } else {
         DWORD to_read = (DWORD)pio->ext_size;
         if (to_read > pio->bytes_requested && pio->bytes_requested > 0) {
+            log_msg("[VFS OVERRUN WARN] Truncating [%s]! Requested %u B, file is %ld B (diff: +%ld B)",
+                    pio->filename, pio->bytes_requested, pio->ext_size, pio->ext_size - (long)pio->bytes_requested);
             to_read = pio->bytes_requested;
         }
         size_t actual_read = fread(pio->lpBuffer, 1, to_read, fext);
@@ -2513,6 +2525,12 @@ static void patch_texture_database_in_ram(void* buffer, DWORD size)
 
     for (size_t i = 0; i < num_patches; i++) {
         const char* tgt = kTextureDbPatches[i].target;
+
+        /* If Thai minimap is disabled, do not patch minimap database redirections */
+        if (!g_settings.enable_thai_minimap && strstr(tgt, "minimap_") != NULL) {
+            continue;
+        }
+
         size_t tlen = kTextureDbPatches[i].target_len;
         const char* rep = kTextureDbPatches[i].replacement;
         size_t rlen = kTextureDbPatches[i].replacement_len;
@@ -2634,7 +2652,19 @@ static BOOL WINAPI hk_ReadFile(
     }
 
     /* 1. Check if the game is reading the TOC table */
-    uint64_t toc_off = (arch_id == 1) ? g_toc_off_dat : g_toc_off_misc;
+    uint64_t toc_off = 0;
+    uint32_t count = 0;
+    if (arch_id == 1) {
+        toc_off = g_toc_off_dat;
+        count = g_count_dat;
+    } else if (arch_id == 2) {
+        toc_off = g_toc_off_misc;
+        count = g_count_misc;
+    } else if (arch_id == 3) {
+        toc_off = g_toc_off_tex;
+        count = g_count_tex;
+    }
+
     if (toc_off != 0 && offset == toc_off) {
         BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
         if (!res && GetLastError() == ERROR_IO_PENDING && lpOverlapped) {
@@ -2650,7 +2680,6 @@ static BOOL WINAPI hk_ReadFile(
         if (res && lpBuffer) {
             /* Patch TOC entries in RAM for any file that has a larger external override */
             FAFULLFS_TocEntry* tocs = (FAFULLFS_TocEntry*)lpBuffer;
-            uint32_t count = (arch_id == 1) ? g_count_dat : g_count_misc;
             DWORD max_entries = nNumberOfBytesToRead / sizeof(FAFULLFS_TocEntry);
             if (count > max_entries) count = max_entries;
 

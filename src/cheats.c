@@ -15,7 +15,7 @@ static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
-ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1 };
+ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1, 1 };
 CheatConfig g_config = { 0 };
 
 
@@ -90,6 +90,7 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         else if (_stricmp(key, "enable_custom_textures") == 0) g_settings.enable_custom_textures = ival;
         else if (_stricmp(key, "use_english_textures") == 0) g_settings.use_english_textures = ival;
         else if (_stricmp(key, "texture_mode") == 0) g_settings.texture_mode = ival;
+        else if (_stricmp(key, "enable_thai_minimap") == 0) g_settings.enable_thai_minimap = ival;
         else if (_stricmp(key, "enable_speedhack") == 0) g_settings.enable_speedhack = ival;
     }
     fclose(f);
@@ -101,6 +102,7 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         g_settings.enable_custom_textures = 0;
         g_settings.texture_mode = 0;
         g_settings.use_english_textures = 0;
+        g_settings.enable_thai_minimap = 0;
         cheat_log("[Settings] MASTER SWITCH: Thai Mod DISABLED (Original Game Text & Assets, Cheats/Speedhack Active)!");
     } else {
         /* Synchronize texture_mode with legacy flags */
@@ -123,9 +125,9 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         }
     }
 
-    cheat_log("[Settings] Loaded settings.ini (ThaiMod=%d, Font=%d, Keyboard=%d, TextureMode=%d, Speedhack=%d)",
+    cheat_log("[Settings] Loaded settings.ini (ThaiMod=%d, Font=%d, Keyboard=%d, TextureMode=%d, ThaiMinimap=%d, Speedhack=%d)",
               g_settings.enable_thai_mod, g_settings.enable_proportional_font, g_settings.enable_thai_keyboard,
-              g_settings.texture_mode, g_settings.enable_speedhack);
+              g_settings.texture_mode, g_settings.enable_thai_minimap, g_settings.enable_speedhack);
 }
 
 
