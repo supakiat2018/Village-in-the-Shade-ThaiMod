@@ -11,6 +11,7 @@
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
 #include "cheats.h"
+#include "speedhack.h"
 
 #ifdef ENABLE_THAI_KEYBOARD
 #include "keyboard_v130_patch.h"
@@ -3096,6 +3097,16 @@ static DWORD WINAPI worker_thread(LPVOID param)
     log_msg("==========================================================");
     log_msg("Mod directory: %ls", g_mod_dir_w);
     log_msg("Game directory: %ls", g_game_dir_w);
+
+    /* 0. Load engine settings from settings.ini */
+    settings_init(g_game_dir_w, g_mod_dir_w, log_msg);
+
+    /* Speedhack Hook (QueryPerformanceCounter & GetTickCount) - Respects settings.ini */
+    if (g_settings.enable_speedhack) {
+        speedhack_install_hooks(log_msg);
+    } else {
+        log_msg("[SETTINGS] Speedhack DISABLED in settings.ini.");
+    }
 
     /* 1. Index Archives for Virtual File System FIRST */
     wchar_t dat_path_w[MAX_PATH];

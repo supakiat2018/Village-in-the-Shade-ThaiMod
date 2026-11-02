@@ -14,6 +14,7 @@ typedef struct {
     int enable_thai_keyboard;     /* 1 = enable in-memory Thai virtual keyboard string table patch */
     int enable_custom_textures;   /* 1 = enable VFS texture replacement */
     int use_english_textures;     /* 1 = redirect/load English textures instead of Thai */
+    int enable_speedhack;         /* 1 = enable in-memory Speedhack (game speed multiplier), 0 = disable */
 } ModSettings;
 
 /* Configuration for In-Game Cheats & Hotkeys (cheats.ini) */
@@ -38,6 +39,17 @@ typedef struct {
     char str_noclip[32];
     int vk_freeze_time;           /* Virtual key for Freeze Time toggle (default VK_F2) */
     char str_freeze_time[32];
+
+    /* Speedhack Hotkeys */
+    int vk_speed_fast;            /* Virtual key for Fast Speed (default VK_F4) */
+    char str_speed_fast[32];
+    int vk_speed_slow;            /* Virtual key for Slow Speed (default VK_F5) */
+    char str_speed_slow[32];
+    int vk_speed_normal;          /* Virtual key for Normal Speed (default VK_F6) */
+    char str_speed_normal[32];
+    double speed_multiplier_fast; /* Multiplier for Fast (default 2.0) */
+    double speed_multiplier_slow; /* Multiplier for Slow (default 0.5) */
+    double current_speed;         /* Currently active speed (default 1.0) */
 } CheatConfig;
 
 extern ModSettings g_settings;

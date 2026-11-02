@@ -4,6 +4,7 @@
  */
 
 #include "cheats.h"
+#include "speedhack.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +15,7 @@ static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
-ModSettings g_settings = { 1, 1, 1, 0 };
+ModSettings g_settings = { 1, 1, 1, 0, 1 };
 CheatConfig g_config = { 0 };
 
 
@@ -87,11 +88,12 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         else if (_stricmp(key, "enable_thai_keyboard") == 0) g_settings.enable_thai_keyboard = ival;
         else if (_stricmp(key, "enable_custom_textures") == 0) g_settings.enable_custom_textures = ival;
         else if (_stricmp(key, "use_english_textures") == 0) g_settings.use_english_textures = ival;
+        else if (_stricmp(key, "enable_speedhack") == 0) g_settings.enable_speedhack = ival;
     }
     fclose(f);
-    cheat_log("[Settings] Loaded settings.ini (Font=%d, Keyboard=%d, Textures=%d, EnglishTextures=%d)",
+    cheat_log("[Settings] Loaded settings.ini (Font=%d, Keyboard=%d, Textures=%d, EnglishTextures=%d, Speedhack=%d)",
               g_settings.enable_proportional_font, g_settings.enable_thai_keyboard,
-              g_settings.enable_custom_textures, g_settings.use_english_textures);
+              g_settings.enable_custom_textures, g_settings.use_english_textures, g_settings.enable_speedhack);
 }
 
 
@@ -406,6 +408,17 @@ static void load_cheats_ini(void)
     g_config.vk_freeze_time = VK_F2;
     strcpy(g_config.str_freeze_time, "F2");
 
+    /* Speedhack Hotkeys */
+    g_config.vk_speed_fast = VK_F4;
+    strcpy(g_config.str_speed_fast, "F4");
+    g_config.vk_speed_slow = VK_F5;
+    strcpy(g_config.str_speed_slow, "F5");
+    g_config.vk_speed_normal = VK_F6;
+    strcpy(g_config.str_speed_normal, "F6");
+    g_config.speed_multiplier_fast = 2.0;
+    g_config.speed_multiplier_slow = 0.5;
+    g_config.current_speed = 1.0;
+
     char line[512];
     while (fgets(line, sizeof(line), f)) {
         char* p = line;
@@ -470,6 +483,26 @@ static void load_cheats_ini(void)
             g_config.vk_freeze_time = parse_vk_key(val);
             strncpy(g_config.str_freeze_time, val, sizeof(g_config.str_freeze_time) - 1);
         }
+        else if (_stricmp(key, "hotkey_speed_fast") == 0) {
+            g_config.vk_speed_fast = parse_vk_key(val);
+            strncpy(g_config.str_speed_fast, val, sizeof(g_config.str_speed_fast) - 1);
+        }
+        else if (_stricmp(key, "hotkey_speed_slow") == 0) {
+            g_config.vk_speed_slow = parse_vk_key(val);
+            strncpy(g_config.str_speed_slow, val, sizeof(g_config.str_speed_slow) - 1);
+        }
+        else if (_stricmp(key, "hotkey_speed_normal") == 0) {
+            g_config.vk_speed_normal = parse_vk_key(val);
+            strncpy(g_config.str_speed_normal, val, sizeof(g_config.str_speed_normal) - 1);
+        }
+        else if (_stricmp(key, "speed_multiplier_fast") == 0) {
+            double d = atof(val);
+            if (d > 0.0) g_config.speed_multiplier_fast = d;
+        }
+        else if (_stricmp(key, "speed_multiplier_slow") == 0) {
+            double d = atof(val);
+            if (d > 0.0) g_config.speed_multiplier_slow = d;
+        }
     }
     fclose(f);
 }
@@ -513,6 +546,30 @@ static DWORD WINAPI hotkey_thread_proc(LPVOID param)
                 g_frozen_time = 0;
                 MessageBeep(MB_ICONASTERISK);
                 cheat_log("[Cheats] [HOTKEY %s] Freeze Time TOGGLED: OFF (Time Resumed)", g_config.str_freeze_time);
+            }
+        }
+
+        /* Speedhack Hotkeys (F4=Fast, F5=Slow, F6=Normal) - Respects settings.ini */
+        if (g_config.enable_hotkeys && g_settings.enable_speedhack) {
+            if (g_config.vk_speed_fast > 0 && (GetAsyncKeyState(g_config.vk_speed_fast) & 1)) {
+                double target = g_config.speed_multiplier_fast > 0.0 ? g_config.speed_multiplier_fast : 2.0;
+                speedhack_set_speed(target);
+                g_config.current_speed = target;
+                MessageBeep(MB_OK);
+                cheat_log("[Cheats] [HOTKEY %s] Game Speed: FAST FORWARD (%.1fx)", g_config.str_speed_fast, target);
+            }
+            if (g_config.vk_speed_slow > 0 && (GetAsyncKeyState(g_config.vk_speed_slow) & 1)) {
+                double target = g_config.speed_multiplier_slow > 0.0 ? g_config.speed_multiplier_slow : 0.5;
+                speedhack_set_speed(target);
+                g_config.current_speed = target;
+                MessageBeep(MB_ICONWARNING);
+                cheat_log("[Cheats] [HOTKEY %s] Game Speed: SLOW MOTION (%.1fx)", g_config.str_speed_slow, target);
+            }
+            if (g_config.vk_speed_normal > 0 && (GetAsyncKeyState(g_config.vk_speed_normal) & 1)) {
+                speedhack_set_speed(1.0);
+                g_config.current_speed = 1.0;
+                MessageBeep(MB_ICONASTERISK);
+                cheat_log("[Cheats] [HOTKEY %s] Game Speed: NORMAL (1.0x)", g_config.str_speed_normal);
             }
         }
 
@@ -778,6 +835,8 @@ void cheats_cleanup(void)
         g_hHotkeyThread = NULL;
     }
 
+    speedhack_set_speed(1.0);
+    g_config.current_speed = 1.0;
     restore_all_patches();
     g_config.active = 0;
     g_cheats_applied = 0;
