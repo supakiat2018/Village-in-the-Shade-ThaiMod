@@ -10,6 +10,7 @@ extern "C" {
 
 /* Configuration for Mod Engine Settings (settings.ini) */
 typedef struct {
+    int enable_thai_mod;          /* 1 = enable Thai mod (text, font, kb, textures), 0 = disable all Thai translation */
     int enable_proportional_font; /* 1 = enable in-memory proportional font kerning hook (tight spacing) */
     int enable_thai_keyboard;     /* 1 = enable in-memory Thai virtual keyboard string table patch */
     int enable_custom_textures;   /* 1 = enable VFS texture replacement */

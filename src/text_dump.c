@@ -1619,6 +1619,7 @@ static const char* get_basename(const char* path)
 /* Search for override file in Mods directory structures */
 static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size_t out_max, long* out_size)
 {
+    if (!g_settings.enable_thai_mod) return FALSE;
     const char* base_name = get_basename(vfs_name);
     wchar_t base_name_w[MAX_PATH];
     MultiByteToWideChar(CP_UTF8, 0, base_name, -1, base_name_w, MAX_PATH);
@@ -2916,6 +2917,10 @@ static void call_with_auto_scale(t_putStr fn, void* this_ptr, const char* str, f
 
 static void hk_putStr(void* this_ptr, const char* str)
 {
+    if (!g_settings.enable_thai_mod) {
+        if (fp_original_putStr) fp_original_putStr(this_ptr, str);
+        return;
+    }
     process_captured_text(str, "putStr");
 
     float scale = 1.0f;
@@ -2945,6 +2950,10 @@ static void hk_putStr(void* this_ptr, const char* str)
 
 static void hk_putStrProp(void* this_ptr, const char* str)
 {
+    if (!g_settings.enable_thai_mod) {
+        if (fp_original_putStrProp) fp_original_putStrProp(this_ptr, str);
+        return;
+    }
     process_captured_text(str, "putStrProp");
 
     float scale = 1.0f;
@@ -2965,6 +2974,10 @@ static void hk_putStrProp(void* this_ptr, const char* str)
 
 static void hk_putStrAlign(void* this_ptr, const char* str)
 {
+    if (!g_settings.enable_thai_mod) {
+        if (fp_original_putStrAlign) fp_original_putStrAlign(this_ptr, str);
+        return;
+    }
     process_captured_text(str, "putStrAlign");
 
     float scale = 1.0f;
