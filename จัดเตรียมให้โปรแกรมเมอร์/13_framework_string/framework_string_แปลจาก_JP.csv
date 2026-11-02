@@ -1,0 +1,10 @@
+﻿Item_No,Index,Category_ID,Key,ต้นฉบับ_JP,คำแปลไทย,Thai_PUA
+1,0,1,STR_ID_CMD_OR,／,/,/
+2,1,2,STR_ID_CMD_AND,＆,&,&
+3,2,3,STR_ID_NUM_FLOOR_1,万,หมื่น,หน
+4,3,4,STR_ID_NUM_FLOOR_2,億,ร้อยล้าน,อยาน
+5,4,5,STR_ID_NUM_FLOOR_3,兆,ล้านล้าน,านาน
+6,5,6,STR_ID_NUM_FLOOR_4,京,京,京
+7,6,7,STR_ID_NUM_FLOOR_5,垓,垓,垓
+8,7,8,STR_ID_NUM_FLOOR_6,秭,秭,秭
+9,8,9,STR_ID_NUM_FLOOR_7,,,

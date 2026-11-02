@@ -1,0 +1,233 @@
+﻿Index,Command_Key,Orig_JP,MODEN_EN,Thai_Normal,Thai_Status
+1,CMD_OK,決定,Confirm,ยืนยัน,MATCHED
+2,CMD_CANCEL,キャンセル,Cancel,ยกเลิก,MATCHED
+3,CMD_BACK,戻る,Back,ย้อนกลับ,MATCHED
+4,CMD_MENU,メニュー,メニュー,เมนู,MATCHED
+5,CMD_CURSOR_EX_UP,選択,Select,เลือก,MATCHED
+6,CMD_CURSOR_EX_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+7,CMD_CURSOR_EX_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+8,CMD_CURSOR_EX_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+9,CMD_CURSOR_EX_DOWN,選択,Select,เลือก,MATCHED
+10,CMD_CURSOR_EX_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+11,CMD_CURSOR_EX_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+12,CMD_CURSOR_EX_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+13,CMD_CURSOR_EX_RIGHT,選択,Select,เลือก,MATCHED
+14,CMD_CURSOR_EX_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+15,CMD_CURSOR_EX_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+16,CMD_CURSOR_EX_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+17,CMD_CURSOR_EX_LEFT,選択,Select,เลือก,MATCHED
+18,CMD_CURSOR_EX_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+19,CMD_CURSOR_EX_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+20,CMD_CURSOR_EX_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+21,CMD_CURSOR_UP,選択,Select,เลือก,MATCHED
+22,CMD_CURSOR_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+23,CMD_CURSOR_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+24,CMD_CURSOR_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+25,CMD_CURSOR_DOWN,選択,Select,เลือก,MATCHED
+26,CMD_CURSOR_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+27,CMD_CURSOR_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+28,CMD_CURSOR_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+29,CMD_CURSOR_RIGHT,選択,Select,เลือก,MATCHED
+30,CMD_CURSOR_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+31,CMD_CURSOR_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+32,CMD_CURSOR_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+33,CMD_CURSOR_LEFT,選択,Select,เลือก,MATCHED
+34,CMD_CURSOR_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+35,CMD_CURSOR_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+36,CMD_CURSOR_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+37,CMD_CURSOR_L1,選択,Select,เลือก,MATCHED
+38,CMD_CURSOR_L1_X10,10単位増減,x10,เพิ่ม/ลด 10 หน่วย,MATCHED
+39,CMD_CURSOR_L1_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+40,CMD_CURSOR_L1_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+41,CMD_CURSOR_R1,選択,Select,เลือก,MATCHED
+42,CMD_CURSOR_R1_X10,10単位増減,x10,เพิ่ม/ลด 10 หน่วย,MATCHED
+43,CMD_CURSOR_R1_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+44,CMD_CURSOR_R1_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+45,CMD_CURSOR_L2,選択,Select,เลือก,MATCHED
+46,CMD_CURSOR_L2_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+47,CMD_CURSOR_L2_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+48,CMD_CURSOR_L2_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+49,CMD_CURSOR_R2,選択,Select,เลือก,MATCHED
+50,CMD_CURSOR_R2_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+51,CMD_CURSOR_R2_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+52,CMD_CURSOR_R2_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+53,CMD_CURSOR_R_STICK_UP,選択,Select,เลือก,MATCHED
+54,CMD_CURSOR_R_STICK_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+55,CMD_CURSOR_R_STICK_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+56,CMD_CURSOR_R_STICK_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+57,CMD_CURSOR_R_STICK_DOWN,選択,Select,เลือก,MATCHED
+58,CMD_CURSOR_R_STICK_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+59,CMD_CURSOR_R_STICK_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+60,CMD_CURSOR_R_STICK_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+61,CMD_CURSOR_R_STICK_LEFT,選択,Select,เลือก,MATCHED
+62,CMD_CURSOR_R_STICK_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+63,CMD_CURSOR_R_STICK_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+64,CMD_CURSOR_R_STICK_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+65,CMD_CURSOR_R_STICK_RIGHT,選択,Select,เลือก,MATCHED
+66,CMD_CURSOR_R_STICK_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+67,CMD_CURSOR_R_STICK_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+68,CMD_CURSOR_R_STICK_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+69,CMD_CURSOR_L_STICK_UP,選択,Select,เลือก,MATCHED
+70,CMD_CURSOR_L_STICK_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+71,CMD_CURSOR_L_STICK_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+72,CMD_CURSOR_L_STICK_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+73,CMD_CURSOR_L_STICK_DOWN,選択,Select,เลือก,MATCHED
+74,CMD_CURSOR_L_STICK_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+75,CMD_CURSOR_L_STICK_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+76,CMD_CURSOR_L_STICK_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+77,CMD_CURSOR_L_STICK_LEFT,選択,Select,เลือก,MATCHED
+78,CMD_CURSOR_L_STICK_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+79,CMD_CURSOR_L_STICK_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+80,CMD_CURSOR_L_STICK_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+81,CMD_CURSOR_L_STICK_RIGHT,選択,Select,เลือก,MATCHED
+82,CMD_CURSOR_L_STICK_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+83,CMD_CURSOR_L_STICK_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+84,CMD_CURSOR_L_STICK_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+85,CMD_CURSOR_LR_STICK_UP,選択,Select,เลือก,MATCHED
+86,CMD_CURSOR_LR_STICK_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+87,CMD_CURSOR_LR_STICK_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+88,CMD_CURSOR_LR_STICK_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+89,CMD_CURSOR_LR_STICK_DOWN,選択,Select,เลือก,MATCHED
+90,CMD_CURSOR_LR_STICK_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+91,CMD_CURSOR_LR_STICK_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+92,CMD_CURSOR_LR_STICK_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+93,CMD_CURSOR_LR_STICK_LEFT,選択,Select,เลือก,MATCHED
+94,CMD_CURSOR_LR_STICK_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+95,CMD_CURSOR_LR_STICK_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+96,CMD_CURSOR_LR_STICK_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+97,CMD_CURSOR_LR_STICK_RIGHT,選択,Select,เลือก,MATCHED
+98,CMD_CURSOR_LR_STICK_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+99,CMD_CURSOR_LR_STICK_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+100,CMD_CURSOR_LR_STICK_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+101,CMD_CURSOR_LR_STICK_EX_UP,選択,Select,เลือก,MATCHED
+102,CMD_CURSOR_LR_STICK_EX_UP_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+103,CMD_CURSOR_LR_STICK_EX_UP_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+104,CMD_CURSOR_LR_STICK_EX_UP_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+105,CMD_CURSOR_LR_STICK_EX_DOWN,選択,Select,เลือก,MATCHED
+106,CMD_CURSOR_LR_STICK_EX_DOWN_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+107,CMD_CURSOR_LR_STICK_EX_DOWN_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+108,CMD_CURSOR_LR_STICK_EX_DOWN_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+109,CMD_CURSOR_LR_STICK_EX_LEFT,選択,Select,เลือก,MATCHED
+110,CMD_CURSOR_LR_STICK_EX_LEFT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+111,CMD_CURSOR_LR_STICK_EX_LEFT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+112,CMD_CURSOR_LR_STICK_EX_LEFT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+113,CMD_CURSOR_LR_STICK_EX_RIGHT,選択,Select,เลือก,MATCHED
+114,CMD_CURSOR_LR_STICK_EX_RIGHT_X10,１０倍増減,x10,เพิ่ม/ลด 10 เท่า,MATCHED
+115,CMD_CURSOR_LR_STICK_EX_RIGHT_X100,１００倍増減,x100,เพิ่ม/ลด 100 เท่า,MATCHED
+116,CMD_CURSOR_LR_STICK_EX_RIGHT_X1000,１０００倍増減,x1000,เพิ่ม/ลด 1000 เท่า,MATCHED
+117,CMD_CURSOR_PAGE_UP,ページ移動,Previous Page,หน้าก่อน,MATCHED
+118,CMD_CURSOR_PAGE_DOWN,ページ移動,Next Page,หน้าถัดไป,MATCHED
+119,CMD_CURSOR_PAGE_UP_R_STCK,ページ移動,Previous Page,เปลี่ยนหน้า,MATCHED
+120,CMD_CURSOR_PAGE_DOWN_R_STCK,ページ移動,Next Page,เปลี่ยนหน้า,MATCHED
+121,CMD_CURSOR_PAGE_LEFT_R_STCK,ページ移動,Previous Page,เปลี่ยนหน้า,MATCHED
+122,CMD_CURSOR_PAGE_RIGHT_R_STCK,ページ移動,Next Page,เปลี่ยนหน้า,MATCHED
+123,CMD_CURSOR_PAGE_UP_L1,ページ移動,Previous Page,เปลี่ยนหน้า,MATCHED
+124,CMD_CURSOR_PAGE_DOWN_R1,ページ移動,Next Page,เปลี่ยนหน้า,MATCHED
+125,CMD_CURSOR_SCROLL_UP,スクロール,Scroll,เลื่อนหน้าจอ,MATCHED
+126,CMD_CURSOR_SCROLL_DOWN,スクロール,Scroll,เลื่อนหน้าจอ,MATCHED
+127,CMD_CURSOR_BUTTON_SCROLL_UP,スクロール,Scroll,เลื่อนหน้าจอ,MATCHED
+128,CMD_CURSOR_BUTTON_SCROLL_DOWN,スクロール,Scroll,เลื่อนหน้าจอ,MATCHED
+129,CMD_NEXT,次へ,Next,ถัดไป,MATCHED
+130,CMD_SKIP,スキップ,スキップ,ข้าม,MATCHED
+131,CMD_FAST_NEXT,早送り,Fast Forward,กรอไปข้างหน้า,MATCHED
+132,CMD_NEXT_2,キャンセル,Cancel,ยกเลิก,MATCHED
+133,CMD_FASTFORWARD,デモ高速化,Event Fast Forward,เร่งความเร็วคัตซีน,MATCHED
+134,CMD_BACKLOG,バックログ,Log,ประวัติบทสนทนา,MATCHED
+135,CMD_BACKLOG_PLAY,再生,Play,เล่นเสียง,MATCHED
+136,CMD_AUTO_TEXT,自動送り,Auto-Scroll,เล่นข้อความอัตโนมัติ,MATCHED
+137,CMD_TEXT_CURSOR_LEFT,選択,Select,เลือก,MATCHED
+138,CMD_TEXT_CURSOR_RIGHT,選択,Select,เลือก,MATCHED
+139,CMD_TEXT_CURSOR_RANGE_LEFT,範囲選択,Select Range,เลือกขอบเขต,MATCHED
+140,CMD_TEXT_CURSOR_RANGE_RIGHT,範囲選択,Select Range,เลือกขอบเขต,MATCHED
+141,CMD_TEXT_CURSOR_BACKSPACE,1文字削除,1文字削除,ลบ 1 ตัวอักษร,MATCHED
+142,CMD_MOUSE_LEFT_DOWN,マウス左ダウン,マウス左ダウン,คลิกซ้าย (กดลง),MATCHED
+143,CMD_MOUSE_LEFT_PRESS,マウス左プレス,マウス左プレス,คลิกซ้าย (กดค้าง),MATCHED
+144,CMD_MOUSE_LEFT_UP,マウス左アップ,マウス左アップ,คลิกซ้าย (ปล่อย),MATCHED
+145,CMD_MOUSE_LEFT_CLICK,マウス左クリック,マウス左クリック,คลิกซ้าย,MATCHED
+146,CMD_MOUSE_RIGHT_DOWN,マウス右ダウン,マウス右ダウン,คลิกขวา (กดลง),MATCHED
+147,CMD_MOUSE_RIGHT_PRESS,マウス右プレス,マウス右プレス,คลิกขวา (กดค้าง),MATCHED
+148,CMD_MOUSE_RIGHT_UP,マウス右アップ,マウス右アップ,คลิกขวา (ปล่อย),MATCHED
+149,CMD_MOUSE_RIGHT_CLICK,マウス右クリック,マウス右クリック,คลิกขวา,MATCHED
+150,CMD_MOUSE_MIDDLE_DOWN,マウス中ダウン,マウス中ダウン,คลิกกลาง (กดลง),MATCHED
+151,CMD_MOUSE_MIDDLE_PRESS,マウス中プレス,マウス中プレス,คลิกกลาง (กดค้าง),MATCHED
+152,CMD_MOUSE_MIDDLE_UP,マウス中アップ,マウス中アップ,คลิกกลาง (ปล่อย),MATCHED
+153,CMD_MOUSE_MIDDLE_CLICK,マウス中クリック,マウス中クリック,คลิกกลาง,MATCHED
+154,CMD_MOUSE_CURSOR_IN,マウスカーソルイン,マウスカーソルイン,เคอร์เซอร์เมาส์เข้า,MATCHED
+155,CMD_MOUSE_CURSOR_OUT,マウスカーソルアウト,マウスカーソルアウト,เคอร์เซอร์เมาส์ออก,MATCHED
+156,CMD_MOUSE_CURSOR_HOVER,マウスカーソルホバー,マウスカーソルホバー,เคอร์เซอร์เมาส์ชี้,MATCHED
+157,CMD_MOUSE_CURSOR_MOVE,マウスカーソル移動,マウスカーソル移動,เคอร์เซอร์เมาส์เคลื่อนที่,MATCHED
+158,CMD_MOUSE_WHEEL_UP,マウスホイール上,マウスホイール上,ลูกกลิ้งเมาส์ขึ้น,MATCHED
+159,CMD_MOUSE_WHEEL_DOWN,マウスホイール↓,マウスホイール↓,ลูกกลิ้งเมาส์ลง,MATCHED
+160,CMD_MOUSE_HOVER,マウスホバー,マウスホバー,เมาส์ชี้,MATCHED
+161,CMD_MOUSE_POS,マウス座標,マウス座標,พิกัดเมาส์,MATCHED
+162,CMD_MOUSE_MOVE,マウス移動,マウス移動,เมาส์เคลื่อนที่,MATCHED
+163,CMD_MOUSE_LEFT_DRAG,マウス左ドラッグ,マウス左ドラッグ,คลิกซ้ายลาก,MATCHED
+164,CMD_MOUSE_RIGHT_DRAG,マウス右ドラッグ,マウス右ドラッグ,คลิกขวาลาก,MATCHED
+165,CMD_MOUSE_LEFT_DRAG_SHIFT,マウス左ドラッグ移動量,マウス左ドラッグ移動量,ระยะคลิกซ้ายลาก,MATCHED
+166,CMD_MOUSE_RIGHT_DRAG_SHIFT,マウス右ドラッグ移動量,マウス右ドラッグ移動量,ระยะคลิกขวาลาก,MATCHED
+167,CMD_MOUSE_LEFT_DRAG_MOVE,マウス左ドラッグ,マウス左ドラッグ,คลิกซ้ายลาก,MATCHED
+168,CMD_MOUSE_RIGHT_DRAG_MOVE,マウス右ドラッグ,マウス右ドラッグ,คลิกขวาลาก,MATCHED
+169,CMD_MOUSE_INVALID_LEFT_DOWN,無効なマウス左ダウン,無効なマウス左ダウン,คลิกซ้ายไม่ทำงาน (กดลง),MATCHED
+170,CMD_MOUSE_INVALID_LEFT_PRESS,無効なマウス左プレス,無効なマウス左プレス,คลิกซ้ายไม่ทำงาน (กดค้าง),MATCHED
+171,CMD_MOUSE_INVALID_LEFT_UP,無効なマウス左アップ,無効なマウス左アップ,คลิกซ้ายไม่ทำงาน (ปล่อย),MATCHED
+172,CMD_MOUSE_INVALID_LEFT_CLICK,無効なマウス左クリック,無効なマウス左クリック,คลิกซ้ายไม่ทำงาน,MATCHED
+173,CMD_DEBUG_MENU_OPEN,<lang JP>デバッグメニュー</lang>,<lang JP>デバッグメニュー</lang>,<lang JP>เมนูดีบัก</lang>,MATCHED
+174,CMD_DEBUG_TREE_ALL_OPEN,<lang JP>ツリー全展開</lang>,<lang JP>ツリー全展開</lang>,<lang JP>ขยายผังทั้งหมด</lang>,MATCHED
+175,CMD_DEBUG_CAMERA_CONTROL,<lang JP>カメラ操作</lang>,<lang JP>カメラ操作</lang>,<lang JP>ควบคุมมุมกล้อง</lang>,MATCHED
+176,CMD_DEBUG_PLAY,<lang JP>再生</lang>,<lang JP>再生</lang>,<lang JP>เล่น</lang>,MATCHED
+177,CMD_DEBUG_STOP,<lang JP>停止</lang>,<lang JP>停止</lang>,<lang JP>หยุด</lang>,MATCHED
+178,CMD_DEBUG_FAST_FORWARD,<lang JP>早送り</lang>,<lang JP>早送り</lang>,<lang JP>กรอไปข้างหน้า</lang>,MATCHED
+179,CMD_DEBUG_FAST_FORWARD_UP,<lang JP>早送り速度アップ</lang>,<lang JP>早送り速度アップ</lang>,<lang JP>เพิ่มความเร็วการกรอ</lang>,MATCHED
+180,CMD_DEBUG_FAST_FORWARD_DOWN,<lang JP>早送り速度ダウン</lang>,<lang JP>早送り速度ダウン</lang>,<lang JP>ลดความเร็วการกรอ</lang>,MATCHED
+181,CMD_DEBUG_PAUSE,<lang JP>一時停止</lang>,<lang JP>一時停止</lang>,<lang JP>หยุดชั่วคราว</lang>,MATCHED
+182,CMD_DEBUG_PAUSE_END,<lang JP>再開</lang>,<lang JP>再開</lang>,<lang JP>เล่นต่อ</lang>,MATCHED
+183,CMD_DEBUG_PAUSE_STEP,<lang JP>コマ送り</lang>,<lang JP>コマ送り</lang>,<lang JP>เลื่อนทีละเฟรม</lang>,MATCHED
+184,CMD_DEBUG_PAUSE_RESUME,<lang JP>押している間再開</lang>,<lang JP>押している間再開</lang>,<lang JP>เล่นต่อขณะกดค้าง</lang>,MATCHED
+185,CMD_DEBUG_COMMAND_RECORD_STOP,<lang JP>コマンド記録、再生停止</lang>,<lang JP>コマンド記録、再生停止</lang>,<lang JP>หยุดบันทึกและเล่นคำสั่ง</lang>,MATCHED
+186,CMD_DEBUG_RENDER_OFF,<lang JP>デバッグ描画非表示</lang>,<lang JP>デバッグ描画非表示</lang>,<lang JP>ซ่อนการแสดงผลดีบัก</lang>,MATCHED
+187,CMD_DEBUG_DEFERRED_RENDER,<lang JP>デファードデバッグ描画</lang>,<lang JP>デファードデバッグ描画</lang>,<lang JP>การแสดงผลดีบักแบบ Deferred</lang>,MATCHED
+188,CMD_BASE_DEBUG_MENU,<lang JP>個別デバッグメニュー</lang>,<lang JP>個別デバッグメニュー</lang>,<lang JP>เมนูดีบักเฉพาะส่วน</lang>,MATCHED
+189,CMD_DEBUG_OBJECT_VISIBLE,<lang JP>表示切り替え</lang>,<lang JP>表示切り替え</lang>,<lang JP>สลับการแสดงผล</lang>,MATCHED
+190,CMD_DEBUG_OBJECT_MOVE,<lang JP>移動</lang>,<lang JP>移動</lang>,<lang JP>เคลื่อนที่</lang>,MATCHED
+191,CMD_DEBUG_OBJECT_MOVE_UP,<lang JP>移動</lang>,<lang JP>移動</lang>,<lang JP>เคลื่อนที่</lang>,MATCHED
+192,CMD_DEBUG_OBJECT_MOVE_DOWN,<lang JP>移動</lang>,<lang JP>移動</lang>,<lang JP>เคลื่อนที่</lang>,MATCHED
+193,CMD_DEBUG_OBJECT_MOVE_LEFT,<lang JP>移動</lang>,<lang JP>移動</lang>,<lang JP>เคลื่อนที่</lang>,MATCHED
+194,CMD_DEBUG_OBJECT_MOVE_RIGHT,<lang JP>移動</lang>,<lang JP>移動</lang>,<lang JP>เคลื่อนที่</lang>,MATCHED
+195,CMD_DEBUG_OBJECT_MOVE_Z_BACK,<lang JP>Z軸移動</lang>,<lang JP>Z軸移動</lang>,<lang JP>เคลื่อนที่แกน Z</lang>,MATCHED
+196,CMD_DEBUG_OBJECT_MOVE_Z_FRONT,<lang JP>Z軸移動</lang>,<lang JP>Z軸移動</lang>,<lang JP>เคลื่อนที่แกน Z</lang>,MATCHED
+197,CMD_DEBUG_OBJECT_MOVE_Y_UP,<lang JP>Y軸移動</lang>,<lang JP>Y軸移動</lang>,<lang JP>เคลื่อนที่แกน Y</lang>,MATCHED
+198,CMD_DEBUG_OBJECT_MOVE_Y_DOWN,<lang JP>Y軸移動</lang>,<lang JP>Y軸移動</lang>,<lang JP>เคลื่อนที่แกน Y</lang>,MATCHED
+199,CMD_DEBUG_OBJECT_ROTATE,<lang JP>回転</lang>,<lang JP>回転</lang>,<lang JP>หมุน</lang>,MATCHED
+200,CMD_DEBUG_OBJECT_ROTATE_UP,<lang JP>回転</lang>,<lang JP>回転</lang>,<lang JP>หมุน</lang>,MATCHED
+201,CMD_DEBUG_OBJECT_ROTATE_DOWN,<lang JP>回転</lang>,<lang JP>回転</lang>,<lang JP>หมุน</lang>,MATCHED
+202,CMD_DEBUG_OBJECT_ROTATE_LEFT,<lang JP>回転</lang>,<lang JP>回転</lang>,<lang JP>หมุน</lang>,MATCHED
+203,CMD_DEBUG_OBJECT_ROTATE_RIGHT,<lang JP>回転</lang>,<lang JP>回転</lang>,<lang JP>หมุน</lang>,MATCHED
+204,CMD_DEBUG_OBJECT_SCALE_UP,<lang JP>拡縮</lang>,<lang JP>拡縮</lang>,<lang JP>ย่อ/ขยาย</lang>,MATCHED
+205,CMD_DEBUG_OBJECT_SCALE_DOWN,<lang JP>拡縮</lang>,<lang JP>拡縮</lang>,<lang JP>ย่อ/ขยาย</lang>,MATCHED
+206,CMD_DEBUG_OBJECT_X_10,<lang JP>10倍操作</lang>,<lang JP>10倍操作</lang>,<lang JP>ปรับค่า 10 เท่า</lang>,MATCHED
+207,CMD_DEBUG_OBJECT_RESET_MENU,<lang JP>リセット</lang>,<lang JP>リセット</lang>,<lang JP>คืนค่าเริ่มต้น</lang>,MATCHED
+208,CMD_DEBUG_OBJECT_DETAIL_MENU,<lang JP>詳細設定</lang>,<lang JP>詳細設定</lang>,<lang JP>การตั้งค่าขั้นสูง</lang>,MATCHED
+209,CMD_DEBUG_SHORTCUT_L,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+210,CMD_DEBUG_SHORTCUT_R,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+211,CMD_DEBUG_SHORTCUT_CIRCLE,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+212,CMD_DEBUG_SHORTCUT_CROSS,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+213,CMD_DEBUG_SHORTCUT_SQUARE,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+214,CMD_DEBUG_SHORTCUT_TRIANGLE,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+215,CMD_DEBUG_SHORTCUT_L1,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+216,CMD_DEBUG_SHORTCUT_R1,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+217,CMD_DEBUG_SHORTCUT_L2,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+218,CMD_DEBUG_SHORTCUT_R2,<lang JP>ショートカット</lang>,<lang JP>ショートカット</lang>,<lang JP>ปุ่มลัด</lang>,MATCHED
+219,CMD_DEBUG_CAMERA_ZOOM_UP,<lang JP>ズーム</lang>,<lang JP>ズーム</lang>,<lang JP>ซูมเข้า</lang>,MATCHED
+220,CMD_DEBUG_CAMERA_ZOOM_DOWN,<lang JP>ズーム</lang>,<lang JP>ズーム</lang>,<lang JP>ซูมออก</lang>,MATCHED
+221,CMD_DEBUG_CAEMRA_VIEW_ANGLE_UP,<lang JP>画角</lang>,<lang JP>画角</lang>,<lang JP>มุมมองภาพ</lang>,MATCHED
+222,CMD_DEBUG_CAEMRA_VIEW_ANGLE_DOWN,<lang JP>画角</lang>,<lang JP>画角</lang>,<lang JP>มุมมองภาพ</lang>,MATCHED
+223,CMD_DEBUG_CAMERA_RESET,<lang JP>リセット</lang>,<lang JP>リセット</lang>,<lang JP>คืนค่ามุมกล้องเริ่มต้น</lang>,MATCHED
+224,CMD_DEBUG_MONKEY_TEST,<lang JP>モンキーテスト</lang>,<lang JP>モンキーテスト</lang>,<lang JP>ทดสอบการสุ่มกด (Monkey Test)</lang>,MATCHED
+225,CMD_DEBUG_SHADOW_BIAS_UP,<lang JP>バイアス値</lang>,<lang JP>バイアス値</lang>,<lang JP>ค่า Shadow Bias</lang>,MATCHED
+226,CMD_DEBUG_SHADOW_BIAS_DOWN,<lang JP>バイアス値</lang>,<lang JP>バイアス値</lang>,<lang JP>ค่า Shadow Bias</lang>,MATCHED
+227,CMD_DEBUG_MODEL_DELETE,<lang JP>削除</lang>,<lang JP>削除</lang>,<lang JP>ลบโมเดล</lang>,MATCHED
+228,CMD_DEBUG_SOUND_PLAY_BEFORE_LOOP,<lang JP>ループ直前再生</lang>,<lang JP>ループ直前再生</lang>,<lang JP>เล่นก่อนจุดวนลูป</lang>,MATCHED
+229,CMD_DEBUG_CURSOR_OBJECT_INFO_ON,<lang JP>オブジェクト情報表示</lang>,<lang JP>オブジェクト情報表示</lang>,<lang JP>แสดงข้อมูลออบเจกต์</lang>,MATCHED
+230,CMD_DEBUG_BASE_INFO_SCROLL,<lang JP>情報スクロール</lang>,<lang JP>情報スクロール</lang>,<lang JP>เลื่อนดูข้อมูล</lang>,MATCHED
+231,CMD_DEBUG_SAVE,<lang JP>保存</lang>,<lang JP>保存</lang>,<lang JP>บันทึก</lang>,MATCHED
+232,CMD_DEBUG_COPY_CLIPBOARD,<lang JP>クリップボードにコピー</lang>,<lang JP>クリップボードにコピー</lang>,<lang JP>คัดลอกลงคลิปบอร์ด</lang>,MATCHED

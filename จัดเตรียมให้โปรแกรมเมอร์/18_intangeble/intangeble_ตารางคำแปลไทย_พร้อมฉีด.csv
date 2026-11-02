@@ -1,0 +1,423 @@
+﻿Key,Line,ต้นฉบับ_JP,MODEN_EN,คำแปลไทย
+INTANGEBLE_ID_CRAFT_RECIPE_00,0,木の収納箱の設計図を入手した！,Obtained the Wooden Chest blueprint!,ได้รับแบบแปลนกล่องเก็บของไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_01,0,小さい松明の設計図を入手した！,Obtained the Small Torch blueprint!,ได้รับแบบแปลนคบเพลิงขนาดเล็กแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_02,0,木の庭床の設計図を入手した！,Obtained the Wooden Path blueprint!,ได้รับแบบแปลนพื้นไม้ปูสวนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_03,0,石の庭床の設計図を入手した！,Obtained the Stone Path blueprint!,ได้รับแบบแปลนพื้นหินปูสวนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_04,0,木の柵の設計図を入手した！,Obtained the Wooden Fence blueprint!,ได้รับแบบแปลนรั้วไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_05,0,木のゲートの設計図を入手した！,Obtained the Wooden Gate blueprint!,ได้รับแบบแปลนประตูรั้วไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_06,0,樹液採取器の設計図を入手した！,Obtained the Tapper blueprint!,ได้รับแบบแปลนเครื่องเก็บยางไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_07,0,薪の束の設計図を入手した！,Obtained the Firewood Bundle blueprint!,ได้รับแบบแปลนมัดฟืนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_08,0,隠れる木の苗を入手した！,Obtained the Hidden Tree Sapling!,ได้รับต้นกล้าไม้พรางตัวแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_09,0,漬物樽の設計図を入手した！,Obtained the Preserving Barrel blueprint!,ได้รับแบบแปลนถังดองผักแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_10,0,養蜂箱の設計図を入手した！,Obtained the Beehive Box blueprint!,ได้รับแบบแปลนกล่องเลี้ยงผึ้งแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_11,0,狐面の設計図を入手した！,Obtained the Kitsune Mask blueprint!,ได้รับแบบแปลนหน้ากากจิ้งจอกแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_12,0,日本人形の設計図を入手した！,Obtained the Japanese Doll blueprint!,ได้รับแบบแปลนตุ๊กตาญี่ปุ่นแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_13,0,はんごうの設計図を入手した！,Obtained the Mess Kit blueprint!,ได้รับแบบแปลนหม้อหุงข้าวสนามแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_14,0,撒き餌の設計図を入手した！,Obtained the Fish Bait blueprint!,ได้รับแบบแปลนเหยื่อล่อปลาแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_15,0,溶鉱炉の設計図を入手した！,Obtained the Blast Furnace blueprint!,ได้รับแบบแปลนเตาหลอมโลหะแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_16,0,兵糧丸の設計図を入手した！,Obtained the Hyorogan blueprint!,ได้รับแบบแปลนยาเม็ดเสบียงศึกแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_17,0,マヨネーズ加工機の設計図を入手した！,Obtained the Mayo Processor blueprint!,ได้รับแบบแปลนเครื่องทำมายองเนสแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_18,0,木の家具シリーズの設計図を入手した！,Obtained the Wooden series furniture blueprint set!,ได้รับแบบแปลนชุดเฟอร์นิเจอร์ไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_19,0,小さいテディベアの設計図を入手した！,Obtained the Small Teddy Bear blueprint!,ได้รับแบบแปลนตุ๊กตาหมีตัวเล็กแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_20,0,フラワーワゴンの設計図を入手した！,Obtained the Flower Wagon blueprint!,ได้รับแบบแปลนรถเข็นดอกไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_21,0,ドライフラワーの設計図を入手した！,Obtained the Dried Flowers blueprint!,ได้รับแบบแปลนดอกไม้แห้งแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_22,0,小さい絵画の設計図を入手した！,Obtained the Small Painting blueprint!,ได้รับแบบแปลนภาพวาดขนาดเล็กแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_23,0,手持ち提灯の設計図を入手した！,Obtained the Paper Lantern blueprint!,ได้รับแบบแปลนโคมไฟกระดาษแบบถือแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_24,0,花瓶の設計図を入手した！,Obtained the Vase blueprint!,ได้รับแบบแปลนแจกันดอกไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_25,0,木彫りの熊の設計図を入手した！,Obtained the Carved Wooden Bear blueprint!,ได้รับแบบแปลนหมีไม้แกะสลักแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_26,0,手編みマフラーの設計図を入手した！,Obtained the Handknit Muffler blueprint!,ได้รับแบบแปลนผ้าพันคอถักมือแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_27,0,苔玉の設計図を入手した！,Obtained the Kokedama blueprint!,ได้รับแบบแปลนบอลมอสส์โคเคดามะแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_28,0,木魚の設計図を入手した！,Obtained the Wooden Fish Bell blueprint!,ได้รับแบบแปลนระฆังไม้รูปปลาแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_29,0,そろばんの設計図を入手した！,Obtained the Abacus blueprint!,ได้รับแบบแปลนลูกคิดแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_30,0,竹細工のトンボの設計図を入手した！,Obtained the Bamboo Dragonfly blueprint!,ได้รับแบบแปลนแมลงปอไม้ไผ่สานแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_31,0,壺の設計図を入手した！,Obtained the Pot blueprint!,ได้รับแบบแปลนไหดินเผาแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_32,0,畳まれた布団の設計図を入手した！,Obtained the Folded Futon blueprint!,ได้รับแบบแปลนฟูกพับแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_33,0,囲炉裏の設計図を入手した！,Obtained the Sunken Hearth blueprint!,ได้รับแบบแปลนเตาผิงอิโรริแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_34,0,イースターエッグの設計図を入手した！,Obtained the Easter Eggs blueprint!,ได้รับแบบแปลนไข่อีสเตอร์แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_35,0,ししおどしの設計図を入手した！,Obtained the Deer Scarer blueprint!,ได้รับแบบแปลนกระบอกไม้ไผ่ไล่กวางแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_36,0,枝の山の設計図を入手した！,Obtained the Pile of Branches blueprint!,ได้รับแบบแปลนกองกิ่งไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_37,0,植木鉢の設計図を入手した！,Obtained the Flowerpot blueprint!,ได้รับแบบแปลนกระถางต้นไม้แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_38,0,収穫カゴの設計図を入手した！,Obtained the Harvest Basket blueprint!,ได้รับแบบแปลนตะกร้าเก็บเกี่ยวแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_39,0,積石の設計図を入手した！,Obtained the Stacked Stones blueprint!,ได้รับแบบแปลนหินเรียงซ้อนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_40,0,庭石の設計図を入手した！,Obtained the Garden Stones blueprint!,ได้รับแบบแปลนหินประดับสวนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_41,0,睡蓮鉢の設計図を入手した！,Obtained the Water Lily Pot blueprint!,ได้รับแบบแปลนอ่างบัวแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_42,0,立て札の設計図を入手した！,Obtained the Signboard blueprint!,ได้รับแบบแปลนป้ายปักข้อความแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_43,0,石積の灯籠の設計図を入手した！,Obtained the Rustic Rock Lantern blueprint!,ได้รับแบบแปลนโคมไฟหินเรียงแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_44,0,苔むした石の設計図を入手した！,Obtained the Mossy Stones blueprint!,ได้รับแบบแปลนหินเกาะมอสส์แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_45,0,箱の山の設計図を入手した！,Obtained the Box Pile blueprint!,ได้รับแบบแปลนกองกล่องแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_46,0,大きな飛び石の設計図を入手した！,Obtained the Large Stepping Stones blueprint!,ได้รับแบบแปลนแผ่นหินก้าวเดินขนาดใหญ่แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_47,0,小さな飛び石の設計図を入手した！,Obtained the Small Stepping Stones blueprint!,ได้รับแบบแปลนแผ่นหินก้าวเดินขนาดเล็กแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_48,0,低木と岩の設計図を入手した！,Obtained the Shrub & Rock blueprint!,ได้รับแบบแปลนพุ่มไม้และโขดหินแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_49,0,縁台の設計図を入手した！,Obtained the Teahouse Bench blueprint!,ได้รับแบบแปลนม้านั่งชานเรือนแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_50,0,牧草ロールの山の設計図を入手した！,Obtained the Hay Bale Heap blueprint!,ได้รับแบบแปลนกองม้วนฟางหญ้าแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_51,0,ブランコの設計図を入手した！,Obtained the Swing blueprint!,ได้รับแบบแปลนชิงช้าแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_52,0,足湯の設計図を入手した！,Obtained the Foot Bath blueprint!,ได้รับแบบแปลนอ่างแช่เท้าแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_53,0,枯山水の設計図を入手した！,Obtained the Rock Garden blueprint!,ได้รับแบบแปลนสวนหินคาเรซันซุยแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_54,0,ビオトープの設計図を入手した！,Obtained the Biotope blueprint!,ได้รับแบบแปลนบ่อน้ำระบบนิเวศแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_55,0,布タペストリー/茶の設計図を入手した！,Obtained the Tapestry blueprint!,ได้รับแบบแปลนพรมแขวนผนังผ้า/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_56,0,リース/茶の設計図を入手した！,Obtained the Wreath blueprint!,ได้รับแบบแปลนพวงหรีดประดับ/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_57,0,横長の絵画/茶の設計図を入手した！,Obtained the Oblong Painting blueprint!,ได้รับแบบแปลนภาพวาดแนวนอน/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_58,0,ガーランド/茶の設計図を入手した！,Obtained the Pennant Banner blueprint!,ได้รับแบบแปลนธงราวประดับ/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_59,0,クールな絨毯/茶の設計図を入手した！,Obtained the Cool Rug blueprint!,ได้รับแบบแปลนพรมสุดคูล/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_60,0,モダンな絨毯/茶の設計図を入手した！,Obtained the Modern Rug blueprint!,ได้รับแบบแปลนพรมโมเดิร์น/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_61,0,あみあみ絨毯/茶の設計図を入手した！,Obtained the Rattan Rug blueprint!,ได้รับแบบแปลนพรมหวายถัก/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_62,0,大人な絨毯/茶の設計図を入手した！,Obtained the Mature Rug blueprint!,ได้รับแบบแปลนพรมผู้ใหญ่/สีน้ำตาลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_63,0,トロフィー/銅の設計図を入手した！,Obtained the Bronze Trophy blueprint!,ได้รับแบบแปลนถ้วยรางวัล/ทองแดงแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_64,0,トロフィー/銀の設計図を入手した！,Obtained the Silver Trophy blueprint!,ได้รับแบบแปลนถ้วยรางวัล/เงินแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_65,0,トロフィー/金の設計図を入手した！,Obtained the Gold Trophy blueprint!,ได้รับแบบแปลนถ้วยรางวัล/ทองแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_66,0,大きな松明の設計図を入手した！,Obtained the Large Torch blueprint!,ได้รับแบบแปลนคบเพลิงขนาดใหญ่แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_67,0,クールな家具の設計図を入手した！,Obtained the Cool series furniture blueprint set!,ได้รับแบบแปลนชุดเฟอร์นิเจอร์สุดคูลแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_68,0,モダンな家具の設計図を入手した！,Obtained the Modern series furniture blueprint set!,ได้รับแบบแปลนชุดเฟอร์นิเจอร์โมเดิร์นแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_69,0,あみあみ家具の設計図を入手した！,Obtained the Rattan series furniture blueprint set!,ได้รับแบบแปลนชุดเฟอร์นิเจอร์หวายถักแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_70,0,大人な家具の設計図を入手した！,Obtained the Mature Furnishings blueprint set!,ได้รับแบบแปลนชุดเฟอร์นิเจอร์ผู้ใหญ่แล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_71,0,かまどの設計図を入手した！,Obtained the Stove blueprint!,ได้รับแบบแปลนเตาหุงต้มโบราณแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_72,0,七輪の設計図を入手した！,Obtained the Charcoal Grill blueprint!,ได้รับแบบแปลนเตาถ่านชิจิรินแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_73,0,焚き火の設計図を入手した！,Obtained the Campfire blueprint!,ได้รับแบบแปลนกองไฟแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_74,0,壁掛け狐面の設計図を入手した！,Obtained the Hanging Kitsune Mask blueprint!,ได้รับแบบแปลนหน้ากากจิ้งจอกแขวนผนังแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_75,0,壁掛け天狗面の設計図を入手した！,Obtained the Hanging Tengu Mask blueprint!,ได้รับแบบแปลนหน้ากากเท็งงุแขวนผนังแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_76,0,壁掛け般若面の設計図を入手した！,Obtained the Hanging Hannya Mask blueprint!,ได้รับแบบแปลนหน้ากากฮันเนียแขวนผนังแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_77,0,壁掛けおかめ面の設計図を入手した！,Obtained the Hanging Okame Mask blueprint!,ได้รับแบบแปลนหน้ากากโอกาเมะแขวนผนังแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_78,0,狐面の設計図を入手した！,Obtained the Kitsune Mask blueprint!,ได้รับแบบแปลนหน้ากากจิ้งจอกแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_79,0,般若面の設計図を入手した！,Obtained the Hannya Mask blueprint!,ได้รับแบบแปลนหน้ากากฮันเนียแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_80,0,おかめ面の設計図を入手した！,Obtained the Okame Mask blueprint!,ได้รับแบบแปลนหน้ากากโอกาเมะแล้ว!
+INTANGEBLE_ID_CRAFT_RECIPE_81,0,天狗面の設計図を入手した！,Obtained the Tengu Mask blueprint!,ได้รับแบบแปลนหน้ากากเท็งงุแล้ว!
+INTANGEBLE_ID_RECIPE_01,0,素朴な朝食のレシピを入手した！,Obtained the Rustic Breakfast recipe!,ได้รับสูตรอาหารเช้าสไตล์ชาวบ้านแล้ว!
+INTANGEBLE_ID_RECIPE_02,0,だし巻き卵のレシピを入手した！,Obtained the Rolled Omelet recipe!,ได้รับสูตรไข่ม้วนดาชิแล้ว!
+INTANGEBLE_ID_RECIPE_03,0,ゆでたまごのレシピを入手した！,Obtained the Boiled Eggs recipe!,ได้รับสูตรไข่ต้มแล้ว!
+INTANGEBLE_ID_RECIPE_04,0,スクランブルエッグのレシピを入手した！,Obtained the Scrambled Eggs recipe!,ได้รับสูตรไข่คนแล้ว!
+INTANGEBLE_ID_RECIPE_05,0,ソーセージグリルのレシピを入手した！,Obtained the Grilled Sausages recipe!,ได้รับสูตรไส้กรอกย่างแล้ว!
+INTANGEBLE_ID_RECIPE_06,0,バタージャムトーストのレシピを入手した！,Obtained the Jam 'n' Butter Toast recipe!,ได้รับสูตรขนมปังปิ้งเนยแยมแล้ว!
+INTANGEBLE_ID_RECIPE_07,0,クロワッサンのレシピを入手した！,Obtained the Croissants recipe!,ได้รับสูตรครัวซองต์แล้ว!
+INTANGEBLE_ID_RECIPE_08,0,マルゲリータピザのレシピを入手した！,Obtained the Margherita Pizza recipe!,ได้รับสูตรพิซซ่ามาร์เกริต้าแล้ว!
+INTANGEBLE_ID_RECIPE_09,0,梅茶漬けのレシピを入手した！,Obtained the Plum Ochazuke recipe!,ได้รับสูตรข้าวแช่ชาบ๊วยแล้ว!
+INTANGEBLE_ID_RECIPE_10,0,おにぎりと漬物定食のレシピを入手した！,Obtained the Rice Balls with Pickles recipe!,ได้รับสูตรชุดข้าวปั้นกับผักดองแล้ว!
+INTANGEBLE_ID_RECIPE_11,0,焼き魚のレシピを入手した！,Obtained the Grilled Fish recipe!,ได้รับสูตรปลาย่างแล้ว!
+INTANGEBLE_ID_RECIPE_12,0,アスパラベーコン巻きのレシピを入手した！,Obtained the Aspara-Bacon recipe!,ได้รับสูตรหน่อไม้ฝรั่งพันเบคอนแล้ว!
+INTANGEBLE_ID_RECIPE_13,0,オニオンスープのレシピを入手した！,Obtained the French Onion Soup recipe!,ได้รับสูตรซุปหัวหอมแล้ว!
+INTANGEBLE_ID_RECIPE_14,0,タマネギのポトフのレシピを入手した！,Obtained the Onion Pot-Au-Feu recipe!,ได้รับสูตรโปโตเฟอหัวหอมแล้ว!
+INTANGEBLE_ID_RECIPE_15,0,エンドウ豆のお浸しのレシピを入手した！,Obtained the Boiled Green Peas recipe!,ได้รับสูตรถั่วลันเตาแช่น้ำดาชิแล้ว!
+INTANGEBLE_ID_RECIPE_16,0,カブの肉あんかけのレシピを入手した！,Obtained the Turnip 'n' Meat Ankake recipe!,ได้รับสูตรหัวผักกาดขาวราดซอสเนื้อแล้ว!
+INTANGEBLE_ID_RECIPE_17,0,ポテトグラタンのレシピを入手した！,Obtained the Potato Gratin recipe!,ได้รับสูตรกราแตงมันฝรั่งแล้ว!
+INTANGEBLE_ID_RECIPE_18,0,フライドポテトのレシピを入手した！,Obtained the French Fries recipe!,ได้รับสูตรมันฝรั่งทอดแล้ว!
+INTANGEBLE_ID_RECIPE_19,0,大人なカレーのレシピを入手した！,Obtained the Grown-Up Curry recipe!,ได้รับสูตรแกงกะหรี่สูตรผู้ใหญ่แล้ว!
+INTANGEBLE_ID_RECIPE_20,0,おこさまカレーのレシピを入手した！,Obtained the Kids' Curry recipe!,ได้รับสูตรแกงกะหรี่สำหรับเด็กแล้ว!
+INTANGEBLE_ID_RECIPE_21,0,ラディッシュサラダのレシピを入手した！,Obtained the Radish Salad recipe!,ได้รับสูตรสลัดแรดิชแล้ว!
+INTANGEBLE_ID_RECIPE_22,0,ロールキャベツのレシピを入手した！,Obtained the Cabbage Rolls recipe!,ได้รับสูตรกะหล่ำปลีห่อเนื้อแล้ว!
+INTANGEBLE_ID_RECIPE_23,0,とんかつのレシピを入手した！,Obtained the Tonkatsu recipe!,ได้รับสูตรทงคัตสึแล้ว!
+INTANGEBLE_ID_RECIPE_24,0,野菜炒めのレシピを入手した！,Obtained the Vegetable Stir-Fry recipe!,ได้รับสูตรผัดผักแล้ว!
+INTANGEBLE_ID_RECIPE_25,0,シーザーサラダのレシピを入手した！,Obtained the Caesar Salad recipe!,ได้รับสูตรซีซาร์สลัดแล้ว!
+INTANGEBLE_ID_RECIPE_26,0,ミネストローネのレシピを入手した！,Obtained the Minestrone recipe!,ได้รับสูตรซุปมิเนสโตรเนแล้ว!
+INTANGEBLE_ID_RECIPE_27,0,豆腐ハンバーグのレシピを入手した！,Obtained the Tofu Hamburg Steak recipe!,ได้รับสูตรสเต๊กแฮมเบิร์กเต้าหู้แล้ว!
+INTANGEBLE_ID_RECIPE_28,0,カプレーゼのレシピを入手した！,Obtained the Caprese Salad recipe!,ได้รับสูตรสลัดคาเปรเซ่แล้ว!
+INTANGEBLE_ID_RECIPE_29,0,山盛りトマトのレシピを入手した！,Obtained the Tomato Tower recipe!,ได้รับสูตรมะเขือเทศพูนจานแล้ว!
+INTANGEBLE_ID_RECIPE_30,0,ナスづくしのレシピを入手した！,Obtained the Eggplant Platter recipe!,ได้รับสูตรสำรับมะเขือม่วงแล้ว!
+INTANGEBLE_ID_RECIPE_31,0,ピーマンの肉詰めのレシピを入手した！,Obtained the Stuffed Bell Peppers recipe!,ได้รับสูตรพริกหวานยัดไส้เนื้อแล้ว!
+INTANGEBLE_ID_RECIPE_32,0,カボチャのスープのレシピを入手した！,Obtained the Pumpkin Soup recipe!,ได้รับสูตรซุปฟักทองแล้ว!
+INTANGEBLE_ID_RECIPE_33,0,カボチャの煮物のレシピを入手した！,Obtained the Simmered Pumpkin recipe!,ได้รับสูตรฟักทองต้มซีอิ๊วแล้ว!
+INTANGEBLE_ID_RECIPE_34,0,山菜の天ぷらのレシピを入手した！,Obtained the Forager's Tempura recipe!,ได้รับสูตรเทมปุระผักป่าแล้ว!
+INTANGEBLE_ID_RECIPE_35,0,まるごとキュウリのレシピを入手した！,Obtained the Whole Cucumbers recipe!,ได้รับสูตรแตงกวาดองทั้งลูกแล้ว!
+INTANGEBLE_ID_RECIPE_36,0,コーンスープのレシピを入手した！,Obtained the Corn Soup recipe!,ได้รับสูตรซุปข้าวโพดแล้ว!
+INTANGEBLE_ID_RECIPE_37,0,焼きとうもろこしのレシピを入手した！,Obtained the Grilled Corn recipe!,ได้รับสูตรข้าวโพดย่างแล้ว!
+INTANGEBLE_ID_RECIPE_38,0,肉と野菜の串焼きのレシピを入手した！,Obtained the Meat 'n' Veggie Kabobs recipe!,ได้รับสูตรบาร์บีคิวเนื้อและผักเสียบไม้ย่างแล้ว!
+INTANGEBLE_ID_RECIPE_39,0,春巻きのレシピを入手した！,Obtained the Spring Rolls recipe!,ได้รับสูตรปอเปี๊ยะทอดแล้ว!
+INTANGEBLE_ID_RECIPE_40,0,生姜焼きのレシピを入手した！,Obtained the Ginger Pork recipe!,ได้รับสูตรหมูผัดขิงแล้ว!
+INTANGEBLE_ID_RECIPE_41,0,ニンニクホイル焼きのレシピを入手した！,Obtained the Foil-Roasted Garlic recipe!,ได้รับสูตรกระเทียมย่างฟอยล์แล้ว!
+INTANGEBLE_ID_RECIPE_42,0,ステーキのレシピを入手した！,Obtained the Steak recipe!,ได้รับสูตรสเต๊กแล้ว!
+INTANGEBLE_ID_RECIPE_43,0,七面鳥の丸焼きのレシピを入手した！,Obtained the Roast Turkey recipe!,ได้รับสูตรไก่งวงอบทั้งตัวแล้ว!
+INTANGEBLE_ID_RECIPE_44,0,ラムチョップのレシピを入手した！,Obtained the Lamb Chops recipe!,ได้รับสูตรเนื้อแกะติดกระดูกย่างแล้ว!
+INTANGEBLE_ID_RECIPE_45,0,デミグラスドリアのレシピを入手した！,Obtained the Demi-Glace Doria recipe!,ได้รับสูตรโดเรียซอสเดมิกลาสแล้ว!
+INTANGEBLE_ID_RECIPE_46,0,レンコンのピリ辛炒めのレシピを入手した！,Obtained the Spicy Lotus Root Sauté recipe!,ได้รับสูตรผัดเผ็ดรากบัวแล้ว!
+INTANGEBLE_ID_RECIPE_47,0,おつまみ枝豆のレシピを入手した！,Obtained the Side of Edamame recipe!,ได้รับสูตรถั่วแระญี่ปุ่นแกล้มแล้ว!
+INTANGEBLE_ID_RECIPE_48,0,ざるそばのレシピを入手した！,Obtained the Zaru Soba recipe!,ได้รับสูตรซารุโซบะแล้ว!
+INTANGEBLE_ID_RECIPE_49,0,たぬきそばのレシピを入手した！,Obtained the Tanuki Soba recipe!,ได้รับสูตรทานูกิโซบะแล้ว!
+INTANGEBLE_ID_RECIPE_50,0,ざるうどんのレシピを入手した！,Obtained the Zaru Udon recipe!,ได้รับสูตรซารุอุด้งแล้ว!
+INTANGEBLE_ID_RECIPE_51,0,きつねうどんのレシピを入手した！,Obtained the Kitsune Udon recipe!,ได้รับสูตรคิตสึเนะอุด้งแล้ว!
+INTANGEBLE_ID_RECIPE_52,0,実家の味定食のレシピを入手した！,"Obtained the ""Taste of Home"" Meal recipe!",ได้รับสูตรชุดอาหารรสมือแม่แล้ว!
+INTANGEBLE_ID_RECIPE_53,0,山の幸茶碗蒸しのレシピを入手した！,Obtained the Montane Chawanmushi recipe!,ได้รับสูตรไข่ตุ๋นชาวันมูชิผักป่าแล้ว!
+INTANGEBLE_ID_RECIPE_54,0,焼き松茸のレシピを入手した！,Obtained the Roasted Matsutakes recipe!,ได้รับสูตรเห็ดมัตสึทาเกะย่างแล้ว!
+INTANGEBLE_ID_RECIPE_55,0,ぽかぽか鍋のレシピを入手した！,Obtained the Warm 'n' Cozy Hotpot recipe!,ได้รับสูตรหม้อไฟอุ่นกายแล้ว!
+INTANGEBLE_ID_RECIPE_56,0,キクラゲと卵炒めのレシピを入手した！,Obtained the Wood Ear 'n' Egg Sauté recipe!,ได้รับสูตรผัดเห็ดหูหนูกับไข่แล้ว!
+INTANGEBLE_ID_RECIPE_57,0,ピンチョスのレシピを入手した！,Obtained the Pinchos recipe!,ได้รับสูตรปินโชสแล้ว!
+INTANGEBLE_ID_RECIPE_58,0,焼き鳥串のレシピを入手した！,Obtained the Yakitori Skewers recipe!,ได้รับสูตรไก่เสียบไม้ย่างยากิโทริแล้ว!
+INTANGEBLE_ID_RECIPE_59,0,餃子のレシピを入手した！,Obtained the Gyoza recipe!,ได้รับสูตรเกี๊ยวซ่าแล้ว!
+INTANGEBLE_ID_RECIPE_60,0,オムライスのレシピを入手した！,Obtained the Omurice recipe!,ได้รับสูตรข้าวห่อไข่แล้ว!
+INTANGEBLE_ID_RECIPE_61,0,ビーフシチューのレシピを入手した！,Obtained the Beef Stew recipe!,ได้รับสูตรสตูว์เนื้อแล้ว!
+INTANGEBLE_ID_RECIPE_62,0,ホワイトシチューのレシピを入手した！,Obtained the White Stew recipe!,ได้รับสูตรไวท์สตูว์แล้ว!
+INTANGEBLE_ID_RECIPE_63,0,すき焼きのレシピを入手した！,Obtained the Sukiyaki recipe!,ได้รับสูตรสุกียากี้แล้ว!
+INTANGEBLE_ID_RECIPE_64,0,バーニャカウダのレシピを入手した！,Obtained the Bagna Càuda recipe!,ได้รับสูตรบัญญาเกาดาแล้ว!
+INTANGEBLE_ID_RECIPE_65,0,鮎の塩焼きのレシピを入手した！,Obtained the Salt-Grilled Sweetfish recipe!,ได้รับสูตรปลาอายุย่างเกลือแล้ว!
+INTANGEBLE_ID_RECIPE_66,0,オリジナルラーメンのレシピを入手した！,Obtained the Signature Ramen recipe!,ได้รับสูตรราเมนสูตรเฉพาะแล้ว!
+INTANGEBLE_ID_RECIPE_67,0,ミートパイのレシピを入手した！,Obtained the Meat Pie recipe!,ได้รับสูตรพายเนื้อแล้ว!
+INTANGEBLE_ID_RECIPE_68,0,スパゲッティのレシピを入手した！,Obtained the Spaghetti recipe!,ได้รับสูตรสปาเกตตีแล้ว!
+INTANGEBLE_ID_RECIPE_69,0,肉まんのレシピを入手した！,Obtained the Meat Buns recipe!,ได้รับสูตรซาลาเปาไส้หมูแล้ว!
+INTANGEBLE_ID_RECIPE_70,0,チャーハンのレシピを入手した！,Obtained the Fried Rice recipe!,ได้รับสูตรข้าวผัดแล้ว!
+INTANGEBLE_ID_RECIPE_71,0,お雑煮のレシピを入手した！,Obtained the Zoni recipe!,ได้รับสูตรซุปโอโซนิแล้ว!
+INTANGEBLE_ID_RECIPE_72,0,七草粥のレシピを入手した！,Obtained the Seven-Herb Porridge recipe!,ได้รับสูตรข้าวต้มสมุนไพรเจ็ดชนิดแล้ว!
+INTANGEBLE_ID_RECIPE_73,0,うな重のレシピを入手した！,Obtained the Unaju recipe!,ได้รับสูตรข้าวหน้าปลาไหลอุนาจูแล้ว!
+INTANGEBLE_ID_RECIPE_74,0,アスパラサラダのレシピを入手した！,Obtained the Asparagus Salad recipe!,ได้รับสูตรสลัดหน่อไม้ฝรั่งแล้ว!
+INTANGEBLE_ID_RECIPE_75,0,柏餅のレシピを入手した！,Obtained the Kashiwa Mochi recipe!,ได้รับสูตรคาชิวะโมจิแล้ว!
+INTANGEBLE_ID_RECIPE_76,0,山果実盛りのレシピを入手した！,Obtained the Mountain Fruit Mix recipe!,ได้รับสูตรผลไม้ป่ารวมมิตรแล้ว!
+INTANGEBLE_ID_RECIPE_77,0,プリンのレシピを入手した！,Obtained the Flan recipe!,ได้รับสูตรพุดดิ้งคัสตาร์ดแล้ว!
+INTANGEBLE_ID_RECIPE_78,0,夏のお供スイカのレシピを入手した！,Obtained the Summery Watermelon recipe!,ได้รับสูตรแตงโมคู่ใจหน้าร้อนแล้ว!
+INTANGEBLE_ID_RECIPE_79,0,夢いっぱいメロンのレシピを入手した！,Obtained the Reverie Melon recipe!,ได้รับสูตรเมลอนเปี่ยมฝันแล้ว!
+INTANGEBLE_ID_RECIPE_80,0,モモゼリーのレシピを入手した！,Obtained the White Peach Jelly recipe!,ได้รับสูตรเยลลี่ลูกท้อแล้ว!
+INTANGEBLE_ID_RECIPE_81,0,ベリーパンナコッタのレシピを入手した！,Obtained the Berry Panna Cotta recipe!,ได้รับสูตรพานาคอตตาเบอร์รีแล้ว!
+INTANGEBLE_ID_RECIPE_82,0,ベリー・ベリーパフェのレシピを入手した！,Obtained the Very Berry Parfait recipe!,ได้รับสูตรพาร์เฟต์เวรีเบอร์รีแล้ว!
+INTANGEBLE_ID_RECIPE_83,0,マンゴーパフェのレシピを入手した！,Obtained the Mango Parfait recipe!,ได้รับสูตรพาร์เฟต์มะม่วงแล้ว!
+INTANGEBLE_ID_RECIPE_84,0,イチゴのケーキのレシピを入手した！,Obtained the Strawberry Cake recipe!,ได้รับสูตรเค้กสตรอว์เบอร์รีแล้ว!
+INTANGEBLE_ID_RECIPE_85,0,フルーツケーキのレシピを入手した！,Obtained the Fresh Fruit Cake recipe!,ได้รับสูตรเค้กผลไม้สดแล้ว!
+INTANGEBLE_ID_RECIPE_86,0,モンブランのレシピを入手した！,Obtained the Mont Blanc recipe!,ได้รับสูตรเค้กมองบลังก์แล้ว!
+INTANGEBLE_ID_RECIPE_87,0,ブドウのタルトのレシピを入手した！,Obtained the Grape Tart recipe!,ได้รับสูตรทาร์ตองุ่นแล้ว!
+INTANGEBLE_ID_RECIPE_88,0,アップルパイのレシピを入手した！,Obtained the Apple Pie recipe!,ได้รับสูตรพายแอปเปิลแล้ว!
+INTANGEBLE_ID_RECIPE_89,0,牛乳寒天のレシピを入手した！,Obtained the Agar Milk Jelly recipe!,ได้รับสูตรวุ้นนมสดแล้ว!
+INTANGEBLE_ID_RECIPE_90,0,杏仁豆腐のレシピを入手した！,Obtained the Almond Tofu recipe!,ได้รับสูตรเต้าฮวยอัลมอนด์แล้ว!
+INTANGEBLE_ID_RECIPE_91,0,チョコレートアソートのレシピを入手した！,Obtained the Assorted Chocolates recipe!,ได้รับสูตรช็อกโกแลตรวมรสแล้ว!
+INTANGEBLE_ID_RECIPE_92,0,カキのコンポートのレシピを入手した！,Obtained the Persimmon Compote recipe!,ได้รับสูตรลูกพลับกวนคอมโพตแล้ว!
+INTANGEBLE_ID_RECIPE_93,0,レモンのはちみつ漬けのレシピを入手した！,Obtained the Honeyed Lemons recipe!,ได้รับสูตรเลมอนดองน้ำผึ้งแล้ว!
+INTANGEBLE_ID_RECIPE_94,0,レモンケーキのレシピを入手した！,Obtained the Lemon Cake recipe!,ได้รับสูตรเค้กเลมอนแล้ว!
+INTANGEBLE_ID_RECIPE_95,0,ガトーショコラのレシピを入手した！,Obtained the Gâteau au Chocolat recipe!,ได้รับสูตรกาโตช็อกโกแลตแล้ว!
+INTANGEBLE_ID_RECIPE_96,0,スイートポテトのレシピを入手した！,Obtained the Sweet Potato Cakes recipe!,ได้รับสูตรขนมมันหวานอบแล้ว!
+INTANGEBLE_ID_RECIPE_97,0,お茶アイスのレシピを入手した！,Obtained the Three-Tea Ice Cream recipe!,ได้รับสูตรไอศกรีมชาเขียวแล้ว!
+INTANGEBLE_ID_RECIPE_98,0,バナナヨーグルトのレシピを入手した！,Obtained the Banana Yogurt recipe!,ได้รับสูตรโยเกิร์ตกล้วยแล้ว!
+INTANGEBLE_ID_RECIPE_99,0,チョコバナナのレシピを入手した！,Obtained the Chocolate Bananas recipe!,ได้รับสูตรกล้วยเคลือบช็อกโกแลตแล้ว!
+INTANGEBLE_ID_RECIPE_100,0,ティーセットのレシピを入手した！,Obtained the Tea Set recipe!,ได้รับสูตรชุดน้ำชาแล้ว!
+INTANGEBLE_ID_RECIPE_101,0,緑茶セットのレシピを入手した！,Obtained the Green Tea Set recipe!,ได้รับสูตรชุดชาเขียวแล้ว!
+INTANGEBLE_ID_RECIPE_102,0,烏龍茶セットのレシピを入手した！,Obtained the Oolong Tea Set recipe!,ได้รับสูตรชุดชาอู่หลงแล้ว!
+INTANGEBLE_ID_RECIPE_103,0,ほうじ茶セットのレシピを入手した！,Obtained the Hojicha Tea Set recipe!,ได้รับสูตรชุดชาโฮจิฉะแล้ว!
+INTANGEBLE_ID_RECIPE_104,0,抹茶セットのレシピを入手した！,Obtained the Matcha Tea Set recipe!,ได้รับสูตรชุดชามัทฉะแล้ว!
+INTANGEBLE_ID_RECIPE_105,0,ミックスジュースのレシピを入手した！,Obtained the Mixed Juice recipe!,ได้รับสูตรน้ำผลไม้รวมแล้ว!
+INTANGEBLE_ID_RECIPE_106,0,誕生日ケーキのレシピを入手した！,Obtained the Birthday Cake recipe!,ได้รับสูตรเค้กวันเกิดแล้ว!
+INTANGEBLE_ID_RECIPE_107,0,塩むすびのレシピを入手した！,Obtained the Salted Rice Balls recipe!,ได้รับสูตรข้าวปั้นคลุกเกลือแล้ว!
+INTANGEBLE_ID_RECIPE_108,0,金粉ちらし寿司のレシピを入手した！,Obtained the Gold Leaf Chirashi recipe!,ได้รับสูตรชิราชิซูชิโรยทองคำเปลวแล้ว!
+INTANGEBLE_ID_RECIPE_109,0,醤油プリンのレシピを入手した！,Obtained the Soy Sauce Flan recipe!,ได้รับสูตรพุดดิ้งโชยุแล้ว!
+INTANGEBLE_ID_RECIPE_110,0,タピオカミルクティーのレシピを入手した！,Obtained the Boba Milk Tea recipe!,ได้รับสูตรชานมไข่มุกแล้ว!
+INTANGEBLE_ID_RECIPE_111,0,焼き鮭定食のレシピを入手した！,Obtained the Grilled Salmon Meal recipe!,ได้รับสูตรชุดอาหารปลาแซลมอนย่างแล้ว!
+INTANGEBLE_ID_RECIPE_112,0,肉吸い豆腐のレシピを入手した！,Obtained the Meat and Tofu Soup recipe!,ได้รับสูตรซุปเนื้อเต้าหู้นิกุซุยแล้ว!
+INTANGEBLE_ID_RECIPE_113,0,いももちのレシピを入手した！,Obtained the Potato Mochi recipe!,ได้รับสูตรโมจิมันฝรั่งแล้ว!
+INTANGEBLE_ID_RECIPE_114,0,メンチカツのレシピを入手した！,Obtained the Menchi-Katsu recipe!,ได้รับสูตรเมนจิคัตสึแล้ว!
+INTANGEBLE_ID_RECIPE_115,0,レモネードのレシピを入手した！,Obtained the Sparkling Lemonade recipe!,ได้รับสูตรน้ำเลมอนเนดแล้ว!
+INTANGEBLE_ID_RECIPE_116,0,小魚の唐揚げのレシピを入手した！,Obtained the Small-Fry Fritters recipe!,ได้รับสูตรปลาตัวเล็กทอดคาราอาเกะแล้ว!
+INTANGEBLE_ID_RECIPE_117,0,焼きそばのレシピを入手した！,Obtained the Yakisoba recipe!,ได้รับสูตรยากิโซบะแล้ว!
+INTANGEBLE_ID_RECIPE_118,0,リンゴ飴のレシピを入手した！,Obtained the Candy Apple recipe!,ได้รับสูตรแอปเปิลเคลือบน้ำตาลแล้ว!
+INTANGEBLE_ID_RECIPE_119,0,ソーダフロートのレシピを入手した！,Obtained the Ice Cream Float recipe!,ได้รับสูตรโซดาโฟลตแล้ว!
+INTANGEBLE_ID_RECIPE_120,0,焼き芋（レシピ無し）,Roasted Sweet Potato (No Recipe),มันเผา (ไม่มีสูตร)
+INTANGEBLE_ID_WHISTLE_SONG_05,0,奇跡の呼笛？を覚えた！,Learned the Miracle Whistle...?,เรียนรู้นกหวีดแห่งปาฏิหาริย์? แล้ว!
+INTANGEBLE_ID_WHISTLE_SONG_10,0,雨の呼笛を覚えた！,Learned the Rain Whistle!,เรียนรู้นกหวีดเรียกฝนแล้ว!
+INTANGEBLE_ID_WHISTLE_SONG_02,0,家畜の呼笛を覚えた！,Learned the Livestock Whistle!,เรียนรู้นกหวีดเรียกสัตว์เลี้ยงแล้ว!
+INTANGEBLE_ID_SHRINE_REPAIR_01,0,ボロボロの祠を修復した！,Repaired the dilapidated hokora!,บูรณะศาลเจ้าที่ทรุดโทรมแล้ว!
+INTANGEBLE_ID_SHRINE_REPAIR_02,0,祠をさらに修復した！,Further repaired the hokora!,บูรณะศาลเจ้าเพิ่มเติมแล้ว!
+INTANGEBLE_ID_SHRINE_REPAIR_03,0,祠をさらに修復した！,Further repaired the hokora!,บูรณะศาลเจ้าเพิ่มเติมแล้ว!
+INTANGEBLE_ID_SHRINE_REPAIR_04,0,祠をさらに修復した！,Further repaired the hokora!,บูรณะศาลเจ้าเพิ่มเติมแล้ว!
+INTANGEBLE_ID_SHRINE_REPAIR_05,0,立派な祠が完成した！,The splendid hokora has been completed!,สร้างศาลเจ้าอันโอ่อ่างดงามเสร็จสมบูรณ์แล้ว!
+INTANGEBLE_ID_SACRED_ITEM_SONG,0,神器『奇跡の呼笛』を覚えた,"Learned the sacred treasure ""Miracle Call Whistle""!",เรียนรู้สมบัติศักดิ์สิทธิ์ 'นกหวีดแห่งปาฏิหาริย์' แล้ว!
+INTANGEBLE_ID_SACRED_ITEM_SKIN,0,神器『鵺の皮』を手に入れた,"Obtained the sacred treasure ""Nue Pelt""!",ได้รับสมบัติศักดิ์สิทธิ์ 'หนังนูเอะ' แล้ว!
+INTANGEBLE_ID_SACRED_ITEM_HATCHET_1,0,神器『欠けたナタ』を手に入れた,"Obtained the sacred treasure ""Chipped Machete""!",ได้รับสมบัติศักดิ์สิทธิ์ 'มีดพร้าบิ่น' แล้ว!
+INTANGEBLE_ID_SACRED_ITEM_HATCHET_2,0,神器『岩切りナタ』を手に入れた,"Obtained the sacred treasure ""Rockrending Machete""!",ได้รับสมบัติศักดิ์สิทธิ์ 'มีดพร้าตัดหิน' แล้ว!
+INTANGEBLE_ID_SECRET_QUEST_AXE_00,0,木の伐採　10回達成！,Chopped down 10 trees or logs!,โค่นต้นไม้ครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_AXE_01,0,木の伐採　50回達成！,Chopped down 50 trees or logs!,โค่นต้นไม้ครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_AXE_02,0,木の伐採　100回達成！,Chopped down 100 trees or logs!,โค่นต้นไม้ครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_AXE_03,0,木の伐採　500回達成！,Chopped down 500 trees or logs!,โค่นต้นไม้ครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_AXE_04,0,木の伐採　1000回達成！,"Chopped down 1,000 trees or logs!","โค่นต้นไม้ครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_PICKAXE_00,0,石の破壊　10回達成！,Broke 10 stones!,ทำลายหินครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PICKAXE_01,0,石の破壊　50回達成！,Broke 50 stones!,ทำลายหินครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PICKAXE_02,0,石の破壊　100回達成！,Broke 100 stones!,ทำลายหินครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PICKAXE_03,0,石の破壊　500回達成！,Broke 500 stones!,ทำลายหินครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PICKAXE_04,0,石の破壊　1000回達成！,"Broke 1,000 stones!","ทำลายหินครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_SICKLE_00,0,雑草の刈り取り　１００回達成！,Cut 100 bushels of grass!,เกี่ยวหญ้าวัชพืชครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SICKLE_01,0,雑草の刈り取り　５００回達成！,Cut 500 bushels of grass!,เกี่ยวหญ้าวัชพืชครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SICKLE_02,0,雑草の刈り取り　１０００回達成！,"Cut 1,000 bushels of grass!","เกี่ยวหญ้าวัชพืชครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_SICKLE_03,0,雑草の刈り取り　５０００回達成！,"Cut 5,000 bushels of grass!","เกี่ยวหญ้าวัชพืชครบ 5,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_SICKLE_04,0,雑草の刈り取り　１００００回達成！,"Cut 10,000 bushels of grass!","เกี่ยวหญ้าวัชพืชครบ 10,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_HOE_00,0,畑を耕す　10回達成！,Tilled soil 10 times!,พรวนดินแปลงผักครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOE_01,0,畑を耕す　50回達成！,Tilled soil 50 times!,พรวนดินแปลงผักครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOE_02,0,畑を耕す　100回達成！,Tilled soil 100 times!,พรวนดินแปลงผักครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOE_03,0,畑を耕す　500回達成！,Tilled soil 500 times!,พรวนดินแปลงผักครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOE_04,0,畑を耕す　1000回達成！,"Tilled soil 1,000 times!","พรวนดินแปลงผักครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_PLOW_00,0,水田を起こす　10回達成！,Dug 10 paddies!,ขุดไถแปลงนาครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PLOW_01,0,水田を起こす　50回達成！,Dug 50 paddies!,ขุดไถแปลงนาครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PLOW_02,0,水田を起こす　100回達成！,Dug 100 paddies!,ขุดไถแปลงนาครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PLOW_03,0,水田を起こす　500回達成！,Dug 500 paddies!,ขุดไถแปลงนาครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PLOW_04,0,水田を起こす　1000回達成！,"Dug 1,000 paddies!","ขุดไถแปลงนาครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_FISHING_00,0,魚を釣り上げる　10回達成！,Caught 10 fish!,ตกปลาได้ครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_FISHING_01,0,魚を釣り上げる　25回達成！,Caught 25 fish!,ตกปลาได้ครบ 25 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_FISHING_02,0,魚を釣り上げる　50回達成！,Caught 50 fish!,ตกปลาได้ครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_FISHING_03,0,魚を釣り上げる　100回達成！,Caught 100 fish!,ตกปลาได้ครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_FISHING_04,0,魚を釣り上げる　300回達成！,Caught 300 fish!,ตกปลาได้ครบ 300 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HUNTING_00,0,弓での狩猟　3回達成！,Hunted 3 times with a bow!,ใช้ธนูล่าสัตว์สำเร็จครบ 3 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HUNTING_01,0,弓での狩猟　10回達成！,Hunted 10 times with a bow!,ใช้ธนูล่าสัตว์สำเร็จครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HUNTING_02,0,弓での狩猟　25回達成！,Hunted 25 times with a bow!,ใช้ธนูล่าสัตว์สำเร็จครบ 25 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HUNTING_03,0,弓での狩猟　50回達成！,Hunted 50 times with a bow!,ใช้ธนูล่าสัตว์สำเร็จครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HUNTING_04,0,弓での狩猟　100回達成！,Hunted 100 times with a bow!,ใช้ธนูล่าสัตว์สำเร็จครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_TRAP_00,0,罠での狩猟　3回達成！,Trapped 3 wild animals!,ใช้กับดักล่าสัตว์สำเร็จครบ 3 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_TRAP_01,0,罠での狩猟　10回達成！,Trapped 10 wild animals!,ใช้กับดักล่าสัตว์สำเร็จครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_TRAP_02,0,罠での狩猟　25回達成！,Trapped 25 wild animals!,ใช้กับดักล่าสัตว์สำเร็จครบ 25 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_TRAP_03,0,罠での狩猟　50回達成！,Trapped 50 wild animals!,ใช้กับดักล่าสัตว์สำเร็จครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_TRAP_04,0,罠での狩猟　100回達成！,Trapped 100 wild animals!,ใช้กับดักล่าสัตว์สำเร็จครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COLLECTION_00,0,山菜の採取　10回達成！,Gathered 10 forageables!,เก็บพืชผักป่าครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COLLECTION_01,0,山菜の採取　30回達成！,Gathered 30 forageables!,เก็บพืชผักป่าครบ 30 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COLLECTION_02,0,山菜の採取　100回達成！,Gathered 100 forageables!,เก็บพืชผักป่าครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COLLECTION_03,0,山菜の採取　250回達成！,Gathered 250 forageables!,เก็บพืชผักป่าครบ 250 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COLLECTION_04,0,山菜の採取　500回達成！,Gathered 500 forageables!,เก็บพืชผักป่าครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_00,0,作物の収穫　5回達成！,Harvested 5 crops!,เก็บเกี่ยวผลผลิตครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_01,0,作物の収穫　20回達成！,Harvested 20 crops!,เก็บเกี่ยวผลผลิตครบ 20 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_02,0,作物の収穫　100回達成！,Harvested 100 crops!,เก็บเกี่ยวผลผลิตครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_03,0,作物の収穫　500回達成！,Harvested 500 crops!,เก็บเกี่ยวผลผลิตครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_04,0,作物の収穫　1000回達成！,"Harvested 1,000 crops!","เก็บเกี่ยวผลผลิตครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_HARVEST_05,0,作物の収穫　10000回達成！,"Harvested 10,000 crops!","เก็บเกี่ยวผลผลิตครบ 10,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_LIVESTOCK_00,0,畜産品の採取　5回達成！,Harvested 5 animal products!,เก็บผลผลิตปศุสัตว์ครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_LIVESTOCK_01,0,畜産品の採取　20回達成！,Harvested 20 animal products!,เก็บผลผลิตปศุสัตว์ครบ 20 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_LIVESTOCK_02,0,畜産品の採取　100回達成！,Harvested 100 animal products!,เก็บผลผลิตปศุสัตว์ครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_LIVESTOCK_03,0,畜産品の採取　500回達成！,Harvested 500 animal products!,เก็บผลผลิตปศุสัตว์ครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_LIVESTOCK_04,0,畜産品の採取　1000回達成！,"Harvested 1,000 animal products!","เก็บผลผลิตปศุสัตว์ครบ 1,000 ครั้งแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_ANIMAL_00,0,動物とのふれあい　20回達成！,Interacted with animals 20 times!,เล่นกับสัตว์ครบ 20 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANIMAL_01,0,動物とのふれあい　50回達成！,Interacted with animals 50 times!,เล่นกับสัตว์ครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANIMAL_02,0,動物とのふれあい　100回達成！,Interacted with animals 100 times!,เล่นกับสัตว์ครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANIMAL_03,0,動物とのふれあい　300回達成！,Interacted with animals 300 times!,เล่นกับสัตว์ครบ 300 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANIMAL_04,0,動物とのふれあい　500回達成！,Interacted with animals 500 times!,เล่นกับสัตว์ครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CRAFT_00,0,作業台でもの作り　10回達成！,Crafted 10 items at the workbench!,สร้างสิ่งของที่โต๊ะทำงานครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CRAFT_01,0,作業台でもの作り　25回達成！,Crafted 25 items at the workbench!,สร้างสิ่งของที่โต๊ะทำงานครบ 25 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CRAFT_02,0,作業台でもの作り　50回達成！,Crafted 50 items at the workbench!,สร้างสิ่งของที่โต๊ะทำงานครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CRAFT_03,0,作業台でもの作り　100回達成！,Crafted 100 items at the workbench!,สร้างสิ่งของที่โต๊ะทำงานครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CRAFT_04,0,作業台でもの作り　500回達成！,Crafted 500 items at the workbench!,สร้างสิ่งของที่โต๊ะทำงานครบ 500 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COOKING_00,0,料理の作成　1回達成！,Cooked for the first time!,ทำอาหารครบ 1 ครั้งสำเร็จแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COOKING_01,0,料理の作成　5回達成！,Cooked 5 dishes!,ทำอาหารครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COOKING_02,0,料理の作成　20回達成！,Cooked 20 dishes!,ทำอาหารครบ 20 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COOKING_03,0,料理の作成　50回達成！,Cooked 50 dishes!,ทำอาหารครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_COOKING_04,0,料理の作成　100回達成！,Cooked 100 dishes!,ทำอาหารครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PROCESSING_MACHINE_00,0,加工品の作成　5回達成！,Created 5 processed goods!,ผลิตสินค้าแปรรูปครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PROCESSING_MACHINE_01,0,加工品の作成　15回達成！,Created 15 processed goods!,ผลิตสินค้าแปรรูปครบ 15 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PROCESSING_MACHINE_02,0,加工品の作成　30回達成！,Created 30 processed goods!,ผลิตสินค้าแปรรูปครบ 30 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PROCESSING_MACHINE_03,0,加工品の作成　50回達成！,Created 50 processed goods!,ผลิตสินค้าแปรรูปครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_PROCESSING_MACHINE_04,0,加工品の作成　100回達成！,Created 100 processed goods!,ผลิตสินค้าแปรรูปครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_00,0,図鑑の登録　50品目達成！,Registered 50 entries in the catalog!,ลงบันทึกในสมุดภาพสารานุกรมครบ 50 รายการแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_01,0,図鑑の登録　150回達成！,Registered 150 entries in the catalog!,ลงบันทึกในสมุดภาพสารานุกรมครบ 150 รายการแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_02,0,図鑑の登録　300回達成！,Registered 300 entries in the catalog!,ลงบันทึกในสมุดภาพสารานุกรมครบ 300 รายการแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_03,0,図鑑の登録　500回達成！,Registered 500 entries in the catalog!,ลงบันทึกในสมุดภาพสารานุกรมครบ 500 รายการแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_04,0,図鑑の登録　1000回達成！,"Registered 1,000 entries in the catalog!","ลงบันทึกในสมุดภาพสารานุกรมครบ 1,000 รายการแล้ว!"
+INTANGEBLE_ID_SECRET_QUEST_ENCYCLOPEDIA_05,0,図鑑の登録　全て達成！,Registered all entries in the catalog!,ลงบันทึกในสมุดภาพสารานุกรมครบทั้งหมดแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_BIRD_DROP_00,0,野鳥の落とし物拾い　3回達成！,Picked up 3 dropped items from wild birds!,เก็บของที่นกป่าทำตกไว้ครบ 3 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_BIRD_DROP_01,0,野鳥の落とし物拾い　10回達成！,Picked up 10 dropped items from wild birds!,เก็บของที่นกป่าทำตกไว้ครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_BIRD_DROP_02,0,野鳥の落とし物拾い　20回達成！,Picked up 20 dropped items from wild birds!,เก็บของที่นกป่าทำตกไว้ครบ 20 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_BIRD_DROP_03,0,野鳥の落とし物拾い　50回達成！,Picked up 50 dropped items from wild birds!,เก็บของที่นกป่าทำตกไว้ครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_BIRD_DROP_04,0,野鳥の落とし物拾い　100回達成！,Picked up 100 dropped items from wild birds!,เก็บของที่นกป่าทำตกไว้ครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CLINIC_00,0,診療所のお世話になる　1回達成！,Visited the clinic for the first time!,เข้ารับการรักษาที่คลินิกครบ 1 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CLINIC_01,0,診療所のお世話になる　2回達成！,Visited the clinic for a second time!,เข้ารับการรักษาที่คลินิกครบ 2 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CLINIC_02,0,診療所のお世話になる　4回達成！,Visited the clinic 4 times!,เข้ารับการรักษาที่คลินิกครบ 4 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CLINIC_03,0,診療所のお世話になる　7回達成！,Visited the clinic 7 times!,เข้ารับการรักษาที่คลินิกครบ 7 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CLINIC_04,0,診療所のお世話になる　10回達成！,Visited the clinic 10 times!,เข้ารับการรักษาที่คลินิกครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_VILLAGER_00,0,住人と仲良くなる　1人達成！,Became friends with 1 resident!,สนิทสนมกับชาวบ้านครบ 1 คนแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_VILLAGER_01,0,住人と仲良くなる　3人達成！,Became friends with 3 residents!,สนิทสนมกับชาวบ้านครบ 3 คนแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_VILLAGER_02,0,住人と仲良くなる　6人達成！,Became friends with 6 residents!,สนิทสนมกับชาวบ้านครบ 6 คนแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_VILLAGER_03,0,住人と仲良くなる　10人達成！,Became friends with 10 residents!,สนิทสนมกับชาวบ้านครบ 10 คนแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_VILLAGER_04,0,住人と仲良くなる　14人達成！,Became friends with 14 residents!,สนิทสนมกับชาวบ้านครบ 14 คนแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CONSTRUCTION_00,0,庭に建物を建築　1回達成！,Built a structure in the garden!,สร้างสิ่งปลูกสร้างในฟาร์มครบ 1 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CONSTRUCTION_01,0,庭に建物を建築　5回達成！,Built 5 structures in the garden!,สร้างสิ่งปลูกสร้างในฟาร์มครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CONSTRUCTION_02,0,庭に建物を建築　15回達成！,Built 15 structures in the garden!,สร้างสิ่งปลูกสร้างในฟาร์มครบ 15 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CONSTRUCTION_03,0,庭に建物を建築　25回達成！,Built 25 structures in the garden!,สร้างสิ่งปลูกสร้างในฟาร์มครบ 25 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_CONSTRUCTION_04,0,庭に建物を建築　50回達成！,Built 50 structures in the garden!,สร้างสิ่งปลูกสร้างในฟาร์มครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SUB_QUEST_00,0,住人からのお使い　5回達成！,Completed 5 requests from residents!,ทำภารกิจช่วยเหลือชาวบ้านครบ 5 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SUB_QUEST_01,0,住人からのお使い　15回達成！,Completed 15 requests from residents!,ทำภารกิจช่วยเหลือชาวบ้านครบ 15 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SUB_QUEST_02,0,住人からのお使い　30回達成！,Completed 30 requests from residents!,ทำภารกิจช่วยเหลือชาวบ้านครบ 30 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SUB_QUEST_03,0,住人からのお使い　50回達成！,Completed 50 requests from residents!,ทำภารกิจช่วยเหลือชาวบ้านครบ 50 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_SUB_QUEST_04,0,住人からのお使い　100回達成！,Completed 100 requests from residents!,ทำภารกิจช่วยเหลือชาวบ้านครบ 100 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANVIL_00,0,全ての道具を銅以上に強化した！,Upgraded all tools to copper or higher!,อัปเกรดเครื่องมือทั้งหมดเป็นระดับทองแดงขึ้นไปแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANVIL_01,0,全ての道具を鋼以上に強化した！,Upgraded all tools to steel or higher!,อัปเกรดเครื่องมือทั้งหมดเป็นระดับเหล็กกล้าขึ้นไปแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANVIL_02,0,全ての道具を金以上に強化した！,Upgraded all tools to gold or higher!,อัปเกรดเครื่องมือทั้งหมดเป็นระดับทองคำขึ้นไปแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_ANVIL_03,0,全ての道具を隕鉄に強化した！,Upgraded all tools with meteoric iron!,อัปเกรดเครื่องมือทั้งหมดเป็นระดับเหล็กอุกกาบาตแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOLIDAY_SPRING,0,お花見でラリー　15回達成！,Completed 15 rallies at the Cherry Blossom Festival!,ตีโต้แรลลี่ในเทศกาลชมดอกไม้ครบ 15 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOLIDAY_SUMMER,0,縁日で買い物　10回達成！,Made 10 purchases at the Summer Festival!,ซื้อของในงานเทศกาลฤดูร้อนครบ 10 ครั้งแล้ว!
+INTANGEBLE_ID_SECRET_QUEST_HOLIDAY_AUTUMN,0,収穫祭で上手に焼き芋を焼いた！,Successfully roasted sweet potatoes at the Harvest Festival!,เผามันหวานในเทศกาลเก็บเกี่ยวได้อย่างยอดเยี่ยม!
+INTANGEBLE_ID_SECRET_QUEST_HOLIDAY_WINTER,0,年末祭で上手に餅をついた！,Successfully made mochi at the New Year's Festival!,ตำโมจิในเทศกาลส่งท้ายปีได้อย่างยอดเยี่ยม!
+INTANGEBLE_ID_RELEASE_CLOTHING_02,0,オーバーオールを着られるようになった！,I can now wear overalls!,สวมชุดเอี๊ยมได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_03,0,スカートを着られるようになった！,I can now wear a school skirt!,สวมกระโปรงได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_04,0,ダッフルコートを着られるようになった！,I can now wear a duffle coat!,สวมเสื้อโค้ตดัฟเฟิลได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_05,0,ニットベストを着られるようになった！,I can now wear a sweater vest!,สวมเสื้อกั๊กไหมพรมได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_06,0,パジャマを着られるようになった！,I can now wear pajamas!,สวมชุดนอนได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_07,0,ポンチョを着られるようになった！,I can now wear a poncho!,สวมเสื้อปอนโชได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_08,0,レインコートを着られるようになった！,I can now wear a raincoat!,สวมเสื้อกันฝนได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_09,0,ワンピースを着られるようになった！,I can now wear a one-piece dress!,สวมชุดวันพีซเดรสได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_10,0,男性用喪服を着られるようになった！,I can now wear a funeral suit!,สวมชุดไว้ทุกข์ชายได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_11,0,女性用喪服を着られるようになった！,I can now wear a funeral dress!,สวมชุดไว้ทุกข์หญิงได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_12,0,甚平を着られるようになった！,I can now wear a jinbei!,สวมชุดจิมเบได้แล้ว!
+INTANGEBLE_ID_RELEASE_CLOTHING_13,0,トレンチコートを着られるようになった！,I can now wear a trench coat!,สวมเสื้อเทรนช์โค้ตได้แล้ว!
+INTANGEBLE_ID_RELEASE_COLLAR_02,0,マフラーを巻けるようになった！,I can now wear a muffler!,พันผ้าพันคอได้แล้ว!
+INTANGEBLE_ID_RELEASE_COLLAR_03,0,もこもこを巻けるようになった！,I can now wear a fluffy scarf!,พันผ้าพันคอขนปุกปุยได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_01,0,麦わら帽子を被れるようになった！,I can now wear a straw hat!,สวมหมวกฟางได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_02,0,ベレー帽をかぶれるようになった！,I can now wear a beret!,สวมหมวกเบเรต์ได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_03,0,カウボーイハットをかぶれるようになった！,I can now wear a cowboy hat!,สวมหมวกคาวบอยได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_04,0,探偵帽子をかぶれるようになった！,I can now wear a detective hat!,สวมหมวกนักสืบได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_05,0,ナイトキャップをかぶれるようになった！,I can now wear a nightcap!,สวมหมวกนอนได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_06,0,春の花冠を被れるようになった！,I can now wear a spring flower crown!,สวมมงกุฎดอกไม้ฤดูใบไม้ผลิได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_07,0,夏の花冠をかぶれるようになった！,I can now wear a summer flower crown!,สวมมงกุฎดอกไม้ฤดูร้อนได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_08,0,秋の花冠をかぶれるようになった！,I can now wear an autumn flower crown!,สวมมงกุฎดอกไม้ฤดูใบไม้ร่วงได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_09,0,冬の花冠をかぶれるようになった！,I can now wear a winter flower crown!,สวมมงกุฎดอกไม้ฤดูหนาวได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_10,0,魔法使い帽子をかぶれるようになった！,I can now wear a witch hat!,สวมหมวกแม่มดได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_11,0,キャップをかぶれるようになった！,I can now wear a cap!,สวมหมวกแก๊ปได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_12,0,笠をかぶれるようになった！,I can now wear a sedge hat!,สวมหมวกสานคาซะได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_30,0,狐面を着けられるようになった！,I can now wear a kitsune mask!,สวมหน้ากากจิ้งจอกได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_31,0,般若面を着けられるようになった！,I can now wear a hannya mask!,สวมหน้ากากฮันเนียได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_32,0,おかめ面を着けられるようになった！,I can now wear an okame mask!,สวมหน้ากากโอกาเมะได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_33,0,王冠を着けられるようになった！,I can now wear a crown!,สวมมงกุฎราชาได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_34,0,音符バッジを着けられるようになった！,I can now wear a music note badge!,ติดเข็มกลัดตัวโน้ตได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_35,0,蝶のピン留めを着けられるようになった！,I can now wear a butterfly pin!,ติดกิ๊บผีเสื้อได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_36,0,花のピン留めを着けられるようになった！,I can now wear a flower pin!,ติดกิ๊บดอกไม้ได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_37,0,天狗面を着けられるようになった！,I can now wear a tengu mask!,สวมหน้ากากเท็งงุได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_50,0,リボンを着けられるようになった！,I can now wear a ribbon!,ผูกโบได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_51,0,紐リボンを着けられるようになった！,I can now wear a ribbon tie!,ผูกโบสายริบบิ้นได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_52,0,鈴の髪飾りを着けられるようになった！,I can now wear a bell hair ornament!,ติดเครื่องประดับผมกระดิ่งได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_53,0,ボンボンを着けられるようになった！,I can now wear a pom pom hair tie!,ติดยางรัดผมปอมปอมได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_60,0,うさみみリボンを着けられるようになった！,I can now wear a bunny ear ribbon!,สวมที่คาดผมหูกระต่ายได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_62,0,ヘッドドレスを着けられるようになった！,I can now wear a frilly headband!,สวมเฮดเดรสลูกไม้ได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_63,0,ヘッドフォンを着けられるようになった！,I can now wear headphones!,สวมหูฟังเฮดโฟนได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_70,0,アイマスクを着けられるようになった！,I can now wear an eye mask!,สวมผ้าปิดตาได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_71,0,ゴーグルを着けられるようになった！,I can now wear goggles!,สวมแว่นตากันลมกอกเกิลได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_72,0,メガネを着けられるようになった！,I can now wear glasses!,สวมแว่นตาได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_73,0,サングラスを着けられるようになった！,I can now wear sunglasses!,สวมแว่นกันแดดได้แล้ว!
+INTANGEBLE_ID_RELEASE_ACCESSORY_74,0,モノクルを着けられるようになった！,I can now wear a monocle!,สวมแว่นตาข้างเดียวได้แล้ว!
+INTANGEBLE_ID_RELEASE_BAG_01,0,ランドセルを背負えるようになった！,I can now wear a school backpack!,สะพายกระเป๋านักเรียนรันโดเซรุได้แล้ว!
+INTANGEBLE_ID_RELEASE_BAG_02,0,リュックを背負えるようになった！,I can now wear a backpack!,สะพายกระเป๋าเป้ได้แล้ว!
+INTANGEBLE_ID_RELEASE_BAG_03,0,猫バックを背負えるようになった！,I can now wear a cat bag!,สะพายกระเป๋าแมวได้แล้ว!
+INTANGEBLE_ID_RELEASE_BAG_04,0,背負子を背負えるようになった！,I can now wear a shoiko,สะพายโครงไม้แบกของได้แล้ว!
+INTANGEBLE_ID_RELEASE_BAG_05,0,籠を背負えるようになった！,I can now wear a backpack basket!,สะพายตะกร้าสานได้แล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_05,0,前髪／片側かき上げを覚えた！,Learned how to style Sidesweep bangs!,เรียนรู้ทรงผมหน้า / ปัดข้างเสยแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_08,0,前髪／クセ毛センターを覚えた！,Learned how to style Center Part bangs!,เรียนรู้ทรงผมหน้า / แสกกลางหยักศกแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_10,0,前髪／オールバックを覚えた！,Learned how to style Slicked-back bangs!,เรียนรู้ทรงผมหน้า / เสยเปิดหน้าผากแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_11,0,前髪／センターウェーブを覚えた！,Learned how to style Center Wavy bangs!,เรียนรู้ทรงผมหน้า / แสกกลางลอนคลื่นแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_12,0,前髪／ナチュラルセンターを覚えた！,Learned how to style Blunt-cut Center Part bangs!,เรียนรู้ทรงผมหน้า / แสกกลางธรรมชาติแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_14,0,前髪／切りすぎパッツンを覚えた！,Learned how to style Blunt-cut Extra Short bangs!,เรียนรู้ทรงผมหน้า / ม้าเต่อตรงแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_15,0,前髪／七三サイドを覚えた！,Learned how to style Side Part bangs!,เรียนรู้ทรงผมหน้า / แสกข้าง 7:3 แล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_16,0,前髪／サイド三つ編みを覚えた！,Learned how to style Side Braid bangs!,เรียนรู้ทรงผมหน้า / เปียข้างแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_17,0,前髪／ふわふわを覚えた！,Learned how to style Fluffy bangs!,เรียนรู้ทรงผมหน้า / ฟูนุ่มแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_18,0,前髪／バラバラパッツンを覚えた！,Learned how to style Blunt-cut Uneven bangs!,เรียนรู้ทรงผมหน้า / ม้าตัดสลับแล้ว!
+INTANGEBLE_ID_RELEASE_FRONT_HAIRSTYLE_19,0,前髪／濡れウェーブを覚えた！,Learned how to style Wet 'n' Wavy bangs!,เรียนรู้ทรงผมหน้า / ลอนเปียกแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_08,0,後ろ髪／つのを覚えた！,Learned how to style Horn Buns!,เรียนรู้ทรงผมหลัง / มวยเขาสองข้างแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_10,0,後ろ髪／ツンツンふたばを覚えた！,Learned how to style Spiky Twin Tails!,เรียนรู้ทรงผมหลัง / ทวินเทลปลายแหลมแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_12,0,後ろ髪／ハーフツインを覚えた！,Learned how to style Half-up Pigtails!,เรียนรู้ทรงผมหลัง / ฮาล์ฟทวินเทลแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_14,0,後ろ髪／サイドテールを覚えた！,Learned how to style a Side Ponytail!,เรียนรู้ทรงผมหลัง / โพนีเทลข้างแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_16,0,後ろ髪／クセ毛短髪を覚えた！,Learned how to style Messy Short Hair!,เรียนรู้ทรงผมหลัง / ผมสั้นหยักศกแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_17,0,後ろ髪／サイドお団子を覚えた！,Learned how to style a Side Bun!,เรียนรู้ทรงผมหลัง / ดังโงะข้างแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_18,0,後ろ髪／三つ編みを覚えた！,Learned how to style a Braid!,เรียนรู้ทรงผมหลัง / เปียเดี่ยวแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_19,0,後ろ髪／ツイン三つ編みを覚えた！,Learned how to style Twin Braids!,เรียนรู้ทรงผมหลัง / เปียคู่แล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_20,0,後ろ髪／ツインお団子を覚えた！,Learned how to style Bubble Braids!,เรียนรู้ทรงผมหลัง / ดังโงะคู่แล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_21,0,後ろ髪／お嬢様ツインを覚えた！,Learned how to style Drill Curl Pigtails!,เรียนรู้ทรงผมหลัง / ทวินเทลลอนคุณหนูแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_22,0,後ろ髪／チャイナツインヘアを覚えた！,Learned how to style Twin Bun Loops!,เรียนรู้ทรงผมหลัง / ทวินเทลจีนแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_24,0,後ろ髪／ロングウェーブを覚えた！,Learned how to style Long Waves!,เรียนรู้ทรงผมหลัง / ลอนยาวแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_25,0,後ろ髪／アフロを覚えた！,Learned how to style an Afro!,เรียนรู้ทรงผมหลัง / แอฟโฟรแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_26,0,後ろ髪／パッツンロングを覚えた！,Learned how to style Blunt-cut Long Hair!,เรียนรู้ทรงผมหลัง / ผมยาวตัดตรงแล้ว!
+INTANGEBLE_ID_RELEASE_BACK_HAIRSTYLE_29,0,後ろ髪／サムライポニテを覚えた！,Learned how to style Samurai Ponytail!,เรียนรู้ทรงผมหลัง / โพนีเทลซามูไรแล้ว!
+INTANGEBLE_ID_OTHER_00,0,村の地図を渡された,Received a map of Kagatsu Village,ได้รับแผนที่หมู่บ้านแล้ว
+INTANGEBLE_ID_OTHER_01,0,100円を渡された,Received 100 yen,ได้รับเงิน 100 เยนแล้ว
+INTANGEBLE_ID_OTHER_02,0,500円を渡された,Received 500 yen,ได้รับเงิน 500 เยนแล้ว
+INTANGEBLE_ID_OTHER_03,0,ヌシの鱗を入手した！,Obtained the Lord's Scale!,ได้รับเกล็ดของจ้าวแห่งสายน้ำแล้ว!
+INTANGEBLE_ID_OTHER_04,0,離れの鍵を盗み取った,Stole the key to the guest house,ขโมยกุญแจเรือนแยกมาแล้ว
+INTANGEBLE_ID_OTHER_05,0,鉛筆とメモ帳を渡された,Received a pencil and notebook,ได้รับดินสอกับสมุดจดแล้ว
+INTANGEBLE_ID_OTHER_06,0,コダマの体を渡された,Received Kodama's body,ได้รับร่างของโคดามะแล้ว
+INTANGEBLE_ID_OTHER_07,0,図書館の鍵を渡された,Received the library key,ได้รับกุญแจห้องสมุดแล้ว
+INTANGEBLE_ID_OTHER_08,0,彼ヶ津村の土地を渡された,Received land in Kagatsu Village,ได้รับที่ดินในหมู่บ้านคางัตสึแล้ว
+INTANGEBLE_ID_OTHER_09,0,<gamevalue GAME_VALUE_TALK_NUM>円を渡された,Received <gamevalue GAME_VALUE_TALK_NUM> yen,ได้รับเงิน <gamevalue GAME_VALUE_TALK_NUM> เยนแล้ว
+INTANGEBLE_ID_OTHER_10,0,狐の油揚げを入手した！,Obtained the fox's aburaage!,ได้รับเต้าหู้ทอดของจิ้งจอกแล้ว!
+INTANGEBLE_ID_OTHER_11,0,1000円を渡された,"Received 1,000 yen","ได้รับเงิน 1,000 เยนแล้ว"
+INTANGEBLE_ID_RELEASE_HUNTING_AREA,0,新しい狩り場に入れるようになった！,You can now enter a new hunting area!,เข้าสู่พื้นที่ล่าสัตว์แห่งใหม่ได้แล้ว!
+INTANGEBLE_ID_RELEASE_SICKLE,0,カマを入手した！,Obtained a sickle!,ได้รับเคียวแล้ว!
+INTANGEBLE_ID_RELEASE_BAG_LV2,0,カバンが大きくなった！,My bag's gotten bigger!,กระเป๋าขยายใหญ่ขึ้นแล้ว!
+INTANGEBLE_ID_RELEASE_BAG_LV3,0,カバンがもっと大きくなった！,My bag's even bigger than before!,กระเป๋าขยายใหญ่ขึ้นกว่าเดิมแล้ว!

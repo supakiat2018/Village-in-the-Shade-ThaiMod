@@ -1,0 +1,405 @@
+﻿====================================================================================================
+ รายงานการตรวจสอบเปรียบเทียบความถูกต้องของคำแปล: cmd_แปลจาก_JP.csv vs cmd_แปลจาก_EN.csv
+ โฟลเดอร์: Village_PC_v130_Database_CSVs\cmd
+====================================================================================================
+
+1. สรุปภาพรวมความแตกต่าง (Executive Summary)
+----------------------------------------------------------------------------------------------------
+- จำนวนแถวทั้งหมด: 380 แถว (Index 0 ถึง 379) ตรงกันเป๊ะ 1:1 ทุกแถว ไม่มีการเลื่อนหรือตกแถว
+- แถวที่ข้อความตรงกันทั้งคู่: 376 แถว (ความหมายของภาษาญี่ปุ่น ภาษาอังกฤษ และคำแปลภาษาไทย สอดคล้องกัน 100%)
+- แถวที่ว่างเปล่าทั้งคู่: 3 แถว (Index 0 CMD_START, Index 373 CMD_INPUT_IME_STRING_OK_EX, Index 374 CMD_INPUT_IME_STRING_OK)
+- จุดแตกต่างเพียงจุดเดียวในทั้งไฟล์ (แถวที่ 378 / Index 377):
+  * คีย์: CMD_SOFTWAREKEYBOARD_OPEN
+  * ฝั่ง JP: ต้นฉบับมีข้อความ 'ソフトウェアキーボード' -> คำแปลไทย: 'คีย์บอร์ดเสมือน'
+  * ฝั่ง EN: ต้นฉบับว่างเปล่า '' -> คำแปลไทย: '' (เว้นว่างไว้ตามภาษาอังกฤษจริง เพื่อไม่ให้ตกแถว)
+----------------------------------------------------------------------------------------------------
+
+2. ตารางตรวจสอบเทียบข้อความและคำแปล ครบทั้ง 380 แถว (Full 380 Rows Verification)
+----------------------------------------------------------------------------------------------------
+แถว   | Index | Key                              | ต้นฉบับ JP             | ต้นฉบับ EN                | คำแปลไทย (JP/EN)          | สถานะ
+--------------------------------------------------------------------------------------------------------------------------------------------
+1     | 0     | CMD_START                        |                        |                           | (ว่างเปล่า)               | ⚪ คีย์ว่างเปล่าตามระบบ
+2     | 1     | CMD_REF_ALL                      | 全ボタン                   | All Buttons               | ปุ่มทั้งหมด               | ✅ ตรงตามต้นฉบับ 100%
+3     | 2     | CMD_REF_OK                       | 決定ボタン                  | Confirm                   | ปุ่มยืนยัน                | ✅ ตรงตามต้นฉบับ 100%
+4     | 3     | CMD_REF_CANCEL                   | キャンセルボタン               | Cancel                    | ปุ่มยกเลิก                | ✅ ตรงตามต้นฉบับ 100%
+5     | 4     | CMD_TALK_BACKLOG_VIEW            | 会話ログ                   | Text Log                  | บันทึกบทสนทนา             | ✅ ตรงตามต้นฉบับ 100%
+6     | 5     | CMD_ANY                          | いずれかのボタン               | Any Button                | กดปุ่มใดก็ได้             | ✅ ตรงตามต้นฉบับ 100%
+7     | 6     | CMD_UNIT_MOVE_STICK              | 移動                     | Move                      | เคลื่อนที่                | ✅ ตรงตามต้นฉบับ 100%
+8     | 7     | CMD_UNIT_MOVE_LEFT               | 移動(未実装)                | Move (Not Implemented)    | เคลื่อนที่ (ยังไม่เปิดใช้) | ✅ ตรงตามต้นฉบับ 100%
+9     | 8     | CMD_UNIT_MOVE_UP                 | 移動(未実装)                | Move (Not Implemented)    | เคลื่อนที่ (ยังไม่เปิดใช้) | ✅ ตรงตามต้นฉบับ 100%
+10    | 9     | CMD_UNIT_MOVE_DOWN               | 移動(未実装)                | Move (Not Implemented)    | เคลื่อนที่ (ยังไม่เปิดใช้) | ✅ ตรงตามต้นฉบับ 100%
+11    | 10    | CMD_UNIT_MOVE_RIGHT              | 移動(未実装)                | Move (Not Implemented)    | เคลื่อนที่ (ยังไม่เปิดใช้) | ✅ ตรงตามต้นฉบับ 100%
+12    | 11    | CMD_UNIT_MOVE_STICK_FIRST        | 移動(未実装)                | Move (Not Implemented)    | เคลื่อนที่ (ยังไม่เปิดใช้) | ✅ ตรงตามต้นฉบับ 100%
+13    | 12    | CMD_UNIT_ACTION                  | 使う                     | Use                       | ใช้งาน                    | ✅ ตรงตามต้นฉบับ 100%
+14    | 13    | CMD_UNIT_ACTION_BUFFERING        | アクション(先行入力)            | Action (Queue Input)      | แอ็กชัน (กดล่วงหน้า)      | ✅ ตรงตามต้นฉบับ 100%
+15    | 14    | CMD_UNIT_ACTION_PRESS            | アクション                  | Action                    | แอ็กชัน                   | ✅ ตรงตามต้นฉบับ 100%
+16    | 15    | CMD_UNIT_ACTION_LEFT             | アクション左                 | Action Left               | แอ็กชันซ้าย               | ✅ ตรงตามต้นฉบับ 100%
+17    | 16    | CMD_UNIT_ACTION_UP               | アクション上                 | Action Up                 | แอ็กชันบน                 | ✅ ตรงตามต้นฉบับ 100%
+18    | 17    | CMD_UNIT_ACTION_DOWN             | アクション下                 | Action Down               | แอ็กชันล่าง               | ✅ ตรงตามต้นฉบับ 100%
+19    | 18    | CMD_UNIT_ACTION_RIGHT            | アクション右                 | Action Right              | แอ็กชันขวา                | ✅ ตรงตามต้นฉบับ 100%
+20    | 19    | CMD_UNIT_ACTION_CANCEL           | アクションキャンセル             | Cancel Action             | ยกเลิกแอ็กชัน             | ✅ ตรงตามต้นฉบับ 100%
+21    | 20    | CMD_UNIT_ITEM                    | 使う                     | Use                       | ใช้งาน                    | ✅ ตรงตามต้นฉบับ 100%
+22    | 21    | CMD_UNIT_ITEM_BUFFERING          | 使う(先行入力)               | Use (Queue Input)         | ใช้งาน (กดล่วงหน้า)       | ✅ ตรงตามต้นฉบับ 100%
+23    | 22    | CMD_UNIT_ITEM_PRESS              | アイテム使用長押し              | Use Item (Hold)           | ใช้ไอเทม (กดค้าง)         | ✅ ตรงตามต้นฉบับ 100%
+24    | 23    | CMD_UNIT_NUE_DASH                | 鵺の皮ダッシュ                | Nue Pelt Dash             | พุ่งตัวด้วยหนังนูเอะ      | ✅ ตรงตามต้นฉบับ 100%
+25    | 24    | CMD_UNIT_ACTION_CONTINUS_PLACEMENT | 連続配置                   | Place (Continuous)        | วางต่อเนื่อง              | ✅ ตรงตามต้นฉบับ 100%
+26    | 25    | CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP | 連続配置                   | Place (Continuous)        | วางต่อเนื่อง              | ✅ ตรงตามต้นฉบับ 100%
+27    | 26    | CMD_UNIT_CHANGE_HANDHELD_PREV    | アイテム変更（未実装？）           | Switch Item (Not Implemented?) | เปลี่ยนไอเทม (ยังไม่เปิดใช้?) | ✅ ตรงตามต้นฉบับ 100%
+28    | 27    | CMD_UNIT_CHANGE_HANDHELD_NEXT    | アイテム変更（未実装？）           | Switch Item (Not Implemented?) | เปลี่ยนไอเทม (ยังไม่เปิดใช้?) | ✅ ตรงตามต้นฉบับ 100%
+29    | 28    | CMD_UNIT_JUMP                    | ジャンプ                   | Jump                      | กระโดด                    | ✅ ตรงตามต้นฉบับ 100%
+30    | 29    | CMD_UNIT_MOVE_PARALLEL           | 平行移動                   | Sidestep                  | เคลื่อนที่สไลด์ข้าง       | ✅ ตรงตามต้นฉบับ 100%
+31    | 30    | CMD_UNIT_MOVE_STICK_PARALLEL     | 平行移動のスティック操作           | Sidestep (Stick)          | โยกอนาล็อกสไลด์ข้าง       | ✅ ตรงตามต้นฉบับ 100%
+32    | 31    | CMD_UNIT_MOVE_ANGLE              | 向き変更                   | Rotate                    | เปลี่ยนทิศทาง             | ✅ ตรงตามต้นฉบับ 100%
+33    | 32    | CMD_UNIT_MOVE_STICK_ANGLE        | 向き変更のスティック操作           | Rotate (Stick)            | โยกอนาล็อกเปลี่ยนทิศทาง   | ✅ ตรงตามต้นฉบับ 100%
+34    | 33    | CMD_UNIT_DETAIL                  | 詳細表示                   | Show Details              | แสดงรายละเอียด            | ✅ ตรงตามต้นฉบับ 100%
+35    | 34    | CMD_UNIT_ITEM_INVENTORY_LEFT     | アイテムインベントリ内移動          | Move Inventory Cursor     | เลื่อนช่องกระเป๋าเก็บของ  | ✅ ตรงตามต้นฉบับ 100%
+36    | 35    | CMD_UNIT_ITEM_INVENTORY_RIGHT    | アイテムインベントリ内移動          | Move Inventory Cursor     | เลื่อนช่องกระเป๋าเก็บของ  | ✅ ตรงตามต้นฉบับ 100%
+37    | 36    | CMD_UNIT_ITEM_INVENTORY_NEXT     | アイテムインベントリ切り替え         | Switch Inventory Row      | สลับแถวกระเป๋าเก็บของ     | ✅ ตรงตามต้นฉบับ 100%
+38    | 37    | CMD_UNIT_ITEM_INVENTORY_DETAIL   | 詳細                     | Details                   | รายละเอียด                | ✅ ตรงตามต้นฉบับ 100%
+39    | 38    | CMD_UNIT_MAIN_MENU               | メインメニュー                | Main Menu                 | เมนูหลัก                  | ✅ ตรงตามต้นฉบับ 100%
+40    | 39    | CMD_UNIT_CHANGE_CAMERA           | カメラの拡縮                 | Zoom Camera               | ซูมกล้องเข้า/ออก          | ✅ ตรงตามต้นฉบับ 100%
+41    | 40    | CMD_UNIT_SHORTCUT_MEMO           | メモ機能                   | Note Function             | สมุดบันทึก                | ✅ ตรงตามต้นฉบับ 100%
+42    | 41    | CMD_UNIT_SHORTCUT_TOOL           | 道具                     | Tools                     | อุปกรณ์                   | ✅ ตรงตามต้นฉบับ 100%
+43    | 42    | CMD_UNIT_SHORTCUT_INVENTORY      | インベントリ                 | Inventory                 | กระเป๋าเก็บของ            | ✅ ตรงตามต้นฉบับ 100%
+44    | 43    | CMD_UNIT_FLUTTER                 | ジタバタする（実装なし）           | Flail (No Implementation) | ดิ้นไปมา (ยังไม่เปิดใช้)  | ✅ ตรงตามต้นฉบับ 100%
+45    | 44    | CMD_INTERACTION                  | インタラクション✕              | Interact ✕                | โต้ตอบ ✕                  | ✅ ตรงตามต้นฉบับ 100%
+46    | 45    | CMD_INTERACTION_INVISIBLE        | インタラクション✕(非表示)         | Interact ✕ (Not Displayed) | โต้ตอบ ✕ (ซ่อน)           | ✅ ตรงตามต้นฉบับ 100%
+47    | 46    | CMD_INTERACTION_TRIANGLE         | インタラクション△              | Interact △                | โต้ตอบ △                  | ✅ ตรงตามต้นฉบับ 100%
+48    | 47    | CMD_INTERACTION_CANCEL           | インタラクション〇              | Interact 〇                | โต้ตอบ 〇                  | ✅ ตรงตามต้นฉบับ 100%
+49    | 48    | CMD_INTERACTION_CANCEL_INVISIBLE | インタラクション○(非表示)         | Interact ○ (Not Displayed) | โต้ตอบ 〇 (ซ่อน)           | ✅ ตรงตามต้นฉบับ 100%
+50    | 49    | CMD_INTERACTION_SQUARE           | インタラクション□              | Interact □                | โต้ตอบ □                  | ✅ ตรงตามต้นฉบับ 100%
+51    | 50    | CMD_INTERACTION_DOWN             | インタラクション✕(押下)          | Interact ✕ (Press)        | โต้ตอบ ✕ (กด)             | ✅ ตรงตามต้นฉบับ 100%
+52    | 51    | CMD_INTERACTION_TRIANGLE_DOWN    | インタラクション△(押下)          | Interact △ (Press)        | โต้ตอบ △ (กด)             | ✅ ตรงตามต้นฉบับ 100%
+53    | 52    | CMD_INTERACTION_CANCEL_DOWN      | インタラクション〇(押下)          | Interact 〇 (Press)        | โต้ตอบ 〇 (กด)             | ✅ ตรงตามต้นฉบับ 100%
+54    | 53    | CMD_INTERACTION_SQUARE_DOWN      | インタラクション□(押下)          | Interact □ (Press)        | โต้ตอบ □ (กด)             | ✅ ตรงตามต้นฉบับ 100%
+55    | 54    | CMD_INTERACTION_L1_INVISIBLE     | インタラクションL1(非表示)        | Interact L1 (Not Displayed) | โต้ตอบ L1 (ซ่อน)          | ✅ ตรงตามต้นฉบับ 100%
+56    | 55    | CMD_INTERACTION_PRESS            | インタラクション(押しっぱなし)       | Interact (Hold)           | โต้ตอบ (กดค้าง)           | ✅ ตรงตามต้นฉบับ 100%
+57    | 56    | CMD_INTERACTION_TRIANGLE_PRESS   | インタラクション△(押しっぱなし)      | Interact △ (Hold)         | โต้ตอบ △ (กดค้าง)         | ✅ ตรงตามต้นฉบับ 100%
+58    | 57    | CMD_INTERACTION_CANCEL_PRESS     | インタラクション〇(押しっぱなし)      | Interact 〇 (Hold)         | โต้ตอบ 〇 (กดค้าง)         | ✅ ตรงตามต้นฉบับ 100%
+59    | 58    | CMD_INTERACTION_SQUARE_PRESS     | インタラクション□(押しっぱなし)      | Interact □ (Hold)         | โต้ตอบ □ (กดค้าง)         | ✅ ตรงตามต้นฉบับ 100%
+60    | 59    | CMD_INTERACTION_LONG             | インタラクション長押し            | Interact: Hold            | โต้ตอบ (กดค้าง)           | ✅ ตรงตามต้นฉบับ 100%
+61    | 60    | CMD_INTERACTION_LONG_TRIANGLE    | インタラクション長押し△           | Interaction: Hold △       | โต้ตอบ (กดค้าง) △         | ✅ ตรงตามต้นฉบับ 100%
+62    | 61    | CMD_INTERACTION_LONG_CANCEL      | インタラクション長押し〇           | Interaction: Hold 〇       | โต้ตอบ (กดค้าง) 〇         | ✅ ตรงตามต้นฉบับ 100%
+63    | 62    | CMD_INTERACTION_LONG_SQUARE      | インタラクション長押し□           | Interaction: Hold □       | โต้ตอบ (กดค้าง) □         | ✅ ตรงตามต้นฉบับ 100%
+64    | 63    | CMD_INTERACTION_ENTER            | 入る                     | Enter                     | เข้าไป                    | ✅ ตรงตามต้นฉบับ 100%
+65    | 64    | CMD_INTERACTION_EXIT             | 出る                     | Exit                      | ออกไป                     | ✅ ตรงตามต้นฉบับ 100%
+66    | 65    | CMD_INTERACTION_OPEN             | 開ける                    | Open                      | เปิด                      | ✅ ตรงตามต้นฉบับ 100%
+67    | 66    | CMD_INTERACTION_CLOSE            | 閉じる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+68    | 67    | CMD_INTERACTION_SHAKE            | 揺らす                    | Shake                     | เขย่า                     | ✅ ตรงตามต้นฉบับ 100%
+69    | 68    | CMD_INTERACTION_HARVEST          | 収穫                     | Harvest                   | เก็บเกี่ยว                | ✅ ตรงตามต้นฉบับ 100%
+70    | 69    | CMD_INTERACTION_HARVEST_BUFFERING | 収穫(先行入力)               | Harvest (Queue Input)     | เก็บเกี่ยว (กดล่วงหน้า)   | ✅ ตรงตามต้นฉบับ 100%
+71    | 70    | CMD_INTERACTION_HARVEST_PRESS    | 収穫長押し                  | Harvest (Hold)            | เก็บเกี่ยว (กดค้าง)       | ✅ ตรงตามต้นฉบับ 100%
+72    | 71    | CMD_INTERACTION_LIVESTOCK_ACTION | 家畜へのアクション              | Action (Livestock)        | แอ็กชันกับสัตว์เลี้ยง     | ✅ ตรงตามต้นฉบับ 100%
+73    | 72    | CMD_INTERACTION_MILKING          | ミルクをとる                 | Milk                      | รีดนม                     | ✅ ตรงตามต้นฉบับ 100%
+74    | 73    | CMD_INTERACTION_ON               | つける                    | Turn On                   | เปิดไฟ                    | ✅ ตรงตามต้นฉบับ 100%
+75    | 74    | CMD_INTERACTION_OFF              | 消す                     | Turn Off                  | ปิดไฟ                     | ✅ ตรงตามต้นฉบับ 100%
+76    | 75    | CMD_INTERACTION_SWITCH_ON        | スイッチをオンにする             | Switch On                 | เปิดสวิตช์                | ✅ ตรงตามต้นฉบับ 100%
+77    | 76    | CMD_INTERACTION_SWITCH_OFF       | スイッチをオフにする             | Switch Off                | ปิดสวิตช์                 | ✅ ตรงตามต้นฉบับ 100%
+78    | 77    | CMD_INTERACTION_ITEM_IN          | 入れる                    | Insert                    | ใส่เข้าไป                 | ✅ ตรงตามต้นฉบับ 100%
+79    | 78    | CMD_INTERACTION_ITEM_OUT         | 出す                     | Take Out                  | หยิบออกมา                 | ✅ ตรงตามต้นฉบับ 100%
+80    | 79    | CMD_INTERACTION_SLEEP            | 寝る                     | Sleep                     | เข้านอน                   | ✅ ตรงตามต้นฉบับ 100%
+81    | 80    | CMD_INTERACTION_AWAKE            | 起きる                    | Wake Up                   | ตื่นนอน                   | ✅ ตรงตามต้นฉบับ 100%
+82    | 81    | CMD_INTERACTION_SIT              | 座る                     | Sit                       | นั่งลง                    | ✅ ตรงตามต้นฉบับ 100%
+83    | 82    | CMD_INTERACTION_STAND            | 立つ                     | Stand                     | ยืนขึ้น                   | ✅ ตรงตามต้นฉบับ 100%
+84    | 83    | CMD_INTERACTION_SPEAK            | 会話                     | Talk                      | พูดคุย                    | ✅ ตรงตามต้นฉบับ 100%
+85    | 84    | CMD_INTERACTION_LET_GO           | 逃がす                    | Release                   | ปล่อยไป                   | ✅ ตรงตามต้นฉบับ 100%
+86    | 85    | CMD_INTERACTION_CHANGE_CLOTHES   | 着替える                   | Change Clothes            | เปลี่ยนชุด                | ✅ ตรงตามต้นฉบับ 100%
+87    | 86    | CMD_INTERACTION_CHECK            | 調べる                    | Examine                   | สำรวจ                     | ✅ ตรงตามต้นฉบับ 100%
+88    | 87    | CMD_INTERACTION_PUT_AWAY         | しまう                    | Put Away                  | เก็บของ                   | ✅ ตรงตามต้นฉบับ 100%
+89    | 88    | CMD_INTERACTION_PUMP             | 水をくむ                   | Draw Water                | ตักน้ำ                    | ✅ ตรงตามต้นฉบับ 100%
+90    | 89    | CMD_INTERACTION_INSERT_FLOWER    | 花を挿す                   | Insert Flower             | ปักดอกไม้                 | ✅ ตรงตามต้นฉบับ 100%
+91    | 90    | CMD_INTERACTION_ANSWER_PHONE     | 電話に出る                  | Answer Phone              | รับโทรศัพท์               | ✅ ตรงตามต้นฉบับ 100%
+92    | 91    | CMD_INTERACTION_CONFIRM          | 確認                     | Check                     | ตรวจสอบ                   | ✅ ตรงตามต้นฉบับ 100%
+93    | 92    | CMD_INTERACTION_TAKEOUT_LONG     | 出す                     | Take Out                  | หยิบออกมา                 | ✅ ตรงตามต้นฉบับ 100%
+94    | 93    | CMD_INTERACTION_OBTAIN           | 入手                     | Acquire                   | ได้รับไอเทม               | ✅ ตรงตามต้นฉบับ 100%
+95    | 94    | CMD_INTERACTION_PICK_UP          | 拾う                     | Pick Up                   | เก็บขึ้นมา                | ✅ ตรงตามต้นฉบับ 100%
+96    | 95    | CMD_INTERACTION_PICK_UP_ITEMFULL | 拾う                     | Pick Up                   | เก็บขึ้นมา                | ✅ ตรงตามต้นฉบับ 100%
+97    | 96    | CMD_INTERACTION_TAKEOUT          | 取り出す                   | Withdraw                  | นำออกมา                   | ✅ ตรงตามต้นฉบับ 100%
+98    | 97    | CMD_INTERACTION_RETURN           | 入れる                    | Insert                    | เก็บใส่คืน                | ✅ ตรงตามต้นฉบับ 100%
+99    | 98    | CMD_INTERACTION_PUT              | 置く                     | Place                     | วางลง                     | ✅ ตรงตามต้นฉบับ 100%
+100   | 99    | CMD_INTERACTION_AXE              | オノを振る                  | Swing Axe                 | เหวี่ยงขวาน               | ✅ ตรงตามต้นฉบับ 100%
+101   | 100   | CMD_INTERACTION_GENERALSTORE     | 田上雑貨店                  | Tagami General Store      | ร้านของชำทากามิ           | ✅ ตรงตามต้นฉบับ 100%
+102   | 101   | CMD_INTERACTION_SHOPPING         | 商品を見る                  | Browse                    | ดูสินค้า                  | ✅ ตรงตามต้นฉบับ 100%
+103   | 102   | CMD_INTERACTION_ANIMAL_SHOPPING  | 家畜を購入                  | Purchase Livestock        | ซื้อสัตว์เลี้ยง           | ✅ ตรงตามต้นฉบับ 100%
+104   | 103   | CMD_INTERACTION_ITEM_SHOPPING    | 商品を見る                  | Browse                    | ดูสินค้า                  | ✅ ตรงตามต้นฉบับ 100%
+105   | 104   | CMD_INTERACTION_CONSTRUCTION_SHED | 樹木建設                   | Kiki Construction         | ร้านก่อสร้างคิกิ          | ✅ ตรงตามต้นฉบับ 100%
+106   | 105   | CMD_INTERACTION_RESTAURANT       | 茶碗亭                    | Chawantei                 | ร้านชาวันเท               | ✅ ตรงตามต้นฉบับ 100%
+107   | 106   | CMD_INTERACTION_FIRST_FLOOR      | 2階                     | Second Floor              | ชั้น 2                    | ✅ ตรงตามต้นฉบับ 100%
+108   | 107   | CMD_INTERACTION_DINING_ROOM      | 食堂                     | Diner                     | ห้องอาหาร                 | ✅ ตรงตามต้นฉบับ 100%
+109   | 108   | CMD_INTERACTION_MAYOR_HOUSE      | 村長邸                    | Kiki Manor                | คฤหาสน์ผู้ใหญ่บ้าน        | ✅ ตรงตามต้นฉบับ 100%
+110   | 109   | CMD_INTERACTION_CORRIDOR         | 廊下                     | Corridor                  | ทางเดิน                   | ✅ ตรงตามต้นฉบับ 100%
+111   | 110   | CMD_INTERACTION_RIN_ROOM         | リンの部屋                  | Rin's Room                | ห้องของริน                | ✅ ตรงตามต้นฉบับ 100%
+112   | 111   | CMD_INTERACTION_KONNO_ROOM       | コンノの部屋                 | Konno's Room              | ห้องของคอนโนะ             | ✅ ตรงตามต้นฉบับ 100%
+113   | 112   | CMD_INTERACTION_BACK_ROAD        | 屋敷の裏道                  | Estate Backroad           | ทางลัดหลังคฤหาสน์         | ✅ ตรงตามต้นฉบับ 100%
+114   | 113   | CMD_INTERACTION_CLINIC           | くすのき診療所                | Kusunoki Clinic           | คลินิกคุสุโนกิ            | ✅ ตรงตามต้นฉบับ 100%
+115   | 114   | CMD_INTERACTION_CLINIC_ENTRANCE  | 受付                     | Reception                 | แผนกต้อนรับ               | ✅ ตรงตามต้นฉบับ 100%
+116   | 115   | CMD_INTERACTION_CLINIC_ROOM      | 病室                     | Sickroom                  | ห้องพักผู้ป่วย            | ✅ ตรงตามต้นฉบับ 100%
+117   | 116   | CMD_INTERACTION_LIBRARY          | 図書館                    | Library                   | ห้องสมุด                  | ✅ ตรงตามต้นฉบับ 100%
+118   | 117   | CMD_INTERACTION_HUNTINGLODGE     | 狩人詰所                   | Hunting Lodge             | ป้อมพรานล่าสัตว์          | ✅ ตรงตามต้นฉบับ 100%
+119   | 118   | CMD_INTERACTION_CARPENTER_HOUSE  | キスケの家                  | Kisuke's House            | บ้านของคิสุเกะ            | ✅ ตรงตามต้นฉบับ 100%
+120   | 119   | CMD_INTERACTION_GENERALSTORE_HOUSE | サザンカの家                 | Sazanka's House           | บ้านของซาซังกะ            | ✅ ตรงตามต้นฉบับ 100%
+121   | 120   | CMD_INTERACTION_HUNTERS_HOUSE    | コマコとシロージの家             | Komako & Shiroji's House  | บ้านของโคมะโกะและชิโรจิ   | ✅ ตรงตามต้นฉบับ 100%
+122   | 121   | CMD_INTERACTION_KOMAKO_ROOM      | コマコの部屋                 | Komako's Room             | ห้องของโคมะโกะ            | ✅ ตรงตามต้นฉบับ 100%
+123   | 122   | CMD_INTERACTION_SHIROJI_ROOM     | シロージの部屋                | Shiroji's Room            | ห้องของชิโรจิ             | ✅ ตรงตามต้นฉบับ 100%
+124   | 123   | CMD_INTERACTION_YOUTH_HOUSE      | ユータの家                  | Yuta's House              | บ้านของยูตะ               | ✅ ตรงตามต้นฉบับ 100%
+125   | 124   | CMD_INTERACTION_DOCTOR_AND_BOY_HOUSE | ハスミとスミレの家              | Hasumi & Sumire's House   | บ้านของฮาสุมิและสุมิเระ   | ✅ ตรงตามต้นฉบับ 100%
+126   | 125   | CMD_INTERACTION_HASUMI_ROOM      | ハスミの部屋                 | Hasumi's Room             | ห้องของฮาสุมิ             | ✅ ตรงตามต้นฉบับ 100%
+127   | 126   | CMD_INTERACTION_SUMIRE_ROOM      | スミレの部屋                 | Sumire's Room             | ห้องของสุมิเระ            | ✅ ตรงตามต้นฉบับ 100%
+128   | 127   | CMD_INTERACTION_HALL_EMPLOYEE_HOUSE | ナゴの家                   | Nago's House              | บ้านของนาโงะ              | ✅ ตรงตามต้นฉบับ 100%
+129   | 128   | CMD_INTERACTION_MAYOR_DETACHED_BUILDING | 村長邸の離れ                 | Kiki Guest House          | เรือนรับรองคฤหาสน์ผู้ใหญ่บ้าน | ✅ ตรงตามต้นฉบับ 100%
+130   | 129   | CMD_INTERACTION_MAYOR_STOREHOUSE | 村長邸の蔵                  | Kiki Storehouse           | โกดังคฤหาสน์ผู้ใหญ่บ้าน   | ✅ ตรงตามต้นฉบับ 100%
+131   | 130   | CMD_INTERACTION_CLOCK_TOWER      | 時計塔                    | Clock Tower               | หอนาฬิกา                  | ✅ ตรงตามต้นฉบับ 100%
+132   | 131   | CMD_INTERACTION_CHINANA_TRUCK    | チナナのトラック               | Chinana's Truck           | รถบรรทุกของชินานะ         | ✅ ตรงตามต้นฉบับ 100%
+133   | 132   | CMD_INTERACTION_ROOM_OUT         | 出る                     | Exit                      | ออกไป                     | ✅ ตรงตามต้นฉบับ 100%
+134   | 133   | CMD_INTERACTION_MYHOUSE          | 自宅                     | My House                  | บ้านของฉัน                | ✅ ตรงตามต้นฉบับ 100%
+135   | 134   | CMD_INTERACTION_MYHOUSE_UNDERGROUND | 地下                     | Underground               | ชั้นใต้ดิน                | ✅ ตรงตามต้นฉบับ 100%
+136   | 135   | CMD_INTERACTION_MYHOUSE_GROUND_FLOOR | １階                     | Ground Floor              | ชั้น 1                    | ✅ ตรงตามต้นฉบับ 100%
+137   | 136   | CMD_INTERACTION_AVIARY           | 鶏小屋                    | Coop                      | เล้าไก่                   | ✅ ตรงตามต้นฉบับ 100%
+138   | 137   | CMD_INTERACTION_LIVESTOCKHOUSE   | 家畜小屋                   | Barn                      | คอกสัตว์                  | ✅ ตรงตามต้นฉบับ 100%
+139   | 138   | CMD_INTERACTION_BARN             | 納屋                     | Storage Shed              | โรงนา                     | ✅ ตรงตามต้นฉบับ 100%
+140   | 139   | CMD_INTERACTION_GREENHOUSE       | 温室                     | Greenhouse                | เรือนกระจก                | ✅ ตรงตามต้นฉบับ 100%
+141   | 140   | CMD_INTERACTION_MAILBOX          | ポスト                    | Mailbox                   | ตู้จดหมาย                 | ✅ ตรงตามต้นฉบับ 100%
+142   | 141   | CMD_INTERACTION_ONIZUKA          | 屋敷の裏道                  | Estate Backroad           | ทางลัดหลังคฤหาสน์         | ✅ ตรงตามต้นฉบับ 100%
+143   | 142   | CMD_INTERACTION_UNDERGROUND_ROAD | 地下通路                   | Underground Passage       | ทางเดินใต้ดิน             | ✅ ตรงตามต้นฉบับ 100%
+144   | 143   | CMD_INTERACTION_LOST_HOUSE       | 廃屋                     | Deserted House            | บ้านร้าง                  | ✅ ตรงตามต้นฉบับ 100%
+145   | 144   | CMD_INTERACTION_MOVE_ON          | 進む                     | Advance                   | เดินหน้า                  | ✅ ตรงตามต้นฉบับ 100%
+146   | 145   | CMD_INTERACTION_RETURN_MOUNTAIN  | 戻る                     | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+147   | 146   | CMD_INTERACTION_MOVE_FORWARD     | 進む                     | Advance                   | เดินหน้า                  | ✅ ตรงตามต้นฉบับ 100%
+148   | 147   | CMD_INTERACTION_RETURN_EXIT      | 戻る                     | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+149   | 148   | CMD_INTERACTION_DUNGEON          | 石切場                    | Quarry                    | เหมืองหิน                 | ✅ ตรงตามต้นฉบับ 100%
+150   | 149   | CMD_INTERACTION_BACK             | 登る                     | Ascend                    | ปีนขึ้น                   | ✅ ตรงตามต้นฉบับ 100%
+151   | 150   | CMD_INTERACTION_NEXT_FLOOR       | 下る                     | Descend                   | ลงไปข้างล่าง              | ✅ ตรงตามต้นฉบับ 100%
+152   | 151   | CMD_INTERACTION_ELEVATOR         | エレベーター                 | Elevator                  | ลิฟต์                     | ✅ ตรงตามต้นฉบับ 100%
+153   | 152   | CMD_INTERACTION_SHIPPINGBOX      | 出荷                     | Ship                      | จัดส่งสินค้า              | ✅ ตรงตามต้นฉบับ 100%
+154   | 153   | CMD_INTERACTION_CHEST            | 収納箱                    | Storage Chest             | หีบเก็บของ                | ✅ ตรงตามต้นฉบับ 100%
+155   | 154   | CMD_INTERACTION_REWARD_BOX       | 報酬箱                    | Reward Box                | กล่องรางวัล               | ✅ ตรงตามต้นฉบับ 100%
+156   | 155   | CMD_INTERACTION_CONSTRUCTION_BOX | 回収箱                    | Collection Box            | กล่องรวบรวมของ            | ✅ ตรงตามต้นฉบับ 100%
+157   | 156   | CMD_INTERACTION_BOARD            | 掲示板                    | Bulletin Board            | กระดานข่าว                | ✅ ตรงตามต้นฉบับ 100%
+158   | 157   | CMD_INTERACTION_BUNDLE           | バンドル                   | Bundle                    | ชุดของถวาย                | ✅ ตรงตามต้นฉบับ 100%
+159   | 158   | CMD_INTERACTION_SUBMIT_CERTIFICATE | 狩猟証明を入れる               | Insert Hunting Certificate | ใส่ใบรับรองการล่าสัตว์    | ✅ ตรงตามต้นฉบับ 100%
+160   | 159   | CMD_INTERACTION_PUSH_ITEM        | 入れる                    | Insert                    | ใส่เข้าไป                 | ✅ ตรงตามต้นฉบับ 100%
+161   | 160   | CMD_INTERACTION_PUSH_ITEM_LONG   | 全て入れる                  | Insert All                | ใส่ทั้งหมด                | ✅ ตรงตามต้นฉบับ 100%
+162   | 161   | CMD_INTERACTION_TICKET           | お手伝い券を渡す               | Hand Over Errand Coupon   | มอบคูปองช่วยงาน           | ✅ ตรงตามต้นฉบับ 100%
+163   | 162   | CMD_INTERACTION_SUBMIT_QUEST_ITEM | 渡す                     | Give                      | ส่งมอบ                    | ✅ ตรงตามต้นฉบับ 100%
+164   | 163   | CMD_INTERACTION_PRESENT          | 贈り物をする                 | Gift                      | มอบของขวัญ                | ✅ ตรงตามต้นฉบับ 100%
+165   | 164   | CMD_INTERACTION_PRESENT_DISABLE  | 贈り物をする                 | Gift                      | มอบของขวัญ                | ✅ ตรงตามต้นฉบับ 100%
+166   | 165   | CMD_INTERACTION_DELIVER_SUBQUEST_ITEM | 納品                     | Deliver                   | ส่งของ                    | ✅ ตรงตามต้นฉบับ 100%
+167   | 166   | CMD_INTERACTION_CARESS           | 撫でる                    | Pet                       | ลูบตัว                    | ✅ ตรงตามต้นฉบับ 100%
+168   | 167   | CMD_INTERACTION_FEED             | エサをあげる                 | Feed                      | ให้อาหาร                  | ✅ ตรงตามต้นฉบับ 100%
+169   | 168   | CMD_INTERACTION_RETRIEVE         | 回収                     | Retrieve                  | เก็บคืน                   | ✅ ตรงตามต้นฉบับ 100%
+170   | 169   | CMD_INTERACTION_RETRIEVE_PRESS   | 回収押しっぱなし               | Retrieve (Hold)           | เก็บคืน (กดค้าง)          | ✅ ตรงตามต้นฉบับ 100%
+171   | 170   | CMD_INTERACTION_COLLECT          | 採取                     | Collect                   | เก็บเกี่ยววัตถุดิบ        | ✅ ตรงตามต้นฉบับ 100%
+172   | 171   | CMD_INTERACTION_OBTAIN_CREATURE  | 回収                     | Retrieve                  | จับสัตว์                  | ✅ ตรงตามต้นฉบับ 100%
+173   | 172   | CMD_INTERACTION_RELEASE_CREATURE | 逃がす                    | Release                   | ปล่อยสัตว์ไป              | ✅ ตรงตามต้นฉบับ 100%
+174   | 173   | CMD_INTERACTION_PUT_BAIT         | エサを置く                  | Place Bait                | วางเหยื่อ                 | ✅ ตรงตามต้นฉบับ 100%
+175   | 174   | CMD_INTERACTION_FISHING          | 釣り                     | Fish                      | ตกปลา                     | ✅ ตรงตามต้นฉบับ 100%
+176   | 175   | CMD_INTERACTION_FISHING_CANCEL   | やめる                    | Stop                      | หยุดตกปลา                 | ✅ ตรงตามต้นฉบับ 100%
+177   | 176   | CMD_INTERACTION_FISHING_HIT      | 釣り上げる                  | Reel In                   | ดึงเบ็ดขึ้นมา             | ✅ ตรงตามต้นฉบับ 100%
+178   | 177   | CMD_INTERACTION_GACHAPON         | 回す                     | Turn                      | หมุนกาชาปอง               | ✅ ตรงตามต้นฉบับ 100%
+179   | 178   | CMD_INTERACTION_FHONE_BOX        | 電話ボックス                 | Phone Booth               | ตู้โทรศัพท์               | ✅ ตรงตามต้นฉบับ 100%
+180   | 179   | CMD_INTERACTION_HIDE             | 隠れる                    | Hide                      | ซ่อนตัว                   | ✅ ตรงตามต้นฉบับ 100%
+181   | 180   | CMD_INTERACTION_HIDE_OUT         | 出る                     | Exit                      | ออกจากที่ซ่อน             | ✅ ตรงตามต้นฉบับ 100%
+182   | 181   | CMD_INTERACTION_COVER            | 調べる                    | Examine                   | สำรวจ                     | ✅ ตรงตามต้นฉบับ 100%
+183   | 182   | CMD_INTERACTION_TAKE             | 取る                     | Take                      | หยิบเอาไป                 | ✅ ตรงตามต้นฉบับ 100%
+184   | 183   | CMD_INTERACTION_PUT_GROUND       | 地面に置く                  | Place on Ground           | วางบนพื้น                 | ✅ ตรงตามต้นฉบับ 100%
+185   | 184   | CMD_INTERACTION_EXPLORE          | 調べる                    | Explore                   | สำรวจ                     | ✅ ตรงตามต้นฉบับ 100%
+186   | 185   | CMD_INTERACTION_PUT_ALTAR        | 投げ入れる                  | Toss in                   | โยนลงไป                   | ✅ ตรงตามต้นฉบับ 100%
+187   | 186   | CMD_INTERACTION_WRITE_LETTERS    | 文字を書く                  | Write                     | เขียนตัวหนังสือ           | ✅ ตรงตามต้นฉบับ 100%
+188   | 187   | CMD_INTERACTION_REPAIR           | 修復する                   | Repair                    | ซ่อมแซม                   | ✅ ตรงตามต้นฉบับ 100%
+189   | 188   | CMD_INTERACTION_PASS             | 通る                     | Pass                      | เดินผ่าน                  | ✅ ตรงตามต้นฉบับ 100%
+190   | 189   | CMD_INTERACTION_OFFERING         | お供えする                  | Make Offering             | ถวายเครื่องเซ่น           | ✅ ตรงตามต้นฉบับ 100%
+191   | 190   | CMD_INTERACTION_CLEAN_UP         | 片づける                   | Clean Up                  | เก็บกวาด                  | ✅ ตรงตามต้นฉบับ 100%
+192   | 191   | CMD_INTERACTION_PULL_OUT         | 引っこ抜く                  | Pull Out                  | ดึงถอนออกมา               | ✅ ตรงตามต้นฉบับ 100%
+193   | 192   | CMD_INTERACTION_LOOK             | 見る                     | Look                      | มองดู                     | ✅ ตรงตามต้นฉบับ 100%
+194   | 193   | CMD_INTERACTION_CROPS_DEVOTE     | 作物を捧げる                 | Offer Crops               | ถวายพืชผล                 | ✅ ตรงตามต้นฉบับ 100%
+195   | 194   | CMD_INTERACTION_SOUND_TEST       | 音楽を聞く                  | Listen to Music           | ฟังเพลง                   | ✅ ตรงตามต้นฉบับ 100%
+196   | 195   | CMD_INTERACTION_CALENDAR         | カレンダー                  | Calendar                  | ปฏิทิน                    | ✅ ตรงตามต้นฉบับ 100%
+197   | 196   | CMD_INTERACTION_DUNGEON_MINECART | トロッコ                   | Minecart                  | รถราง                     | ✅ ตรงตามต้นฉบับ 100%
+198   | 197   | CMD_INTERACTION_DRESS_UP         | 着替える                   | Change Clothes            | เปลี่ยนชุด                | ✅ ตรงตามต้นฉบับ 100%
+199   | 198   | CMD_INTERACTION_PUT_TO_GRAVE     | 赤子を置く                  | Place Baby                | วางทารก                   | ✅ ตรงตามต้นฉบับ 100%
+200   | 199   | CMD_INTERACTION_PUT_IN_HAY       | 牧草を入れる                 | Insert Hay                | ใส่หญ้าแห้ง               | ✅ ตรงตามต้นฉบับ 100%
+201   | 200   | CMD_INTERACTION_REMOVE_HAY       | 牧草を取り出す                | Withdraw Hay              | หยิบหญ้าแห้งออกมา         | ✅ ตรงตามต้นฉบับ 100%
+202   | 201   | CMD_INTERACTION_PRESENT_CHEESE   | チーズを渡す                 | Give Cheese               | มอบชีส                    | ✅ ตรงตามต้นฉบับ 100%
+203   | 202   | CMD_INTERACTION_GHOST_RAT        | ネズミ？                   | Rat?                      | หนูงั้นเหรอ?              | ✅ ตรงตามต้นฉบับ 100%
+204   | 203   | CMD_INTERACTION_POUND_MOCHI      | 餅つき                    | Pound Mochi               | ตำโมจิ                    | ✅ ตรงตามต้นฉบับ 100%
+205   | 204   | CMD_INTERACTION_KAGAMI_MOCHI     | 鏡餅を作る                  | Make Kagami Mochi         | ทำคางามิโมจิ              | ✅ ตรงตามต้นฉบับ 100%
+206   | 205   | CMD_INTERACTION_ROAST_POTATO     | 芋を焼く                   | Roast Sweet Potato        | เผามันเทศ                 | ✅ ตรงตามต้นฉบับ 100%
+207   | 206   | CMD_INTERACTION_SHOOT_GAME       | 射的で遊ぶ                  | Play Shooting Gallery     | เล่นเกมยิงเป้า            | ✅ ตรงตามต้นฉบับ 100%
+208   | 207   | CMD_INTERACTION_RESTAURANT_ORDER | 注文する                   | Order                     | สั่งอาหาร                 | ✅ ตรงตามต้นฉบับ 100%
+209   | 208   | CMD_INTERACTION_STORY_00_013     | ？？？                    | ???                       | ???                       | ✅ ตรงตามต้นฉบับ 100%
+210   | 209   | CMD_INTERACTION_STORY_04_040     | 話しかける                  | Speak To                  | เข้าไปคุย                 | ✅ ตรงตามต้นฉบับ 100%
+211   | 210   | CMD_INTERACTION_PULL             | 引っ張る                   | Pull                      | ดึง                       | ✅ ตรงตามต้นฉบับ 100%
+212   | 211   | CMD_INTERACTION_STORY_05_036     | 斬る                     | Cut                       | ฟัน                       | ✅ ตรงตามต้นฉบับ 100%
+213   | 212   | CMD_INTERACTION_STORY_06_009     | 飛び込む                   | Jump Down                 | กระโจนลงไป                | ✅ ตรงตามต้นฉบับ 100%
+214   | 213   | CMD_INTERACTION_STORY_06_010     | 受け取る                   | Accept                    | รับไว้                    | ✅ ตรงตามต้นฉบับ 100%
+215   | 214   | CMD_INTERACTION_STORY_06_054     | 押す                     | Push                      | ผลัก                      | ✅ ตรงตามต้นฉบับ 100%
+216   | 215   | CMD_INTERACTION_STORY_06_062     | 跳ぶ                     | Jump Down                 | กระโดด                    | ✅ ตรงตามต้นฉบับ 100%
+217   | 216   | CMD_INTERACTION_CRAFT_TABLE      | 作業台                    | Workbench                 | โต๊ะคราฟต์ของ             | ✅ ตรงตามต้นฉบับ 100%
+218   | 217   | CMD_INTERACTION_DYEING_MACHINE   | 染色台                    | Dye Station               | โต๊ะย้อมสี                | ✅ ตรงตามต้นฉบับ 100%
+219   | 218   | CMD_INTERACTION_ANVIL            | 金床                     | Anvil                     | ทั่งตีเหล็ก               | ✅ ตรงตามต้นฉบับ 100%
+220   | 219   | CMD_INTERACTION_COOKING          | 料理                     | Cook                      | ทำอาหาร                   | ✅ ตรงตามต้นฉบับ 100%
+221   | 220   | CMD_INTERACTION_LIVESTOCK_LIST   | 家畜一覧                   | Livestock List            | รายชื่อสัตว์เลี้ยง        | ✅ ตรงตามต้นฉบับ 100%
+222   | 221   | CMD_PROCESS_MACHINE_CLOSE        | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+223   | 222   | CMD_CRAFT_TABLE_FOCUS_DETAIL     | 詳細                     | Details                   | รายละเอียด                | ✅ ตรงตามต้นฉบับ 100%
+224   | 223   | CMD_CRAFT_TABLE_FOCUS_LIST       | もどる                    | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+225   | 224   | CMD_CRAFT_TABLE_CRAFT            | 作る                     | Craft                     | สร้าง                     | ✅ ตรงตามต้นฉบับ 100%
+226   | 225   | CMD_CRAFT_TABLE_CRAFT_KEEP       | 作る（連続）                 | Craft (Multi)             | สร้าง (ต่อเนื่อง)         | ✅ ตรงตามต้นฉบับ 100%
+227   | 226   | CMD_COOKING_COOK                 | 調理                     | Cooking                   | ปรุงอาหาร                 | ✅ ตรงตามต้นฉบับ 100%
+228   | 227   | CMD_COOKING_COOK_KEEP            | 調理（連続）                 | Cooking (Multi)           | ปรุงอาหาร (ต่อเนื่อง)     | ✅ ตรงตามต้นฉบับ 100%
+229   | 228   | CMD_CRAFT_TABLE_CHANGE_TAB       | 切替                     | Tab                       | สลับแท็บ                  | ✅ ตรงตามต้นฉบับ 100%
+230   | 229   | CMD_CRAFT_TABLE_TOGGLE_FAVORITE  | お気に入り                  | Favorite                  | รายการโปรด                | ✅ ตรงตามต้นฉบับ 100%
+231   | 230   | CMD_STORAGE_MENU_CLOSE           | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+232   | 231   | CMD_STORAGE_MENU_PUSH            | 移動                     | Move                      | ย้าย                      | ✅ ตรงตามต้นฉบับ 100%
+233   | 232   | CMD_STORAGE_MENU_PUSH_KEEP       | 移動（連続）                 | Move (Continuous)         | ย้าย (ต่อเนื่อง)          | ✅ ตรงตามต้นฉบับ 100%
+234   | 233   | CMD_STORAGE_MENU_PUSH_ALL        | 全て移動                   | Move All                  | ย้ายทั้งหมด               | ✅ ตรงตามต้นฉบับ 100%
+235   | 234   | CMD_STORAGE_MENU_SORT            | 整頓                     | Sort                      | จัดเรียง                  | ✅ ตรงตามต้นฉบับ 100%
+236   | 235   | CMD_STORAGE_MENU_PUSH_SAME       | 同じものを移動                | Group Identical Items     | ย้ายของที่เหมือนกัน       | ✅ ตรงตามต้นฉบับ 100%
+237   | 236   | CMD_STORAGE_MENU_CHANGE_TARGET   | 切替                     | Switch                    | สลับฝั่ง                  | ✅ ตรงตามต้นฉบับ 100%
+238   | 237   | CMD_STORAGE_MENU_NAMING          | 名前を付ける                 | Name                      | ตั้งชื่อ                  | ✅ ตรงตามต้นฉบับ 100%
+239   | 238   | CMD_STORAGE_MENU_CHANGE_BAG      | バッグを入れ替える(未実装？)        | Swap Bag (Not Implemented?) | สลับกระเป๋า (ยังไม่เปิดใช้?) | ✅ ตรงตามต้นฉบับ 100%
+240   | 239   | CMD_STORAGE_MENU_SHOW_LIST       | リストの開閉                 | Open/Close List           | เปิด/ปิดรายการ            | ✅ ตรงตามต้นฉบับ 100%
+241   | 240   | CMD_STORAGE_MENU_LINK_CHANGE_LEFT | 収納箱の切替                 | Switch Storage Chest      | สลับหีบเก็บของ            | ✅ ตรงตามต้นฉบับ 100%
+242   | 241   | CMD_STORAGE_MENU_LINK_CHANGE_RIGHT | 収納箱の切替                 | Switch Storage Chest      | สลับหีบเก็บของ            | ✅ ตรงตามต้นฉบับ 100%
+243   | 242   | CMD_INTERACTION_PUT_TABLETOP     | 置く                     | Place                     | วาง                       | ✅ ตรงตามต้นฉบับ 100%
+244   | 243   | CMD_PUT_TABLETOP_CLOSE           | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+245   | 244   | CMD_PUT_TABLETOP_FOCUS_BELONGINGS | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+246   | 245   | CMD_PUT_TABLETOP_FOCUS_TABLETOP  | もどる                    | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+247   | 246   | CMD_PUT_TABLETOP_PUT_ON          | 置く                     | Place                     | วางลง                     | ✅ ตรงตามต้นฉบับ 100%
+248   | 247   | CMD_PUT_TABLETOP_PUT_AWAY        | 取り除く                   | Remove                    | นำออก                     | ✅ ตรงตามต้นฉบับ 100%
+249   | 248   | CMD_PUT_TABLETOP_PUT_ROTATE_R    | 回す                     | Rotate                    | หมุนขวา                   | ✅ ตรงตามต้นฉบับ 100%
+250   | 249   | CMD_PUT_TABLETOP_PUT_ROTATE_L    | 回す                     | Rotate                    | หมุนซ้าย                  | ✅ ตรงตามต้นฉบับ 100%
+251   | 250   | CMD_INVENTORY_MENU_BOUND_UP      | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+252   | 251   | CMD_INVENTORY_MENU_BOUND_DOWN    | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+253   | 252   | CMD_INVENTORY_MENU_BOUND_LEFT    | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+254   | 253   | CMD_INVENTORY_MENU_BOUND_RIGHT   | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+255   | 254   | CMD_DAIRY_RESULT_CHANGE          | 切替                     | Switch                    | สลับหน้า                  | ✅ ตรงตามต้นฉบับ 100%
+256   | 255   | CMD_WHISTLE_NOTE_INPUT_1         | 音符入力                   | Input Musical Note        | กดตัวโน้ต                 | ✅ ตรงตามต้นฉบับ 100%
+257   | 256   | CMD_WHISTLE_NOTE_INPUT_2         | 音符入力                   | Input Musical Note        | กดตัวโน้ต                 | ✅ ตรงตามต้นฉบับ 100%
+258   | 257   | CMD_WHISTLE_NOTE_INPUT_STICK     | 音符入力                   | Input Musical Note        | โยกอนาล็อกกดตัวโน้ต       | ✅ ตรงตามต้นฉบับ 100%
+259   | 258   | CMD_WHISTLE_CHANGE_SONG          | 楽譜切替                   | Switch Sheet Music        | สลับโน้ตเพลง              | ✅ ตรงตามต้นฉบับ 100%
+260   | 259   | CMD_TOOL_CIRCLE_CANCEL           | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+261   | 260   | CMD_TOOL_CIRCLE_DECIDE           | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+262   | 261   | CMD_TOOL_CIRCLE_WHISTLE          | 指笛                     | Finger Whistle            | ผิวปาก                    | ✅ ตรงตามต้นฉบับ 100%
+263   | 262   | CMD_TOOL_CIRCLE_HATCHET          | ナタ                     | Machete                   | มีดพร้า                   | ✅ ตรงตามต้นฉบับ 100%
+264   | 263   | CMD_TOOL_CIRCLE_STICK            | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+265   | 264   | CMD_MEMOLIST_REMOVE_PRESS        | メモを削除                  | Delete Note               | ลบบันทึก                  | ✅ ตรงตามต้นฉบับ 100%
+266   | 265   | CMD_MEMOLIST_REMOVE_PRESS_KEEP   | メモを削除                  | Delete Note               | ลบบันทึก                  | ✅ ตรงตามต้นฉบับ 100%
+267   | 266   | CMD_MEMOLIST_REMOVE_PRESS_HELP   | メモを削除                  | Delete Note               | ลบบันทึก                  | ✅ ตรงตามต้นฉบับ 100%
+268   | 267   | CMD_MEMOLIST_REMOVE_RELEASE      | 削除をやめる                 | Cancel Deletion           | ยกเลิกการลบ               | ✅ ตรงตามต้นฉบับ 100%
+269   | 268   | CMD_STORE_ADD                    | いれる                    | Add                       | เพิ่ม                     | ✅ ตรงตามต้นฉบับ 100%
+270   | 269   | CMD_STORE_ADD_KEEP               | いれる（連続）                | Add (Continuous)          | เพิ่ม (ต่อเนื่อง)         | ✅ ตรงตามต้นฉบับ 100%
+271   | 270   | CMD_STORE_RETURN                 | もどす                    | Return                    | ลดลง                      | ✅ ตรงตามต้นฉบับ 100%
+272   | 271   | CMD_STORE_RETURN_KEEP            | もどす（連続）                | Return (Continuous)       | ลดลง (ต่อเนื่อง)          | ✅ ตรงตามต้นฉบับ 100%
+273   | 272   | CMD_STORE_CHANGE_TARGET          | 切替                     | Switch                    | สลับแท็บ                  | ✅ ตรงตามต้นฉบับ 100%
+274   | 273   | CMD_STORE_BUY                    | 購入                     | Purchase                  | ซื้อ                      | ✅ ตรงตามต้นฉบับ 100%
+275   | 274   | CMD_STORE_ORDER                  | 注文                     | Order                     | สั่งซื้อ                  | ✅ ตรงตามต้นฉบับ 100%
+276   | 275   | CMD_INTERACTION_SHRINE           | 辻の祠                    | Crossroads Hokora         | ศาลเจ้าทางแยก             | ✅ ตรงตามต้นฉบับ 100%
+277   | 276   | CMD_SHRINE_CLOSE                 | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+278   | 277   | CMD_SHRINE_GENERATE_SPHERE       | スキル玉生成                 | Generate Skill Sphere     | สร้างลูกแก้วสกิล          | ✅ ตรงตามต้นฉบับ 100%
+279   | 278   | CMD_SHRINE_CHANGE_SKILLTREE      | スキルツリー                 | Skill Tree                | ผังสกิล                   | ✅ ตรงตามต้นฉบับ 100%
+280   | 279   | CMD_SKILLTREE_MOVE_STICK         | 移動                     | Move                      | เลื่อนดู                  | ✅ ตรงตามต้นฉบับ 100%
+281   | 280   | CMD_SKILLTREE_MOVE_UP            | 移動                     | Move                      | เลื่อนขึ้น                | ✅ ตรงตามต้นฉบับ 100%
+282   | 281   | CMD_SKILLTREE_MOVE_DOWN          | 移動                     | Move                      | เลื่อนลง                  | ✅ ตรงตามต้นฉบับ 100%
+283   | 282   | CMD_SKILLTREE_MOVE_LEFT          | 移動                     | Move                      | เลื่อนซ้าย                | ✅ ตรงตามต้นฉบับ 100%
+284   | 283   | CMD_SKILLTREE_MOVE_RIGHT         | 移動                     | Move                      | เลื่อนขวา                 | ✅ ตรงตามต้นฉบับ 100%
+285   | 284   | CMD_SKILLTREE_RELEASE            | スキル解放                  | Unlock Skill              | ปลดล็อกสกิล               | ✅ ตรงตามต้นฉบับ 100%
+286   | 285   | CMD_SKILLTREE_CHANGE_SHRINE      | もどる                    | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+287   | 286   | CMD_INTERACTION_CONSTRUCTION     | 樹木建設                   | Kiki Construction         | ร้านก่อสร้างคิกิ          | ✅ ตรงตามต้นฉบับ 100%
+288   | 287   | CMD_CONSTRUCTION_CLOSE           | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+289   | 288   | CMD_CONSTRUCTION_DECIDE          | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+290   | 289   | CMD_CONSTRUCTION_EDIT_DECIDE     | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+291   | 290   | CMD_CONSTRUCTION_EDIT_CANCEL     | もどる                    | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+292   | 291   | CMD_CONSTRUCTION_EDIT_ROTATE     | 反転                     | Flip                      | กลับด้าน                  | ✅ ตรงตามต้นฉบับ 100%
+293   | 292   | CMD_CONSTRUCTION_EDIT_CHANGE_TARGET | 対象切替                   | Change Target             | เปลี่ยนเป้าหมาย           | ✅ ตรงตามต้นฉบับ 100%
+294   | 293   | CMD_CONSTRUCTION_MAP_MOVE_STICK  | 移動                     | Move                      | เลื่อนแผนที่              | ✅ ตรงตามต้นฉบับ 100%
+295   | 294   | CMD_MAINMENU_SHIFT_L             | メインメニュー左シフト            | Toggle Main Menu (Left)   | เลื่อนเมนูหลักซ้าย        | ✅ ตรงตามต้นฉบับ 100%
+296   | 295   | CMD_MAINMENU_SHIFT_R             | メインメニュー右シフト            | Toggle Main Menu (Right)  | เลื่อนเมนูหลักขวา         | ✅ ตรงตามต้นฉบับ 100%
+297   | 296   | CMD_MAINMENU_CLOSE               | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+298   | 297   | CMD_MAINMENU_INVENTORY_POP_PUSH  | 持つ/置く                  | Grab/Place                | หยิบ / วาง                | ✅ ตรงตามต้นฉบับ 100%
+299   | 298   | CMD_MAINMENU_INVENTORY_PUSH      | ひとつ置く                  | Place One                 | วางทีละชิ้น               | ✅ ตรงตามต้นฉบับ 100%
+300   | 299   | CMD_MAINMENU_INVENTORY_POP_CANCEL | もどす                    | Return                    | เก็บคืนที่เดิม            | ✅ ตรงตามต้นฉบับ 100%
+301   | 300   | CMD_MAINMENU_INVENTORY_PUTAWAY   | 床に置く                   | Place on Floor            | วางบนพื้น                 | ✅ ตรงตามต้นฉบับ 100%
+302   | 301   | CMD_MAINMENU_INVENTORY_DECIDE    | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+303   | 302   | CMD_MAINMENU_INVENTORY_MENU      | 手放す                    | Discard                   | ทิ้งของ                   | ✅ ตรงตามต้นฉบับ 100%
+304   | 303   | CMD_MAINMENU_MAP_DETAIL_NPC      | 詳細                     | Details                   | รายละเอียด                | ✅ ตรงตามต้นฉบับ 100%
+305   | 304   | CMD_MAINMENU_MAP_STAMP           | スタンプ                   | Stamp                     | ปักหมุด                   | ✅ ตรงตามต้นฉบับ 100%
+306   | 305   | CMD_MAINMENU_MAP_LIST            | リスト                    | List                      | รายการ                    | ✅ ตรงตามต้นฉบับ 100%
+307   | 306   | CMD_MAINMENU_MAP_RETURN          | もどる                    | Return                    | ย้อนกลับ                  | ✅ ตรงตามต้นฉบับ 100%
+308   | 307   | CMD_MAINMENU_MAP_QUICK           | 高速化                    | Cursor Speed              | เลื่อนเร็ว                | ✅ ตรงตามต้นฉบับ 100%
+309   | 308   | CMD_MAINMENU_MAP_MOVE            | 移動                     | Move                      | เลื่อนดู                  | ✅ ตรงตามต้นฉบับ 100%
+310   | 309   | CMD_MAINMENU_MAP_SCALE_UP        | 拡大                     | Zoom In                   | ซูมเข้า                   | ✅ ตรงตามต้นฉบับ 100%
+311   | 310   | CMD_MAINMENU_MAP_SCALE_DOWN      | 縮小                     | Zoom Out                  | ซูมออก                    | ✅ ตรงตามต้นฉบับ 100%
+312   | 311   | CMD_MAINMENU_QUEST_OPEN          | 展開                     | Expand                    | ขยาย                      | ✅ ตรงตามต้นฉบับ 100%
+313   | 312   | CMD_MAINMENU_QUEST_CLOSE         | 畳む                     | Collapse                  | ย่อเก็บ                   | ✅ ตรงตามต้นฉบับ 100%
+314   | 313   | CMD_MAINMENU_VILLAGER_SEARCH     | 居場所を確認                 | Check Location            | ดูตำแหน่งที่อยู่          | ✅ ตรงตามต้นฉบับ 100%
+315   | 314   | CMD_MAINMENU_ENCYCLOPEDIA_SKIP   | 次ページ                   | Next Page                 | หน้าถัดไป                 | ✅ ตรงตามต้นฉบับ 100%
+316   | 315   | CMD_MAINMENU_QUEST_CHECKLIST_SCROLL | チェックリスト上下（翻訳不要）        | Checklist Up/Down (No translation needed) | เลื่อนเช็กลิสต์ขึ้น/ลง    | ✅ ตรงตามต้นฉบับ 100%
+317   | 316   | CMD_INPUT_STRING_DELETE          | １文字消す                  | Backspace                 | ลบตัวอักษร                | ✅ ตรงตามต้นฉบับ 100%
+318   | 317   | CMD_INPUT_STRING_SPACE           | スペース                   | Space                     | เว้นวรรค                  | ✅ ตรงตามต้นฉบับ 100%
+319   | 318   | CMD_INPUT_STRING_CANCEL          | キャンセル                  | Cancel                    | ยกเลิก                    | ✅ ตรงตามต้นฉบับ 100%
+320   | 319   | CMD_INPUT_STRING_OK              | 決定                     | Confirm                   | ยืนยัน                    | ✅ ตรงตามต้นฉบับ 100%
+321   | 320   | CMD_INPUT_STRING_BOUND_DOWN      | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+322   | 321   | CMD_INPUT_STRING_BOUND_UP        | 選択                     | Select                    | เลือก                     | ✅ ตรงตามต้นฉบับ 100%
+323   | 322   | CMD_IPUNT_STRING_CHAR_FIX        | 文字確定                   | Input confirmed           | ยืนยันตัวอักษร            | ✅ ตรงตามต้นฉบับ 100%
+324   | 323   | CMD_CHARACTERMAKE_BAR_LEFT       | 左シフト                   | Left Shift                | เลื่อนซ้าย                | ✅ ตรงตามต้นฉบับ 100%
+325   | 324   | CMD_CHARACTERMAKE_BAR_RIGHT      | 右シフト                   | Right Shift               | เลื่อนขวา                 | ✅ ตรงตามต้นฉบับ 100%
+326   | 325   | CMD_CHARACTERMAKE_BAR_LEFT_KEEP  | 左シフト（長押し）              | Left Shift (Hold)         | เลื่อนซ้าย (กดค้าง)       | ✅ ตรงตามต้นฉบับ 100%
+327   | 326   | CMD_CHARACTERMAKE_BAR_RIGHT_KEEP | 右シフト（長押し）              | Right Shift (Hold)        | เลื่อนขวา (กดค้าง)        | ✅ ตรงตามต้นฉบับ 100%
+328   | 327   | CMD_CHARACTERMAKE_ROTATE_PLAYER  | 向き変更                   | Rotate                    | หมุนตัวละคร               | ✅ ตรงตามต้นฉบับ 100%
+329   | 328   | CMD_CHARACTERMAKE_CLOSE          | 完了                     | Finish                    | เสร็จสิ้น                 | ✅ ตรงตามต้นฉบับ 100%
+330   | 329   | CMD_CHARACTERMAKE_TAB_CONTROL    | 切替                     | Tab                       | สลับแท็บ                  | ✅ ตรงตามต้นฉบับ 100%
+331   | 330   | CMD_CHARACTERMAKE_CURSOR         | 移動                     | Move                      | เลื่อนเคอร์เซอร์          | ✅ ตรงตามต้นฉบับ 100%
+332   | 331   | CMD_CHARACTERMAKE_PRESET_COLOR   | 色を反映                   | Apply Color               | นำสีมาใช้                 | ✅ ตรงตามต้นฉบับ 100%
+333   | 332   | CMD_CHARACTERMAKE_RESET_ACCESSORY | 外す                     | Remove                    | ถอดออก                    | ✅ ตรงตามต้นฉบับ 100%
+334   | 333   | CMD_NUMBER_SELECT_LEFT           | 減らす                    | Decrease                  | ลดจำนวน                   | ✅ ตรงตามต้นฉบับ 100%
+335   | 334   | CMD_NUMBER_SELECT_RIGHT          | 増やす                    | Increase                  | เพิ่มจำนวน                | ✅ ตรงตามต้นฉบับ 100%
+336   | 335   | CMD_NUMBER_SELECT_DECIDE_BUY     | 買う                     | Buy                       | ซื้อ                      | ✅ ตรงตามต้นฉบับ 100%
+337   | 336   | CMD_NUMBER_SELECT_DECIDE_CRAFT   | 作る                     | Craft                     | สร้าง                     | ✅ ตรงตามต้นฉบับ 100%
+338   | 337   | CMD_NUMBER_SELECT_CANCEL         | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+339   | 338   | CMD_SOUND_TEST_PLAY              | 再生                     | Play                      | เล่นเพลง                  | ✅ ตรงตามต้นฉบับ 100%
+340   | 339   | CMD_SOUND_TEST_STOP              | 停止                     | Stop                      | หยุดเพลง                  | ✅ ตรงตามต้นฉบับ 100%
+341   | 340   | CMD_SOUND_TEST_CLOSE             | とじる                    | Close                     | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+342   | 341   | CMD_SETTING_RESET                | 設定初期化                  | Reset to Default          | คืนค่าเริ่มต้น            | ✅ ตรงตามต้นฉบับ 100%
+343   | 342   | CMD_DEMO_SKIP                    | スキップ                   | Skip                      | ข้าม                      | ✅ ตรงตามต้นฉบับ 100%
+344   | 343   | CMD_TITLE_RIGHTS_NOTATION        | 権利表記                   | Copyright Notice          | ข้อมูลลิขสิทธิ์           | ✅ ตรงตามต้นฉบับ 100%
+345   | 344   | CMD_SAVE_DELETE                  | セーブデータ削除               | Delete Save Data          | ลบข้อมูลบันทึก            | ✅ ตรงตามต้นฉบับ 100%
+346   | 345   | CMD_SWAP_SELECT                  | 入替え                    | Swap                      | สลับตำแหน่ง               | ✅ ตรงตามต้นฉบับ 100%
+347   | 346   | CMD_SWAP_CANCEL                  | やめる                    | Cancel                    | ยกเลิก                    | ✅ ตรงตามต้นฉบับ 100%
+348   | 347   | CMD_BANDLE_SUBMIT                | 納品                     | Deliver                   | ถวายของ                   | ✅ ตรงตามต้นฉบับ 100%
+349   | 348   | CMD_POPUP_OK_CLOSE               | 閉じる（翻訳不要）              | Close (No translation needed) | ปิด                       | ✅ ตรงตามต้นฉบับ 100%
+350   | 349   | CMD_SELECT_CANCEL                | やめる                    | Cancel                    | ยกเลิก                    | ✅ ตรงตามต้นฉบับ 100%
+351   | 350   | CMD_OPTION_CLOSE                 | やめる                    | Cancel                    | ยกเลิก                    | ✅ ตรงตามต้นฉบับ 100%
+352   | 351   | CMD_PLACEMENT_EDITOR_SYSTEM_MENU | システムメニュー               | System Menu               | เมนูระบบ                  | ✅ ตรงตามต้นฉบับ 100%
+353   | 352   | CMD_PLACEMENT_EDITOR_PLACEMENT_MENU | 配置メニュー                 | Placement Menu            | เมนูการจัดวาง             | ✅ ตรงตามต้นฉบับ 100%
+354   | 353   | CMD_PLACEMENT_EDITOR_PLACEMENT   | 配置                     | Place                     | จัดวาง                    | ✅ ตรงตามต้นฉบับ 100%
+355   | 354   | CMD_PLACEMENT_EDITOR_ERASE       | 削除                     | Delete                    | ลบออก                     | ✅ ตรงตามต้นฉบับ 100%
+356   | 355   | CMD_DEBUG_WORLDMAP_MOVE_STICK    | 移動                     | Move                      | เลื่อนดู                  | ✅ ตรงตามต้นฉบับ 100%
+357   | 356   | CMD_DEBUG_WORLDMAP_MOVE_RESET    | 現在地へ                   | To Current Location       | ไปยังตำแหน่งปัจจุบัน      | ✅ ตรงตามต้นฉบับ 100%
+358   | 357   | CMD_DEBUG_WORLDMAP_ZOOM_OUT      | ズーム                    | Zoom                      | ซูมออก                    | ✅ ตรงตามต้นฉบับ 100%
+359   | 358   | CMD_DEBUG_WORLDMAP_ZOOM_IN       | ズーム                    | Zoom                      | ซูมเข้า                   | ✅ ตรงตามต้นฉบับ 100%
+360   | 359   | CMD_DEBUG_WORLDMAP_ZOOM_RESET    | ズームリセット                | Reset Zoom                | คืนค่าการซูมเริ่มต้น      | ✅ ตรงตามต้นฉบับ 100%
+361   | 360   | CMD_DEBUG_WORLDMAP_AREA_PREV     | エリア移動                  | Change Area               | เปลี่ยนพื้นที่ (ก่อนหน้า) | ✅ ตรงตามต้นฉบับ 100%
+362   | 361   | CMD_DEBUG_WORLDMAP_AREA_NEXT     | エリア移動                  | Change Area               | เปลี่ยนพื้นที่ (ถัดไป)    | ✅ ตรงตามต้นฉบับ 100%
+363   | 362   | CMD_DEBUG_EVENTCHART_MENU_OPEN   | メニューを開く                | Open Menu                 | เปิดเมนู                  | ✅ ตรงตามต้นฉบับ 100%
+364   | 363   | CMD_DEBUG_EVENTCHART_SHORTCUT    | 便利ボタン                  | Shortcuts                 | ปุ่มลัด                   | ✅ ตรงตามต้นฉบับ 100%
+365   | 364   | CMD_DEBUG_NPC_ENABLE_CHANGE      | 有効/無効切り替え              | Toggle On/Off             | สลับ เปิด/ปิด             | ✅ ตรงตามต้นฉบับ 100%
+366   | 365   | CMD_CHARACTERMAKE_DEFAULT_RETURN | デフォルトに戻す               | Restore to Default        | คืนค่าเริ่มต้น            | ✅ ตรงตามต้นฉบับ 100%
+367   | 366   | CMD_INTERACTION_DELIVER_HORROR_ITEM | 納品                     | Deliver                   | ส่งมอบไอเทมอาถรรพ์        | ✅ ตรงตามต้นฉบับ 100%
+368   | 367   | CMD_GAME_END                     | ゲームを終了する               | Exit Game                 | ออกจากเกม                 | ✅ ตรงตามต้นฉบับ 100%
+369   | 368   | CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_L | 対象切替                   | Change Target             | เปลี่ยนเป้าหมาย (ซ้าย)    | ✅ ตรงตามต้นฉบับ 100%
+370   | 369   | CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_R | 対象切替                   | Change Target             | เปลี่ยนเป้าหมาย (ขวา)     | ✅ ตรงตามต้นฉบับ 100%
+371   | 370   | CMD_FISHING                      | 釣り                     | Fish                      | ตกปลา                     | ✅ ตรงตามต้นฉบับ 100%
+372   | 371   | CMD_UNIT_WALK_STICK              | スティック歩行                | Stick Movement            | โยกอนาล็อกเดิน            | ✅ ตรงตามต้นฉบับ 100%
+373   | 372   | CMD_UNIT_WALK_KEY                | キーボード移動                | Keyboard Movement         | ปุ่มคีย์บอร์ดเดิน         | ✅ ตรงตามต้นฉบับ 100%
+374   | 373   | CMD_INPUT_IMESTRING_CANCEL       |                        |                           | (ว่างเปล่า)               | ⚪ คีย์ว่างเปล่าตามระบบ
+375   | 374   | CMD_INPUT_IME_STRING_OK          |                        |                           | (ว่างเปล่า)               | ⚪ คีย์ว่างเปล่าตามระบบ
+376   | 375   | CMD_INTERACTION_CATALOG          | 家具カタログ                 | Furniture Catalog         | แคตตาล็อกเฟอร์นิเจอร์     | ✅ ตรงตามต้นฉบับ 100%
+377   | 376   | CMD_SAVEDATA_SELECT              | 以前のセーブデータ              | Previous Save Data        | ข้อมูลบันทึกก่อนหน้า      | ✅ ตรงตามต้นฉบับ 100%
+378   | 377   | CMD_SOFTWAREKEYBOARD_OPEN        | ソフトウェアキーボード            |                           | JP: คีย์บอร์ดเสมือน | EN: (ว่าง) | ⚠️ จุดต่าง (JP มีคำ / EN ว่างตามต้นฉบับ)
+379   | 378   | CMD_ITME_RENAME                  | 命名変更                   | Change Name               | เปลี่ยนชื่อ               | ✅ ตรงตามต้นฉบับ 100%
+380   | 379   | CMD_TOOL_CIRCLE_SEEDER           | 種まき機                   | Seeder                    | เครื่องหว่านเมล็ด         | ✅ ตรงตามต้นฉบับ 100%
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+====================================================================================================
+ สรุปผลการตรวจสอบ: คำแปลถูกต้องตรงกับความหมายของทั้งสองภาษา 100% ลำดับแถวตรงกันสมบูรณ์แบบ
+====================================================================================================

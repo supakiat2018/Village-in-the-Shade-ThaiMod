@@ -1,0 +1,381 @@
+﻿Item_No,Index,Key,ต้นฉบับ_EN,คำแปลไทย,Thai_PUA
+1,0,CMD_START,,,
+2,1,CMD_REF_ALL,All Buttons,ปุ่มทั้งหมด,มงหมด
+3,2,CMD_REF_OK,Confirm,ปุ่มยืนยัน,มนน
+4,3,CMD_REF_CANCEL,Cancel,ปุ่มยกเลิก,มยกเก
+5,4,CMD_TALK_BACKLOG_VIEW,Text Log,บันทึกบทสนทนา,นกบทสนทนา
+6,5,CMD_ANY,Any Button,กดปุ่มใดก็ได้,กดมใดไ
+7,6,CMD_UNIT_MOVE_STICK,Move,เคลื่อนที่,เคอน
+8,7,CMD_UNIT_MOVE_LEFT,Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ)
+9,8,CMD_UNIT_MOVE_UP,Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ)
+10,9,CMD_UNIT_MOVE_DOWN,Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ)
+11,10,CMD_UNIT_MOVE_RIGHT,Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ)
+12,11,CMD_UNIT_MOVE_STICK_FIRST,Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ)
+13,12,CMD_UNIT_ACTION,Use,ใช้งาน,ใงาน
+14,13,CMD_UNIT_ACTION_BUFFERING,Action (Queue Input),แอ็กชัน (กดล่วงหน้า),แกน (กดวงหา)
+15,14,CMD_UNIT_ACTION_PRESS,Action,แอ็กชัน,แกน
+16,15,CMD_UNIT_ACTION_LEFT,Action Left,แอ็กชันซ้าย,แกนาย
+17,16,CMD_UNIT_ACTION_UP,Action Up,แอ็กชันบน,แกนบน
+18,17,CMD_UNIT_ACTION_DOWN,Action Down,แอ็กชันล่าง,แกนาง
+19,18,CMD_UNIT_ACTION_RIGHT,Action Right,แอ็กชันขวา,แกนขวา
+20,19,CMD_UNIT_ACTION_CANCEL,Cancel Action,ยกเลิกแอ็กชัน,ยกเกแกน
+21,20,CMD_UNIT_ITEM,Use,ใช้งาน,ใงาน
+22,21,CMD_UNIT_ITEM_BUFFERING,Use (Queue Input),ใช้งาน (กดล่วงหน้า),ใงาน (กดวงหา)
+23,22,CMD_UNIT_ITEM_PRESS,Use Item (Hold),ใช้ไอเทม (กดค้าง),ใไอเทม (กดาง)
+24,23,CMD_UNIT_NUE_DASH,Nue Pelt Dash,พุ่งตัวด้วยหนังนูเอะ,งววยหงเอะ
+25,24,CMD_UNIT_ACTION_CONTINUS_PLACEMENT,Place (Continuous),วางต่อเนื่อง,วางอเอง
+26,25,CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP,Place (Continuous),วางต่อเนื่อง,วางอเอง
+27,26,CMD_UNIT_CHANGE_HANDHELD_PREV,Switch Item (Not Implemented?),เปลี่ยนไอเทม (ยังไม่เปิดใช้?),เปยนไอเทม (งไเดใ?)
+28,27,CMD_UNIT_CHANGE_HANDHELD_NEXT,Switch Item (Not Implemented?),เปลี่ยนไอเทม (ยังไม่เปิดใช้?),เปยนไอเทม (งไเดใ?)
+29,28,CMD_UNIT_JUMP,Jump,กระโดด,กระโดด
+30,29,CMD_UNIT_MOVE_PARALLEL,Sidestep,เคลื่อนที่สไลด์ข้าง,เคอนสไลาง
+31,30,CMD_UNIT_MOVE_STICK_PARALLEL,Sidestep (Stick),โยกอนาล็อกสไลด์ข้าง,โยกอนาอกสไลาง
+32,31,CMD_UNIT_MOVE_ANGLE,Rotate,เปลี่ยนทิศทาง,เปยนศทาง
+33,32,CMD_UNIT_MOVE_STICK_ANGLE,Rotate (Stick),โยกอนาล็อกเปลี่ยนทิศทาง,โยกอนาอกเปยนศทาง
+34,33,CMD_UNIT_DETAIL,Show Details,แสดงรายละเอียด,แสดงรายละเยด
+35,34,CMD_UNIT_ITEM_INVENTORY_LEFT,Move Inventory Cursor,เลื่อนช่องกระเป๋าเก็บของ,เอนองกระเาเบของ
+36,35,CMD_UNIT_ITEM_INVENTORY_RIGHT,Move Inventory Cursor,เลื่อนช่องกระเป๋าเก็บของ,เอนองกระเาเบของ
+37,36,CMD_UNIT_ITEM_INVENTORY_NEXT,Switch Inventory Row,สลับแถวกระเป๋าเก็บของ,สบแถวกระเาเบของ
+38,37,CMD_UNIT_ITEM_INVENTORY_DETAIL,Details,รายละเอียด,รายละเยด
+39,38,CMD_UNIT_MAIN_MENU,Main Menu,เมนูหลัก,เมหก
+40,39,CMD_UNIT_CHANGE_CAMERA,Zoom Camera,ซูมกล้องเข้า/ออก,มกองเา/ออก
+41,40,CMD_UNIT_SHORTCUT_MEMO,Note Function,สมุดบันทึก,สดนก
+42,41,CMD_UNIT_SHORTCUT_TOOL,Tools,อุปกรณ์,ปกร
+43,42,CMD_UNIT_SHORTCUT_INVENTORY,Inventory,กระเป๋าเก็บของ,กระเาเบของ
+44,43,CMD_UNIT_FLUTTER,Flail (No Implementation),ดิ้นไปมา (ยังไม่เปิดใช้),นไปมา (งไเดใ)
+45,44,CMD_INTERACTION,Interact ✕,โต้ตอบ ✕,โตอบ ✕
+46,45,CMD_INTERACTION_INVISIBLE,Interact ✕ (Not Displayed),โต้ตอบ ✕ (ซ่อน),โตอบ ✕ (อน)
+47,46,CMD_INTERACTION_TRIANGLE,Interact △,โต้ตอบ △,โตอบ △
+48,47,CMD_INTERACTION_CANCEL,Interact 〇,โต้ตอบ 〇,โตอบ 〇
+49,48,CMD_INTERACTION_CANCEL_INVISIBLE,Interact ○ (Not Displayed),โต้ตอบ 〇 (ซ่อน),โตอบ 〇 (อน)
+50,49,CMD_INTERACTION_SQUARE,Interact □,โต้ตอบ □,โตอบ □
+51,50,CMD_INTERACTION_DOWN,Interact ✕ (Press),โต้ตอบ ✕ (กด),โตอบ ✕ (กด)
+52,51,CMD_INTERACTION_TRIANGLE_DOWN,Interact △ (Press),โต้ตอบ △ (กด),โตอบ △ (กด)
+53,52,CMD_INTERACTION_CANCEL_DOWN,Interact 〇 (Press),โต้ตอบ 〇 (กด),โตอบ 〇 (กด)
+54,53,CMD_INTERACTION_SQUARE_DOWN,Interact □ (Press),โต้ตอบ □ (กด),โตอบ □ (กด)
+55,54,CMD_INTERACTION_L1_INVISIBLE,Interact L1 (Not Displayed),โต้ตอบ L1 (ซ่อน),โตอบ L1 (อน)
+56,55,CMD_INTERACTION_PRESS,Interact (Hold),โต้ตอบ (กดค้าง),โตอบ (กดาง)
+57,56,CMD_INTERACTION_TRIANGLE_PRESS,Interact △ (Hold),โต้ตอบ △ (กดค้าง),โตอบ △ (กดาง)
+58,57,CMD_INTERACTION_CANCEL_PRESS,Interact 〇 (Hold),โต้ตอบ 〇 (กดค้าง),โตอบ 〇 (กดาง)
+59,58,CMD_INTERACTION_SQUARE_PRESS,Interact □ (Hold),โต้ตอบ □ (กดค้าง),โตอบ □ (กดาง)
+60,59,CMD_INTERACTION_LONG,Interact: Hold,โต้ตอบ (กดค้าง),โตอบ (กดาง)
+61,60,CMD_INTERACTION_LONG_TRIANGLE,Interaction: Hold △,โต้ตอบ (กดค้าง) △,โตอบ (กดาง) △
+62,61,CMD_INTERACTION_LONG_CANCEL,Interaction: Hold 〇,โต้ตอบ (กดค้าง) 〇,โตอบ (กดาง) 〇
+63,62,CMD_INTERACTION_LONG_SQUARE,Interaction: Hold □,โต้ตอบ (กดค้าง) □,โตอบ (กดาง) □
+64,63,CMD_INTERACTION_ENTER,Enter,เข้าไป,เาไป
+65,64,CMD_INTERACTION_EXIT,Exit,ออกไป,ออกไป
+66,65,CMD_INTERACTION_OPEN,Open,เปิด,เด
+67,66,CMD_INTERACTION_CLOSE,Close,ปิด,ด
+68,67,CMD_INTERACTION_SHAKE,Shake,เขย่า,เขา
+69,68,CMD_INTERACTION_HARVEST,Harvest,เก็บเกี่ยว,เบเยว
+70,69,CMD_INTERACTION_HARVEST_BUFFERING,Harvest (Queue Input),เก็บเกี่ยว (กดล่วงหน้า),เบเยว (กดวงหา)
+71,70,CMD_INTERACTION_HARVEST_PRESS,Harvest (Hold),เก็บเกี่ยว (กดค้าง),เบเยว (กดาง)
+72,71,CMD_INTERACTION_LIVESTOCK_ACTION,Action (Livestock),แอ็กชันกับสัตว์เลี้ยง,แกนบตเยง
+73,72,CMD_INTERACTION_MILKING,Milk,รีดนม,ดนม
+74,73,CMD_INTERACTION_ON,Turn On,เปิดไฟ,เดไฟ
+75,74,CMD_INTERACTION_OFF,Turn Off,ปิดไฟ,ดไฟ
+76,75,CMD_INTERACTION_SWITCH_ON,Switch On,เปิดสวิตช์,เดสต
+77,76,CMD_INTERACTION_SWITCH_OFF,Switch Off,ปิดสวิตช์,ดสต
+78,77,CMD_INTERACTION_ITEM_IN,Insert,ใส่เข้าไป,ใเาไป
+79,78,CMD_INTERACTION_ITEM_OUT,Take Out,หยิบออกมา,หบออกมา
+80,79,CMD_INTERACTION_SLEEP,Sleep,เข้านอน,เานอน
+81,80,CMD_INTERACTION_AWAKE,Wake Up,ตื่นนอน,นนอน
+82,81,CMD_INTERACTION_SIT,Sit,นั่งลง,งลง
+83,82,CMD_INTERACTION_STAND,Stand,ยืนขึ้น,นน
+84,83,CMD_INTERACTION_SPEAK,Talk,พูดคุย,ดย
+85,84,CMD_INTERACTION_LET_GO,Release,ปล่อยไป,ปอยไป
+86,85,CMD_INTERACTION_CHANGE_CLOTHES,Change Clothes,เปลี่ยนชุด,เปยนด
+87,86,CMD_INTERACTION_CHECK,Examine,สำรวจ,รวจ
+88,87,CMD_INTERACTION_PUT_AWAY,Put Away,เก็บของ,เบของ
+89,88,CMD_INTERACTION_PUMP,Draw Water,ตักน้ำ,ก
+90,89,CMD_INTERACTION_INSERT_FLOWER,Insert Flower,ปักดอกไม้,กดอกไ
+91,90,CMD_INTERACTION_ANSWER_PHONE,Answer Phone,รับโทรศัพท์,บโทรพ
+92,91,CMD_INTERACTION_CONFIRM,Check,ตรวจสอบ,ตรวจสอบ
+93,92,CMD_INTERACTION_TAKEOUT_LONG,Take Out,หยิบออกมา,หบออกมา
+94,93,CMD_INTERACTION_OBTAIN,Acquire,ได้รับไอเทม,ไบไอเทม
+95,94,CMD_INTERACTION_PICK_UP,Pick Up,เก็บขึ้นมา,เบนมา
+96,95,CMD_INTERACTION_PICK_UP_ITEMFULL,Pick Up,เก็บขึ้นมา,เบนมา
+97,96,CMD_INTERACTION_TAKEOUT,Withdraw,นำออกมา,ออกมา
+98,97,CMD_INTERACTION_RETURN,Insert,เก็บใส่คืน,เบใน
+99,98,CMD_INTERACTION_PUT,Place,วางลง,วางลง
+100,99,CMD_INTERACTION_AXE,Swing Axe,เหวี่ยงขวาน,เหยงขวาน
+101,100,CMD_INTERACTION_GENERALSTORE,Tagami General Store,ร้านของชำทากามิ,านของทากา
+102,101,CMD_INTERACTION_SHOPPING,Browse,ดูสินค้า,นา
+103,102,CMD_INTERACTION_ANIMAL_SHOPPING,Purchase Livestock,ซื้อสัตว์เลี้ยง,อตเยง
+104,103,CMD_INTERACTION_ITEM_SHOPPING,Browse,ดูสินค้า,นา
+105,104,CMD_INTERACTION_CONSTRUCTION_SHED,Kiki Construction,ร้านก่อสร้างคิกิ,านอสาง
+106,105,CMD_INTERACTION_RESTAURANT,Chawantei,ร้านชาวันเท,านชานเท
+107,106,CMD_INTERACTION_FIRST_FLOOR,Second Floor,ชั้น 2,น 2
+108,107,CMD_INTERACTION_DINING_ROOM,Diner,ห้องอาหาร,องอาหาร
+109,108,CMD_INTERACTION_MAYOR_HOUSE,Kiki Manor,คฤหาสน์ผู้ใหญ่บ้าน,คฤหาสใหาน
+110,109,CMD_INTERACTION_CORRIDOR,Corridor,ทางเดิน,ทางเน
+111,110,CMD_INTERACTION_RIN_ROOM,Rin's Room,ห้องของริน,องของน
+112,111,CMD_INTERACTION_KONNO_ROOM,Konno's Room,ห้องของคอนโนะ,องของคอนโนะ
+113,112,CMD_INTERACTION_BACK_ROAD,Estate Backroad,ทางลัดหลังคฤหาสน์,ทางดหงคฤหาส
+114,113,CMD_INTERACTION_CLINIC,Kusunoki Clinic,คลินิกคุสุโนกิ,คกโน
+115,114,CMD_INTERACTION_CLINIC_ENTRANCE,Reception,แผนกต้อนรับ,แผนกอนบ
+116,115,CMD_INTERACTION_CLINIC_ROOM,Sickroom,ห้องพักผู้ป่วย,องกวย
+117,116,CMD_INTERACTION_LIBRARY,Library,ห้องสมุด,องสด
+118,117,CMD_INTERACTION_HUNTINGLODGE,Hunting Lodge,ป้อมพรานล่าสัตว์,อมพรานาต
+119,118,CMD_INTERACTION_CARPENTER_HOUSE,Kisuke's House,บ้านของคิสุเกะ,านของเกะ
+120,119,CMD_INTERACTION_GENERALSTORE_HOUSE,Sazanka's House,บ้านของซาซังกะ,านของซางกะ
+121,120,CMD_INTERACTION_HUNTERS_HOUSE,Komako & Shiroji's House,บ้านของโคมะโกะและชิโรจิ,านของโคมะโกะและโร
+122,121,CMD_INTERACTION_KOMAKO_ROOM,Komako's Room,ห้องของโคมะโกะ,องของโคมะโกะ
+123,122,CMD_INTERACTION_SHIROJI_ROOM,Shiroji's Room,ห้องของชิโรจิ,องของโร
+124,123,CMD_INTERACTION_YOUTH_HOUSE,Yuta's House,บ้านของยูตะ,านของตะ
+125,124,CMD_INTERACTION_DOCTOR_AND_BOY_HOUSE,Hasumi & Sumire's House,บ้านของฮาสุมิและสุมิเระ,านของฮาและเระ
+126,125,CMD_INTERACTION_HASUMI_ROOM,Hasumi's Room,ห้องของฮาสุมิ,องของฮา
+127,126,CMD_INTERACTION_SUMIRE_ROOM,Sumire's Room,ห้องของสุมิเระ,องของเระ
+128,127,CMD_INTERACTION_HALL_EMPLOYEE_HOUSE,Nago's House,บ้านของนาโงะ,านของนาโงะ
+129,128,CMD_INTERACTION_MAYOR_DETACHED_BUILDING,Kiki Guest House,เรือนรับรองคฤหาสน์ผู้ใหญ่บ้าน,เอนบรองคฤหาสใหาน
+130,129,CMD_INTERACTION_MAYOR_STOREHOUSE,Kiki Storehouse,โกดังคฤหาสน์ผู้ใหญ่บ้าน,โกงคฤหาสใหาน
+131,130,CMD_INTERACTION_CLOCK_TOWER,Clock Tower,หอนาฬิกา,หอนากา
+132,131,CMD_INTERACTION_CHINANA_TRUCK,Chinana's Truck,รถบรรทุกของชินานะ,รถบรรกของนานะ
+133,132,CMD_INTERACTION_ROOM_OUT,Exit,ออกไป,ออกไป
+134,133,CMD_INTERACTION_MYHOUSE,My House,บ้านของฉัน,านของน
+135,134,CMD_INTERACTION_MYHOUSE_UNDERGROUND,Underground,ชั้นใต้ดิน,นใน
+136,135,CMD_INTERACTION_MYHOUSE_GROUND_FLOOR,Ground Floor,ชั้น 1,น 1
+137,136,CMD_INTERACTION_AVIARY,Coop,เล้าไก่,เาไ
+138,137,CMD_INTERACTION_LIVESTOCKHOUSE,Barn,คอกสัตว์,คอกต
+139,138,CMD_INTERACTION_BARN,Storage Shed,โรงนา,โรงนา
+140,139,CMD_INTERACTION_GREENHOUSE,Greenhouse,เรือนกระจก,เอนกระจก
+141,140,CMD_INTERACTION_MAILBOX,Mailbox,ตู้จดหมาย,จดหมาย
+142,141,CMD_INTERACTION_ONIZUKA,Estate Backroad,ทางลัดหลังคฤหาสน์,ทางดหงคฤหาส
+143,142,CMD_INTERACTION_UNDERGROUND_ROAD,Underground Passage,ทางเดินใต้ดิน,ทางเนใน
+144,143,CMD_INTERACTION_LOST_HOUSE,Deserted House,บ้านร้าง,านาง
+145,144,CMD_INTERACTION_MOVE_ON,Advance,เดินหน้า,เนหา
+146,145,CMD_INTERACTION_RETURN_MOUNTAIN,Return,ย้อนกลับ,อนกบ
+147,146,CMD_INTERACTION_MOVE_FORWARD,Advance,เดินหน้า,เนหา
+148,147,CMD_INTERACTION_RETURN_EXIT,Return,ย้อนกลับ,อนกบ
+149,148,CMD_INTERACTION_DUNGEON,Quarry,เหมืองหิน,เหองน
+150,149,CMD_INTERACTION_BACK,Ascend,ปีนขึ้น,นน
+151,150,CMD_INTERACTION_NEXT_FLOOR,Descend,ลงไปข้างล่าง,ลงไปางาง
+152,151,CMD_INTERACTION_ELEVATOR,Elevator,ลิฟต์,ฟ
+153,152,CMD_INTERACTION_SHIPPINGBOX,Ship,จัดส่งสินค้า,ดงนา
+154,153,CMD_INTERACTION_CHEST,Storage Chest,หีบเก็บของ,บเบของ
+155,154,CMD_INTERACTION_REWARD_BOX,Reward Box,กล่องรางวัล,กองรางล
+156,155,CMD_INTERACTION_CONSTRUCTION_BOX,Collection Box,กล่องรวบรวมของ,กองรวบรวมของ
+157,156,CMD_INTERACTION_BOARD,Bulletin Board,กระดานข่าว,กระดานาว
+158,157,CMD_INTERACTION_BUNDLE,Bundle,ชุดของถวาย,ดของถวาย
+159,158,CMD_INTERACTION_SUBMIT_CERTIFICATE,Insert Hunting Certificate,ใส่ใบรับรองการล่าสัตว์,ใใบบรองการาต
+160,159,CMD_INTERACTION_PUSH_ITEM,Insert,ใส่เข้าไป,ใเาไป
+161,160,CMD_INTERACTION_PUSH_ITEM_LONG,Insert All,ใส่ทั้งหมด,ใงหมด
+162,161,CMD_INTERACTION_TICKET,Hand Over Errand Coupon,มอบคูปองช่วยงาน,มอบปองวยงาน
+163,162,CMD_INTERACTION_SUBMIT_QUEST_ITEM,Give,ส่งมอบ,งมอบ
+164,163,CMD_INTERACTION_PRESENT,Gift,มอบของขวัญ,มอบของขญ
+165,164,CMD_INTERACTION_PRESENT_DISABLE,Gift,มอบของขวัญ,มอบของขญ
+166,165,CMD_INTERACTION_DELIVER_SUBQUEST_ITEM,Deliver,ส่งของ,งของ
+167,166,CMD_INTERACTION_CARESS,Pet,ลูบตัว,บว
+168,167,CMD_INTERACTION_FEED,Feed,ให้อาหาร,ใอาหาร
+169,168,CMD_INTERACTION_RETRIEVE,Retrieve,เก็บคืน,เบน
+170,169,CMD_INTERACTION_RETRIEVE_PRESS,Retrieve (Hold),เก็บคืน (กดค้าง),เบน (กดาง)
+171,170,CMD_INTERACTION_COLLECT,Collect,เก็บเกี่ยววัตถุดิบ,เบเยวตบ
+172,171,CMD_INTERACTION_OBTAIN_CREATURE,Retrieve,จับสัตว์,บต
+173,172,CMD_INTERACTION_RELEASE_CREATURE,Release,ปล่อยสัตว์ไป,ปอยตไป
+174,173,CMD_INTERACTION_PUT_BAIT,Place Bait,วางเหยื่อ,วางเหอ
+175,174,CMD_INTERACTION_FISHING,Fish,ตกปลา,ตกปลา
+176,175,CMD_INTERACTION_FISHING_CANCEL,Stop,หยุดตกปลา,หดตกปลา
+177,176,CMD_INTERACTION_FISHING_HIT,Reel In,ดึงเบ็ดขึ้นมา,งเดนมา
+178,177,CMD_INTERACTION_GACHAPON,Turn,หมุนกาชาปอง,หนกาชาปอง
+179,178,CMD_INTERACTION_FHONE_BOX,Phone Booth,ตู้โทรศัพท์,โทรพ
+180,179,CMD_INTERACTION_HIDE,Hide,ซ่อนตัว,อนว
+181,180,CMD_INTERACTION_HIDE_OUT,Exit,ออกจากที่ซ่อน,ออกจากอน
+182,181,CMD_INTERACTION_COVER,Examine,สำรวจ,รวจ
+183,182,CMD_INTERACTION_TAKE,Take,หยิบเอาไป,หบเอาไป
+184,183,CMD_INTERACTION_PUT_GROUND,Place on Ground,วางบนพื้น,วางบนน
+185,184,CMD_INTERACTION_EXPLORE,Explore,สำรวจ,รวจ
+186,185,CMD_INTERACTION_PUT_ALTAR,Toss in,โยนลงไป,โยนลงไป
+187,186,CMD_INTERACTION_WRITE_LETTERS,Write,เขียนตัวหนังสือ,เยนวหงอ
+188,187,CMD_INTERACTION_REPAIR,Repair,ซ่อมแซม,อมแซม
+189,188,CMD_INTERACTION_PASS,Pass,เดินผ่าน,เนาน
+190,189,CMD_INTERACTION_OFFERING,Make Offering,ถวายเครื่องเซ่น,ถวายเคองเน
+191,190,CMD_INTERACTION_CLEAN_UP,Clean Up,เก็บกวาด,เบกวาด
+192,191,CMD_INTERACTION_PULL_OUT,Pull Out,ดึงถอนออกมา,งถอนออกมา
+193,192,CMD_INTERACTION_LOOK,Look,มองดู,มอง
+194,193,CMD_INTERACTION_CROPS_DEVOTE,Offer Crops,ถวายพืชผล,ถวายชผล
+195,194,CMD_INTERACTION_SOUND_TEST,Listen to Music,ฟังเพลง,งเพลง
+196,195,CMD_INTERACTION_CALENDAR,Calendar,ปฏิทิน,ปน
+197,196,CMD_INTERACTION_DUNGEON_MINECART,Minecart,รถราง,รถราง
+198,197,CMD_INTERACTION_DRESS_UP,Change Clothes,เปลี่ยนชุด,เปยนด
+199,198,CMD_INTERACTION_PUT_TO_GRAVE,Place Baby,วางทารก,วางทารก
+200,199,CMD_INTERACTION_PUT_IN_HAY,Insert Hay,ใส่หญ้าแห้ง,ใหาแง
+201,200,CMD_INTERACTION_REMOVE_HAY,Withdraw Hay,หยิบหญ้าแห้งออกมา,หบหาแงออกมา
+202,201,CMD_INTERACTION_PRESENT_CHEESE,Give Cheese,มอบชีส,มอบส
+203,202,CMD_INTERACTION_GHOST_RAT,Rat?,หนูงั้นเหรอ?,หนเหรอ?
+204,203,CMD_INTERACTION_POUND_MOCHI,Pound Mochi,ตำโมจิ,โม
+205,204,CMD_INTERACTION_KAGAMI_MOCHI,Make Kagami Mochi,ทำคางามิโมจิ,คางาโม
+206,205,CMD_INTERACTION_ROAST_POTATO,Roast Sweet Potato,เผามันเทศ,เผานเทศ
+207,206,CMD_INTERACTION_SHOOT_GAME,Play Shooting Gallery,เล่นเกมยิงเป้า,เนเกมงเา
+208,207,CMD_INTERACTION_RESTAURANT_ORDER,Order,สั่งอาหาร,งอาหาร
+209,208,CMD_INTERACTION_STORY_00_013,???,???,???
+210,209,CMD_INTERACTION_STORY_04_040,Speak To,เข้าไปคุย,เาไปย
+211,210,CMD_INTERACTION_PULL,Pull,ดึง,ง
+212,211,CMD_INTERACTION_STORY_05_036,Cut,ฟัน,น
+213,212,CMD_INTERACTION_STORY_06_009,Jump Down,กระโจนลงไป,กระโจนลงไป
+214,213,CMD_INTERACTION_STORY_06_010,Accept,รับไว้,บไ
+215,214,CMD_INTERACTION_STORY_06_054,Push,ผลัก,ผก
+216,215,CMD_INTERACTION_STORY_06_062,Jump Down,กระโดด,กระโดด
+217,216,CMD_INTERACTION_CRAFT_TABLE,Workbench,โต๊ะคราฟต์ของ,โะคราฟของ
+218,217,CMD_INTERACTION_DYEING_MACHINE,Dye Station,โต๊ะย้อมสี,โะอม
+219,218,CMD_INTERACTION_ANVIL,Anvil,ทั่งตีเหล็ก,งเหก
+220,219,CMD_INTERACTION_COOKING,Cook,ทำอาหาร,อาหาร
+221,220,CMD_INTERACTION_LIVESTOCK_LIST,Livestock List,รายชื่อสัตว์เลี้ยง,รายอตเยง
+222,221,CMD_PROCESS_MACHINE_CLOSE,Close,ปิด,ด
+223,222,CMD_CRAFT_TABLE_FOCUS_DETAIL,Details,รายละเอียด,รายละเยด
+224,223,CMD_CRAFT_TABLE_FOCUS_LIST,Return,ย้อนกลับ,อนกบ
+225,224,CMD_CRAFT_TABLE_CRAFT,Craft,สร้าง,สาง
+226,225,CMD_CRAFT_TABLE_CRAFT_KEEP,Craft (Multi),สร้าง (ต่อเนื่อง),สาง (อเอง)
+227,226,CMD_COOKING_COOK,Cooking,ปรุงอาหาร,ปงอาหาร
+228,227,CMD_COOKING_COOK_KEEP,Cooking (Multi),ปรุงอาหาร (ต่อเนื่อง),ปงอาหาร (อเอง)
+229,228,CMD_CRAFT_TABLE_CHANGE_TAB,Tab,สลับแท็บ,สบแบ
+230,229,CMD_CRAFT_TABLE_TOGGLE_FAVORITE,Favorite,รายการโปรด,รายการโปรด
+231,230,CMD_STORAGE_MENU_CLOSE,Close,ปิด,ด
+232,231,CMD_STORAGE_MENU_PUSH,Move,ย้าย,าย
+233,232,CMD_STORAGE_MENU_PUSH_KEEP,Move (Continuous),ย้าย (ต่อเนื่อง),าย (อเอง)
+234,233,CMD_STORAGE_MENU_PUSH_ALL,Move All,ย้ายทั้งหมด,ายงหมด
+235,234,CMD_STORAGE_MENU_SORT,Sort,จัดเรียง,ดเยง
+236,235,CMD_STORAGE_MENU_PUSH_SAME,Group Identical Items,ย้ายของที่เหมือนกัน,ายของเหอนน
+237,236,CMD_STORAGE_MENU_CHANGE_TARGET,Switch,สลับฝั่ง,สบง
+238,237,CMD_STORAGE_MENU_NAMING,Name,ตั้งชื่อ,งอ
+239,238,CMD_STORAGE_MENU_CHANGE_BAG,Swap Bag (Not Implemented?),สลับกระเป๋า (ยังไม่เปิดใช้?),สบกระเา (งไเดใ?)
+240,239,CMD_STORAGE_MENU_SHOW_LIST,Open/Close List,เปิด/ปิดรายการ,เด/ดรายการ
+241,240,CMD_STORAGE_MENU_LINK_CHANGE_LEFT,Switch Storage Chest,สลับหีบเก็บของ,สบบเบของ
+242,241,CMD_STORAGE_MENU_LINK_CHANGE_RIGHT,Switch Storage Chest,สลับหีบเก็บของ,สบบเบของ
+243,242,CMD_INTERACTION_PUT_TABLETOP,Place,วาง,วาง
+244,243,CMD_PUT_TABLETOP_CLOSE,Close,ปิด,ด
+245,244,CMD_PUT_TABLETOP_FOCUS_BELONGINGS,Confirm,ยืนยัน,นน
+246,245,CMD_PUT_TABLETOP_FOCUS_TABLETOP,Return,ย้อนกลับ,อนกบ
+247,246,CMD_PUT_TABLETOP_PUT_ON,Place,วางลง,วางลง
+248,247,CMD_PUT_TABLETOP_PUT_AWAY,Remove,นำออก,ออก
+249,248,CMD_PUT_TABLETOP_PUT_ROTATE_R,Rotate,หมุนขวา,หนขวา
+250,249,CMD_PUT_TABLETOP_PUT_ROTATE_L,Rotate,หมุนซ้าย,หนาย
+251,250,CMD_INVENTORY_MENU_BOUND_UP,Select,เลือก,เอก
+252,251,CMD_INVENTORY_MENU_BOUND_DOWN,Select,เลือก,เอก
+253,252,CMD_INVENTORY_MENU_BOUND_LEFT,Select,เลือก,เอก
+254,253,CMD_INVENTORY_MENU_BOUND_RIGHT,Select,เลือก,เอก
+255,254,CMD_DAIRY_RESULT_CHANGE,Switch,สลับหน้า,สบหา
+256,255,CMD_WHISTLE_NOTE_INPUT_1,Input Musical Note,กดตัวโน้ต,กดวโต
+257,256,CMD_WHISTLE_NOTE_INPUT_2,Input Musical Note,กดตัวโน้ต,กดวโต
+258,257,CMD_WHISTLE_NOTE_INPUT_STICK,Input Musical Note,โยกอนาล็อกกดตัวโน้ต,โยกอนาอกกดวโต
+259,258,CMD_WHISTLE_CHANGE_SONG,Switch Sheet Music,สลับโน้ตเพลง,สบโตเพลง
+260,259,CMD_TOOL_CIRCLE_CANCEL,Close,ปิด,ด
+261,260,CMD_TOOL_CIRCLE_DECIDE,Confirm,ยืนยัน,นน
+262,261,CMD_TOOL_CIRCLE_WHISTLE,Finger Whistle,ผิวปาก,วปาก
+263,262,CMD_TOOL_CIRCLE_HATCHET,Machete,มีดพร้า,ดพา
+264,263,CMD_TOOL_CIRCLE_STICK,Select,เลือก,เอก
+265,264,CMD_MEMOLIST_REMOVE_PRESS,Delete Note,ลบบันทึก,ลบนก
+266,265,CMD_MEMOLIST_REMOVE_PRESS_KEEP,Delete Note,ลบบันทึก,ลบนก
+267,266,CMD_MEMOLIST_REMOVE_PRESS_HELP,Delete Note,ลบบันทึก,ลบนก
+268,267,CMD_MEMOLIST_REMOVE_RELEASE,Cancel Deletion,ยกเลิกการลบ,ยกเกการลบ
+269,268,CMD_STORE_ADD,Add,เพิ่ม,เม
+270,269,CMD_STORE_ADD_KEEP,Add (Continuous),เพิ่ม (ต่อเนื่อง),เม (อเอง)
+271,270,CMD_STORE_RETURN,Return,ลดลง,ลดลง
+272,271,CMD_STORE_RETURN_KEEP,Return (Continuous),ลดลง (ต่อเนื่อง),ลดลง (อเอง)
+273,272,CMD_STORE_CHANGE_TARGET,Switch,สลับแท็บ,สบแบ
+274,273,CMD_STORE_BUY,Purchase,ซื้อ,อ
+275,274,CMD_STORE_ORDER,Order,สั่งซื้อ,งอ
+276,275,CMD_INTERACTION_SHRINE,Crossroads Hokora,ศาลเจ้าทางแยก,ศาลเาทางแยก
+277,276,CMD_SHRINE_CLOSE,Close,ปิด,ด
+278,277,CMD_SHRINE_GENERATE_SPHERE,Generate Skill Sphere,สร้างลูกแก้วสกิล,สางกแวสล
+279,278,CMD_SHRINE_CHANGE_SKILLTREE,Skill Tree,ผังสกิล,งสล
+280,279,CMD_SKILLTREE_MOVE_STICK,Move,เลื่อนดู,เอน
+281,280,CMD_SKILLTREE_MOVE_UP,Move,เลื่อนขึ้น,เอนน
+282,281,CMD_SKILLTREE_MOVE_DOWN,Move,เลื่อนลง,เอนลง
+283,282,CMD_SKILLTREE_MOVE_LEFT,Move,เลื่อนซ้าย,เอนาย
+284,283,CMD_SKILLTREE_MOVE_RIGHT,Move,เลื่อนขวา,เอนขวา
+285,284,CMD_SKILLTREE_RELEASE,Unlock Skill,ปลดล็อกสกิล,ปลดอกสล
+286,285,CMD_SKILLTREE_CHANGE_SHRINE,Return,ย้อนกลับ,อนกบ
+287,286,CMD_INTERACTION_CONSTRUCTION,Kiki Construction,ร้านก่อสร้างคิกิ,านอสาง
+288,287,CMD_CONSTRUCTION_CLOSE,Close,ปิด,ด
+289,288,CMD_CONSTRUCTION_DECIDE,Confirm,ยืนยัน,นน
+290,289,CMD_CONSTRUCTION_EDIT_DECIDE,Confirm,ยืนยัน,นน
+291,290,CMD_CONSTRUCTION_EDIT_CANCEL,Return,ย้อนกลับ,อนกบ
+292,291,CMD_CONSTRUCTION_EDIT_ROTATE,Flip,กลับด้าน,กบาน
+293,292,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET,Change Target,เปลี่ยนเป้าหมาย,เปยนเาหมาย
+294,293,CMD_CONSTRUCTION_MAP_MOVE_STICK,Move,เลื่อนแผนที่,เอนแผน
+295,294,CMD_MAINMENU_SHIFT_L,Toggle Main Menu (Left),เลื่อนเมนูหลักซ้าย,เอนเมหกาย
+296,295,CMD_MAINMENU_SHIFT_R,Toggle Main Menu (Right),เลื่อนเมนูหลักขวา,เอนเมหกขวา
+297,296,CMD_MAINMENU_CLOSE,Close,ปิด,ด
+298,297,CMD_MAINMENU_INVENTORY_POP_PUSH,Grab/Place,หยิบ / วาง,หบ / วาง
+299,298,CMD_MAINMENU_INVENTORY_PUSH,Place One,วางทีละชิ้น,วางละน
+300,299,CMD_MAINMENU_INVENTORY_POP_CANCEL,Return,เก็บคืนที่เดิม,เบนเม
+301,300,CMD_MAINMENU_INVENTORY_PUTAWAY,Place on Floor,วางบนพื้น,วางบนน
+302,301,CMD_MAINMENU_INVENTORY_DECIDE,Confirm,ยืนยัน,นน
+303,302,CMD_MAINMENU_INVENTORY_MENU,Discard,ทิ้งของ,งของ
+304,303,CMD_MAINMENU_MAP_DETAIL_NPC,Details,รายละเอียด,รายละเยด
+305,304,CMD_MAINMENU_MAP_STAMP,Stamp,ปักหมุด,กหด
+306,305,CMD_MAINMENU_MAP_LIST,List,รายการ,รายการ
+307,306,CMD_MAINMENU_MAP_RETURN,Return,ย้อนกลับ,อนกบ
+308,307,CMD_MAINMENU_MAP_QUICK,Cursor Speed,เลื่อนเร็ว,เอนเว
+309,308,CMD_MAINMENU_MAP_MOVE,Move,เลื่อนดู,เอน
+310,309,CMD_MAINMENU_MAP_SCALE_UP,Zoom In,ซูมเข้า,มเา
+311,310,CMD_MAINMENU_MAP_SCALE_DOWN,Zoom Out,ซูมออก,มออก
+312,311,CMD_MAINMENU_QUEST_OPEN,Expand,ขยาย,ขยาย
+313,312,CMD_MAINMENU_QUEST_CLOSE,Collapse,ย่อเก็บ,อเบ
+314,313,CMD_MAINMENU_VILLAGER_SEARCH,Check Location,ดูตำแหน่งที่อยู่,แหงอ
+315,314,CMD_MAINMENU_ENCYCLOPEDIA_SKIP,Next Page,หน้าถัดไป,หาดไป
+316,315,CMD_MAINMENU_QUEST_CHECKLIST_SCROLL,Checklist Up/Down (No translation needed),เลื่อนเช็กลิสต์ขึ้น/ลง,เอนเกสน/ลง
+317,316,CMD_INPUT_STRING_DELETE,Backspace,ลบตัวอักษร,ลบวกษร
+318,317,CMD_INPUT_STRING_SPACE,Space,เว้นวรรค,เนวรรค
+319,318,CMD_INPUT_STRING_CANCEL,Cancel,ยกเลิก,ยกเก
+320,319,CMD_INPUT_STRING_OK,Confirm,ยืนยัน,นน
+321,320,CMD_INPUT_STRING_BOUND_DOWN,Select,เลือก,เอก
+322,321,CMD_INPUT_STRING_BOUND_UP,Select,เลือก,เอก
+323,322,CMD_IPUNT_STRING_CHAR_FIX,Input confirmed,ยืนยันตัวอักษร,นนวกษร
+324,323,CMD_CHARACTERMAKE_BAR_LEFT,Left Shift,เลื่อนซ้าย,เอนาย
+325,324,CMD_CHARACTERMAKE_BAR_RIGHT,Right Shift,เลื่อนขวา,เอนขวา
+326,325,CMD_CHARACTERMAKE_BAR_LEFT_KEEP,Left Shift (Hold),เลื่อนซ้าย (กดค้าง),เอนาย (กดาง)
+327,326,CMD_CHARACTERMAKE_BAR_RIGHT_KEEP,Right Shift (Hold),เลื่อนขวา (กดค้าง),เอนขวา (กดาง)
+328,327,CMD_CHARACTERMAKE_ROTATE_PLAYER,Rotate,หมุนตัวละคร,หนวละคร
+329,328,CMD_CHARACTERMAKE_CLOSE,Finish,เสร็จสิ้น,เสจน
+330,329,CMD_CHARACTERMAKE_TAB_CONTROL,Tab,สลับแท็บ,สบแบ
+331,330,CMD_CHARACTERMAKE_CURSOR,Move,เลื่อนเคอร์เซอร์,เอนเคอเซอ
+332,331,CMD_CHARACTERMAKE_PRESET_COLOR,Apply Color,นำสีมาใช้,มาใ
+333,332,CMD_CHARACTERMAKE_RESET_ACCESSORY,Remove,ถอดออก,ถอดออก
+334,333,CMD_NUMBER_SELECT_LEFT,Decrease,ลดจำนวน,ลดนวน
+335,334,CMD_NUMBER_SELECT_RIGHT,Increase,เพิ่มจำนวน,เมนวน
+336,335,CMD_NUMBER_SELECT_DECIDE_BUY,Buy,ซื้อ,อ
+337,336,CMD_NUMBER_SELECT_DECIDE_CRAFT,Craft,สร้าง,สาง
+338,337,CMD_NUMBER_SELECT_CANCEL,Close,ปิด,ด
+339,338,CMD_SOUND_TEST_PLAY,Play,เล่นเพลง,เนเพลง
+340,339,CMD_SOUND_TEST_STOP,Stop,หยุดเพลง,หดเพลง
+341,340,CMD_SOUND_TEST_CLOSE,Close,ปิด,ด
+342,341,CMD_SETTING_RESET,Reset to Default,คืนค่าเริ่มต้น,นาเมน
+343,342,CMD_DEMO_SKIP,Skip,ข้าม,าม
+344,343,CMD_TITLE_RIGHTS_NOTATION,Copyright Notice,ข้อมูลลิขสิทธิ์,อลขท
+345,344,CMD_SAVE_DELETE,Delete Save Data,ลบข้อมูลบันทึก,ลบอลนก
+346,345,CMD_SWAP_SELECT,Swap,สลับตำแหน่ง,สบแหง
+347,346,CMD_SWAP_CANCEL,Cancel,ยกเลิก,ยกเก
+348,347,CMD_BANDLE_SUBMIT,Deliver,ถวายของ,ถวายของ
+349,348,CMD_POPUP_OK_CLOSE,Close (No translation needed),ปิด,ด
+350,349,CMD_SELECT_CANCEL,Cancel,ยกเลิก,ยกเก
+351,350,CMD_OPTION_CLOSE,Cancel,ยกเลิก,ยกเก
+352,351,CMD_PLACEMENT_EDITOR_SYSTEM_MENU,System Menu,เมนูระบบ,เมระบบ
+353,352,CMD_PLACEMENT_EDITOR_PLACEMENT_MENU,Placement Menu,เมนูการจัดวาง,เมการดวาง
+354,353,CMD_PLACEMENT_EDITOR_PLACEMENT,Place,จัดวาง,ดวาง
+355,354,CMD_PLACEMENT_EDITOR_ERASE,Delete,ลบออก,ลบออก
+356,355,CMD_DEBUG_WORLDMAP_MOVE_STICK,Move,เลื่อนดู,เอน
+357,356,CMD_DEBUG_WORLDMAP_MOVE_RESET,To Current Location,ไปยังตำแหน่งปัจจุบัน,ไปงแหงจน
+358,357,CMD_DEBUG_WORLDMAP_ZOOM_OUT,Zoom,ซูมออก,มออก
+359,358,CMD_DEBUG_WORLDMAP_ZOOM_IN,Zoom,ซูมเข้า,มเา
+360,359,CMD_DEBUG_WORLDMAP_ZOOM_RESET,Reset Zoom,คืนค่าการซูมเริ่มต้น,นาการมเมน
+361,360,CMD_DEBUG_WORLDMAP_AREA_PREV,Change Area,เปลี่ยนพื้นที่ (ก่อนหน้า),เปยนน (อนหา)
+362,361,CMD_DEBUG_WORLDMAP_AREA_NEXT,Change Area,เปลี่ยนพื้นที่ (ถัดไป),เปยนน (ดไป)
+363,362,CMD_DEBUG_EVENTCHART_MENU_OPEN,Open Menu,เปิดเมนู,เดเม
+364,363,CMD_DEBUG_EVENTCHART_SHORTCUT,Shortcuts,ปุ่มลัด,มด
+365,364,CMD_DEBUG_NPC_ENABLE_CHANGE,Toggle On/Off,สลับ เปิด/ปิด,สบ เด/ด
+366,365,CMD_CHARACTERMAKE_DEFAULT_RETURN,Restore to Default,คืนค่าเริ่มต้น,นาเมน
+367,366,CMD_INTERACTION_DELIVER_HORROR_ITEM,Deliver,ส่งมอบไอเทมอาถรรพ์,งมอบไอเทมอาถรร
+368,367,CMD_GAME_END,Exit Game,ออกจากเกม,ออกจากเกม
+369,368,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_L,Change Target,เปลี่ยนเป้าหมาย (ซ้าย),เปยนเาหมาย (าย)
+370,369,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_R,Change Target,เปลี่ยนเป้าหมาย (ขวา),เปยนเาหมาย (ขวา)
+371,370,CMD_FISHING,Fish,ตกปลา,ตกปลา
+372,371,CMD_UNIT_WALK_STICK,Stick Movement,โยกอนาล็อกเดิน,โยกอนาอกเน
+373,372,CMD_UNIT_WALK_KEY,Keyboard Movement,ปุ่มคีย์บอร์ดเดิน,มบอดเน
+374,373,CMD_INPUT_IMESTRING_CANCEL,,,
+375,374,CMD_INPUT_IME_STRING_OK,,,
+376,375,CMD_INTERACTION_CATALOG,Furniture Catalog,แคตตาล็อกเฟอร์นิเจอร์,แคตตาอกเฟอเจอ
+377,376,CMD_SAVEDATA_SELECT,Previous Save Data,ข้อมูลบันทึกก่อนหน้า,อลนกอนหา
+378,377,CMD_SOFTWAREKEYBOARD_OPEN,,,
+379,378,CMD_ITME_RENAME,Change Name,เปลี่ยนชื่อ,เปยนอ
+380,379,CMD_TOOL_CIRCLE_SEEDER,Seeder,เครื่องหว่านเมล็ด,เคองหานเมด

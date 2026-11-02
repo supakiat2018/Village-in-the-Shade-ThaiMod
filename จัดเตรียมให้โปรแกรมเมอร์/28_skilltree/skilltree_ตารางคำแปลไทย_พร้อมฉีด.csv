@@ -1,0 +1,81 @@
+﻿id,key,ชื่อสั้น_TH,ชื่อเต็ม_TH,en_title,คำอธิบาย_TH,en_desc
+0,SKILL_NODE_SKILL_TREE_RELEASE,ปลดล็อกผังทักษะ,ปลดล็อกศาลเจ้า,Unlock Hokora,ขอยกศาลเจ้านี้ให้แก่เจ้า,I yield this hokora to you
+1,SKILL_NODE_AGRICULTURE_UNLOCK_FURROW,ยกร่องแปลง,เทคนิคการยกร่อง,Furrow Technique,ใช้จอบพรวนดินแปลงผักซ้ำอีกครั้งเพื่อทำ 'ร่องแปลง',Re-hoeing tilled soil creates a furrow
+2,SKILL_NODE_CRAFT_FLOOR_STRAW,สูตร: พื้นฟางปูสวน,พื้นฟางปูสวน,Straw Path,เรียนรู้วิธีสร้าง 'พื้นฟางปูสวน',Learn to make Straw Paths
+3,SKILL_NODE_CRAFT_COMPOSTER,สูตร: ถังหมักปุ๋ย,ถังหมักปุ๋ย,Composter,เรียนรู้วิธีสร้าง 'ถังหมักปุ๋ย',Learn to make Composters
+4,SKILL_NODE_CRAFT_FLOOR_BRICK,สูตร: พื้นอิฐปูสวน,พื้นอิฐปูสวน,Brick Path,เรียนรู้วิธีสร้าง 'พื้นอิฐปูสวน',Learn to make Brick Paths
+5,SKILL_NODE_CRAFT_PURIFY_SALT,สูตร: เกลือบริสุทธิ์,เกลือบริสุทธิ์,Purifying Salt,เรียนรู้วิธีสร้าง 'เกลือบริสุทธิ์',Learn to make Purifying Salt
+6,SKILL_NODE_CRAFT_OIL_EXTRACTION_MACHINE,สูตร: เครื่องสกัดน้ำมัน,เครื่องสกัดน้ำมัน,Oil Press,เรียนรู้วิธีสร้าง 'เครื่องสกัดน้ำมัน',Learn to make Oil Presses
+7,SKILL_NODE_CRAFT_FLOOR_STONE_TILE,สูตร: พื้นกระเบื้องหินปูสวน,พื้นกระเบื้องหินปูสวน,Stone Tile Path,เรียนรู้วิธีสร้าง 'พื้นกระเบื้องหินปูสวน',Learn to make Stone Tile Paths
+8,SKILL_NODE_CRAFT_FLOUR_MILL,สูตร: เครื่องโม่แป้ง,เครื่องโม่แป้ง,Grinding Mill,เรียนรู้วิธีสร้าง 'เครื่องโม่แป้ง',Learn to make Grinding Mills
+9,SKILL_NODE_CRAFT_STRAW_DOLL,สูตร: ตุ๊กตาฟาง,ตุ๊กตาฟาง,Straw Doll,เรียนรู้วิธีสร้าง 'ตุ๊กตาฟาง',Learn to make Straw Dolls
+10,SKILL_NODE_CRAFT_FLOOR_LOG,สูตร: พื้นท่อนไม้ปูสวน,พื้นท่อนไม้ปูสวน,Log Path,เรียนรู้วิธีสร้าง 'พื้นท่อนไม้ปูสวน',Learn to make Log Paths
+11,SKILL_NODE_CRAFT_MILK_PROCESSING_MACHINE,สูตร: เครื่องแปรรูปนม,เครื่องแปรรูปนม,Milk Processor,เรียนรู้วิธีสร้าง 'เครื่องแปรรูปนม',Learn to make Milk Processors
+12,SKILL_NODE_CRAFT_BRICK_SERIES,สูตร: ชุดรั้วอิฐ,รั้วและประตูอิฐ,Brick Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วอิฐ' และ 'ประตูอิฐ',Learn to make Brick Fences/Gates
+13,SKILL_NODE_CRAFT_CHARCOAL_KILN,สูตร: เตาเผาถ่าน,เตาเผาถ่าน,Charcoal Kiln,เรียนรู้วิธีสร้าง 'เตาเผาถ่าน',Learn to make Charcoal Kilns
+14,SKILL_NODE_CRAFT_STORAGE_JAR_LV2,สูตร: ถังหมักดอง Lv.2,ถังหมักดอง / ดัดแปลง,Preserving Barrel Mk II,เรียนรู้วิธีสร้าง 'ถังหมักดอง / ดัดแปลง',Learn to make improved Preserving Barrels
+15,SKILL_NODE_CRAFT_COMPOSTER_LV2,สูตร: ถังหมักปุ๋ย Lv.2,ถังหมักปุ๋ย / ดัดแปลง,Composter Mk II,เรียนรู้วิธีสร้าง 'ถังหมักปุ๋ย / ดัดแปลง',Learn to make improved Composters
+16,SKILL_NODE_CRAFT_LOOM,สูตร: กี่ทอผ้า,กี่ทอผ้า,Loom,เรียนรู้วิธีสร้าง 'กี่ทอผ้า',Learn to make Looms
+17,SKILL_NODE_CRAFT_FLOOR_WHITE_STONE_TILE,สูตร: พื้นหินขาวปูสวน,พื้นกระเบื้องหินขาวปูสวน,White Stone Tile Path,เรียนรู้วิธีสร้าง 'พื้นกระเบื้องหินขาวปูสวน',Learn to make White Stone Tile Paths
+18,SKILL_NODE_CRAFT_ROPE_SERIES,สูตร: ชุดรั้วเชือก,รั้วและประตูเชือก,Rope Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วเชือก' และ 'ประตูเชือก',Learn to make Rope Fences/Gates
+19,SKILL_NODE_STAMINA_REDUCTION_SICKLE,ลดพลังกาย: เคียว,เทคนิคการใช้เคียว,Sickling Finesse,ลดการใช้พลังกายเมื่อกวัดแกว่งเคียว,Reduce stamina expended by sickle usage
+20,SKILL_NODE_TREE_GROWTH_UP_1,ต้นไม้โตไวขึ้น 1,ศาสตร์การปลูกต้นไม้,Arboriculture Finesse,ความเร็วการเติบโตของต้นไม้เพิ่มขึ้น 5%,Tree growth speed +5%
+21,SKILL_NODE_CRAFT_FLOOR_BLACK_STONE_TILE,สูตร: พื้นหินดำปูสวน,พื้นกระเบื้องหินดำปูสวน,Black Stone Tile Paths,เรียนรู้วิธีสร้าง 'พื้นกระเบื้องหินดำปูสวน',Learn to make Black Stone Tile Paths
+22,SKILL_NODE_CRAFT_PLANK_SERIES,สูตร: ชุดรั้วไม้กระดาน,รั้วและประตูไม้กระดาน,Picket Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วไม้กระดาน' และ 'ประตูไม้กระดาน',Learn to make Picket Fences/Gates
+23,SKILL_NODE_MINE_APPEARANCE_UP_1,พบสายแร่เพิ่มขึ้น 1,ศาสตร์การค้นหาสายแร่,Prospecting Finesse,โอกาสพบสายแร่ในเหมืองหินเพิ่มขึ้น 3%,Chance of finding quarry deposits +3%
+24,SKILL_NODE_CRAFT_SERICULTURE_BOX,สูตร: กล่องเลี้ยงไหม,กล่องเลี้ยงหนอนไหม,Silkworm Box,เรียนรู้วิธีสร้าง 'กล่องเลี้ยงหนอนไหม',Learn to make Silkworm Boxes
+25,SKILL_NODE_CRAFT_SMOKING_MACHINE,สูตร: เครื่องรมควัน,เครื่องรมควัน,Smoker,เรียนรู้วิธีสร้าง 'เครื่องรมควัน',Learn to make Smokers
+26,SKILL_NODE_CRAFT_BAMBOO_SERIES,สูตร: ชุดรั้วไม้ไผ่,รั้วและประตูไม้ไผ่,Bamboo Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วไม้ไผ่' และ 'ประตูไม้ไผ่',Learn to make Bamboo Fences/Gates
+27,SKILL_NODE_CRAFT_WHITE_PLANK_SERIES,สูตร: ชุดรั้วไม้ขาว,รั้วและประตูไม้กระดานขาว,White Picket Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วไม้กระดานขาว' และ 'ประตูไม้กระดานขาว',Learn to make White Picket Fences/Gates
+28,SKILL_NODE_CRAFT_COLLECTION_UP,เก็บของป่าได้เพิ่มขึ้น,ศาสตร์การเก็บของป่า,Foraging Finesse,มีโอกาส 25% ที่จะเก็บของป่าได้เพิ่มเป็น 2 ชิ้น,25% to forage two items instead of one
+29,SKILL_NODE_CRAFT_MESH_SERIES,สูตร: ชุดรั้วตาข่าย,รั้วและประตูตาข่าย,Mesh Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วตาข่าย' และ 'ประตูตาข่าย',Learn to make Mesh Fences/Gates
+30,SKILL_NODE_RARE_NIGHT_ITEM_RATE_UP,โอกาสพบกระจกและดาบเพิ่มขึ้น,ศาสตร์ค้นหากระจกและดาบ,Regalia Wrangler,ทำให้พบ 'กระจก' และ 'ดาบ' ในยามดึกได้ง่ายขึ้น,Make swords/mirrors easier to obtain at night
+31,SKILL_NODE_CRAFT_MAYONNAISE_PROCESSING_MACHINE_LV2,สูตร: เครื่องทำมายองเนส Lv.2,เครื่องทำมายองเนส / ดัดแปลง,Mayo Processor Mk II,เรียนรู้วิธีสร้าง 'เครื่องทำมายองเนส / ดัดแปลง',Learn to make improved Mayo Processors
+32,SKILL_NODE_LIVESTOCK_LOVERATE_UP_1,สัตว์เลี้ยงสนิทไวขึ้น 1,ศาสตร์ผูกมิตรกับสัตว์,Domestication Finesse,ความสนิทสนมของสัตว์เลี้ยงเพิ่มขึ้นได้ง่ายขึ้น,Gain animal affection more easily
+33,SKILL_NODE_CRAFT_SPRINKLER_SMALL,สูตร: สปริงเกลอร์จิ๋ว,สปริงเกลอร์ขนาดเล็ก,Small Sprinkler,เรียนรู้วิธีสร้าง 'สปริงเกลอร์ขนาดเล็ก',Learn to make Small Sprinklers
+34,SKILL_NODE_CRAFT_IRON_SERIES,สูตร: ชุดรั้วเหล็ก,รั้วและประตูเหล็ก,Iron Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วเหล็ก' และ 'ประตูเหล็ก',Learn how to make Iron Fences/Gates
+35,SKILL_NODE_CRAFT_FLOUR_MILL_LV2,สูตร: เครื่องโม่แป้ง Lv.2,เครื่องโม่แป้ง / ดัดแปลง,Grinding Mill Mk II,เรียนรู้วิธีสร้าง 'เครื่องโม่แป้ง / ดัดแปลง',Learn to make improved Grinding Mills
+36,SKILL_NODE_TREE_GROWTH_UP_2,ต้นไม้โตไวขึ้น 2,ศาสตร์การปลูกต้นไม้+,Arboriculture Finesse+,ความเร็วการเติบโตของต้นไม้เพิ่มขึ้น 10%,Tree growth speed +10%
+37,SKILL_NODE_CRAFT_MILK_PROCESSING_MACHINE_LV2,สูตร: เครื่องแปรรูปนม Lv.2,เครื่องแปรรูปนม / ดัดแปลง,Milk Processor Mk II,เรียนรู้วิธีสร้าง 'เครื่องแปรรูปนม / ดัดแปลง',Learn to make improved Milk Processors
+38,SKILL_NODE_CRAFT_FLOOR_FLOWER,สูตร: พื้นดอกไม้ปูสวน,พื้นดอกไม้ปูสวน,Flower Path,เรียนรู้วิธีสร้าง 'พื้นดอกไม้ปูสวน',Learn to make Flower Paths
+39,SKILL_NODE_CRAFT_SPRINKLING_BAIT_HIGH_GRADE,สูตร: เหยื่ออ่อยชั้นดี,เหยื่อตกปลาชั้นดี,Deluxe Fishing Bait,เรียนรู้วิธีสร้าง 'เหยื่อตกปลาชั้นดี',Learn to make Deluxe Fishing Bait
+40,SKILL_NODE_CRAFT_CHARCOAL_KILN_LV2,สูตร: เตาเผาถ่าน Lv.2,เตาเผาถ่าน / ดัดแปลง,Charcoal Kiln Mk II,เรียนรู้วิธีสร้าง 'เตาเผาถ่าน / ดัดแปลง',Learn to make improved Charcoal Kilns
+41,SKILL_NODE_CROPS_PROCESSED_PRODUCTS_PRICE_UP_1,ราคาขายผลผลิตแปรรูปพืช 1,ศาสตร์ส่งออกผลผลิตแปรรูปพืชผล,Processing Salesmanship (C),ราคาขายผลผลิตแปรรูปจากพืชผลเพิ่มขึ้น 5%,Processed crop product sales price +5%
+42,SKILL_NODE_CRAFT_BREWING_BARREL,สูตร: ถังหมักบ่ม,ถังหมักบ่ม,Brewing Barrel,เรียนรู้วิธีสร้าง 'ถังหมักบ่ม',Learn to make Brewing Barrels
+43,SKILL_NODE_CRAFT_FLOOR_FALLEN_LEAVES,สูตร: พื้นใบไม้ร่วงปูสวน,พื้นใบไม้ร่วงปูสวน,Fallen Leaf Path,เรียนรู้วิธีสร้าง 'พื้นใบไม้ร่วงปูสวน',Learn how to make Fallen Leaf Paths
+44,SKILL_NODE_CRAFT_BLAST_FURNACE_LV2,สูตร: เตาหลอมโลหะ Lv.2,เตาหลอมโลหะ / ดัดแปลง,Blast Furnace Mk II,เรียนรู้วิธีสร้าง 'เตาหลอมโลหะ / ดัดแปลง',Learn to make improved Blast Furnaces
+45,SKILL_NODE_CRAFT_DRYING_MACHINE,สูตร: เครื่องอบแห้ง,เครื่องอบแห้ง,Dehydrator,เรียนรู้วิธีสร้าง 'เครื่องอบแห้ง',Learn to make Dehydrators
+46,SKILL_NODE_CRAFT_SMOKING_MACHINE_LV2,สูตร: เครื่องรมควัน Lv.2,เครื่องรมควัน / ดัดแปลง,Smoker Mk II,เรียนรู้วิธีสร้าง 'เครื่องรมควัน / ดัดแปลง',Learn to make improved Smokers
+47,SKILL_NODE_LIVESTOCK_PRODUCTS_PRICE_UP_1,ราคาขายปศุสัตว์ 1,ศาสตร์การส่งออกปศุสัตว์,Ranching Salesmanship,ราคาขายผลผลิตปศุสัตว์เพิ่มขึ้น 5%,Animal product sales price +5%
+48,SKILL_NODE_CRAFT_AGUNG_BARREL,สูตร: ถังบ่มอาหาร,ถังบ่มอาหาร,Aging Barrel,เรียนรู้วิธีสร้าง 'ถังบ่มอาหาร',Learn to make Aging Barrels
+49,SKILL_NODE_CRAFT_GARDEN_SERIES,สูตร: ชุดรั้วสวนเหล็กดัด,รั้วและประตูสวนเหล็กดัด,Iron Garden Fence/Gate,เรียนรู้วิธีสร้าง 'รั้วสวนเหล็กดัด' และ 'ประตูสวนเหล็กดัด',Learn to make Iron Garden Fences/Gates
+50,SKILL_NODE_FISH_PRICE_UP_1,ราคาขายปลา 1,ศาสตร์การส่งออกปลา,Fishing Salesmanship,ราคาขายปลาเพิ่มขึ้น 5%,Fish sales price +5%
+51,SKILL_NODE_CRAFT_DRYING_MACHINE_LV2,สูตร: เครื่องอบแห้ง Lv.2,เครื่องอบแห้ง / ดัดแปลง,Dehydrator Mk II,เรียนรู้วิธีสร้าง 'เครื่องอบแห้ง / ดัดแปลง',Learn to make improved Dehydrators
+52,SKILL_NODE_CRAFT_LOOM_LV2,สูตร: กี่ทอผ้า Lv.2,กี่ทอผ้า / ดัดแปลง,Loom Mk II,เรียนรู้วิธีสร้าง 'กี่ทอผ้า / ดัดแปลง',Learn to make improved Looms
+53,SKILL_NODE_LIVESTOCK_PROCESSED_PRODUCTS_PRICE_UP_1,ราคาขายผลผลิตแปรรูปสัตว์ 1,ศาสตร์ส่งออกผลผลิตแปรรูปสัตว์,Processing Salesmanship (AP),ราคาขายผลผลิตแปรรูปจากสัตว์เพิ่มขึ้น 5%,Processed animal product sales price +5%
+54,SKILL_NODE_VILLAGER_EXCHANGE_1,ผูกมิตรกับชาวบ้าน 1,ศาสตร์ผูกมิตรกับชาวบ้าน,Befriending Finesse,ความสนิทสนมกับชาวบ้านเพิ่มขึ้นได้ง่ายขึ้น,Gain villager affection more easily
+55,SKILL_NODE_MINE_DROP_PLUS_1,ขุดหินได้เพิ่ม +1,เทคนิคการขุดเหมือง,Mining Finesse,เมื่อขุดหิน จะได้รับหินเพิ่มขึ้น 1 ก้อน,Rock mining yield +1
+56,SKILL_NODE_CROPS_PRICE_UP_1,ราคาขายพืชผล 1,ศาสตร์การส่งออกพืชผล,Farming Salesmanship,ราคาขายพืชผลเพิ่มขึ้น 5%,Crop sales price +5%
+57,SKILL_NODE_CRAFT_OIL_EXTRACTION_MACHINE_LV2,สูตร: เครื่องสกัดน้ำมัน Lv.2,เครื่องสกัดน้ำมัน / ดัดแปลง,Oil Press Mk II,เรียนรู้วิธีสร้าง 'เครื่องสกัดน้ำมัน / ดัดแปลง',Learn to make improved Oil Presses
+58,SKILL_NODE_CRAFT_BREWING_BARREL_LV2,สูตร: ถังหมักบ่ม Lv.2,ถังหมักบ่ม / ดัดแปลง,Brewing Barrel Mk II,เรียนรู้วิธีสร้าง 'ถังหมักบ่ม / ดัดแปลง',Learn to make improved Brewing Barrels
+59,SKILL_NODE_WOOD_DROP_PLUS_1,ตัดไม้ได้เพิ่ม +1,ศาสตร์การตัดไม้,Logging Finesse,เมื่อตัดต้นไม้ จะได้รับท่อนไม้เพิ่มขึ้น 1 ท่อน,Tree chopping yield +1
+60,SKILL_NODE_HUNTING_PRICE_UP_1,ราคาขายสัตว์ล่า 1,ศาสตร์การส่งออกสัตว์ล่า,Hunting Salesmanship,ราคาขายของรางวัลจากการล่าสัตว์เพิ่มขึ้น 5%,Hunting reward sales price +5%
+61,SKILL_NODE_FISH_PRICE_UP_2,ราคาขายปลา 2,ศาสตร์การส่งออกปลา+,Fish Shipping Technique+,ราคาขายปลาเพิ่มขึ้น 10%,Fish sales price +10%
+62,SKILL_NODE_CROPS_PROCESSED_PRODUCTS_PRICE_UP_2,ราคาขายผลผลิตแปรรูปพืช 2,ศาสตร์ส่งออกผลผลิตแปรรูปพืชผล+,Processing Salesmanship+ (C),ราคาขายผลผลิตแปรรูปจากพืชผลเพิ่มขึ้น 10%,Processed crop product sales price +10%
+63,SKILL_NODE_LIVESTOCK_LOVERATE_UP_2,สัตว์เลี้ยงสนิทไวขึ้น 2,ศาสตร์ผูกมิตรกับสัตว์+,Domestication Finesse+,ความสนิทสนมของสัตว์เลี้ยงเพิ่มขึ้นได้ง่ายยิ่งขึ้นกว่าเดิม,Gain animal affection even more easily
+64,SKILL_NODE_CONNECT_CHEST,เชื่อมโยงกล่องเก็บของ,ศาสตร์เชื่อมโยงกล่องเก็บของ,Linked Storage Chests,สามารถโยกย้ายสิ่งของระหว่างกล่องเก็บของหลายใบได้,Learn to move items between storage chests
+65,SKILL_NODE_JEWELRY_DROP_PLUS_1,ราคาขายอัญมณี 1,ศาสตร์การส่งออกอัญมณี,Gemstone Salesmanship,ราคาขายอัญมณีเพิ่มขึ้น 5%,Gemstone sales price +5%
+66,SKILL_NODE_CROPS_PRICE_UP_2,ราคาขายพืชผล 2,ศาสตร์การส่งออกพืชผล+,Farming Salesmanship+,ราคาขายพืชผลเพิ่มขึ้น 10%,Crop sales price +10%
+67,SKILL_NODE_LIVESTOCK_PRODUCTS_PRICE_UP_2,ราคาขายปศุสัตว์ 2,ศาสตร์การส่งออกปศุสัตว์+,Ranching Salesmanship+,ราคาขายผลผลิตปศุสัตว์เพิ่มขึ้น 10%,Animal product sales price +10%
+68,SKILL_NODE_CRAFT_SPRINKLER_MIDDLE,สูตร: สปริงเกลอร์ขนาดกลาง,สปริงเกลอร์ขนาดกลาง,Normal Sprinkler,เรียนรู้วิธีสร้าง 'สปริงเกลอร์ขนาดกลาง',Learn to make Normal Sprinklers
+69,SKILL_NODE_CRAFT_SPRINKLING_BAIT_WHITE,สูตร: เหยื่อตกปลาสีขาว,เหยื่อตกปลาสีขาว,White Fishing Bait,เรียนรู้วิธีสร้าง 'เหยื่อตกปลาสีขาว',Learn to make White Fishing Bait
+70,SKILL_NODE_WOOD_DROP_PLUS_2,ตัดไม้ได้เพิ่ม +2,ศาสตร์การตัดไม้+,Logging Finesse+,เมื่อตัดต้นไม้ จะได้รับท่อนไม้เพิ่มขึ้น 2 ท่อน,Tree chopping yield +2
+71,SKILL_NODE_VILLAGER_EXCHANGE_2,ผูกมิตรกับชาวบ้าน 2,ศาสตร์ผูกมิตรกับชาวบ้าน+,Befriending Finesse+,ความสนิทสนมกับชาวบ้านเพิ่มขึ้นได้ง่ายยิ่งขึ้นกว่าเดิม,Gain villager affection even more easily
+72,SKILL_NODE_MINE_APPEARANCE_UP_2,พบสายแร่เพิ่มขึ้น 2,ศาสตร์การค้นหาสายแร่+,Prospecting Finesse+,โอกาสพบสายแร่ในเหมืองหินเพิ่มขึ้น 5%,Chance of finding quarry deposits +5%
+73,SKILL_NODE_CRAFT_AGUNG_BARREL_LV2,สูตร: ถังบ่มอาหาร Lv.2,ถังบ่มอาหาร / ดัดแปลง,Aging Barrel Mk II,เรียนรู้วิธีสร้าง 'ถังบ่มอาหาร / ดัดแปลง',Learn to make improved Aging Barrels
+74,SKILL_NODE_HUNTING_PRICE_UP_2,ราคาขายสัตว์ล่า 2,ศาสตร์การส่งออกสัตว์ล่า+,Hunting Salesmanship+,ราคาขายของรางวัลจากการล่าสัตว์เพิ่มขึ้น 10%,Hunting reward sales price +10%
+75,SKILL_NODE_JEWELRY_DROP_PLUS_2,ราคาขายอัญมณี 2,ศาสตร์การส่งออกอัญมณี+,Gemstone Salesmanship+,ราคาขายอัญมณีเพิ่มขึ้น 10%,Gemstone sales price +10%
+76,SKILL_NODE_LIVESTOCK_PROCESSED_PRODUCTS_PRICE_UP_2,ราคาขายผลผลิตแปรรูปสัตว์ 2,ศาสตร์ส่งออกผลผลิตแปรรูปสัตว์+,Processing Salesmanship+ (AP),ราคาขายผลผลิตแปรรูปจากสัตว์เพิ่มขึ้น 10%,Processed animal product sale price +10%
+77,SKILL_NODE_CRAFT_SPRINKLER_LARGE,สูตร: สปริงเกลอร์ขนาดใหญ่,สปริงเกลอร์เสริมประสิทธิภาพ,Upgraded Sprinkler,เรียนรู้วิธีสร้าง 'สปริงเกลอร์เสริมประสิทธิภาพ',Learn to make Upgraded Sprinklers
+78,SKILL_NODE_MINE_DROP_PLUS_2,ขุดหินได้เพิ่ม +2,เทคนิคการขุดเหมือง+,Mining Finesse+,เมื่อขุดหิน จะได้รับหินเพิ่มขึ้น 2 ก้อน,Rock mining yield +2
+79,SKILL_NODE_HARVEST_SICKLE,เกี่ยวพืชด้วยเคียว,เสริมพลังเคียว,Sickle Upgrade,สามารถใช้เคียวในการเก็บเกี่ยวพืชผลได้,Harvest crops with the sickle

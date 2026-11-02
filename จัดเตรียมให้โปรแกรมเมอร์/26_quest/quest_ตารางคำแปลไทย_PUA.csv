@@ -1,0 +1,347 @@
+﻿Key,Line,ต้นฉบับ_JP,MODEN_EN,คำแปลไทย,Thai_PUA
+QUEST_ID_CHAIN_GRAND_GOAL,0,彼ヶ津村の一員になる,Become a member of Kagatsu Village,กลายเป็นส่วนหนึ่งของหมู่บ้านคางัตสึ,กลายเนวนหงของหานคาต
+QUEST_ID_CHAIN_GRAND_GOAL,1,彼ヶ津村の一員になった,Became a member of Kagatsu Village,ได้กลายเป็นส่วนหนึ่งของหมู่บ้านคางัตสึแล้ว,ไกลายเนวนหงของหานคาตแว
+QUEST_ID_CHAIN_GRAND_GOAL,2,リンから言われた、暮らしの目的。,"The purpose of living, as told by Rin.",เป้าหมายในการใช้ชีวิต ที่รินได้บอกไว้,เาหมายในการใต นไบอกไ
+QUEST_ID_CHAIN_GRAND_GOAL,3,必要なことをやり遂げよう。,Accomplish what needs to be done.,ทำสิ่งที่จำเป็นให้ลุล่วงกันเถอะ,งเนใวงนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_01,0,掟の一、午後十一時以降外出禁止,Rule 1: Do not be outside past 11 PM,กฎข้อที่หนึ่ง: ห้ามออกนอกบ้านหลัง 23:00 น.,กฎอหง: ามออกนอกานหง 23:00 น.
+QUEST_ID_CHAIN_VILLAGE_RULES_01,1,午後１１時以降、人ならざるものが徘徊する,"After 11 PM, non-human things roam about",หลังเวลา 23:00 น. สิ่งที่ไม่ใช่มนุษย์จะออกเพ่นพ่าน,หงเวลา 23:00 น. งไใมษจะออกเนาน
+QUEST_ID_CHAIN_VILLAGE_RULES_01,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_01,3,「午後十一時以降外出禁止」,"""Do not be outside past 11 PM""","""ห้ามออกนอกบ้านหลัง 23:00 น.""","""ามออกนอกานหง 23:00 น."""
+QUEST_ID_CHAIN_VILLAGE_RULES_01,5,掟を破って深夜に外へ出ろ,Break the code and go outside at midnight,จงฝ่าฝืนกฎแล้วออกไปข้างนอกยามดึกสงัด,จงานกฎแวออกไปางนอกยามกสด
+QUEST_ID_CHAIN_VILLAGE_RULES_02,0,掟の二、村のために協力せよ,Rule 2: Cooperate for the sake of the village,กฎข้อที่สอง: จงให้ความร่วมมือเพื่อหมู่บ้าน,กฎอสอง: จงใความวมอเอหาน
+QUEST_ID_CHAIN_VILLAGE_RULES_02,1,信頼には、行動で応えねばならない,Trust must be fostered through action,ความไว้เนื้อเชื่อใจ ต้องตอบแทนด้วยการกระทำ,ความไเอเอใจ องตอบแทนวยการกระ
+QUEST_ID_CHAIN_VILLAGE_RULES_02,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_02,3,「村のために協力せよ」,"""Cooperate for the sake of the village""","""จงให้ความร่วมมือเพื่อหมู่บ้าน""","""จงใความวมอเอหาน"""
+QUEST_ID_CHAIN_VILLAGE_RULES_02,5,全ての「お手伝い券」を使い切ろう,Use up all of the errand coupons,"ใช้ ""ตั๋วช่วยงาน"" ทั้งหมดให้หมดเถอะ","ใ ""ววยงาน"" งหมดใหมดเถอะ"
+QUEST_ID_CHAIN_VILLAGE_RULES_02,6,お手伝いが終わったことをリンに伝えよう,Let Rin know that all the villagers' errands have been completed,ไปบอกรินว่าช่วยงานเสร็จสิ้นแล้วเถอะ,ไปบอกนาวยงานเสจนแวเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_02,7,依頼品を村長邸の目録に納品しよう,Deliver the items to the catalogs at the village head's mansion,ส่งมอบสิ่งของตามคำขอลงในสมุดบัญชีที่คฤหาสน์ผู้ใหญ่บ้านเถอะ,งมอบงของตามขอลงในสดญคฤหาสใหานเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_02,8,依頼品を集めたことをリンに報告しよう,Report to Rin that you've gathered the requested items,ไปรายงานรินว่ารวบรวมสิ่งของตามคำขอครบแล้วเถอะ,ไปรายงานนารวบรวมงของตามขอครบแวเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,0,掟の三、見知らぬ者に近づくな,Rule 3: Keep your distance from strangers,กฎข้อที่สาม: อย่าเข้าใกล้คนแปลกหน้า,กฎอสาม: อาเาใกคนแปลกหา
+QUEST_ID_CHAIN_VILLAGE_RULES_03,1,掟は彼ヶ津で暮らす者を守るためのもの,The code is meant to protect those who live in Kagatsu,กฎมีไว้เพื่อปกป้องผู้คนที่อาศัยอยู่ในคางัตสึ,กฎไเอปกองคนอายอในคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_03,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_03,3,「見知らぬ者に近づくな」,"""Keep your distance from strangers""","""อย่าเข้าใกล้คนแปลกหน้า""","""อาเาใกคนแปลกหา"""
+QUEST_ID_CHAIN_VILLAGE_RULES_03,5,リンに図書館の鍵を借りてこよう,Borrow the library key from Rin,ไปขอยืมกุญแจหอสมุดจากรินกันเถอะ,ไปขอมญแจหอสดจากนนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,6,酸っぱい樹液を２個集めよう,Collect 2 sour tree saps,รวบรวมน้ำเลี้ยงรสเปรี้ยว 2 ชิ้นกันเถอะ,รวบรวมเยงรสเปยว 2 นนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,7,酸っぱい樹液を２個ハスミに渡そう,Give the 2 sour tree saps to Hasumi,ส่งมอบน้ำเลี้ยงรสเปรี้ยว 2 ชิ้นให้ฮาสุมิกันเถอะ,งมอบเยงรสเปยว 2 นใฮานเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,8,夜闇にナゴの財布を探しにいこう,Find Nago's wallet late at night,ออกตามหากระเป๋าสตางค์ของนาโงะในยามค่ำคืนกันเถอะ,ออกตามหากระเาสตางของนาโงะในยามนนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,9,トバリとコマコと一緒にニワトリを追おう,Chase the chicken with Tobari and Komako,ออกไล่ตามไก่ไปพร้อมกับโทบาริและโคมะโกะกันเถอะ,ออกไตามไไปพอมบโทบาและโคมะโกะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,10,図書館に行ってみよう,Go to the library,ลองไปที่หอสมุดกันเถอะ,ลองไปหอสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,11,深夜に失くなった本を探してナゴに渡そう,Find lost books late at night and give them to Nago,ตามหาหนังสือที่หายไปยามดึกสงัดแล้วนำไปให้นาโงะกันเถอะ,ตามหาหงอหายไปยามกสดแวไปในาโงะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,12,時計塔にいってみよう,Go to the clock tower,ลองไปที่หอนาฬิกากันเถอะ,ลองไปหอนากานเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,13,奇跡の呼笛？を吹いてみよう,Try the Miracle Whistle?,ลองเป่านกหวีดแห่งปาฏิหาริย์? ดูเถอะ,ลองเานกหดแงปาหา? เถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,14,ニワトリに奇跡の呼笛？を披露しよう,Perform the Miracle Whistle for the chicken,เป่านกหวีดแห่งปาฏิหาริย์? แสดงให้ไก่ดูเถอะ,เานกหดแงปาหา? แสดงใไเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,15,深夜に桃の樹の元へいこう,Go to the peach tree late at night,ไปยังโคนต้นท้อยามดึกสงัดกันเถอะ,ไปงโคนนอยามกสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,16,コダマの樹を切り倒せ,Cut down Kodama's tree,จงโค่นต้นไม้ของโคดามะลงเสีย,จงโนนไของโคดามะลงเย
+QUEST_ID_CHAIN_VILLAGE_RULES_03,17,ナゴに財布を返そう,Return the wallet to Nago,นำกระเป๋าสตางค์ไปคืนให้นาโงะกันเถอะ,กระเาสตางไปนในาโงะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_03,18,ナゴにお礼をもらいにいこう,Go receive a thank-you gift from Nago,ไปรับของขอบคุณจากนาโงะกันเถอะ,ไปบของขอบณจากนาโงะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,0,掟の四、他人の秘密を暴くな,Rule 4: Do not expose other people's secrets,กฎข้อที่สี่: อย่าเปิดโปงความลับของผู้อื่น,กฎอ: อาเดโปงความบของน
+QUEST_ID_CHAIN_VILLAGE_RULES_04,1,秘密を暴くと取り返しがつかない,"If you expose secrets, there's no going back",หากเปิดโปงความลับ จะไม่อาจหวนคืนกลับมาได้อีก,หากเดโปงความบ จะไอาจหวนนกบมาไก
+QUEST_ID_CHAIN_VILLAGE_RULES_04,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_04,3,「他人の秘密を暴くな」,"""Do not expose other people's secrets""","""อย่าเปิดโปงความลับของผู้อื่น""","""อาเดโปงความบของน"""
+QUEST_ID_CHAIN_VILLAGE_RULES_04,5,コンノの部屋から鍵を盗み出そう,Take the key from Konno's room,ลอบขโมยกุญแจออกมาจากห้องของคอนโนะกันเถอะ,ลอบขโมยญแจออกมาจากองของคอนโนะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,6,深夜にトバリの家を訪ねよう,Visit Tobari's house late at night,ไปเยือนบ้านของโทบาริยามดึกสงัดกันเถอะ,ไปเอนานของโทบายามกสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,7,リンの秘密を暴こう,Uncover Rin's secret,เปิดโปงความลับของรินกันเถอะ,เดโปงความบของนนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,8,リンが消えた廊下を調べよう,Investigate the hallway where Rin disappeared,สำรวจโถงทางเดินที่รินหายตัวไปกันเถอะ,รวจโถงทางเนนหายวไปนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,9,いつも通り過ごそう,Spend the day as usual,ใช้เวลาตามปกติเหมือนเช่นเคยกันเถอะ,ใเวลาตามปกเหอนเนเคยนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,10,キツネを追いかけてみよう,Catch the fox,ลองไล่ตามสุนัขจิ้งจอกไปดูเถอะ,ลองไตามขงจอกไปเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,11,リンがいる診療所へいこう,Go to the clinic where Rin is,ไปยังคลินิกที่รินอยู่กันเถอะ,ไปงคกนอนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_04,12,リンの傍にいよう,Stay by Rin's side,อยู่เคียงข้างรินกันเถอะ,อเยงางนนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_05,0,掟の五、村を出てはならぬ,Rule 5: Do not leave the village,กฎข้อที่ห้า: ห้ามออกจากหมู่บ้าน,กฎอา: ามออกจากหาน
+QUEST_ID_CHAIN_VILLAGE_RULES_05,1,鵺の皮を纏わねば村を出ることは叶わない,"Unless you wear the nue pelt, you cannot leave the village",หากมิได้สวมคลุมหนังนูเอะ ย่อมมิอาจออกจากหมู่บ้านได้,หากไสวมคมหงเอะ อมอาจออกจากหานไ
+QUEST_ID_CHAIN_VILLAGE_RULES_05,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_05,3,「村を出てはならぬ」,"""Do not leave the village""","""ห้ามออกจากหมู่บ้าน""","""ามออกจากหาน"""
+QUEST_ID_CHAIN_VILLAGE_RULES_05,5,深夜に提灯を持って峠を探索しよう,Take a paper lantern to the mountain pass late at night,ถือโคมไฟไปสำรวจช่องเขายามดึกสงัดกันเถอะ,อโคมไฟไปรวจองเขายามกสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_05,6,深夜に峠の最奥でスミレに会おう,Meet Sumire deep in the pass late at night,ไปพบสุมิเระตรงจุดลึกสุดของช่องเขายามดึกสงัดกันเถอะ,ไปพบเระตรงดกดขององเขายามกสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_05,7,診療所へ話を聞きにいこう,Go to the clinic to hear the story,ไปฟังเรื่องราวที่คลินิกกันเถอะ,ไปงเองราวคกนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_05,8,スミレを助けてあげよう,Help Sumire,ช่วยสุมิเระกันเถอะ,วยเระนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_06,0,掟の六、山からの声に応えるな,Rule 6: Do not respond to voices from the mountains,กฎข้อที่หก: อย่าขานรับเสียงเรียกจากภูเขา,กฎอหก: อาขานบเยงเยกจากเขา
+QUEST_ID_CHAIN_VILLAGE_RULES_06,1,山の声とはオウムの歌声だった,The voice from the mountain was the singing of a parrot,แท้จริงแล้วเสียงจากภูเขาคือเสียงร้องเพลงของนกแก้ว,แจงแวเยงจากเขาอเยงองเพลงของนกแว
+QUEST_ID_CHAIN_VILLAGE_RULES_06,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_06,3,「山からの声に応えるな」,"""Do not respond to voices from the mountains""","""อย่าขานรับเสียงเรียกจากภูเขา""","""อาขานบเยงเยกจากเขา"""
+QUEST_ID_CHAIN_VILLAGE_RULES_06,5,山奥の大橋にヨウが居ないか見にいこう,Search for Yoh at the bridge deep in the mountains,ลองไปดูที่สะพานใหญ่ลึกเข้าไปในภูเขาว่าโยอยู่ที่นั่นหรือไม่,ลองไปสะพานใหกเาไปในเขาาโยอนหอไ
+QUEST_ID_CHAIN_VILLAGE_RULES_06,6,もう一度、山奥の大橋の先へいこう,Cross the bridge deep in the mountains once more,ข้ามไปยังอีกฟากของสะพานใหญ่ลึกเข้าไปในภูเขาอีกครั้งเถอะ,ามไปงกฟากของสะพานใหกเาไปในเขากคงเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_06,7,廃屋で声の主を探そう,Search the abandoned house for the source of the voice,ตามหาเจ้าของเสียงในบ้านร้างกันเถอะ,ตามหาเาของเยงในานางนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_06,8,食堂へロッカクの話を聞きにいこう,Go to the diner to hear Rokkaku's story,ไปฟังเรื่องราวของร็อกคาคุที่โรงอาหารกันเถอะ,ไปงเองราวของอกคาโรงอาหารนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_06,9,大橋の向こうへ、声の主を探しにいこう,Cross the large bridge to search for the source of the voice,ข้ามสะพานใหญ่ไปตามหาเจ้าของเสียงกันเถอะ,ามสะพานใหไปตามหาเาของเยงนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,0,掟の七、失った物を探すな,Rule 7: Do not search for what has been lost,กฎข้อที่เจ็ด: อย่าได้ตามหาสิ่งที่สูญหาย,กฎอเด: อาไตามหางญหาย
+QUEST_ID_CHAIN_VILLAGE_RULES_07,1,岩切りナタはキツネとの契約で失われていた,The Rockrending Machete had been given to a fox,มีดพร้าผ่าหินได้สูญหายไปเนื่องจากพันธสัญญากับสุนัขจิ้งจอก,ดพาานไญหายไปเองจากนธญญาบขงจอก
+QUEST_ID_CHAIN_VILLAGE_RULES_07,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_07,3,「失った物を探すな」,"""Do not search for what has been lost""","""อย่าได้ตามหาสิ่งที่สูญหาย""","""อาไตามหางญหาย"""
+QUEST_ID_CHAIN_VILLAGE_RULES_07,5,オノを金の延べ棒で改良しよう,Upgrade the axe with gold ingots,อัปเกรดขวานด้วยแท่งทองคำกันเถอะ,ปเกรดขวานวยแงทองนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,6,午後５時までに憑き藪へいこう,Go to the Haunted Thicket by 5:00 PM,ไปยังพงไม้สิงสู่ก่อนเวลา 17:00 น. กันเถอะ,ไปงพงไงอนเวลา 17:00 น. นเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,7,サザンカと藪を進もう,Go through the thicket with Sazanka,มุ่งหน้าฝ่าพงไม้ไปพร้อมกับซาซังกะกันเถอะ,งหาาพงไไปพอมบซางกะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,8,午後５時までに憑き藪へいこう,Go to the Haunted Thicket by 5:00 PM,ไปยังพงไม้สิงสู่ก่อนเวลา 17:00 น. กันเถอะ,ไปงพงไงอนเวลา 17:00 น. นเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,9,コマコと藪を進もう,Go through the thicket with Komako,มุ่งหน้าฝ่าพงไม้ไปพร้อมกับโคมะโกะกันเถอะ,งหาาพงไไปพอมบโคมะโกะนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,10,午後５時までに憑き藪へいこう,Go to the Haunted Thicket by 5:00 PM,ไปยังพงไม้สิงสู่ก่อนเวลา 17:00 น. กันเถอะ,ไปงพงไงอนเวลา 17:00 น. นเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_07,11,藪で神器を探そう,Search for the sacred treasure in the thicket,ตามหาเครื่องทรงเทพในพงไม้กันเถอะ,ตามหาเคองทรงเทพในพงไนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_08,0,掟の八、願いには相応の代償が必要,Rule 8: Every request requires appropriate compensation,กฎข้อที่แปด: ความปรารถนาย่อมต้องการสิ่งตอบแทนที่สมน้ำสมเนื้อ,กฎอแปด: ความปรารถนาอมองการงตอบแทนสมสมเอ
+QUEST_ID_CHAIN_VILLAGE_RULES_08,1,願いは、手放してこそ掴めるもの,A wish is something you can only grasp by letting go,ความปรารถนาคือสิ่งที่จักคว้าไว้ได้ ก็ต่อเมื่อยอมปล่อยมือเท่านั้น,ความปรารถนาองกคาไไ อเอยอมปอยอเาน
+QUEST_ID_CHAIN_VILLAGE_RULES_08,2,彼ヶ津村に伝わる、守るべき掟の一つ。,One of the rules that must be followed in Kagatsu Village.,หนึ่งในกฎที่ต้องปฏิบัติตาม ซึ่งสืบทอดกันมาในหมู่บ้านคางัตสึ,หงในกฎองปตาม งบทอดนมาในหานคาต
+QUEST_ID_CHAIN_VILLAGE_RULES_08,3,「願いには相応の代償が必要」,"""Every request requires appropriate compensation""","""ความปรารถนาย่อมต้องการสิ่งตอบแทนที่สมน้ำสมเนื้อ""","""ความปรารถนาอมองการงตอบแทนสมสมเอ"""
+QUEST_ID_CHAIN_VILLAGE_RULES_08,5,彼ヶ津村に帰ろう,Go back to Kagatsu Village,กลับไปยังหมู่บ้านคางัตสึกันเถอะ,กบไปงหานคาตนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_08,6,キスケに協力して彼ヶ津村を守る？,Cooperate with Kisuke to protect Kagatsu Village?,ร่วมมือกับคิสุเกะเพื่อปกป้องหมู่บ้านคางัตสึงั้นหรือ?,วมอบเกะเอปกองหานคาตนหอ?
+QUEST_ID_CHAIN_VILLAGE_RULES_08,7,深夜に大穴にいこう,Go to the chasm late at night,ไปยังหลุมลึกยามดึกสงัดกันเถอะ,ไปงหมกยามกสดนเถอะ
+QUEST_ID_CHAIN_VILLAGE_RULES_08,8,土地神を殺す,Kill the local god,สังหารเทพเจ้าแห่งผืนดิน,งหารเทพเาแงนน
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,0,辻の祠の修復依頼,Request to repair the hokora at the crossroads,คำขอซ่อมแซมศาลเจ้าตรงทางแยก,ขออมแซมศาลเาตรงทางแยก
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,1,辻の祠が完成した,The hokora at the crossroads has been completed,ศาลเจ้าตรงทางแยกได้รับการบูรณะเสร็จสมบูรณ์แล้ว,ศาลเาตรงทางแยกไบการรณะเสจสมรแว
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,2,辻にあるボロボロの祠を直そう。,Fix the dilapidated hokora on the crossroads.,มาซ่อมแซมศาลเจ้าผุพังตรงทางแยกกันเถอะ,มาอมแซมศาลเางตรงทางแยกนเถอะ
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,3,良い行いには良い報いがあるはず！,Good deeds should bring good rewards!,ทำความดีย่อมต้องได้ผลดีตอบแทนแน่นอน!,ความอมองไผลตอบแทนแนอน!
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,5,祠を修復しよう,Fix the hokora,มาซ่อมแซมศาลเจ้ากันเถอะ,มาอมแซมศาลเานเถอะ
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,6,祠をもっと修復しよう,Fix the hokora some more,มาซ่อมแซมศาลเจ้าเพิ่มเติมกันเถอะ,มาอมแซมศาลเาเมเมนเถอะ
+QUEST_ID_CHAIN_SHRINE_REPAIR_REQUEST,7,祠をもっともっと修復しよう,Fix the hokora even more,มาซ่อมแซมศาลเจ้าให้สมบูรณ์ยิ่งขึ้นกันเถอะ,มาอมแซมศาลเาใสมรงนนเถอะ
+QUEST_ID_CHAIN_FIND_SACRED,0,三つの神器を探そう,Search for the three sacred treasures,ตามหาเครื่องทรงเทพทั้งสามชิ้นกันเถอะ,ตามหาเคองทรงเทพงสามนนเถอะ
+QUEST_ID_CHAIN_FIND_SACRED,2,土地神を退けるには、三つの神器が必要だ。,The three sacred treasures are needed to fight the local god.,การจะขับไล่เทพเจ้าแห่งผืนดิน จำเป็นต้องใช้เครื่องทรงเทพทั้งสามชิ้น,การจะบไเทพเาแงนน เนองใเคองทรงเทพงสามน
+QUEST_ID_CHAIN_FIND_SACRED,3,神器は村の誰かが隠しているという。,It's said they can be found somewhere in the village.,เล่ากันว่าเครื่องทรงเทพถูกใครบางคนในหมู่บ้านซ่อนเอาไว้,เานาเคองทรงเทพกใครบางคนในหานอนเอาไ
+QUEST_ID_CHAIN_CONTROLLED_VILLAGER_01,0,？？？？？？,？？？？？？,??????,??????
+QUEST_ID_CHAIN_CONTROLLED_VILLAGER_01,2,！このクエストではこのテキストはありません！,! There is no text for this quest!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAIN_CONTROLLED_VILLAGER_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_HUNTER_01,0,コマコのお手伝い,Komako's Errand,ช่วยเหลือโคมะโกะ,วยเหอโคมะโกะ
+QUEST_ID_HUNTER_01,2,お手伝い券を渡し、コマコから依頼を受けた。,Gave the errand coupon and got a request from Komako.,มอบตั๋วช่วยงานและรับคำขอมาจากโคมะโกะ,มอบววยงานและบขอมาจากโคมะโกะ
+QUEST_ID_HUNTER_01,3,辻にある祠を直してほしいらしい。,It seems she wants the hokora at the crossroads fixed.,ดูเหมือนนางต้องการให้ซ่อมแซมศาลเจ้าตรงทางแยก,เหอนนางองการใอมแซมศาลเาตรงทางแยก
+QUEST_ID_HUNTER_01,5,素材を集めて辻の祠を修復しよう,Gather materials and repair the hokora on the crossroads,รวบรวมวัตถุดิบแล้วไปบูรณะศาลเจ้าตรงทางแยกกันเถอะ,รวบรวมตบแวไปรณะศาลเาตรงทางแยกนเถอะ
+QUEST_ID_HUNTER_01,6,祠が直ったことをコマコに伝えにいこう,Tell Komako that the hokora has been repaired,ไปบอกโคมะโกะว่าซ่อมศาลเจ้าเสร็จแล้วเถอะ,ไปบอกโคมะโกะาอมศาลเาเสจแวเถอะ
+QUEST_ID_HUNTER_01,7,辻の祠へお参りにいこう,Pray at the hokora on the crossroads,ไปสักการะศาลเจ้าตรงทางแยกกันเถอะ,ไปกการะศาลเาตรงทางแยกนเถอะ
+QUEST_ID_ORPHAN_01,0,トバリのお手伝い,Tobari's Errand,ช่วยเหลือโทบาริ,วยเหอโทบา
+QUEST_ID_ORPHAN_01,2,お手伝い券を渡し、トバリから依頼を受けた。,Gave the errand coupon and got a request from Tobari.,มอบตั๋วช่วยงานและรับคำขอมาจากโทบาริ,มอบววยงานและบขอมาจากโทบา
+QUEST_ID_ORPHAN_01,3,トバリの代わりに、蔵のゴミを片付けよう。,Take Tobari's place and clean up the trash in the storehouse.,เก็บกวาดขยะในโกดังเก็บของแทนโทบาริกันเถอะ,เบกวาดขยะในโกงเบของแทนโทบานเถอะ
+QUEST_ID_ORPHAN_01,5,村長邸の蔵を掃除しよう,Clean up the trash in the Kiki Storehouse,ทำความสะอาดโกดังเก็บของที่คฤหาสน์ผู้ใหญ่บ้านกันเถอะ,ความสะอาดโกงเบของคฤหาสใหานนเถอะ
+QUEST_ID_ORPHAN_01,6,掃除が終わったことをトバリに伝えよう,Tell Tobari I finished cleaning,ไปบอกโทบาริว่าทำความสะอาดเสร็จแล้วเถอะ,ไปบอกโทบาาความสะอาดเสจแวเถอะ
+QUEST_ID_ORPHAN_01,7,もう一度蔵にいこう,Go back to the storehouse,กลับไปที่โกดังเก็บของอีกครั้งเถอะ,กบไปโกงเบของกคงเถอะ
+QUEST_ID_BOY_01,0,スミレのお手伝い,Sumire's Errand,ช่วยเหลือสุมิเระ,วยเหอเระ
+QUEST_ID_BOY_01,2,お手伝い券を渡し、スミレから依頼を受けた。,Gave the errand coupon and got a request from Sumire.,มอบตั๋วช่วยงานและรับคำขอมาจากสุมิเระ,มอบววยงานและบขอมาจากเระ
+QUEST_ID_BOY_01,3,山で咲く、紫の花が必要なのだという。,He said he needs purple flowers that grow in the mountains.,เขาบอกว่าต้องการดอกไม้สีม่วงที่เบ่งบานบนภูเขา,เขาบอกาองการดอกไวงเงบานบนเขา
+QUEST_ID_BOY_01,5,山で紫の花を取ってこよう,Pick purple flowers near the mountains,ไปเก็บดอกไม้สีม่วงบนภูเขากันเถอะ,ไปเบดอกไวงบนเขานเถอะ
+QUEST_ID_BOY_01,6,紫の花をスミレに渡そう,Give the purple flowers to Sumire,ส่งมอบดอกไม้สีม่วงให้สุมิเระเถอะ,งมอบดอกไวงใเระเถอะ
+QUEST_ID_BOY_01,7,スミレの家にいこう,Go to Sumire's house,ไปที่บ้านของสุมิเระกันเถอะ,ไปานของเระนเถอะ
+QUEST_ID_STREET_VENDOR_01,0,チナナのお手伝い,Chinana's Errand,ช่วยเหลือชินานะ,วยเหอนานะ
+QUEST_ID_STREET_VENDOR_01,2,お手伝い券を渡し、チナナから依頼を受けた。,Gave the errand coupon and got a request from Chinana.,มอบตั๋วช่วยงานและรับคำขอมาจากชินานะ,มอบววยงานและบขอมาจากนานะ
+QUEST_ID_STREET_VENDOR_01,3,灰色の黒いツブ模様の石を探しているらしい。,She said she's looking for a gray stone with black spots.,ดูเหมือนนางกำลังตามหาก้อนหินสีเทาลายจุดสีดำ,เหอนนางงตามหาอนนเทาลายด
+QUEST_ID_STREET_VENDOR_01,5,チナナの石を峠へ続く道で探そう,Search for the rock on the road to the pass,ตามหาก้อนหินของชินานะบนเส้นทางสู่ช่องเขากันเถอะ,ตามหาอนนของนานะบนเนทางองเขานเถอะ
+QUEST_ID_STREET_VENDOR_01,6,石をチナナの元へ運ぼう,Bring the rock to Chinana,นำก้อนหินไปส่งให้ชินานะเถอะ,อนนไปงในานะเถอะ
+QUEST_ID_STREET_VENDOR_01,7,チナナに会いにいこう,Visit Chinana,ไปพบชินานะกันเถอะ,ไปพบนานะนเถอะ
+QUEST_ID_GIRL_01,0,ヨウのお手伝い,Yoh's Errand,ช่วยเหลือโย,วยเหอโย
+QUEST_ID_GIRL_01,2,お手伝い券を渡し、ヨウから依頼を受けた。,Gave the errand coupon and got a request from Yoh.,มอบตั๋วช่วยงานและรับคำขอมาจากโย,มอบววยงานและบขอมาจากโย
+QUEST_ID_GIRL_01,3,ヤマメを釣って来てほしいとのこと。,She wants me to catch and bring her a yamame trout.,นางต้องการให้ช่วยตกปลายามาเมะมาให้,นางองการใวยตกปลายามาเมะมาใ
+QUEST_ID_GIRL_01,5,ヨウのためにヤマメを釣ろう,Catch a yamame trout for Yoh,ไปตกปลายามาเมะเพื่อโยกันเถอะ,ไปตกปลายามาเมะเอโยนเถอะ
+QUEST_ID_GIRL_01,6,ヤマメをヨウに渡そう,Give the yamame trout to Yoh,ส่งมอบปลายามาเมะให้โยเถอะ,งมอบปลายามาเมะใโยเถอะ
+QUEST_ID_GIRL_01,7,食堂にいるロッカクに会いにいこう,Visit Rokkaku at the diner,ไปพบร็อกคาคุที่โรงอาหารกันเถอะ,ไปพบอกคาโรงอาหารนเถอะ
+QUEST_ID_GENERAL_STORE_MASTER_01,0,サザンカのお手伝い,Sazanka's Errand,ช่วยเหลือซาซังกะ,วยเหอซางกะ
+QUEST_ID_GENERAL_STORE_MASTER_01,2,お手伝い券を渡し、サザンカから依頼を受けた。,Gave the errand coupon and got a request from Sazanka.,มอบตั๋วช่วยงานและรับคำขอมาจากซาซังกะ,มอบววยงานและบขอมาจากซางกะ
+QUEST_ID_GENERAL_STORE_MASTER_01,3,石切場で銅鉱石を探してきてほしいという。,She wants some copper ores from the quarry.,นางต้องการให้ไปหาแร่ทองแดงที่เหมืองหิน,นางองการใไปหาแทองแดงเหองน
+QUEST_ID_GENERAL_STORE_MASTER_01,5,銅鉱石を５個持ってこよう,Bring 5 copper ores,นำแร่ทองแดง 5 ก้อนมาเถอะ,แทองแดง 5 อนมาเถอะ
+QUEST_ID_GENERAL_STORE_MASTER_01,6,サザンカに銅鉱石を５個渡そう,Give the 5 copper ores to Sazanka,ส่งมอบแร่ทองแดง 5 ก้อนให้ซาซังกะเถอะ,งมอบแทองแดง 5 อนใซางกะเถอะ
+QUEST_ID_GENERAL_STORE_MASTER_01,7,サザンカに会いにいこう,Talk to Sazanka,ไปพบซาซังกะกันเถอะ,ไปพบซางกะนเถอะ
+QUEST_ID_YOUNG_MAN_01,0,ユータのお手伝い,Yuta's Errand,ช่วยเหลือยูตะ,วยเหอตะ
+QUEST_ID_YOUNG_MAN_01,2,お手伝い券を渡し、ユータから依頼を受けた。,Gave the errand coupon and got a request from Yuta.,มอบตั๋วช่วยงานและรับคำขอมาจากยูตะ,มอบววยงานและบขอมาจากตะ
+QUEST_ID_YOUNG_MAN_01,3,養蜂のためのミツバチを探しているらしい。,It seems he's looking for honeybees for beekeeping.,ดูเหมือนเขากำลังตามหาผึ้งมิ้มมาใช้เลี้ยงผึ้ง,เหอนเขางตามหางมมาใเยงง
+QUEST_ID_YOUNG_MAN_01,5,山でミツバチを５匹捕まえよう,Catch 5 honeybees near the mountains,ไปจับผึ้งมิ้มบนภูเขามา 5 ตัวกันเถอะ,ไปบงมบนเขามา 5 วนเถอะ
+QUEST_ID_YOUNG_MAN_01,6,ユータにミツバチを５匹渡そう,Give the 5 honeybees to Yuta,ส่งมอบผึ้งมิ้ม 5 ตัวให้ยูตะเถอะ,งมอบงม 5 วใตะเถอะ
+QUEST_ID_YOUNG_MAN_01,7,ユータの家にいこう,Go to Yuta's house,ไปที่บ้านของยูตะกันเถอะ,ไปานของตะนเถอะ
+QUEST_ID_OLD_MAN_01,0,ロッカクのお手伝い,Rokkaku's Errand,ช่วยเหลือร็อกคาคุ,วยเหออกคา
+QUEST_ID_OLD_MAN_01,2,お手伝い券を渡し、ロッカクから依頼を受けた。,Gave the errand coupon and got a request from Rokkaku.,มอบตั๋วช่วยงานและรับคำขอมาจากร็อกคาคุ,มอบววยงานและบขอมาจากอกคา
+QUEST_ID_OLD_MAN_01,3,リンにお弁当を届けてほしいとのこと。,He wants me to deliver a lunch box to Rin.    ,เขาต้องการให้ช่วยนำข้าวกล่องไปส่งให้ริน,เขาองการใวยาวกองไปงใน
+QUEST_ID_OLD_MAN_01,5,リンのお弁当を届けよう,Deliver Rin's lunch box,นำข้าวกล่องของรินไปส่งกันเถอะ,าวกองของนไปงนเถอะ
+QUEST_ID_OLD_MAN_01,6,届けたことをロッカクに報告しよう,Report to Rokkaku that it's been delivered,ไปรายงานร็อกคาคุว่าส่งข้าวกล่องแล้วเถอะ,ไปรายงานอกคาางาวกองแวเถอะ
+QUEST_ID_SECRETARY_01,0,コンノのお手伝い,Konno's Errand,ช่วยเหลือคอนโนะ,วยเหอคอนโนะ
+QUEST_ID_SECRETARY_01,2,お手伝い券を渡し、コンノから依頼を受けた。,Gave the errand coupon and got a request from Konno.,มอบตั๋วช่วยงานและรับคำขอมาจากคอนโนะ,มอบววยงานและบขอมาจากคอนโนะ
+QUEST_ID_SECRETARY_01,3,薪の束を作って、持って来いと言われた。,I was told to make a bundle of firewood and bring it to him.,เขาบอกให้มัดฟืนแล้วนำมาให้เขา,เขาบอกใดนแวมาใเขา
+QUEST_ID_SECRETARY_01,5,薪の束を作ろう,Make a bundle of firewood,ทำมัดฟืนกันเถอะ,ดนนเถอะ
+QUEST_ID_SECRETARY_01,6,薪の束をコンノの部屋に持っていこう,Take the bundle of firewood to Konno's room,นำมัดฟืนไปที่ห้องของคอนโนะเถอะ,ดนไปองของคอนโนะเถอะ
+QUEST_ID_SECRETARY_01,7,コンノの部屋にいこう,Go to Konno's room,ไปที่ห้องของคอนโนะกันเถอะ,ไปองของคอนโนะนเถอะ
+QUEST_ID_FEMALE_DOCTOR_01,0,ハスミのお手伝い,Hasumi's Errand,ช่วยเหลือฮาสุมิ,วยเหอฮา
+QUEST_ID_FEMALE_DOCTOR_01,2,お手伝い券を渡し、ハスミから依頼を受けた。,Gave the errand coupon and got a request from Hasumi.,มอบตั๋วช่วยงานและรับคำขอมาจากฮาสุมิ,มอบววยงานและบขอมาจากฮา
+QUEST_ID_FEMALE_DOCTOR_01,3,漢方薬の素材、トウキを探している様子だ。,She's looking for a toki plant for her herbal medicine.,ดูเหมือนนางกำลังตามหาสมุนไพรโทคิเพื่อใช้ปรุงยาสมุนไพร,เหอนนางงตามหาสนไพรโทเอใปงยาสนไพร
+QUEST_ID_FEMALE_DOCTOR_01,5,山にトウキを採りにいこう,Find a toki plant somewhere in the mountains,ไปเก็บสมุนไพรโทคิบนภูเขากันเถอะ,ไปเบสนไพรโทบนเขานเถอะ
+QUEST_ID_FEMALE_DOCTOR_01,6,くすのき診療所でハスミにトウキを渡そう,Give the toki plant to Hasumi at the Kusunoki Clinic,ไปส่งมอบสมุนไพรโทคิให้ฮาสุมิที่คลินิกคุสุโนกิเถอะ,ไปงมอบสนไพรโทใฮาคกโนเถอะ
+QUEST_ID_FEMALE_DOCTOR_01,7,くすのき診療所にいこう,Visit the Kusunoki Clinic,ไปที่คลินิกคุสุโนกิกันเถอะ,ไปคกโนนเถอะ
+QUEST_ID_CARPENTER_01,0,キスケのお手伝い,Kisuke's Errand,ช่วยเหลือคิสุเกะ,วยเหอเกะ
+QUEST_ID_CARPENTER_01,2,お手伝い券を渡し、キスケから依頼を受けた。,Gave the errand coupon and got a request from Kisuke.,มอบตั๋วช่วยงานและรับคำขอมาจากคิสุเกะ,มอบววยงานและบขอมาจากเกะ
+QUEST_ID_CARPENTER_01,3,銅のツルハシで岩を壊してほしいとのこと。,He wants me to break boulders with a copper pickaxe.,เขาต้องการให้ใช้อีเตอร์ทองแดงทุบทำลายโขดหิน,เขาองการใใเตอทองแดงบลายโขดน
+QUEST_ID_CARPENTER_01,5,山のキャンプ近くの落石を壊そう,Destroy the boulder near the campsite,ไปทำลายหินถล่มใกล้กับจุดตั้งแคมป์บนภูเขากันเถอะ,ไปลายนถมใกบดงแคมบนเขานเถอะ
+QUEST_ID_CARPENTER_01,6,落石を壊したことをキスケに報告しよう,Tell Kisuke the boulder has been destroyed,ไปรายงานคิสุเกะว่าทำลายหินถล่มเรียบร้อยแล้วเถอะ,ไปรายงานเกะาลายนถมเยบอยแวเถอะ
+QUEST_ID_CARPENTER_01,7,樹木建設前にいこう,Visit Kiki Construction,ไปที่หน้าบริษัทก่อสร้างคิกิกันเถอะ,ไปหาบทอสางนเถอะ
+QUEST_ID_WOODCUTTER_01,0,シロージのお手伝い,Shiroji's Errand,ช่วยเหลือชิโรจิ,วยเหอโร
+QUEST_ID_WOODCUTTER_01,2,お手伝い券を渡し、シロージから依頼を受けた。,Gave the errand coupon and got a request from Shiroji.,มอบตั๋วช่วยงานและรับคำขอมาจากชิโรจิ,มอบววยงานและบขอมาจากโร
+QUEST_ID_WOODCUTTER_01,3,罠を使った狩りを手伝ってほしいという。,He wants me to help with hunting using traps.,เขาต้องการให้ช่วยล่าสัตว์ด้วยกับดัก,เขาองการใวยาตวยบก
+QUEST_ID_WOODCUTTER_01,5,罠の様子を見にいこう,Check on the traps,ไปดูสภาพของกับดักกันเถอะ,ไปสภาพของบกนเถอะ
+QUEST_ID_WOODCUTTER_01,6,シロージに報告しにいこう,Report to Shiroji,ไปรายงานชิโรจิกันเถอะ,ไปรายงานโรนเถอะ
+QUEST_ID_WOODCUTTER_01,7,狩人詰所の提出箱に狩猟証明を入れよう,Put the hunting certificate in the box at the hunter's lodge,ใส่ใบรับรองการล่าลงในกล่องส่งมอบที่ป้อมนายพรานกันเถอะ,ใใบบรองการาลงในกองงมอบอมนายพรานนเถอะ
+QUEST_ID_WOODCUTTER_01,8,山の奥へいこう,Go deeper into the mountains,มุ่งหน้าลึกเข้าไปในภูเขากันเถอะ,งหากเาไปในเขานเถอะ
+QUEST_ID_TUTORIAL_01,0,<cmd CMD_UNIT_MOVE_STICK>移動,<cmd CMD_UNIT_MOVE_STICK> Move,<cmd CMD_UNIT_MOVE_STICK> เคลื่อนที่,<cmd CMD_UNIT_MOVE_STICK> เคอน
+QUEST_ID_TUTORIAL_01,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_02,0,<cmd CMD_INTERACTION_HARVEST>アクション,<cmd CMD_INTERACTION_HARVEST> Action,<cmd CMD_INTERACTION_HARVEST> แอ็กชัน,<cmd CMD_INTERACTION_HARVEST> แกน
+QUEST_ID_TUTORIAL_02,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_02,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_03,0,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP>ジャンプ,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> Jump,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด
+QUEST_ID_TUTORIAL_03,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_03,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_04,0,<cmd CMD_UNIT_MOVE_ANGLE>＋<cmd CMD_UNIT_MOVE_STICK>その場で回転,<cmd CMD_UNIT_MOVE_ANGLE>＋<cmd CMD_UNIT_MOVE_STICK> Rotate in place,<cmd CMD_UNIT_MOVE_ANGLE>＋<cmd CMD_UNIT_MOVE_STICK> หมุนตัวอยู่กับที่,<cmd CMD_UNIT_MOVE_ANGLE>＋<cmd CMD_UNIT_MOVE_STICK> หนวอบ
+QUEST_ID_TUTORIAL_04,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_04,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_05,0,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK>平行移動,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK> Sidestep,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK> เคลื่อนที่ขนาน,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK> เคอนขนาน
+QUEST_ID_TUTORIAL_05,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_05,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_06,0,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP>ジャンプ２,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> Jump 2,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด 2,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด 2
+QUEST_ID_TUTORIAL_06,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_06,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_07,0,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP>ジャンプ３,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> Jump 3,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด 3,<cmd CMD_UNIT_MOVE_STICK>＋<cmd CMD_UNIT_JUMP> กระโดด 3
+QUEST_ID_TUTORIAL_07,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_07,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_10,0,<cmd CMD_UNIT_MAIN_MENU>地図を見る,<cmd CMD_UNIT_MAIN_MENU> View the map,<cmd CMD_UNIT_MAIN_MENU> ดูแผนที่,<cmd CMD_UNIT_MAIN_MENU> แผน
+QUEST_ID_TUTORIAL_10,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_10,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_01,0,<cmd CMD_UNIT_MOVE_STICK>木まで移動する,<cmd CMD_UNIT_MOVE_STICK> Move to the tree,<cmd CMD_UNIT_MOVE_STICK> เดินไปที่ต้นไม้,<cmd CMD_UNIT_MOVE_STICK> เนไปนไ
+QUEST_ID_CHAPTER_01_01,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_02,0,<cmd CMD_UNIT_ACTION>オノで木を切り倒せ,<cmd CMD_UNIT_ACTION> Use the axe to cut down the tree,<cmd CMD_UNIT_ACTION> ใช้ขวานโค่นต้นไม้ลงมา,<cmd CMD_UNIT_ACTION> ใขวานโนนไลงมา
+QUEST_ID_CHAPTER_01_02,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_02,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_03,0,<cmd CMD_UNIT_ACTION>ツルハシで全ての石を壊せ,<cmd CMD_UNIT_ACTION> Break all the rocks with the pickaxe,<cmd CMD_UNIT_ACTION> ใช้อีเตอร์ทำลายหินทั้งหมด,<cmd CMD_UNIT_ACTION> ใเตอลายนงหมด
+QUEST_ID_CHAPTER_01_03,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_03,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_04,0,<cmd CMD_UNIT_MOVE_STICK>畑まで移動する,<cmd CMD_UNIT_MOVE_STICK> Move to the field,<cmd CMD_UNIT_MOVE_STICK> เดินไปที่แปลงเพาะปลูก,<cmd CMD_UNIT_MOVE_STICK> เนไปแปลงเพาะปก
+QUEST_ID_CHAPTER_01_04,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_04,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_05,0,<cmd CMD_UNIT_ACTION>クワで土を耕せ,<cmd CMD_UNIT_ACTION> Use the hoe to till the soil,<cmd CMD_UNIT_ACTION> ใช้จอบพรวนดิน,<cmd CMD_UNIT_ACTION> ใจอบพรวนน
+QUEST_ID_CHAPTER_01_05,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_05,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_06,0,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK>並行移動で耕す場所を選ぶ,Hold <cmd CMD_UNIT_MOVE_PARALLEL> to strafe and move slowly with <cmd CMD_UNIT_MOVE_STICK> to choose where to till,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK> เคลื่อนที่ขนานเพื่อเลือกตำแหน่งพรวนดิน,<cmd CMD_UNIT_MOVE_PARALLEL>＋<cmd CMD_UNIT_MOVE_STICK> เคอนขนานเอเอกแหงพรวนน
+QUEST_ID_CHAPTER_01_06,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_06,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_07,0,<cmd CMD_INTERACTION_TRIANGLE>種を撒け,<cmd CMD_INTERACTION_TRIANGLE> Sow seeds,<cmd CMD_INTERACTION_TRIANGLE> หว่านเมล็ดพันธุ์,<cmd CMD_INTERACTION_TRIANGLE> หานเมดน
+QUEST_ID_CHAPTER_01_07,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_07,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_08,0,<cmd CMD_UNIT_MOVE_STICK>水辺まで移動する,<cmd CMD_UNIT_MOVE_STICK> Move to the water,<cmd CMD_UNIT_MOVE_STICK> เดินไปที่ริมน้ำ,<cmd CMD_UNIT_MOVE_STICK> เนไปม
+QUEST_ID_CHAPTER_01_08,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_08,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_09,0,<cmd CMD_UNIT_ACTION>ジョウロに水をくむ,<cmd CMD_UNIT_ACTION> Fill the watering can with water,<cmd CMD_UNIT_ACTION> ตักน้ำใส่บัวรดน้ำ,<cmd CMD_UNIT_ACTION> กใวรด
+QUEST_ID_CHAPTER_01_09,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_09,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_10,0,<cmd CMD_UNIT_MOVE_STICK>畑まで戻る,<cmd CMD_UNIT_MOVE_STICK> Return to the field,<cmd CMD_UNIT_MOVE_STICK> กลับไปที่แปลงเพาะปลูก,<cmd CMD_UNIT_MOVE_STICK> กบไปแปลงเพาะปก
+QUEST_ID_CHAPTER_01_10,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_10,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_11,0,<cmd CMD_UNIT_ACTION>ジョウロで種に水を撒け,<cmd CMD_UNIT_ACTION> Use the watering can to water the seeds,<cmd CMD_UNIT_ACTION> ใช้บัวรดน้ำรดน้ำที่เมล็ดพันธุ์,<cmd CMD_UNIT_ACTION> ใวรดรดเมดน
+QUEST_ID_CHAPTER_01_11,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_11,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_12,0,植えた野菜を大切にしろ,Take care of the vegetables you planted,ดูแลพืชผักที่ปลูกเอาไว้ให้ดี,แลชกปกเอาไใ
+QUEST_ID_CHAPTER_01_12,2,キスケからお願いされた。,!This quest does not have this text!,ได้รับคำขอร้องมาจากคิสุเกะ,ไบขอองมาจากเกะ
+QUEST_ID_CHAPTER_01_12,3,守らなきゃいけない約束ごと。,"!If this is displayed, it's a bug, so please report it!",คำสัญญาที่ต้องรักษาไว้ให้ได้,ญญาองกษาไใไ
+QUEST_ID_CHAPTER_01_13,0,畑に水を撒け,Water the field,รดน้ำในแปลงเพาะปลูก,รดในแปลงเพาะปก
+QUEST_ID_CHAPTER_01_13,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_13,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_14,0,作物を収穫しろ,Harvest the crops,เก็บเกี่ยวพืชผล,เบเยวชผล
+QUEST_ID_CHAPTER_01_14,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_14,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_15,0,祭壇に野菜を捧げろ,Offer the vegetables at the altar,นำพืชผักไปถวายที่แท่นบูชา,ชกไปถวายแนชา
+QUEST_ID_CHAPTER_01_15,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_15,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_11,0,指笛を吹いてみよう,Try whistling,ลองเป่านกหวีดดูเถอะ,ลองเานกหดเถอะ
+QUEST_ID_TUTORIAL_11,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_11,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_12,0,楽譜に合わせて指笛を吹いてみよう,Try whistling along with the sheet music,ลองเป่านกหวีดตามโน้ตเพลงดูเถอะ,ลองเานกหดตามโตเพลงเถอะ
+QUEST_ID_TUTORIAL_12,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_12,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_00,0,村の人に挨拶して回ろう　０/８,Greet the villagers 0/8,เดินทักทายคนในหมู่บ้านกันเถอะ 0/8,เนกทายคนในหานนเถอะ 0/8
+QUEST_ID_FIRST_MEETING_00,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_00,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_01,0,村の人に挨拶して回ろう　１/８,Greet the villagers 1/8,เดินทักทายคนในหมู่บ้านกันเถอะ 1/8,เนกทายคนในหานนเถอะ 1/8
+QUEST_ID_FIRST_MEETING_01,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_02,0,村の人に挨拶して回ろう　２/８,Greet the villagers 2/8,เดินทักทายคนในหมู่บ้านกันเถอะ 2/8,เนกทายคนในหานนเถอะ 2/8
+QUEST_ID_FIRST_MEETING_02,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_02,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_03,0,村の人に挨拶して回ろう　３/８,Greet the villagers 3/8,เดินทักทายคนในหมู่บ้านกันเถอะ 3/8,เนกทายคนในหานนเถอะ 3/8
+QUEST_ID_FIRST_MEETING_03,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_03,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_04,0,村の人に挨拶して回ろう　４/８,Greet the villagers 4/8,เดินทักทายคนในหมู่บ้านกันเถอะ 4/8,เนกทายคนในหานนเถอะ 4/8
+QUEST_ID_FIRST_MEETING_04,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_04,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_05,0,村の人に挨拶して回ろう　５/８,Greet the villagers 5/8,เดินทักทายคนในหมู่บ้านกันเถอะ 5/8,เนกทายคนในหานนเถอะ 5/8
+QUEST_ID_FIRST_MEETING_05,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_05,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_06,0,村の人に挨拶して回ろう　６/８,Greet the villagers 6/8,เดินทักทายคนในหมู่บ้านกันเถอะ 6/8,เนกทายคนในหานนเถอะ 6/8
+QUEST_ID_FIRST_MEETING_06,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_06,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_07,0,村の人に挨拶して回ろう　７/８,Greet the villagers 7/8,เดินทักทายคนในหมู่บ้านกันเถอะ 7/8,เนกทายคนในหานนเถอะ 7/8
+QUEST_ID_FIRST_MEETING_07,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_07,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_FIRST_MEETING_08,0,村の人に挨拶して回ろう　８/８,Greet the villagers 8/8,เดินทักทายคนในหมู่บ้านกันเถอะ 8/8,เนกทายคนในหานนเถอะ 8/8
+QUEST_ID_FIRST_MEETING_08,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_FIRST_MEETING_08,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_18,0,つくしを食べろ,Eat the horsetail,กินยอดสึคุชิ,นยอด
+QUEST_ID_CHAPTER_01_18,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_18,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_19,0,商品を見ろ,Look at the merchandise,ดูสินค้า,นา
+QUEST_ID_CHAPTER_01_19,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_19,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_20,0,欲しい商品をメモしてみよう,Try noting the items you want,ลองจดบันทึกสินค้าที่ต้องการดูเถอะ,ลองจดนกนาองการเถอะ
+QUEST_ID_CHAPTER_01_20,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_20,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_01_21,0,メモしたものを確認してみよう,Try checking your note,ลองตรวจสอบสิ่งที่จดบันทึกไว้ดูเถอะ,ลองตรวจสอบงจดนกไเถอะ
+QUEST_ID_CHAPTER_01_21,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_01_21,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_02_03,0,墓地をキレイにしよう,Cemetery Cleanup,ทำความสะอาดสุสานกันเถอะ,ความสะอาดสานนเถอะ
+QUEST_ID_CHAPTER_02_03,2,！このクエストではこのテキストはありません！,! There is no text for this quest!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_02_03,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_02_03,5,雑草をすべて刈り取ろう,Remove all the weeds,ถอนวัชพืชทั้งหมดออกไปกันเถอะ,ถอนชชงหมดออกไปนเถอะ
+QUEST_ID_CHAPTER_02_03,6,リンに報告しよう,Report to Rin,ไปรายงานรินกันเถอะ,ไปรายงานนนเถอะ
+QUEST_ID_CHAPTER_04_09,0,トバリに危機が迫ったら守れ,Protect Tobari from danger,ปกป้องโทบาริหากมีอันตรายเข้ามาใกล้,ปกองโทบาหากนตรายเามาใก
+QUEST_ID_CHAPTER_04_09,2,！このクエストではこのテキストはありません！,!There is no text for this quest!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_04_09,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_04_10,0,もっともっと祠を直そう,Make further repairs to the shrine,บูรณะศาลเจ้าให้ดียิ่งขึ้นไปอีกกันเถอะ,รณะศาลเาใงนไปกนเถอะ
+QUEST_ID_CHAPTER_04_10,2,辻にある祠をもっと立派にしてあげよう。,Make the shrine on the crossroads even more splendid,มาทำให้ศาลเจ้าตรงทางแยกงดงามโอ่อ่ายิ่งขึ้นกันเถอะ,มาใศาลเาตรงทางแยกงดงามโางนนเถอะ
+QUEST_ID_CHAPTER_04_10,3,良い行いには良い報いがあるはず！,Good deeds should bring good rewards!,ทำดีย่อมได้ดีตอบแทนแน่นอน!,อมไตอบแทนแนอน!
+QUEST_ID_CHAPTER_05_00_01,0,鵺の皮を試せ,Test the nue pelt,ทดลองใช้หนังนูเอะ,ทดลองใหงเอะ
+QUEST_ID_CHAPTER_05_00_01,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_05_00_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_TUTORIAL_16,0,<cmd CMD_INTERACTION_LONG_CANCEL>＋<cmd CMD_UNIT_MOVE_STICK> 鵺の皮で早駆け,<cmd CMD_INTERACTION_LONG_CANCEL>+<cmd CMD_UNIT_MOVE_STICK> Dash with the nue pelt,<cmd CMD_INTERACTION_LONG_CANCEL> วิ่งเร็วด้วยหนังนูเอะ,<cmd CMD_INTERACTION_LONG_CANCEL> งเววยหงเอะ
+QUEST_ID_TUTORIAL_16,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_TUTORIAL_16,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_05_00_02,0,<cmd CMD_INTERACTION_SQUARE>岩切りナタを試してみよう,<cmd CMD_INTERACTION_SQUARE> Try the Rockrending Machete,<cmd CMD_INTERACTION_SQUARE> ลองใช้มีดพร้าผ่าหินดูเถอะ,<cmd CMD_INTERACTION_SQUARE> ลองใดพาานเถอะ
+QUEST_ID_CHAPTER_05_00_02,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_05_00_02,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_05_00_03,0,奇跡の呼笛を試せ,Test the Miracle Whistle,ทดลองใช้นกหวีดแห่งปาฏิหาริย์,ทดลองในกหดแงปาหา
+QUEST_ID_CHAPTER_05_00_03,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_05_00_03,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_05_00_04_DREAM,0,神器を持って大穴に戻れ,Return to the chasm with the sacred treasures,นำเครื่องทรงเทพกลับไปที่หลุมยักษ์,เคองทรงเทพกบไปหมก
+QUEST_ID_CHAPTER_05_00_04_DREAM,2,思い出した、いつかの約束。,I just remembered my promise.,นึกออกแล้ว... คำสัญญาในวันวาน,กออกแว... ญญาในนวาน
+QUEST_ID_CHAPTER_05_00_04_DREAM,3,だいぶ遅れたけど、きっとまだ待ってるはず。,"I'm really late, but I'm sure you're still waiting.",ถึงจะสายไปมาก แต่เธอต้องยังรออยู่แน่ๆ,งจะสายไปมาก แเธอองงรออแๆ
+QUEST_ID_CHAPTER_05_00_05,0,<cmd CMD_INTERACTION_SQUARE>トバリを岩切りナタで斬れ,<cmd CMD_INTERACTION_SQUARE> Cut down Tobari,<cmd CMD_INTERACTION_SQUARE> ฟันโทบาริด้วยมีดพร้าผ่าหิน,<cmd CMD_INTERACTION_SQUARE> นโทบาวยดพาาน
+QUEST_ID_CHAPTER_05_00_05,2,！このクエストではこのテキストはありません！,! There is no text for this quest!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_05_00_05,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_06_01,0,ナタの前まで移動しろ,Pick up the machete,เดินไปข้างหน้ามีดพร้า,เนไปางหาดพา
+QUEST_ID_CHAPTER_06_01,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_06_01,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_06_02,0,ナタを拾え,Pick up the machete,เก็บมีดพร้าขึ้นมา,เบดพานมา
+QUEST_ID_CHAPTER_06_02,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_06_02,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_06_07,0,岩を退かせ,Move the boulder,ขยับโขดหินออกไป,ขบโขดนออกไป
+QUEST_ID_CHAPTER_06_07,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_06_07,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_CHAPTER_06_08,0,岩を退かそう,Move the boulder,ย้ายโขดหินออกไปกันเถอะ,ายโขดนออกไปนเถอะ
+QUEST_ID_CHAPTER_06_08,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_CHAPTER_06_08,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_SUB_001,0,収納箱を作ってみよう,Make a storage chest,ลองสร้างหีบเก็บของดูเถอะ,ลองสางบเบของเถอะ
+QUEST_ID_SUB_001,2,便利だからと、リンに作ることを勧められた。,Rin recommended making them because they're convenient.,รินแนะนำให้สร้างเพราะมันสะดวกสบายดี,นแนะใสางเพราะนสะดวกสบาย
+QUEST_ID_SUB_001,3,ぎゅうぎゅうのカバンも、少しは軽くなるかも。,It might help lighten my bag too.,กระเป๋าที่แน่นเอี้ยดอาจจะเบาลงบ้างก็ได้,กระเาแนเยดอาจจะเบาลงางไ
+QUEST_ID_SUB_001,5,作業台で収納箱を作ろう,Make a storage chest at the workbench,สร้างหีบเก็บของที่โต๊ะทำงานกันเถอะ,สางบเบของโะงานนเถอะ
+QUEST_ID_SUB_002,0,兵糧丸を作ってみよう,Try making hyorogan,ลองทำยาเม็ดเสบียงศึกดูเถอะ,ลองยาเดเสยงกเถอะ
+QUEST_ID_SUB_002,2,ハスミ曰く、昔の非常食なのだという。,Hasumi said they're an old-timey emergency food.,ฮาสุมิบอกว่ามันคือเสบียงฉุกเฉินในสมัยโบราณ,ฮาบอกานอเสยงกเนในสยโบราณ
+QUEST_ID_SUB_002,3,一粒でもあれば、疲れた時に役に立つかも。,Even just one piece might come in handy when I'm tired.,แค่มีสักเม็ดเดียว ก็อาจจะมีประโยชน์เวลาเหนื่อยล้าก็ได้,แกเดเยว อาจจะประโยชเวลาเหอยาไ
+QUEST_ID_SUB_002,5,作業台で兵糧丸を作ろう,Make hyorogan at the workbench,ทำยาเม็ดเสบียงศึกที่โต๊ะทำงานกันเถอะ,ยาเดเสยงกโะงานนเถอะ
+QUEST_ID_HOLIDAY_NOTICE_FAIR,0,AM １０：００　品評会,10:00 AM Evaluation,10:00 AM งานประกวดผลผลิต,10:00 AM งานประกวดผลผต
+QUEST_ID_HOLIDAY_NOTICE_FAIR,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_HOLIDAY_NOTICE_FAIR,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_HOLIDAY_NOTICE_SPRING,0,AM １０：００　お花見,10:00 AM Cherry Blossom Festival,10:00 AM เทศกาลชมดอกไม้,10:00 AM เทศกาลชมดอกไ
+QUEST_ID_HOLIDAY_NOTICE_SPRING,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_HOLIDAY_NOTICE_SPRING,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_HOLIDAY_NOTICE_SUMMER,0,PM ４：００　縁日,4:00 PM Festival,04:00 PM เทศกาลงานวัด,04:00 PM เทศกาลงานด
+QUEST_ID_HOLIDAY_NOTICE_SUMMER,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_HOLIDAY_NOTICE_SUMMER,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_HOLIDAY_NOTICE_AUTUMN,0,AM １０：００　収穫祭,10:00 AM Harvest Festival,10:00 AM เทศกาลเก็บเกี่ยว,10:00 AM เทศกาลเบเยว
+QUEST_ID_HOLIDAY_NOTICE_AUTUMN,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_HOLIDAY_NOTICE_AUTUMN,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !
+QUEST_ID_HOLIDAY_NOTICE_WINTER,0,PM ８：００　年末祭,8:00 PM New Year's Festival,08:00 PM เทศกาลส่งท้ายปีเก่า,08:00 PM เทศกาลงายเา
+QUEST_ID_HOLIDAY_NOTICE_WINTER,2,！このクエストではこのテキストはありません！,!This quest does not have this text!,! ในเควสต์นี้ไม่มีข้อความนี้ !,! ในเควสไอความ !
+QUEST_ID_HOLIDAY_NOTICE_WINTER,3,！表示されている場合バグなので報告！,BUG: Report this if it appears!,! หากแสดงข้อความนี้ถือเป็นบั๊ก กรุณาแจ้งรายงาน !,! หากแสดงอความอเนก กณาแงรายงาน !

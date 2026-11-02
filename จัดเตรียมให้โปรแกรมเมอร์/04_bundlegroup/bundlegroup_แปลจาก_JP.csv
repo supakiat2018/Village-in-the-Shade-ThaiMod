@@ -1,0 +1,19 @@
+﻿Item_No,Index,id,key,tag_jp,jp_orig,ต้นฉบับ_JP,ชื่อกลุ่ม_TH,คำแปลไทย,ชื่อกลุ่ม_PUA,Thai_PUA,en_moden,ต้นฉบับ_EN,สถานะ
+1,0,0,BUNDLE_GROUP_ID_SPRING_01,狐のお社・春_01,狐の社／春,狐の社／春,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ผลิ,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ผลิ,ศาลเางจอก／ฤใบไผ,ศาลเางจอก／ฤใบไผ,Fox Shrine / Spring,Fox Shrine / Spring,สมบูรณ์
+2,1,1,BUNDLE_GROUP_ID_SUMMER_01,狐のお社・夏_01,狐の社／夏,狐の社／夏,ศาลเจ้าจิ้งจอก／ฤดูร้อน,ศาลเจ้าจิ้งจอก／ฤดูร้อน,ศาลเางจอก／ฤอน,ศาลเางจอก／ฤอน,Fox Shrine / Summer,Fox Shrine / Summer,สมบูรณ์
+3,2,2,BUNDLE_GROUP_ID_AUTUMN_01,狐のお社・秋_01,狐の社／秋,狐の社／秋,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ร่วง,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ร่วง,ศาลเางจอก／ฤใบไวง,ศาลเางจอก／ฤใบไวง,Fox Shrine / Autumn,Fox Shrine / Autumn,สมบูรณ์
+4,3,3,BUNDLE_GROUP_ID_WINTER_01,狐のお社・冬_01,狐の社／冬,狐の社／冬,ศาลเจ้าจิ้งจอก／ฤดูหนาว,ศาลเจ้าจิ้งจอก／ฤดูหนาว,ศาลเางจอก／ฤหนาว,ศาลเางจอก／ฤหนาว,Fox Shrine / Winter,Fox Shrine / Winter,สมบูรณ์
+5,4,4,BUNDLE_GROUP_ID_SHRINE_REPAIR_01,ほこら修復_01,祠の修復,祠の修復,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,Hokora Repair,Hokora Repair,สมบูรณ์
+6,5,5,BUNDLE_GROUP_ID_SHRINE_REPAIR_02,ほこら修復_02,祠の修復,祠の修復,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,Hokora Repair,Hokora Repair,สมบูรณ์
+7,6,6,BUNDLE_GROUP_ID_SHRINE_REPAIR_03,ほこら修復_03,祠の修復,祠の修復,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,Hokora Repair,Hokora Repair,สมบูรณ์
+8,7,7,BUNDLE_GROUP_ID_SHRINE_REPAIR_04,ほこら修復_04,祠の修復,祠の修復,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,Hokora Repair,Hokora Repair,สมบูรณ์
+9,8,8,BUNDLE_GROUP_ID_SHRINE_REPAIR_05,ほこら修復_05,祠の修復,祠の修復,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,Hokora Repair,Hokora Repair,สมบูรณ์
+10,9,9,BUNDLE_GROUP_ID_VILLAGE_HEAD_01,リンの依頼_01,リンのお手伝い,リンのお手伝い,ช่วยเหลือริน,ช่วยเหลือริน,วยเหอน,วยเหอน,Rin's Errand,Rin's Errand,สมบูรณ์
+11,10,10,BUNDLE_GROUP_ID_VILLAGE_HEAD_02,リンの依頼_02,野菜の納品,野菜の納品,ส่งมอบพืชผัก,ส่งมอบพืชผัก,งมอบชก,งมอบชก,Vegetable Delivery,Vegetable Delivery,สมบูรณ์
+12,11,11,BUNDLE_GROUP_ID_VILLAGE_HEAD_03,リンの依頼_03,果物の納品,果物の納品,ส่งมอบผลไม้,ส่งมอบผลไม้,งมอบผลไ,งมอบผลไ,Fruit Delivery,Fruit Delivery,สมบูรณ์
+13,12,12,BUNDLE_GROUP_ID_VILLAGE_HEAD_04,リンの依頼_04,花の納品,花の納品,ส่งมอบดอกไม้,ส่งมอบดอกไม้,งมอบดอกไ,งมอบดอกไ,Flower Delivery,Flower Delivery,สมบูรณ์
+14,13,13,BUNDLE_GROUP_ID_VILLAGE_HEAD_05,リンの依頼_05,加工品の納品,加工品の納品,ส่งมอบผลผลิตแปรรูป,ส่งมอบผลผลิตแปรรูป,งมอบผลผตแปรป,งมอบผลผตแปรป,Processed Delivery,Processed Delivery,สมบูรณ์
+15,14,14,BUNDLE_GROUP_ID_VILLAGE_HEAD_06,リンの依頼_06,畜産物の納品,畜産物の納品,ส่งมอบผลผลิตปศุสัตว์,ส่งมอบผลผลิตปศุสัตว์,งมอบผลผตปต,งมอบผลผตปต,Ranching Delivery,Ranching Delivery,สมบูรณ์
+16,15,15,BUNDLE_GROUP_ID_VILLAGE_HEAD_07,リンの依頼_07,狩猟品の納品,狩猟品の納品,ส่งมอบผลผลิตจากการล่า,ส่งมอบผลผลิตจากการล่า,งมอบผลผตจากการา,งมอบผลผตจากการา,Hunting Delivery,Hunting Delivery,สมบูรณ์
+17,16,16,BUNDLE_GROUP_ID_VILLAGE_HEAD_08,リンの依頼_08,魚の納品,魚の納品,ส่งมอบปลา,ส่งมอบปลา,งมอบปลา,งมอบปลา,Fish Delivery,Fish Delivery,สมบูรณ์
+18,17,17,BUNDLE_GROUP_ID_VILLAGE_HEAD_09,リンの依頼_09,高級品の納品,高級品の納品,ส่งมอบสินค้าระดับพรีเมียม,ส่งมอบสินค้าระดับพรีเมียม,งมอบนาระบพเยม,งมอบนาระบพเยม,High-Quality Delivery,High-Quality Delivery,สมบูรณ์

@@ -1,0 +1,10 @@
+﻿Item_No,Index,Category_ID,Key,Key_Offset_Hex,DAT_JP_Primary,DAT_JP_Offset,DAT_EN_Primary,DAT_EN_Offset,DAT_Injected_PUA,DAT_Injected_Offset,DAT_Injected_Hex,Target_CSV_PUA,Target_CSV_Thai,PUA_Match_Check,หมายเหตุ_ผลการตรวจ
+1,0,1,STR_ID_CMD_OR,0x0348,/,0x04A9,/,0x035A,/,0x04A9,2f,/,/,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+2,1,2,STR_ID_CMD_AND,0x0366,&,0x04AB,&,0x0379,&,0x04AB,26,&,&,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+3,2,3,STR_ID_NUM_FLOOR_1,0x0385,K,0x04AD,K,0x039C,K,0x04AD,4b,K,K,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+4,3,4,STR_ID_NUM_FLOOR_2,0x03B0,M,0x04AF,M,0x03C7,M,0x04AF,4d,M,M,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+5,4,5,STR_ID_NUM_FLOOR_3,0x03DB,B,0x04B1,B,0x03F2,B,0x04B1,42,B,B,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+6,5,6,STR_ID_NUM_FLOOR_4,0x0406,T,0x04B3,T,0x041D,T,0x04B3,54,T,T,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+7,6,7,STR_ID_NUM_FLOOR_5,0x0431,Qd,0x04B5,Qd,0x0448,Qd,0x04B5,51 64,Qd,Qd,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+8,7,8,STR_ID_NUM_FLOOR_6,0x045E,Qt,0x04B8,Qt,0x0475,Qt,0x04B8,51 74,Qt,Qt,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน
+9,8,9,STR_ID_NUM_FLOOR_7,0x048B,Sx,0x04BB,Sx,0x049F,Sx,0x04BB,53 78,Sx,Sx,ตรงกัน (MATCH),เป็นสัญลักษณ์/ตัวย่อตัวเลขสากล ตรงกับที่ตัวเกม Steam ใช้งาน

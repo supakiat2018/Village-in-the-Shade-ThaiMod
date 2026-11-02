@@ -1,0 +1,62 @@
+﻿id,key,name_jp,en_moden,ชื่อชุดสินค้า_TH,ชื่อชุดสินค้า_PUA
+0,BUNDLE_ID_SPRING_01,春の山菜奉納,Spring Forageables,ของถวายพืชป่าฤดูใบไม้ผลิ,ของถวายชาฤใบไผ
+1,BUNDLE_ID_SPRING_02,春の野菜奉納,Spring Vegetables,ของถวายพืชผักฤดูใบไม้ผลิ,ของถวายชกฤใบไผ
+2,BUNDLE_ID_SPRING_03,春の花奉納,Spring Flowers,ของถวายดอกไม้ฤดูใบไม้ผลิ,ของถวายดอกไฤใบไผ
+3,BUNDLE_ID_SPRING_04,春の魚奉納,Spring Fish,ของถวายปลาฤดูใบไม้ผลิ,ของถวายปลาฤใบไผ
+4,BUNDLE_ID_SUMMER_01,夏の山菜奉納,Summer Forageables,ของถวายพืชป่าฤดูร้อน,ของถวายชาฤอน
+5,BUNDLE_ID_SUMMER_02,夏の野菜奉納,Summer Vegetables,ของถวายพืชผักฤดูร้อน,ของถวายชกฤอน
+6,BUNDLE_ID_SUMMER_03,夏の花奉納,Summer Flowers,ของถวายดอกไม้ฤดูร้อน,ของถวายดอกไฤอน
+7,BUNDLE_ID_SUMMER_04,夏の魚奉納,Summer Fish,ของถวายปลาฤดูร้อน,ของถวายปลาฤอน
+8,BUNDLE_ID_AUTUMN_01,秋の山菜奉納,Autumn Forageables,ของถวายพืชป่าฤดูใบไม้ร่วง,ของถวายชาฤใบไวง
+9,BUNDLE_ID_AUTUMN_02,秋の野菜奉納,Autumn Vegetables,ของถวายพืชผักฤดูใบไม้ร่วง,ของถวายชกฤใบไวง
+10,BUNDLE_ID_AUTUMN_03,秋の花奉納,Autumn Flowers,ของถวายดอกไม้ฤดูใบไม้ร่วง,ของถวายดอกไฤใบไวง
+11,BUNDLE_ID_AUTUMN_04,秋の魚奉納,Autumn Fish,ของถวายปลาฤดูใบไม้ร่วง,ของถวายปลาฤใบไวง
+12,BUNDLE_ID_WINTER_01,冬の山菜奉納,Winter Forageables,ของถวายพืชป่าฤดูหนาว,ของถวายชาฤหนาว
+13,BUNDLE_ID_WINTER_02,冬の野菜奉納,Winter Vegetables,ของถวายพืชผักฤดูหนาว,ของถวายชกฤหนาว
+14,BUNDLE_ID_WINTER_03,冬の花奉納,Winter Flowers,ของถวายดอกไม้ฤดูหนาว,ของถวายดอกไฤหนาว
+15,BUNDLE_ID_WINTER_04,冬の魚奉納,Winter Fish,ของถวายปลาฤดูหนาว,ของถวายปลาฤหนาว
+16,BUNDLE_ID_SHRINE_REPAIR_01_01,木材,Timber,ไม้แปรรูป,ไแปรป
+17,BUNDLE_ID_SHRINE_REPAIR_01_02,石材,Minerals,หินก่อสร้าง,นอสาง
+18,BUNDLE_ID_SHRINE_REPAIR_02_01,木材,Timber,ไม้แปรรูป,ไแปรป
+19,BUNDLE_ID_SHRINE_REPAIR_02_02,石材,Minerals,หินก่อสร้าง,นอสาง
+20,BUNDLE_ID_SHRINE_REPAIR_03_01,木材,Timber,ไม้แปรรูป,ไแปรป
+21,BUNDLE_ID_SHRINE_REPAIR_03_02,石材,Minerals,หินก่อสร้าง,นอสาง
+22,BUNDLE_ID_SHRINE_REPAIR_04_01,木材,Timber,ไม้แปรรูป,ไแปรป
+23,BUNDLE_ID_SHRINE_REPAIR_04_02,石材,Minerals,หินก่อสร้าง,นอสาง
+24,BUNDLE_ID_SHRINE_REPAIR_05_01,木材,Timber,ไม้แปรรูป,ไแปรป
+25,BUNDLE_ID_SHRINE_REPAIR_05_02,石材,Minerals,หินก่อสร้าง,นอสาง
+26,BUNDLE_ID_VILLAGE_HEAD_01_01,木材の依頼,Timber Request,คำขอไม้แปรรูป,ขอไแปรป
+27,BUNDLE_ID_VILLAGE_HEAD_01_02,石材の依頼,Mineral Request,คำขอหินก่อสร้าง,ขอนอสาง
+28,BUNDLE_ID_VILLAGE_HEAD_01_03,食品の依頼,Foodstuff Request,คำขอเสบียงอาหาร,ขอเสยงอาหาร
+29,BUNDLE_ID_VILLAGE_HEAD_02_01,春の野菜,Spring Vegetables,พืชผักฤดูใบไม้ผลิ,ชกฤใบไผ
+30,BUNDLE_ID_VILLAGE_HEAD_02_02,夏の野菜,Summer Vegetables,พืชผักฤดูร้อน,ชกฤอน
+31,BUNDLE_ID_VILLAGE_HEAD_02_03,秋の野菜,Autumn Vegetables,พืชผักฤดูใบไม้ร่วง,ชกฤใบไวง
+32,BUNDLE_ID_VILLAGE_HEAD_02_04,冬の野菜,Winter Vegetables,พืชผักฤดูหนาว,ชกฤหนาว
+33,BUNDLE_ID_VILLAGE_HEAD_03_01,春の果物,Spring Fruits,ผลไม้ฤดูใบไม้ผลิ,ผลไฤใบไผ
+34,BUNDLE_ID_VILLAGE_HEAD_03_02,夏の果物,Summer Fruits,ผลไม้ฤดูร้อน,ผลไฤอน
+35,BUNDLE_ID_VILLAGE_HEAD_03_03,秋の果物,Autumn Fruits,ผลไม้ฤดูใบไม้ร่วง,ผลไฤใบไวง
+36,BUNDLE_ID_VILLAGE_HEAD_03_04,冬の果物,Winter Fruits,ผลไม้ฤดูหนาว,ผลไฤหนาว
+37,BUNDLE_ID_VILLAGE_HEAD_04_01,春の花,Spring Flowers,ดอกไม้ฤดูใบไม้ผลิ,ดอกไฤใบไผ
+38,BUNDLE_ID_VILLAGE_HEAD_04_02,夏の花,Summer Flowers,ดอกไม้ฤดูร้อน,ดอกไฤอน
+39,BUNDLE_ID_VILLAGE_HEAD_04_03,秋の花,Autumn Flowers,ดอกไม้ฤดูใบไม้ร่วง,ดอกไฤใบไวง
+40,BUNDLE_ID_VILLAGE_HEAD_04_04,冬の花,Winter Flowers,ดอกไม้ฤดูหนาว,ดอกไฤหนาว
+41,BUNDLE_ID_VILLAGE_HEAD_05_01,漬物,Pickles,ผักดอง,กดอง
+42,BUNDLE_ID_VILLAGE_HEAD_05_02,お酒,Alcohols,สุรา,รา
+43,BUNDLE_ID_VILLAGE_HEAD_05_03,調味料,Seasonings,เครื่องปรุง,เคองปง
+44,BUNDLE_ID_VILLAGE_HEAD_05_04,加工品,Processed Products,ผลผลิตแปรรูป,ผลผตแปรป
+45,BUNDLE_ID_VILLAGE_HEAD_06_01,タマゴ,Eggs,ไข่,ไ
+46,BUNDLE_ID_VILLAGE_HEAD_06_02,畜産品,Animal Products,ผลผลิตปศุสัตว์,ผลผตปต
+47,BUNDLE_ID_VILLAGE_HEAD_06_03,家畜の毛,Animal Fibers,ขนสัตว์เลี้ยง,ขนตเยง
+48,BUNDLE_ID_VILLAGE_HEAD_06_04,家畜の肉,Animal Meats,เนื้อสัตว์เลี้ยง,เอตเยง
+49,BUNDLE_ID_VILLAGE_HEAD_07_01,小動物の素材,Small-Game Spoils,วัตถุดิบจากสัตว์เล็ก,ตบจากตเก
+50,BUNDLE_ID_VILLAGE_HEAD_07_02,小動物の希少素材,Rare Small-Game Spoils,วัตถุดิบหายากจากสัตว์เล็ก,ตบหายากจากตเก
+51,BUNDLE_ID_VILLAGE_HEAD_07_03,大型動物の素材,Big-Game Spoils,วัตถุดิบจากสัตว์ใหญ่,ตบจากตให
+52,BUNDLE_ID_VILLAGE_HEAD_07_04,大型動物の希少素材,Rare Big-Game Spoils,วัตถุดิบหายากจากสัตว์ใหญ่,ตบหายากจากตให
+53,BUNDLE_ID_VILLAGE_HEAD_08_01,小型の魚,Small Fish,ปลาขนาดเล็ก,ปลาขนาดเก
+54,BUNDLE_ID_VILLAGE_HEAD_08_02,中型の魚,Medium Fish,ปลาขนาดกลาง,ปลาขนาดกลาง
+55,BUNDLE_ID_VILLAGE_HEAD_08_03,大型の魚,Large Fish,ปลาขนาดใหญ่,ปลาขนาดให
+56,BUNDLE_ID_VILLAGE_HEAD_08_04,幻の魚,Mythical Fish,ปลาในตำนาน,ปลาในนาน
+57,BUNDLE_ID_VILLAGE_HEAD_09_01,高品質の作物,High-Quality Crops,พืชผลคุณภาพสูง,ชผลณภาพง
+58,BUNDLE_ID_VILLAGE_HEAD_09_02,高品質の畜産品,High-Quality Animal Products,ผลผลิตปศุสัตว์คุณภาพสูง,ผลผตปตณภาพง
+59,BUNDLE_ID_VILLAGE_HEAD_09_03,高品質な家畜の毛,High-Quality Animal Fibers,ขนสัตว์เลี้ยงคุณภาพสูง,ขนตเยงณภาพง
+60,BUNDLE_ID_VILLAGE_HEAD_09_04,希少な宝石,Rare Gemstones,อัญมณีหายาก,ญมหายาก

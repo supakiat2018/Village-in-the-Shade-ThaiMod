@@ -1,0 +1,35 @@
+# Nippon Ichi Software - FAFULLFS DAT Archive Unpacker/Repacker
+# Compatible with Village in the Shade and other NIS games
+# QuickBMS script
+
+idstring "FAFULLFS"
+get FILES long
+get UNK1 long
+get ARCHIVE_SIZE longlong
+get STRING_TABLE_SIZE longlong
+get TOC_OFFSET longlong
+
+math STRING_TABLE_OFFSET = TOC_OFFSET
+math TMP = FILES
+math TMP * 48
+math STRING_TABLE_OFFSET + TMP
+
+goto TOC_OFFSET
+
+for i = 0 < FILES
+    get HASH longlong
+    get NAME_OFFSET longlong
+    get UNK2 longlong
+    get SIZE longlong
+    get OFFSET longlong
+    get FLAGS longlong
+
+    savepos ENTRY_POS
+    math FINAL_NAME_OFFSET = STRING_TABLE_OFFSET
+    math FINAL_NAME_OFFSET + NAME_OFFSET
+    goto FINAL_NAME_OFFSET
+    get NAME string
+    goto ENTRY_POS
+
+    log NAME OFFSET SIZE
+next i

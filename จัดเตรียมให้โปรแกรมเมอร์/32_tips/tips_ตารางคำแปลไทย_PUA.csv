@@ -1,0 +1,271 @@
+﻿Item_No,Tip_Index,Tip_Key,Item_Type,Original_JP,MODEN_EN,Thai_From_Switch,Thai_Final,Thai_Status,Thai_PUA
+1,1,TIPS_01_HARVEST_01,TITLE,作物の収穫,Harvesting,เก็บเกี่ยวพืชผล,เก็บเกี่ยวพืชผล,MATCHED,เบเยวชผล
+2,1,TIPS_01_HARVEST_01,LINE_1,<cmd CMD_INTERACTION_HARVEST -offsetY -5>で、目の前にある,Press <cmd CMD_INTERACTION_HARVEST -offsetY -5> to harvest matured crops in front of you.,กด<cmd CMD_INTERACTION_HARVEST -offsetY -5>เก็บเกี่ยว,กด<cmd CMD_INTERACTION_HARVEST -offsetY -5>เก็บเกี่ยว,MATCHED,กด<cmd CMD_INTERACTION_HARVEST -offsetY -5>เบเยว
+3,1,TIPS_01_HARVEST_01,LINE_2,実った作物を収穫する,Harvest ripe crops,พืชผลที่พร้อมเก็บเกี่ยวตรงหน้า,พืชผลที่พร้อมเก็บเกี่ยวตรงหน้า,MATCHED,ชผลพอมเบเยวตรงหา
+4,2,TIPS_02_HARVEST_02,TITLE,作物の連続収穫,Persistent Harvesting,เก็บเกี่ยวพืชผลต่อเนื่อง,เก็บเกี่ยวพืชผลต่อเนื่อง,MATCHED,เบเยวชผลอเอง
+5,2,TIPS_02_HARVEST_02,LINE_1,<cmd CMD_INTERACTION_LONG -offsetY -5>を押している間、,Hold <cmd CMD_INTERACTION_HARVEST -offsetY -5> in front of a crop to continuously harvest,ขณะกด<cmd CMD_INTERACTION_LONG -offsetY -5>ค้างไว้,ขณะกด<cmd CMD_INTERACTION_LONG -offsetY -5>ค้างไว้,MATCHED,ขณะกด<cmd CMD_INTERACTION_LONG -offsetY -5>างไ
+6,2,TIPS_02_HARVEST_02,LINE_2,目の前の作物と同じ種類の作物を,crops of the same type.,จะเก็บเกี่ยวพืชผลชนิดเดียวกัน,จะเก็บเกี่ยวพืชผลชนิดเดียวกัน,MATCHED,จะเบเยวชผลชดเยวน
+7,2,TIPS_02_HARVEST_02,LINE_3,連続で収穫する,Harvest continuously,กับตรงหน้าได้อย่างต่อเนื่อง,กับตรงหน้าได้อย่างต่อเนื่อง,MATCHED,บตรงหาไอางอเอง
+8,3,TIPS_03_JUMP,TITLE,ジャンプ,Jumping,กระโดด,กระโดด,MATCHED,กระโดด
+9,3,TIPS_03_JUMP,LINE_1,<cmd CMD_UNIT_JUMP -offsetY -5>ジャンプする,Press <cmd CMD_UNIT_JUMP -offsetY -5> while moving toward a fence with<cmd CMD_UNIT_MOVE_STICK -offsetY -5>,กด<cmd CMD_UNIT_JUMP -offsetY -5>เพื่อกระโดด,กด<cmd CMD_UNIT_JUMP -offsetY -5>เพื่อกระโดด,MATCHED,กด<cmd CMD_UNIT_JUMP -offsetY -5>เอกระโดด
+10,3,TIPS_03_JUMP,LINE_2,<cmd CMD_UNIT_MOVE_STICK -offsetY -5>＋<cmd CMD_UNIT_JUMP -offsetY -5>柵に向かって行うと,to jump over it.,กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เคลือนที่＋<cmd CMD_UNIT_JUMP -offsetY -5>,กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เคลือนที่＋<cmd CMD_UNIT_JUMP -offsetY -5>,MATCHED,กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เคอน＋<cmd CMD_UNIT_JUMP -offsetY -5>
+11,3,TIPS_03_JUMP,LINE_3,柵を飛び越えることができる,Jump over fences,เพื่อกระโดดข้ามรั้ว,เพื่อกระโดดข้ามรั้ว,MATCHED,เอกระโดดามว
+12,4,TIPS_05_MOVE_PARALLEL,TITLE,平行移動,Sidestepping,เคลื่อนที่ขนาน,เคลื่อนที่ขนาน,MATCHED,เคอนขนาน
+13,4,TIPS_05_MOVE_PARALLEL,LINE_1,<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_PARALLEL -offsetY -5>で平行移動する,"Hold <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5> to sidestep, allowing you to move slowly",กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_PARALLEL -offsetY -5>เคลื่อนที่,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_PARALLEL -offsetY -5>เคลื่อนที่,MATCHED,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_PARALLEL -offsetY -5>เคอน
+14,4,TIPS_05_MOVE_PARALLEL,LINE_2,一方向を向きながら,with <cmd CMD_UNIT_MOVE_STICK_PARALLEL -offsetY -5> while facing one direction.,สามารถเคลื่อนที่อย่างช้าๆ ได้,สามารถเคลื่อนที่อย่างช้าๆ ได้,MATCHED,สามารถเคอนอางาๆ ไ
+15,4,TIPS_05_MOVE_PARALLEL,LINE_3,ゆっくりと移動することができる,Move slowly,โดยที่ยังคงหันหน้าไปในทิศทางเดิม,โดยที่ยังคงหันหน้าไปในทิศทางเดิม,MATCHED,โดยงคงนหาไปในศทางเม
+16,5,TIPS_06_MOVE_ANGLE,TITLE,回転,Rotating,หมุนตัว,หมุนตัว,MATCHED,หนว
+17,5,TIPS_06_MOVE_ANGLE,LINE_1,<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_ANGLE -offsetY -5>回転,"Hold <cmd CMD_UNIT_MOVE_ANGLE -offsetY -5> to rotate, allowing you to change direction",กด<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_ANGLE -offsetY -5>หมุนตัว,กด<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_ANGLE -offsetY -5>หมุนตัว,MATCHED,กด<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>＋<cmd CMD_UNIT_MOVE_STICK_ANGLE -offsetY -5>หนว
+18,5,TIPS_06_MOVE_ANGLE,LINE_2,その場にとどまり,with <cmd CMD_UNIT_MOVE_STICK_ANGLE -offsetY -5> while staying in place. ,สามารถเปลี่ยนทิศทางการหันหน้าได้,สามารถเปลี่ยนทิศทางการหันหน้าได้,MATCHED,สามารถเปยนศทางการนหาไ
+19,5,TIPS_06_MOVE_ANGLE,LINE_3,向きを変える,Change direction,โดยที่ยังคงยืนอยู่กับที่,โดยที่ยังคงยืนอยู่กับที่,MATCHED,โดยงคงนอบ
+20,6,TIPS_07_ITEM_SELECT_01,TITLE,道具を選択,Inventory Selection,เลือกอุปกรณ์,เลือกอุปกรณ์,MATCHED,เอกปกร
+21,6,TIPS_07_ITEM_SELECT_01,LINE_1,<cmd CMD_CURSOR_R_STICK_LEFT CMD_CURSOR_R_STICK_RIGHT>で道具欄のカーソルを,Move the inventory bar cursor left and right,กด<cmd CMD_CURSOR_R_STICK_LEFT CMD_CURSOR_R_STICK_RIGHT>เลื่อนเคอร์เซอร์,กด<cmd CMD_CURSOR_R_STICK_LEFT CMD_CURSOR_R_STICK_RIGHT>เลื่อนเคอร์เซอร์,MATCHED,กด<cmd CMD_CURSOR_R_STICK_LEFT CMD_CURSOR_R_STICK_RIGHT>เอนเคอเซอ
+22,6,TIPS_07_ITEM_SELECT_01,LINE_2,左右へ移動させて、道具を選択,with <cmd CMD_CURSOR_R_STICK_LEFT CMD_CURSOR_R_STICK_RIGHT>.,ในช่องอุปกรณ์ไปทาง,ในช่องอุปกรณ์ไปทาง,MATCHED,ในองปกรไปทาง
+23,7,TIPS_08_ITEM_SELECT_02,TITLE,道具欄の切替,Switching Inventory Rows,สลับแถวช่องอุปกรณ์,สลับแถวช่องอุปกรณ์,MATCHED,สบแถวองปกร
+24,7,TIPS_08_ITEM_SELECT_02,LINE_1,<cmd CMD_CURSOR_R_STICK_UP CMD_CURSOR_R_STICK_DOWN>で道具欄を,Switch the inventory bar to another row with <cmd CMD_CURSOR_R_STICK_UP CMD_CURSOR_R_STICK_DOWN>.,กด<cmd CMD_CURSOR_R_STICK_UP CMD_CURSOR_R_STICK_DOWN>สลับการแสดงผล,กด<cmd CMD_CURSOR_R_STICK_UP CMD_CURSOR_R_STICK_DOWN>สลับการแสดงผล,MATCHED,กด<cmd CMD_CURSOR_R_STICK_UP CMD_CURSOR_R_STICK_DOWN>สบการแสดงผล
+25,7,TIPS_08_ITEM_SELECT_02,LINE_2,別の列に表示を切り替える,Switch to another row,แถวช่องอุปกรณ์ไปยังแถวอื่น,แถวช่องอุปกรณ์ไปยังแถวอื่น,MATCHED,แถวองปกรไปงแถวน
+26,8,TIPS_09_TOOL_USE,TITLE,農具の使用,Farm Tools,การใช้อุปกรณ์การเกษตร,การใช้อุปกรณ์การเกษตร,MATCHED,การใปกรการเกษตร
+27,8,TIPS_09_TOOL_USE,LINE_1,<cmd CMD_UNIT_ACTION -offsetY -5>農具を使う,"Press <cmd CMD_UNIT_ACTION -offsetY -5> to use the currently selected farming tool,",กด<cmd CMD_UNIT_ACTION -offsetY -5>ใช้อุปกรณ์เกษตร,กด<cmd CMD_UNIT_ACTION -offsetY -5>ใช้อุปกรณ์เกษตร,MATCHED,กด<cmd CMD_UNIT_ACTION -offsetY -5>ใปกรเกษตร
+28,8,TIPS_09_TOOL_USE,LINE_2,選択された農具を使用できる,each of which has its own effects.,ใช้งานอุปกรณ์เกษตรที่เลือกอยู่ได้,ใช้งานอุปกรณ์เกษตรที่เลือกอยู่ได้,MATCHED,ใงานปกรเกษตรเอกอไ
+29,8,TIPS_09_TOOL_USE,LINE_3,効果は農具毎に変わる,Effects vary by tool,ผลลัพธ์จะต่างกันตามแต่ละอุปกรณ์,ผลลัพธ์จะต่างกันตามแต่ละอุปกรณ์,MATCHED,ผลพจะางนตามและปกร
+30,9,TIPS_10_TOOL_USE_HOLD,TITLE,農具の使用位置,Farm Tool Positioning,ตำแหน่งใช้อุปกรณ์การเกษตร,ตำแหน่งใช้อุปกรณ์การเกษตร,MATCHED,แหงใปกรการเกษตร
+31,9,TIPS_10_TOOL_USE_HOLD,LINE_1,<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>農具を構える,Hold <cmd CMD_UNIT_ACTION -offsetY -5> to ready a farming tool while moving,กด<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>ตั้งท่าใช้อุปกรณ์การเกษตร,กด<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>ตั้งท่าใช้อุปกรณ์การเกษตร,MATCHED,กด<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>งาใปกรการเกษตร
+32,9,TIPS_10_TOOL_USE_HOLD,LINE_2,長押し中<cmd CMD_UNIT_MOVE_STICK -offsetY -5>で移動する,with <cmd CMD_UNIT_MOVE_STICK -offsetY -5>. Cancel with <cmd CMD_REF_CANCEL -offsetY -5>.,ขณะกดค้างสามารถขยับด้วย<cmd CMD_UNIT_MOVE_STICK -offsetY -5>,ขณะกดค้างสามารถขยับด้วย<cmd CMD_UNIT_MOVE_STICK -offsetY -5>,MATCHED,ขณะกดางสามารถขบวย<cmd CMD_UNIT_MOVE_STICK -offsetY -5>
+33,9,TIPS_10_TOOL_USE_HOLD,LINE_3,<cmd CMD_REF_CANCEL -offsetY -5>で構えを解除する,Cancel with <cmd CMD_REF_CANCEL -offsetY -5>,และกด<cmd CMD_REF_CANCEL -offsetY -5>ยกเลิกการตั้งท่า,และกด<cmd CMD_REF_CANCEL -offsetY -5>ยกเลิกการตั้งท่า,MATCHED,และกด<cmd CMD_REF_CANCEL -offsetY -5>ยกเกการงา
+34,10,TIPS_11_PRESENT,TITLE,贈り物を渡す,Giving Gifts,มอบของขวัญ,มอบของขวัญ,MATCHED,มอบของขญ
+35,10,TIPS_11_PRESENT,LINE_1,住人に向かって<cmd CMD_INTERACTION_PRESENT -offsetY -5>道具を渡す,Press <cmd CMD_INTERACTION_PRESENT -offsetY -5> while facing a villager to present the,หันหน้าเข้าหาชาวบ้านแล้วกด<cmd CMD_INTERACTION_PRESENT -offsetY -5>,หันหน้าเข้าหาชาวบ้านแล้วกด<cmd CMD_INTERACTION_PRESENT -offsetY -5>,MATCHED,นหาเาหาชาวานแวกด<cmd CMD_INTERACTION_PRESENT -offsetY -5>
+36,10,TIPS_11_PRESENT,LINE_2,選択された道具を,currently selected item to them as a gift.,มอบอุปกรณ์หรือไอเทมที่เลือกอยู่,มอบอุปกรณ์หรือไอเทมที่เลือกอยู่,MATCHED,มอบปกรหอไอเทมเอกอ
+37,10,TIPS_11_PRESENT,LINE_3,目の前の住人に贈ることができる,Give it to the villager in front of you,ให้เป็นของขวัญแก่ชาวบ้านตรงหน้าได้,ให้เป็นของขวัญแก่ชาวบ้านตรงหน้าได้,MATCHED,ใเนของขญแชาวานตรงหาไ
+38,11,TIPS_12_FURNITURE_PLACED,TITLE,家具の設置,Placing Furniture,จัดวางเฟอร์นิเจอร์,จัดวางเฟอร์นิเจอร์,MATCHED,ดวางเฟอเจอ
+39,11,TIPS_12_FURNITURE_PLACED,LINE_1,道具欄から家具を選び、<cmd CMD_UNIT_ITEM -offsetY -5>で設置,Press <cmd CMD_UNIT_ITEM -offsetY -5> to place a furniture item selected in the,เลือกเฟอร์นิเจอร์จากช่องอุปกรณ์,เลือกเฟอร์นิเจอร์จากช่องอุปกรณ์,MATCHED,เอกเฟอเจอจากองปกร
+40,11,TIPS_12_FURNITURE_PLACED,LINE_2,<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>で設置位置を調整できる,"inventory bar, or hold <cmd CMD_UNIT_ITEM -offsetY -5> to adjust positioning.",แล้วกด<cmd CMD_UNIT_ITEM -offsetY -5>เพื่อจัดวาง,แล้วกด<cmd CMD_UNIT_ITEM -offsetY -5>เพื่อจัดวาง,MATCHED,แวกด<cmd CMD_UNIT_ITEM -offsetY -5>เอดวาง
+41,11,TIPS_12_FURNITURE_PLACED,LINE_3,,,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปรับตำแหน่งจัดวาง,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปรับตำแหน่งจัดวาง,MATCHED,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปบแหงดวาง
+42,12,TIPS_13_FURNITURE_REMOVE,TITLE,家具の回収,Retrieving Furniture,เก็บเฟอร์นิเจอร์คืน,เก็บเฟอร์นิเจอร์คืน,MATCHED,เบเฟอเจอน
+43,12,TIPS_13_FURNITURE_REMOVE,LINE_1,家具に向かって<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>で回収,<cmd CMD_INTERACTION_RETRIEVE -offsetY -5> while facing a furniture item to remove,หันหน้าเข้าหาเฟอร์นิเจอร์,หันหน้าเข้าหาเฟอร์นิเจอร์,MATCHED,นหาเาหาเฟอเจอ
+44,12,TIPS_13_FURNITURE_REMOVE,LINE_2,設置された家具を撤去できる,and retrieve it.,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>เพื่อเก็บคืน,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>เพื่อเก็บคืน,MATCHED,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>เอเบน
+45,13,TIPS_14_TOOL_SHORTCUT,TITLE,農具サークル展開,Tool Wheel,เปิดวงล้ออุปกรณ์การเกษตร,เปิดวงล้ออุปกรณ์การเกษตร,MATCHED,เดวงอปกรการเกษตร
+46,13,TIPS_14_TOOL_SHORTCUT,LINE_1,<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>で選択する農具を変更できる,"Press <cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5> to open the farming tool wheel, where the",กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เพื่อเปลี่ยนอุปกรณ์,กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เพื่อเปลี่ยนอุปกรณ์,MATCHED,กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เอเปยนปกร
+47,13,TIPS_14_TOOL_SHORTCUT,LINE_2,サークル展開後は<cmd CMD_REF_OK -offsetY -5>で決定,currently selected tool can be changed. Confirm,หลังจากเปิดวงล้อขึ้นมาแล้ว,หลังจากเปิดวงล้อขึ้นมาแล้ว,MATCHED,หงจากเดวงอนมาแว
+48,13,TIPS_14_TOOL_SHORTCUT,LINE_3,,,ให้กด<cmd CMD_REF_OK -offsetY -5>เพื่อยืนยัน,ให้กด<cmd CMD_REF_OK -offsetY -5>เพื่อยืนยัน,MATCHED,ใกด<cmd CMD_REF_OK -offsetY -5>เอนน
+49,14,TIPS_15_MEMO_ADD,TITLE,メモを追加,Adding Notes,เพิ่มลงสมุดบันทึก,เพิ่มลงสมุดบันทึก,MATCHED,เมลงสดนก
+50,14,TIPS_15_MEMO_ADD,LINE_1,メモが可能な画面にて<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>で、,Press <cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5> on applicable screens to note a selected,ในหน้าจอที่บันทึกได้ กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>,ในหน้าจอที่บันทึกได้ กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>,MATCHED,ในหาจอนกไ กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>
+51,14,TIPS_15_MEMO_ADD,LINE_2,選択された項目をメモリストに追加,item. Noted items can be viewed in the notebook.,เพิ่มรายการที่เลือกลงในบันทึก,เพิ่มรายการที่เลือกลงในบันทึก,MATCHED,เมรายการเอกลงในนก
+52,14,TIPS_15_MEMO_ADD,LINE_3,メモはメモリストで見れる,View notes in the Memo List,สามารถเปิดดูได้จากรายการบันทึก,สามารถเปิดดูได้จากรายการบันทึก,MATCHED,สามารถเดไจากรายการนก
+53,15,TIPS_16_MEMO_OPEN,TITLE,メモを展開,Viewing Notes,เปิดดูรายการบันทึก,เปิดดูรายการบันทึก,MATCHED,เดรายการนก
+54,15,TIPS_16_MEMO_OPEN,LINE_1,<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>でメモリストを表示する,"Press <cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5> to display the notebook, where all noted",กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>เปิดรายการบันทึก,กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>เปิดรายการบันทึก,MATCHED,กด<cmd CMD_UNIT_SHORTCUT_MEMO -offsetY -5>เดรายการนก
+55,15,TIPS_16_MEMO_OPEN,LINE_2,メモしたものを、一覧で確認できる,items will be listed.,สามารถตรวจสอบสิ่งที่บันทึกไว้ได้,สามารถตรวจสอบสิ่งที่บันทึกไว้ได้,MATCHED,สามารถตรวจสอบงนกไไ
+56,16,TIPS_17_MENU_OPEN,TITLE,メニューを開く,Opening the Menu,เปิดเมนู,เปิดเมนู,MATCHED,เดเม
+57,16,TIPS_17_MENU_OPEN,LINE_1,<cmd CMD_UNIT_MAIN_MENU -offsetY -5>メニューを開く,"Press <cmd CMD_UNIT_MAIN_MENU -offsetY -5> to open the menu, where you can view the",กด<cmd CMD_UNIT_MAIN_MENU -offsetY -5>เพื่อเปิดเมนู,กด<cmd CMD_UNIT_MAIN_MENU -offsetY -5>เพื่อเปิดเมนู,MATCHED,กด<cmd CMD_UNIT_MAIN_MENU -offsetY -5>เอเดเม
+58,16,TIPS_17_MENU_OPEN,LINE_2,地図や手持ち道具などを,"map, items on hand, and more.",เปิดหน้าจอตรวจสอบแผนที่,เปิดหน้าจอตรวจสอบแผนที่,MATCHED,เดหาจอตรวจสอบแผน
+59,16,TIPS_17_MENU_OPEN,LINE_3,確認する画面を開く,Open the information screen,และอุปกรณ์ในกระเป๋าของคุณ,และอุปกรณ์ในกระเป๋าของคุณ,MATCHED,และปกรในกระเาของณ
+60,17,TIPS_18_HOW_TO_VEGGIE_01,TITLE,作物の育て方,Raising Crops,วิธีปลูกพืชผล,วิธีปลูกพืชผล,MATCHED,ปกชผล
+61,17,TIPS_18_HOW_TO_VEGGIE_01,LINE_1,農具「クワ」を使って、,Use the hoe to turn a patch of soil into tillage where,"ใช้อุปกรณ์การเกษตร ""จอบ""","ใช้อุปกรณ์การเกษตร ""จอบ""",MATCHED,"ใปกรการเกษตร ""จอบ"""
+62,17,TIPS_18_HOW_TO_VEGGIE_01,LINE_2,土の地面を畑にすることで,crop seeds can be planted.,พรวนพื้นดินให้เป็นแปลงเกษตร,พรวนพื้นดินให้เป็นแปลงเกษตร,MATCHED,พรวนนนใเนแปลงเกษตร
+63,17,TIPS_18_HOW_TO_VEGGIE_01,LINE_3,作物の種を植えられる,Plant crop seeds,เพื่อเริ่มหว่านเมล็ดพันธุ์พืชผล,เพื่อเริ่มหว่านเมล็ดพันธุ์พืชผล,MATCHED,เอเมหานเมดนชผล
+64,18,TIPS_19_HOW_TO_VEGGIE_02,TITLE,作物の育て方２,Raising Crops 2,วิธีปลูกพืชผล 2,วิธีปลูกพืชผล 2,MATCHED,ปกชผล 2
+65,18,TIPS_19_HOW_TO_VEGGIE_02,LINE_1,作物の種が植わった乾いた畑に,Use the watering can daily on dry soil where crop seeds,เมื่อแปลงที่หว่านเมล็ดเริ่มแห้ง,เมื่อแปลงที่หว่านเมล็ดเริ่มแห้ง,MATCHED,เอแปลงหานเมดเมแง
+66,18,TIPS_19_HOW_TO_VEGGIE_02,LINE_2,農具「ジョウロ」で水を与えよう,"are planted, and they will grow.","ให้ใช้อุปกรณ์""บัวรดน้ำ""รดน้ำลงไป","ให้ใช้อุปกรณ์""บัวรดน้ำ""รดน้ำลงไป",MATCHED,"ใใปกร""วรด""รดลงไป"
+67,18,TIPS_19_HOW_TO_VEGGIE_02,LINE_3,毎日繰り返すと、作物が育つ,Repeat every day to grow crops,หากรดน้ำทุกวัน พืชผลจะเติบโตขึ้น,หากรดน้ำทุกวัน พืชผลจะเติบโตขึ้น,MATCHED,หากรดกน ชผลจะเบโตน
+68,19,TIPS_20_HOW_TO_VEGGIE_03,TITLE,作物の育て方３,Raising Crops 3,วิธีปลูกพืชผล 3,วิธีปลูกพืชผล 3,MATCHED,ปกชผล 3
+69,19,TIPS_20_HOW_TO_VEGGIE_03,LINE_1,畑に植えた種が成長して,Once seeds planted in soil have grown and produced,เมื่อเมล็ดที่ปลูกในแปลงเติบโต,เมื่อเมล็ดที่ปลูกในแปลงเติบโต,MATCHED,เอเมดปกในแปลงเบโต
+70,19,TIPS_20_HOW_TO_VEGGIE_03,LINE_2,作物が実ったら,"crops, you can finally harvest them.",จนพืชผลออกผลผลิตเต็มที่,จนพืชผลออกผลผลิตเต็มที่,MATCHED,จนชผลออกผลผตเม
+71,19,TIPS_20_HOW_TO_VEGGIE_03,LINE_3,待ちに待った収穫ができる,Harvest at last,ก็จะได้เวลาเก็บเกี่ยวที่รอคอย,ก็จะได้เวลาเก็บเกี่ยวที่รอคอย,MATCHED,จะไเวลาเบเยวรอคอย
+72,20,TIPS_21_SOWING,TITLE,種を撒く,Sowing Seeds,หว่านเมล็ดพันธุ์,หว่านเมล็ดพันธุ์,MATCHED,หานเมดน
+73,20,TIPS_21_SOWING,LINE_1,道具から「種」を選ぼう,Move the inventory cursor to the seeds you want to,"เลือก ""เมล็ดพันธุ์"" จากช่องอุปกรณ์","เลือก ""เมล็ดพันธุ์"" จากช่องอุปกรณ์",MATCHED,"เอก ""เมดน"" จากองปกร"
+74,20,TIPS_21_SOWING,LINE_2,「種」は<cmd CMD_INTERACTION_TRIANGLE -offsetY -5>で畑に向かって使う,plant and press<cmd CMD_INTERACTION_TRIANGLE -offsetY -5> to plant them. Hold <cmd CMD_INTERACTION_TRIANGLE -offsetY -5> to plant,กด<cmd CMD_INTERACTION_TRIANGLE -offsetY -5>ใส่แปลงเพื่อหว่านเมล็ด,กด<cmd CMD_INTERACTION_TRIANGLE -offsetY -5>ใส่แปลงเพื่อหว่านเมล็ด,MATCHED,กด<cmd CMD_INTERACTION_TRIANGLE -offsetY -5>ใแปลงเอหานเมด
+75,20,TIPS_21_SOWING,LINE_3,<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>で連続して種を撒く,continuously.,หรือกด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>หว่านต่อเนื่อง,หรือกด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>หว่านต่อเนื่อง,MATCHED,หอกด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>หานอเอง
+76,21,TIPS_22_MILK,TITLE,畜産品の生産,Animal Products,เก็บผลผลิตปศุสัตว์,เก็บผลผลิตปศุสัตว์,MATCHED,เบผลผตปต
+77,21,TIPS_22_MILK,LINE_1,家畜に向かって<cmd CMD_INTERACTION_OBTAIN -offsetY -5>で畜産品を採る,Face one of your livestock and hold <cmd CMD_INTERACTION_HARVEST -offsetY -5> to get an,เข้าใกล้สัตว์เลี้ยงแล้วกด<cmd CMD_INTERACTION_OBTAIN -offsetY -5>,เข้าใกล้สัตว์เลี้ยงแล้วกด<cmd CMD_INTERACTION_OBTAIN -offsetY -5>,MATCHED,เาใกตเยงแวกด<cmd CMD_INTERACTION_OBTAIN -offsetY -5>
+78,21,TIPS_22_MILK,LINE_2,畜産品を入手できる上に、,animal product from it. You can also pet them to,นอกจากจะได้รับผลผลิตปศุสัตว์แล้ว,นอกจากจะได้รับผลผลิตปศุสัตว์แล้ว,MATCHED,นอกจากจะไบผลผตปตแว
+79,21,TIPS_22_MILK,LINE_3,動物と仲良くなることができる,increase their friendship.,ยังช่วยเพิ่มความสนิทสนมได้อีกด้วย,ยังช่วยเพิ่มความสนิทสนมได้อีกด้วย,MATCHED,งวยเมความสทสนมไกวย
+80,22,TIPS_23_HOW_TO_LIVESTOCK,TITLE,動物の育て方,Raising Animals,วิธีเลี้ยงสัตว์,วิธีเลี้ยงสัตว์,MATCHED,เยงต
+81,22,TIPS_23_HOW_TO_LIVESTOCK,LINE_1,家畜は毎日、撫でてあげよう,"Pet your livestock daily. This raises their affection,",ลูบตัวสัตว์เลี้ยงเป็นประจำทุกวัน,ลูบตัวสัตว์เลี้ยงเป็นประจำทุกวัน,MATCHED,บวตเยงเนประกน
+82,22,TIPS_23_HOW_TO_LIVESTOCK,LINE_2,より仲良くなることができ、,resulting in better-quality animal products. ,จะช่วยให้สนิทสนมกันมากยิ่งขึ้น,จะช่วยให้สนิทสนมกันมากยิ่งขึ้น,MATCHED,จะวยใสทสนมนมากงน
+83,22,TIPS_23_HOW_TO_LIVESTOCK,LINE_3,より良い畜産物が手に入る,Receive better livestock products,และได้ผลผลิตคุณภาพดียิ่งขึ้น,และได้ผลผลิตคุณภาพดียิ่งขึ้น,MATCHED,และไผลผตณภาพงน
+84,23,TIPS_24_CHICKEN,TITLE,ニワトリの畜産物,Chicken Products,ผลผลิตจากไก่,ผลผลิตจากไก่,MATCHED,ผลผตจากไ
+85,23,TIPS_24_CHICKEN,LINE_1,ニワトリは毎日、卵を生み出す,"Chickens lay eggs every day. The higher their affection,",ไก่จะออกไข่เป็นประจำทุกวัน,ไก่จะออกไข่เป็นประจำทุกวัน,MATCHED,ไจะออกไเนประกน
+86,23,TIPS_24_CHICKEN,LINE_2,仲の良いニワトリは、,the better the quality of their eggs.,หากสนิทสนมกับไก่มากยิ่งขึ้น,หากสนิทสนมกับไก่มากยิ่งขึ้น,MATCHED,หากสทสนมบไมากงน
+87,23,TIPS_24_CHICKEN,LINE_3,より良い卵を生んでくれる,Lay better-quality eggs,พวกมันจะออกไข่คุณภาพดียิ่งขึ้น,พวกมันจะออกไข่คุณภาพดียิ่งขึ้น,MATCHED,พวกนจะออกไณภาพงน
+88,24,TIPS_25_FISHING,TITLE,釣りをする,Fishing,การตกปลา,การตกปลา,MATCHED,การตกปลา
+89,24,TIPS_25_FISHING,LINE_1,釣りができる水辺に来たら、,Press <cmd CMD_INTERACTION_FISHING> to fish at suitable bodies of water.,เมื่อเดินมายังริมน้ำที่ตกปลาได้,เมื่อเดินมายังริมน้ำที่ตกปลาได้,MATCHED,เอเนมางมตกปลาไ
+90,24,TIPS_25_FISHING,LINE_2,<cmd CMD_INTERACTION_FISHING -offsetY -5>で釣りができる,Fish with <cmd CMD_INTERACTION_FISHING -offsetY -5>,กด<cmd CMD_INTERACTION_FISHING -offsetY -5>เพื่อเริ่มตกปลาได้,กด<cmd CMD_INTERACTION_FISHING -offsetY -5>เพื่อเริ่มตกปลาได้,MATCHED,กด<cmd CMD_INTERACTION_FISHING -offsetY -5>เอเมตกปลาไ
+91,25,TIPS_26_ITEM_USE,TITLE,道具の使用,Using Items,การใช้อุปกรณ์,การใช้อุปกรณ์,MATCHED,การใปกร
+92,25,TIPS_26_ITEM_USE,LINE_1,選択している道具は,Press <cmd CMD_UNIT_ITEM> to use the currently selected item.,อุปกรณ์ที่กำลังเลือกอยู่,อุปกรณ์ที่กำลังเลือกอยู่,MATCHED,ปกรงเอกอ
+93,25,TIPS_26_ITEM_USE,LINE_2,<cmd CMD_UNIT_ITEM -offsetY -5>で使うことができる,Use it with <cmd CMD_UNIT_ITEM -offsetY -5>,สามารถกดใช้งานได้ด้วยปุ่ม<cmd CMD_UNIT_ITEM -offsetY -5>,สามารถกดใช้งานได้ด้วยปุ่ม<cmd CMD_UNIT_ITEM -offsetY -5>,MATCHED,สามารถกดใงานไวยม<cmd CMD_UNIT_ITEM -offsetY -5>
+94,26,TIPS_27_WORKBENCH_PLACED,TITLE,作業台の設置,Workbench Placement,จัดวางโต๊ะทำงาน,จัดวางโต๊ะทำงาน,MATCHED,ดวางโะงาน
+95,26,TIPS_27_WORKBENCH_PLACED,LINE_1,作業台を<cmd CMD_UNIT_ITEM_PRESS -offsetY -5>で置こう,Press <cmd CMD_UNIT_ITEM_PRESS -offsetY -5> to place a workbench selected in the,เลือกโต๊ะทำงานจากช่องอุปกรณ์,เลือกโต๊ะทำงานจากช่องอุปกรณ์,MATCHED,เอกโะงานจากองปกร
+96,26,TIPS_27_WORKBENCH_PLACED,LINE_2,道具欄から作業台を選び、,"inventory bar, or hold <cmd CMD_UNIT_ITEM_PRESS -offsetY -5> to adjust its",กด<cmd CMD_UNIT_ITEM_PRESS -offsetY -5>เพื่อจัดวาง,กด<cmd CMD_UNIT_ITEM_PRESS -offsetY -5>เพื่อจัดวาง,MATCHED,กด<cmd CMD_UNIT_ITEM_PRESS -offsetY -5>เอดวาง
+97,26,TIPS_27_WORKBENCH_PLACED,LINE_3,<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>で設置位置を調整,positioning.,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปรับตำแหน่งจัดวาง,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปรับตำแหน่งจัดวาง,MATCHED,กด<cmd CMD_INTERACTION_LONG_TRIANGLE -offsetY -5>ปบแหงดวาง
+98,27,TIPS_28_WORKBENCH_OPEN,TITLE,作業台,Workbench,โต๊ะทำงาน,โต๊ะทำงาน,MATCHED,โะงาน
+99,27,TIPS_28_WORKBENCH_OPEN,LINE_1,資材を揃えて道具を作ろう,Gather materials to craft items. The materials required,รวบรวมวัตถุดิบเพื่อสร้างอุปกรณ์,รวบรวมวัตถุดิบเพื่อสร้างอุปกรณ์,MATCHED,รวบรวมตบเอสางปกร
+100,27,TIPS_28_WORKBENCH_OPEN,LINE_2,道具ごとに必要資材は異なる,will differ for each item.,อุปกรณ์แต่ละชิ้น,อุปกรณ์แต่ละชิ้น,MATCHED,ปกรและน
+101,27,TIPS_28_WORKBENCH_OPEN,LINE_3,,,จะใช้วัตถุดิบที่แตกต่างกัน,จะใช้วัตถุดิบที่แตกต่างกัน,MATCHED,จะใตบแตกางน
+102,28,TIPS_29_DOG_WHISTLE,TITLE,犬の呼笛,Dog Whistle,นกหวีดเรียกสุนัข,นกหวีดเรียกสุนัข,MATCHED,นกหดเยกข
+103,28,TIPS_29_DOG_WHISTLE,LINE_1,犬の呼笛を吹くと,The Dog Whistle will summon your dog from anywhere,เมื่อเป่านกหวีดเรียกสุนัข,เมื่อเป่านกหวีดเรียกสุนัข,MATCHED,เอเานกหดเยกข
+104,28,TIPS_29_DOG_WHISTLE,LINE_2,村のどこにいても犬が来てくれる,in the village. Access finger whistles with <cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>.,สุนัขจะวิ่งมาหาจากทุกที่ในหมู่บ้าน,สุนัขจะวิ่งมาหาจากทุกที่ในหมู่บ้าน,MATCHED,ขจะงมาหาจากกในหาน
+105,28,TIPS_29_DOG_WHISTLE,LINE_3,指笛は<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>から選択できる,Select the whistle from <cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>,เลือกนกหวีดได้จาก<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>,เลือกนกหวีดได้จาก<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>,MATCHED,เอกนกหดไจาก<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>
+106,29,TIPS_30_FURROW,TITLE,畝,Furrows,ร่องแปลงผัก,ร่องแปลงผัก,MATCHED,องแปลงก
+107,29,TIPS_30_FURROW,LINE_1,クワで畑を耕すと畝になる,Hoe already-tilled soil again to furrow it. Crops suited to,ใช้จอบพรวนแปลงผักให้เป็นร่อง,ใช้จอบพรวนแปลงผักให้เป็นร่อง,MATCHED,ใจอบพรวนแปลงกใเนอง
+108,29,TIPS_30_FURROW,LINE_2,畝に適した作物を植えると、,furrows mature quicker when planted in them.,หากปลูกพืชผลที่เหมาะกับร่องแปลง,หากปลูกพืชผลที่เหมาะกับร่องแปลง,MATCHED,หากปกชผลเหมาะบองแปลง
+109,29,TIPS_30_FURROW,LINE_3,実るまでの日にちが短くなる,Crops ripen sooner,ระยะเวลาจนออกผลผลิตจะสั้นลง,ระยะเวลาจนออกผลผลิตจะสั้นลง,MATCHED,ระยะเวลาจนออกผลผตจะนลง
+110,30,TIPS_31_MOVE,TITLE,移動,Moving,การเคลื่อนที่,การเคลื่อนที่,MATCHED,การเคอน
+111,30,TIPS_31_MOVE,LINE_1,<cmd CMD_UNIT_MOVE_STICK -offsetY -5>走って移動する,"Run with <cmd CMD_UNIT_MOVE_STICK -offsetY -5>. Walk with<cmd CMD_UNIT_WALK_STICK -offsetY -5>, or <cmd CMD_UNIT_WALK_KEY -offsetY -5>.",กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เพื่อวิ่งเคลื่อนที่,กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เพื่อวิ่งเคลื่อนที่,MATCHED,กด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เองเคอน
+112,30,TIPS_31_MOVE,LINE_2,少しだけ<cmd CMD_UNIT_WALK_STICK -offsetY -5>を倒すか,"Tilt <cmd CMD_UNIT_WALK_STICK -offsetY -5> slightly, or",หากกด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เพียงเล็กน้อย,หากกด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เพียงเล็กน้อย,MATCHED,หากกด<cmd CMD_UNIT_MOVE_STICK -offsetY -5>เยงเกอย
+113,30,TIPS_31_MOVE,LINE_3,<cmd CMD_UNIT_WALK_KEY -offsetY -5>で歩いて移動できる,Walk with <cmd CMD_UNIT_WALK_KEY -offsetY -5>,จะเปลี่ยนเป็นการเดินช้าๆ,จะเปลี่ยนเป็นการเดินช้าๆ,MATCHED,จะเปยนเนการเนาๆ
+114,31,TIPS_32_FLASHLIGHT,TITLE,懐中電灯,Flashlight,ไฟฉาย,ไฟฉาย,MATCHED,ไฟฉาย
+115,31,TIPS_32_FLASHLIGHT,LINE_1,<cmd CMD_UNIT_ACTION -offsetY -5>懐中電灯を点灯,Press <cmd CMD_UNIT_ACTION -offsetY -5> to turn on the flashlight. Press again to turn,กด<cmd CMD_UNIT_ACTION -offsetY -5>เปิดไฟฉาย,กด<cmd CMD_UNIT_ACTION -offsetY -5>เปิดไฟฉาย,MATCHED,กด<cmd CMD_UNIT_ACTION -offsetY -5>เดไฟฉาย
+116,31,TIPS_32_FLASHLIGHT,LINE_2,もう一度押すと消灯する,it off.,หากกดอีกครั้งจะเป็นการปิดไฟฉาย,หากกดอีกครั้งจะเป็นการปิดไฟฉาย,MATCHED,หากกดกคงจะเนการดไฟฉาย
+117,32,TIPS_32_FLASHLIGHT_HORROR_OFF,TITLE,懐中電灯,Flashlight,ไฟฉาย,ไฟฉาย,MATCHED,ไฟฉาย
+118,32,TIPS_32_FLASHLIGHT_HORROR_OFF,LINE_1,<cmd CMD_UNIT_ACTION -offsetY -5>懐中電灯を点灯,Press <cmd CMD_UNIT_ACTION -offsetY -5> to turn on the flashlight. Press again to turn,กด<cmd CMD_UNIT_ACTION -offsetY -5>เปิดไฟฉาย,กด<cmd CMD_UNIT_ACTION -offsetY -5>เปิดไฟฉาย,MATCHED,กด<cmd CMD_UNIT_ACTION -offsetY -5>เดไฟฉาย
+119,32,TIPS_32_FLASHLIGHT_HORROR_OFF,LINE_2,もう一度押すと消灯する,it off.,หากกดอีกครั้งจะเป็นการปิดไฟฉาย,หากกดอีกครั้งจะเป็นการปิดไฟฉาย,MATCHED,หากกดกคงจะเนการดไฟฉาย
+120,33,TIPS_33_WHISTLE_READY,TITLE,指笛を構える,Preparing to Whistle,เตรียมเป่านกหวีด,เตรียมเป่านกหวีด,MATCHED,เตยมเานกหด
+121,33,TIPS_33_WHISTLE_READY,LINE_1,<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>農具サークルを展開して、,"Press <cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5> to open the farming tool wheel, then <cmd CMD_TOOL_CIRCLE_WHISTLE -offsetY -5>",กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เปิดวงล้ออุปกรณ์การเกษตร,กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เปิดวงล้ออุปกรณ์การเกษตร,MATCHED,กด<cmd CMD_UNIT_SHORTCUT_TOOL -offsetY -5>เดวงอปกรการเกษตร
+122,33,TIPS_33_WHISTLE_READY,LINE_2,<cmd CMD_TOOL_CIRCLE_WHISTLE -offsetY -5>で指笛を構える,to ready a finger whistle.,แล้วเลือก<cmd CMD_TOOL_CIRCLE_WHISTLE -offsetY -5>ตั้งท่าเตรียมนกหวีด,แล้วเลือก<cmd CMD_TOOL_CIRCLE_WHISTLE -offsetY -5>ตั้งท่าเตรียมนกหวีด,MATCHED,แวเอก<cmd CMD_TOOL_CIRCLE_WHISTLE -offsetY -5>งาเตยมนกหด
+123,34,TIPS_34_WHISTLE_SELECT,TITLE,楽譜を選ぶ,Selecting a Whistle,เลือกบทเพลงนกหวีด,เลือกบทเพลงนกหวีด,MATCHED,เอกบทเพลงนกหด
+124,34,TIPS_34_WHISTLE_SELECT,LINE_1,指笛を構えた状態で、,"While ready to whistle, press <cmd CMD_WHISTLE_CHANGE_SONG -offsetY -5> to change the guide.",ขณะอยู่ในท่าเตรียมนกหวีด,ขณะอยู่ในท่าเตรียมนกหวีด,MATCHED,ขณะอในาเตยมนกหด
+125,34,TIPS_34_WHISTLE_SELECT,LINE_2,<cmd CMD_WHISTLE_CHANGE_SONG -offsetY -5>歌のガイドを表示する,Press <cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5> to whistle in time with the guide.,กด<cmd CMD_WHISTLE_CHANGE_SONG -offsetY -5>แสดงแถบนำทางบทเพลง,กด<cmd CMD_WHISTLE_CHANGE_SONG -offsetY -5>แสดงแถบนำทางบทเพลง,MATCHED,กด<cmd CMD_WHISTLE_CHANGE_SONG -offsetY -5>แสดงแถบทางบทเพลง
+126,34,TIPS_34_WHISTLE_SELECT,LINE_3,ガイドに合わせて<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>で吹く,Follow the guide and press <cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>,และกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>ตามจังหวะนำทางเป่า,และกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>ตามจังหวะนำทางเป่า,MATCHED,และกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>ตามงหวะทางเา
+127,35,TIPS_35_WHISTLE,TITLE,指笛を吹く,Whistling,เป่านกหวีด,เป่านกหวีด,MATCHED,เานกหด
+128,35,TIPS_35_WHISTLE,LINE_1,指笛を構えた後に、,"While ready to whistle, press <cmd CMD_WHISTLE_NOTE_INPUT_1> to blow.",หลังจากเข้าสู่ท่าเตรียมนกหวีดแล้ว,หลังจากเข้าสู่ท่าเตรียมนกหวีดแล้ว,MATCHED,หงจากเาาเตยมนกหดแว
+129,35,TIPS_35_WHISTLE,LINE_2,<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>で指笛を吹く,Whistle with <cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>,สามารถกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>เป่านกหวีดได้,สามารถกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>เป่านกหวีดได้,MATCHED,สามารถกด<cmd CMD_WHISTLE_NOTE_INPUT_1 -offsetY -5>เานกหดไ
+130,36,TIPS_36_HUNTING_CERTIFICATE,TITLE,狩猟証明,Hunting Certificates,ใบรับรองการล่า,ใบรับรองการล่า,MATCHED,ใบบรองการา
+131,36,TIPS_36_HUNTING_CERTIFICATE,LINE_1,入手した狩猟証明は、,Obtained hunting certificates can be delivered to the,นำใบรับรองการล่าที่ได้รับมา,นำใบรับรองการล่าที่ได้รับมา,MATCHED,ใบบรองการาไบมา
+132,36,TIPS_36_HUNTING_CERTIFICATE,LINE_2,狩人小屋の小箱に納品しよう,box at the hunting lodge for rewards.,ไปส่งที่กล่องเล็กในกระท่อมนายพราน,ไปส่งที่กล่องเล็กในกระท่อมนายพราน,MATCHED,ไปงกองเกในกระอมนายพราน
+133,36,TIPS_36_HUNTING_CERTIFICATE,LINE_3,報酬と交換することができる,Exchange them for rewards,เพื่อแลกเปลี่ยนเป็นของรางวัล,เพื่อแลกเปลี่ยนเป็นของรางวัล,MATCHED,เอแลกเปยนเนของรางล
+134,37,TIPS_37_SAVE,TITLE,セーブ,Saving,การบันทึกข้อมูล,การบันทึกข้อมูล,MATCHED,การนกอล
+135,37,TIPS_37_SAVE,LINE_1,眠ると進行状況がセーブされる,"When you sleep, your progress is saved. If you exit the",เมื่อเข้านอน ระบบจะบันทึกข้อมูล,เมื่อเข้านอน ระบบจะบันทึกข้อมูล,MATCHED,เอเานอน ระบบจะนกอล
+136,37,TIPS_37_SAVE,LINE_2,中断した場合は、,"game, it will resume from the last day you woke up.",หากออกจากเกมระหว่างวัน,หากออกจากเกมระหว่างวัน,MATCHED,หากออกจากเกมระหางน
+137,37,TIPS_37_SAVE,LINE_3,最後に目覚めた日から再開する,Resume from the last day you woke up,จะเริ่มต่อจากวันที่ตื่นนอนล่าสุด,จะเริ่มต่อจากวันที่ตื่นนอนล่าสุด,MATCHED,จะเมอจากนนนอนาด
+138,38,TIPS_38_RECIPE,TITLE,レシピを覚える,Learning Recipes,เรียนรู้สูตรอาหาร,เรียนรู้สูตรอาหาร,MATCHED,เยนตรอาหาร
+139,38,TIPS_38_RECIPE,LINE_1,何度も同じ料理を注文したり、,"By ordering the same dish multiple times, or by having",สั่งอาหารชนิดเดิมซ้ำหลายครั้ง,สั่งอาหารชนิดเดิมซ้ำหลายครั้ง,MATCHED,งอาหารชดเมหลายคง
+140,38,TIPS_38_RECIPE,LINE_2,住人から教えてもらうことで、,"a villager teach you, you can learn cooking recipes.",หรือได้รับการถ่ายทอดจากชาวบ้าน,หรือได้รับการถ่ายทอดจากชาวบ้าน,MATCHED,หอไบการายทอดจากชาวาน
+141,38,TIPS_38_RECIPE,LINE_3,料理のレシピを覚える,Learn cooking recipes,จะได้รับสูตรอาหารนั้นๆมา,จะได้รับสูตรอาหารนั้นๆมา,MATCHED,จะไบตรอาหารนๆมา
+142,39,TIPS_39_PLOW,TITLE,スキ,Spade,เสียม,เสียม,MATCHED,เยม
+143,39,TIPS_39_PLOW,LINE_1,スキを使うと田んぼを作れる,The spade allows you to create paddies. Select it from,การใช้เสียมจะช่วยสร้างแปลงนาข้าว,การใช้เสียมจะช่วยสร้างแปลงนาข้าว,MATCHED,การใเยมจะวยสางแปลงนาาว
+144,39,TIPS_39_PLOW,LINE_2,農具サークルでスキを選び、,the farming tool wheel and use it with <cmd CMD_UNIT_ACTION>.,เลือกเสียมจากวงล้ออุปกรณ์,เลือกเสียมจากวงล้ออุปกรณ์,MATCHED,เอกเยมจากวงอปกร
+145,39,TIPS_39_PLOW,LINE_3,<cmd CMD_UNIT_ACTION -offsetY -5>で使うことができる,Use it with <cmd CMD_UNIT_ACTION -offsetY -5>,แล้วกด<cmd CMD_UNIT_ACTION -offsetY -5>เพื่อใช้งาน,แล้วกด<cmd CMD_UNIT_ACTION -offsetY -5>เพื่อใช้งาน,MATCHED,แวกด<cmd CMD_UNIT_ACTION -offsetY -5>เอใงาน
+146,40,TIPS_40_BREWING_BARREL,TITLE,醸造樽,Brewing Barrel,ถังหมักบ่ม,ถังหมักบ่ม,MATCHED,งหกม
+147,40,TIPS_40_BREWING_BARREL,LINE_1,庭に置ける加工機のひとつ,"A processor that can be placed on your farm. Given time,",เครื่องแปรรูปที่จัดวางในสวนได้,เครื่องแปรรูปที่จัดวางในสวนได้,MATCHED,เคองแปรปดวางในสวนไ
+148,40,TIPS_40_BREWING_BARREL,LINE_2,野菜や果物を入れて待つと、,it turns veggies and fruits into broth and liqueur,เมื่อใส่ผักหรือผลไม้แล้วรอสักพัก,เมื่อใส่ผักหรือผลไม้แล้วรอสักพัก,MATCHED,เอใกหอผลไแวรอกก
+149,40,TIPS_40_BREWING_BARREL,LINE_3,出汁やリキュールに加工できる,respectively.,จะแปรรูปเป็นน้ำซุปหรือเหล้าหวานได้,จะแปรรูปเป็นน้ำซุปหรือเหล้าหวานได้,MATCHED,จะแปรปเนปหอเหาหวานไ
+150,41,TIPS_41_CALENDAR,TITLE,カレンダー,Calendar,ปฏิทิน,ปฏิทิน,MATCHED,ปน
+151,41,TIPS_41_CALENDAR,LINE_1,イベントの日程を確認できる家具,"A furniture item for checking event dates. Once placed,",เฟอร์นิเจอร์ไว้ดูกำหนดการเทศกาล,เฟอร์นิเจอร์ไว้ดูกำหนดการเทศกาล,MATCHED,เฟอเจอไหนดการเทศกาล
+152,41,TIPS_41_CALENDAR,LINE_2,配置して<cmd CMD_INTERACTION_CALENDAR -offsetY -5>で調べると、,you can view it with <cmd CMD_INTERACTION_CALENDAR -offsetY -5>.,จัดวางแล้วกด<cmd CMD_INTERACTION_CALENDAR -offsetY -5>เพื่อสำรวจ,จัดวางแล้วกด<cmd CMD_INTERACTION_CALENDAR -offsetY -5>เพื่อสำรวจ,MATCHED,ดวางแวกด<cmd CMD_INTERACTION_CALENDAR -offsetY -5>เอรวจ
+153,41,TIPS_41_CALENDAR,LINE_3,カレンダーを見ることができる,View the calendar,ก็จะสามารถเปิดดูปฏิทินได้,ก็จะสามารถเปิดดูปฏิทินได้,MATCHED,จะสามารถเดปนไ
+154,42,TIPS_42_BOW,TITLE,弓,Bow,ธนู,ธนู,MATCHED,ธ
+155,42,TIPS_42_BOW,LINE_1,獣に対して撃つと攻撃できる,Can be used to shoot game. Hold <cmd CMD_UNIT_ACTION_PRESS> to determine,สามารถยิงโจมตีใส่สัตว์ป่าได้,สามารถยิงโจมตีใส่สัตว์ป่าได้,MATCHED,สามารถงโจมใตาไ
+156,42,TIPS_42_BOW,LINE_2,<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>で飛距離を決め、,"the distance, then release to shoot an arrow.",กดค้าง<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>เพื่อกะระยะยิง,กดค้าง<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>เพื่อกะระยะยิง,MATCHED,กดาง<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>เอกะระยะง
+157,42,TIPS_42_BOW,LINE_3,離すと矢を発射する,Release to fire an arrow,และเมื่อปล่อยมือก็จะยิงลูกศรออกไป,และเมื่อปล่อยมือก็จะยิงลูกศรออกไป,MATCHED,และเอปอยอจะงกศรออกไป
+158,43,TIPS_43_SHRINE,TITLE,辻の祠,Crossroads Hokora,ศาลเจ้าตรงทางแยก,ศาลเจ้าตรงทางแยก,MATCHED,ศาลเาตรงทางแยก
+159,43,TIPS_43_SHRINE,LINE_1,勾玉を消費し能力を得られる,"Here, magatamas can be offered to unlock upgrades. Unlocking",ใช้มากาทามะเพื่อรับความสามารถใหม่,ใช้มากาทามะเพื่อรับความสามารถใหม่,MATCHED,ใมากาทามะเอบความสามารถให
+160,43,TIPS_43_SHRINE,LINE_2,下方の能力を解放することで、,an upgrade may open up paths leading to further upgrades.,เมื่อปลดล็อกความสามารถด้านล่าง,เมื่อปลดล็อกความสามารถด้านล่าง,MATCHED,เอปลดอกความสามารถานาง
+161,43,TIPS_43_SHRINE,LINE_3,繋がった地点も解放できる,Unlock connected locations too,จะปลดล็อกจุดที่เชื่อมต่อกันได้,จะปลดล็อกจุดที่เชื่อมต่อกันได้,MATCHED,จะปลดอกดเอมอนไ
+162,44,TIPS_44_CONSTRUCTION,TITLE,建築,Building,การก่อสร้าง,การก่อสร้าง,MATCHED,การอสาง
+163,44,TIPS_44_CONSTRUCTION,LINE_1,大工の作業場で、新しい建築物を,"At Kisuke's workshop, money and materials can be spent",สั่งสร้างสิ่งปลูกสร้างใหม่ในสวน,สั่งสร้างสิ่งปลูกสร้างใหม่ในสวน,MATCHED,งสางงปกสางใหในสวน
+164,44,TIPS_44_CONSTRUCTION,LINE_2,自分の庭に建てられる,to build new structures on your farm.,ได้ที่โรงงานของช่างไม้,ได้ที่โรงงานของช่างไม้,MATCHED,ไโรงงานของางไ
+165,44,TIPS_44_CONSTRUCTION,LINE_3,建築にはお金と素材が必要,Construction requires money and materials,การก่อสร้างต้องใช้เงินและวัตถุดิบ,การก่อสร้างต้องใช้เงินและวัตถุดิบ,MATCHED,การอสางองใเนและตบ
+166,45,TIPS_45_TALISMANIC_TREE,TITLE,魔除けナンテン,Warding Nandina,ต้นนันทินาขับไล่ภูตผี,ต้นนันทินาขับไล่ภูตผี,MATCHED,นนนาบไต
+167,45,TIPS_45_TALISMANIC_TREE,LINE_1,魔除けナンテンには隠れられ、,"Warding Nandinas can be used to hide from spirits, but only",เข้าไปหลบหลังต้นนันทินาขับไล่ผี,เข้าไปหลบหลังต้นนันทินาขับไล่ผี,MATCHED,เาไปหลบหงนนนาบไ
+168,45,TIPS_45_TALISMANIC_TREE,LINE_2,怪異から身を隠すことができる,after their saplings have grown.,เพื่อซ่อนตัวจากสิ่งลี้ลับได้,เพื่อซ่อนตัวจากสิ่งลี้ลับได้,MATCHED,เออนวจากงบไ
+169,45,TIPS_45_TALISMANIC_TREE,LINE_3,苗が成長するまでは使用できない,Unavailable until the sapling grows,ต้องรอให้ต้นกล้าเติบโตเต็มที่ก่อน,ต้องรอให้ต้นกล้าเติบโตเต็มที่ก่อน,MATCHED,องรอในกาเบโตเมอน
+170,46,TIPS_46_CONTINUS_PLACEMENT,TITLE,家具の連続設置,Mass Furniture Placing,จัดวางเฟอร์นิเจอร์ต่อเนื่อง,จัดวางเฟอร์นิเจอร์ต่อเนื่อง,MATCHED,ดวางเฟอเจออเอง
+171,46,TIPS_46_CONTINUS_PLACEMENT,LINE_1,家具を置く時に<cmd CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP -offsetY -5>で,Hold <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>+<cmd CMD_UNIT_ITEM -offsetY -5> while placing furniture to continuously,ขณะจัดวางเฟอร์นิเจอร์,ขณะจัดวางเฟอร์นิเจอร์,MATCHED,ขณะดวางเฟอเจอ
+172,46,TIPS_46_CONTINUS_PLACEMENT,LINE_2,移動しながら連続で置くことができる,place the same item while moving.,กด<cmd CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP -offsetY -5>,กด<cmd CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP -offsetY -5>,MATCHED,กด<cmd CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP -offsetY -5>
+173,46,TIPS_46_CONTINUS_PLACEMENT,LINE_3,,,จะสามารถเดินไปพร้อมวางต่อเนื่องได้,จะสามารถเดินไปพร้อมวางต่อเนื่องได้,MATCHED,จะสามารถเนไปพอมวางอเองไ
+174,47,TIPS_47_WEED_INVASION,TITLE,雑草の侵食,Weed Encroachment,การรุกรานของวัชพืช,การรุกรานของวัชพืช,MATCHED,การกรานของชช
+175,47,TIPS_47_WEED_INVASION,LINE_1,雑草を放置すると,"Be sure to eliminate weeds regularly, or they will spread",หากปล่อยวัชพืชทิ้งไว้,หากปล่อยวัชพืชทิ้งไว้,MATCHED,หากปอยชชงไ
+176,47,TIPS_47_WEED_INVASION,LINE_2,作物も押しのけ周囲へ広がっていく,to their surroundings and crowd out crops.,จะลุกลามเบียดเบียนพืชผลรอบข้าง,จะลุกลามเบียดเบียนพืชผลรอบข้าง,MATCHED,จะกลามเยดเยนชผลรอบาง
+177,47,TIPS_47_WEED_INVASION,LINE_3,こまめに草刈りをしよう,Cut weeds regularly,จึงควรถอนวัชพืชอย่างสม่ำเสมอ,จึงควรถอนวัชพืชอย่างสม่ำเสมอ,MATCHED,งควรถอนชชอางสเสมอ
+178,48,TIPS_48_INFO_TREE,TITLE,樹木の情報,Tree Details,ข้อมูลต้นไม้,ข้อมูลต้นไม้,MATCHED,อลนไ
+179,48,TIPS_48_INFO_TREE,LINE_1,樹木に<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>か<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>で注視すると、,"By focusing on a tree with <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5> or <cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>, you can",เมื่อกด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองต้นไม้,เมื่อกด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองต้นไม้,MATCHED,เอกด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หอ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เงมองนไ
+180,48,TIPS_48_INFO_TREE,LINE_2,樹木の名前などを,check its name and other details.,จะสามารถตรวจสอบข้อมูลต่างๆ,จะสามารถตรวจสอบข้อมูลต่างๆ,MATCHED,จะสามารถตรวจสอบอลางๆ
+181,48,TIPS_48_INFO_TREE,LINE_3,確認することができる,View more information,เช่น ชื่อของต้นไม้ได้,เช่น ชื่อของต้นไม้ได้,MATCHED,เน อของนไไ
+182,49,TIPS_49_INFO_CROPS,TITLE,作物の情報,Crop Details,ข้อมูลพืชผล,ข้อมูลพืชผล,MATCHED,อลชผล
+183,49,TIPS_49_INFO_CROPS,LINE_1,作物に<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>か<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>で注視すると、,"By focusing on a crop with <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5> or <cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>, you can",กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองพืชผล,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองพืชผล,MATCHED,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หอ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เงมองชผล
+184,49,TIPS_49_INFO_CROPS,LINE_2,作物の名前や成育日数を,check its name and how many days it has been,จะสามารถตรวจสอบชื่อของพืชผล,จะสามารถตรวจสอบชื่อของพืชผล,MATCHED,จะสามารถตรวจสอบอของชผล
+185,49,TIPS_49_INFO_CROPS,LINE_3,確認することができる,growing.,และจำนวนวันที่ใช้เติบโตได้,และจำนวนวันที่ใช้เติบโตได้,MATCHED,และนวนนใเบโตไ
+186,50,TIPS_50_INFO_LIVESTOCK,TITLE,家畜の情報,Livestock Details,ข้อมูลสัตว์เลี้ยง,ข้อมูลสัตว์เลี้ยง,MATCHED,อลตเยง
+187,50,TIPS_50_INFO_LIVESTOCK,LINE_1,家畜に<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>か<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>で注視すると、,"By focusing on livestock with <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5> or <cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>, you can",กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองสัตว์,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองสัตว์,MATCHED,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หอ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เงมองต
+188,50,TIPS_50_INFO_LIVESTOCK,LINE_2,名前や食事の状況、なつき度を,"check its name, feeding status, and affection",จะตรวจสอบชื่อ สถานะอาหาร,จะตรวจสอบชื่อ สถานะอาหาร,MATCHED,จะตรวจสอบอ สถานะอาหาร
+189,50,TIPS_50_INFO_LIVESTOCK,LINE_3,確認することができる,level.,และระดับความสนิทสนมได้,และระดับความสนิทสนมได้,MATCHED,และระบความสทสนมไ
+190,51,TIPS_51_INFO_VILLAGER,TITLE,村人の情報,Villager Information,ข้อมูลชาวบ้าน,ข้อมูลชาวบ้าน,MATCHED,อลชาวาน
+191,51,TIPS_51_INFO_VILLAGER,LINE_1,住人に<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>か<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>で注視すると、,"By focusing on a resident with <cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5> or <cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>, you can",กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองชาวบ้าน,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หรือ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เพ่งมองชาวบ้าน,MATCHED,กด<cmd CMD_UNIT_MOVE_PARALLEL -offsetY -5>หอ<cmd CMD_UNIT_MOVE_ANGLE -offsetY -5>เงมองชาวาน
+192,51,TIPS_51_INFO_VILLAGER,LINE_2,住人の名前や好感度、,"check their name, affection level, what gifts",จะตรวจสอบชื่อ ระดับความสนิทสนม,จะตรวจสอบชื่อ ระดับความสนิทสนม,MATCHED,จะตรวจสอบอ ระบความสทสนม
+193,51,TIPS_51_INFO_VILLAGER,LINE_3,贈り物の好みなどを確認できる,"they like, and other details.",และของขวัญที่ชื่นชอบได้,และของขวัญที่ชื่นชอบได้,MATCHED,และของขญนชอบไ
+194,52,TIPS_52_PADDY_FIELD,TITLE,水田,Paddies,แปลงนาข้าว,แปลงนาข้าว,MATCHED,แปลงนาาว
+195,52,TIPS_52_PADDY_FIELD,LINE_1,水田の作物に水やりは不要だが、,"Paddy crops do not need watering, but be careful—",พืชผลในแปลงนาไม่จำเป็นต้องรดน้ำ,พืชผลในแปลงนาไม่จำเป็นต้องรดน้ำ,MATCHED,ชผลในแปลงนาไเนองรด
+196,52,TIPS_52_PADDY_FIELD,LINE_2,作物の側に雑草が生えていると、,"if weeds sprout near them, their growth will stop.",แต่หากมีวัชพืชขึ้นอยู่ข้างๆ,แต่หากมีวัชพืชขึ้นอยู่ข้างๆ,MATCHED,แหากชชนอางๆ
+197,52,TIPS_52_PADDY_FIELD,LINE_3,成長が止まるので注意しよう,"Growth will stop, so be careful",การเติบโตจะหยุดชะงักลง จึงควรระวัง,การเติบโตจะหยุดชะงักลง จึงควรระวัง,MATCHED,การเบโตจะหดชะกลง งควรระง
+198,53,TIPS_53_LIVING_TANK,TITLE,生け簀,Fish Tanks,กระชังเลี้ยงปลา,กระชังเลี้ยงปลา,MATCHED,กระงเยงปลา
+199,53,TIPS_53_LIVING_TANK,LINE_1,同じ種類の魚を2匹以上入れると,Adding fish of the same kind may lead them to multiply.,ใส่ปลาชนิดเดียวกันตั้งแต่ 2 ตัว,ใส่ปลาชนิดเดียวกันตั้งแต่ 2 ตัว,MATCHED,ใปลาชดเยวนงแ 2 ว
+200,53,TIPS_53_LIVING_TANK,LINE_2,魚が増えることがある,"The more there are, the higher the chance.",ปลาอาจมีโอกาสเพิ่มจำนวนขึ้นได้,ปลาอาจมีโอกาสเพิ่มจำนวนขึ้นได้,MATCHED,ปลาอาจโอกาสเมนวนนไ
+201,53,TIPS_53_LIVING_TANK,LINE_3,魚が多いほど増える確率が上がる,More fish increase the chance of breeding,ยิ่งมีปลามาก โอกาสเพิ่มก็ยิ่งสูง,ยิ่งมีปลามาก โอกาสเพิ่มก็ยิ่งสูง,MATCHED,งปลามาก โอกาสเมงง
+202,54,TIPS_54_WHISTLE_LIVESTOCK,TITLE,家畜の呼笛,Livestock Whistle,นกหวีดเรียกสัตว์เลี้ยง,นกหวีดเรียกสัตว์เลี้ยง,MATCHED,นกหดเยกตเยง
+203,54,TIPS_54_WHISTLE_LIVESTOCK,LINE_1,家畜の呼笛を吹くと、,Blowing the Livestock Whistle will cause any livestock,เมื่อเป่านกหวีดเรียกสัตว์เลี้ยง,เมื่อเป่านกหวีดเรียกสัตว์เลี้ยง,MATCHED,เอเานกหดเยกตเยง
+204,54,TIPS_54_WHISTLE_LIVESTOCK,LINE_2,周囲にいる飼っている家畜が、,you own in the area to gather near you.,สัตว์เลี้ยงในฟาร์มที่อยู่รอบๆ,สัตว์เลี้ยงในฟาร์มที่อยู่รอบๆ,MATCHED,ตเยงในฟามอรอบๆ
+205,54,TIPS_54_WHISTLE_LIVESTOCK,LINE_3,主人公の近くに集まってくる,They will gather near you,จะเดินมารวมตัวกันใกล้ๆ ตัวเอก,จะเดินมารวมตัวกันใกล้ๆ ตัวเอก,MATCHED,จะเนมารวมวนใกๆ วเอก
+206,55,TIPS_55_WHISTLE_RETURN,TITLE,奇跡の呼笛,Miracle Whistle,นกหวีดแห่งปาฏิหาริย์,นกหวีดแห่งปาฏิหาริย์,MATCHED,นกหดแงปาหา
+207,55,TIPS_55_WHISTLE_RETURN,LINE_1,奇跡の呼笛を吹くと、,Blowing the Miracle Whistle stops time in the village.,เมื่อเป่านกหวีดแห่งปาฏิหาริย์,เมื่อเป่านกหวีดแห่งปาฏิหาริย์,MATCHED,เอเานกหดแงปาหา
+208,55,TIPS_55_WHISTLE_RETURN,LINE_2,村の時間が止まる,This effect only applies while on your farm.,เวลาของหมู่บ้านจะหยุดเดิน,เวลาของหมู่บ้านจะหยุดเดิน,MATCHED,เวลาของหานจะหดเน
+209,55,TIPS_55_WHISTLE_RETURN,LINE_3,庭の中でだけ効果がある,Only works inside the garden,มีผลเฉพาะเมื่ออยู่ในสวนเท่านั้น,มีผลเฉพาะเมื่ออยู่ในสวนเท่านั้น,MATCHED,ผลเฉพาะเออในสวนเาน
+210,56,TIPS_56_WHISTLE_RAINMAKING,TITLE,雨の呼笛,Rain Whistle,นกหวีดเรียกฝน,นกหวีดเรียกฝน,MATCHED,นกหดเยกฝน
+211,56,TIPS_56_WHISTLE_RAINMAKING,LINE_1,雨の呼笛を吹くと、,Blowing the Rain Whistle will increase the chances of,เมื่อเป่านกหวีดเรียกฝน,เมื่อเป่านกหวีดเรียกฝน,MATCHED,เอเานกหดเยกฝน
+212,56,TIPS_56_WHISTLE_RAINMAKING,LINE_2,翌日に雨が降る確率が上がる,rain the following day.,โอกาสฝนตกในวันพรุ่งนี้จะสูงขึ้น,โอกาสฝนตกในวันพรุ่งนี้จะสูงขึ้น,MATCHED,โอกาสฝนตกในนพงจะงน
+213,57,TIPS_57_STUMP_REMOVE,TITLE,切り株の撤去,Removing Stumps,การขุดตอไม้,การขุดตอไม้,MATCHED,การดตอไ
+214,57,TIPS_57_STUMP_REMOVE,LINE_1,木を切り倒すと切り株が残る,Chopping down a tree will leave a stump. These will not,เมื่อโค่นต้นไม้แล้วจะเหลือตอไม้ไว้,เมื่อโค่นต้นไม้แล้วจะเหลือตอไม้ไว้,MATCHED,เอโนนไแวจะเหอตอไไ
+215,57,TIPS_57_STUMP_REMOVE,LINE_2,切り株はオノで撤去できるが、,"regrow, so use an axe to remove them.",ใช้ขวานฟันเพื่อรื้อถอนตอไม้ได้,ใช้ขวานฟันเพื่อรื้อถอนตอไม้ได้,MATCHED,ใขวานนเออถอนตอไไ
+216,57,TIPS_57_STUMP_REMOVE,LINE_3,残しておいても木に成長しない,Leaving it won't make it grow into a tree,ตอไม้ที่ทิ้งไว้จะไม่โตเป็นต้นไม้,ตอไม้ที่ทิ้งไว้จะไม่โตเป็นต้นไม้,MATCHED,ตอไงไจะไโตเนนไ
+217,58,TIPS_58_FURNITURE_REMOVE_02,TITLE,家具の連続回収,Mass Furniture Retrieval ,เก็บเฟอร์นิเจอร์คืนต่อเนื่อง,เก็บเฟอร์นิเจอร์คืนต่อเนื่อง,MATCHED,เบเฟอเจอนอเอง
+218,58,TIPS_58_FURNITURE_REMOVE_02,LINE_1,家具に向かって<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>で回収,<cmd CMD_INTERACTION_RETRIEVE -offsetY -5> in front of a furniture item to continuously,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>ค้างไว้หน้าเฟอร์นิเจอร์,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>ค้างไว้หน้าเฟอร์นิเจอร์,MATCHED,กด<cmd CMD_INTERACTION_RETRIEVE -offsetY -5>างไหาเฟอเจอ
+219,58,TIPS_58_FURNITURE_REMOVE_02,LINE_2,長押しの間、目の前の家具と,retrieve furniture of the same type.,จะเก็บเฟอร์นิเจอร์ชนิดเดียวกัน,จะเก็บเฟอร์นิเจอร์ชนิดเดียวกัน,MATCHED,จะเบเฟอเจอชดเยวน
+220,58,TIPS_58_FURNITURE_REMOVE_02,LINE_3,同じ家具を自動で連続回収する,Automatically collect identical furniture in sequence,กลับคืนมาต่อเนื่องโดยอัตโนมัติ,กลับคืนมาต่อเนื่องโดยอัตโนมัติ,MATCHED,กบนมาอเองโดยตโน
+221,59,TIPS_59_CONSTRUCTION_ITEM,TITLE,建築時の回収物,Collection Box,สิ่งของที่ถูกเก็บจากการก่อสร้าง,สิ่งของที่ถูกเก็บจากการก่อสร้าง,MATCHED,งของกเบจากการอสาง
+222,59,TIPS_59_CONSTRUCTION_ITEM,LINE_1,建築予定地の範囲内にある,"Furniture, crops, processing machines, and other items",สิ่งของในเขตพื้นที่ก่อสร้าง,สิ่งของในเขตพื้นที่ก่อสร้าง,MATCHED,งของในเขตนอสาง
+223,59,TIPS_59_CONSTRUCTION_ITEM,LINE_2,家具や作物、加工機などは、,in a planned construction area will be moved into a,เช่น เฟอร์นิเจอร์ หรือพืชผล,เช่น เฟอร์นิเจอร์ หรือพืชผล,MATCHED,เน เฟอเจอ หอชผล
+224,59,TIPS_59_CONSTRUCTION_ITEM,LINE_3,回収箱に入れられる,collection box.,จะถูกนำไปเก็บไว้ในกล่องเก็บของคืน,จะถูกนำไปเก็บไว้ในกล่องเก็บของคืน,MATCHED,จะกไปเบไในกองเบของน
+225,60,TIPS_60_ROCK_CUT_MACHETE,TITLE,岩切りナタ,Rockrending Machete,มีดพร้าผ่าหิน,มีดพร้าผ่าหิน,MATCHED,ดพาาน
+226,60,TIPS_60_ROCK_CUT_MACHETE,LINE_1,鋭く、どんなものでも切れる,Sharp and capable of cutting through anything including,คมกริบและสามารถตัดฟันได้ทุกสิ่ง,คมกริบและสามารถตัดฟันได้ทุกสิ่ง,MATCHED,คมกบและสามารถดนไกง
+227,60,TIPS_60_ROCK_CUT_MACHETE,LINE_2,木や草、岩も壊すことができる,"wood, grass, and boulders. Its effect is equivalent to",ทำลายได้ทั้งต้นไม้ หญ้า และหิน,ทำลายได้ทั้งต้นไม้ หญ้า และหิน,MATCHED,ลายไงนไ หา และน
+228,60,TIPS_60_ROCK_CUT_MACHETE,LINE_3,農具の強化に準じた効果を持つ,upgraded farm tools.,มีผลเทียบเท่าอัปเกรดอุปกรณ์เกษตร,มีผลเทียบเท่าอัปเกรดอุปกรณ์เกษตร,MATCHED,ผลเยบเาปเกรดปกรเกษตร
+229,61,TIPS_61_NUE_LEATHER,TITLE,鵺の皮,Nue Pelt,หนังนูเอะ,หนังนูเอะ,MATCHED,หงเอะ
+230,61,TIPS_61_NUE_LEATHER,LINE_1,<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>鵺の皮を使用する,"Press and hold <cmd CMD_UNIT_JUMP -offsetY -5> to use the nue pelt, which allows you",กด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>ใช้หนังนูเอะ,กด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>ใช้หนังนูเอะ,MATCHED,กด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>ใหงเอะ
+231,61,TIPS_61_NUE_LEATHER,LINE_2,<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>を押している間、,to move much faster than usual.,ขณะกด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>ค้างไว้,ขณะกด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>ค้างไว้,MATCHED,ขณะกด<cmd CMD_INTERACTION_LONG_CANCEL -offsetY -5>างไ
+232,61,TIPS_61_NUE_LEATHER,LINE_3,普段より早く移動できる,Move faster than usual,จะเคลื่อนที่ได้รวดเร็วกว่าปกติ,จะเคลื่อนที่ได้รวดเร็วกว่าปกติ,MATCHED,จะเคอนไรวดเวกาปก
+233,62,TIPS_62_COOKING,TITLE,料理,Cooking,การทำอาหาร,การทำอาหาร,MATCHED,การอาหาร
+234,62,TIPS_62_COOKING,LINE_1,料理は卵類や肉類など、,There are a number of different types of ingredients you,ใช้วัตถุดิบประเภทเดียวกันทำอาหาร,ใช้วัตถุดิบประเภทเดียวกันทำอาหาร,MATCHED,ใตบประเภทเยวนอาหาร
+235,62,TIPS_62_COOKING,LINE_2,同種の食材なら使用できる,"can use to cook meals, such as meat or eggs. Try all",เช่น ไข่ หรือเนื้อ แทนกันได้,เช่น ไข่ หรือเนื้อ แทนกันได้,MATCHED,เน ไ หอเอ แทนนไ
+236,62,TIPS_62_COOKING,LINE_3,異なる素材も併用可能,sorts of different combinations.,และใช้วัตถุดิบต่างชนิดร่วมกันได้,และใช้วัตถุดิบต่างชนิดร่วมกันได้,MATCHED,และใตบางชดวมนไ
+237,63,TIPS_FAIR_NOTICE_CROPS,TITLE,品評会／作物,evaluation/crops,งานประกวด／พืชผล,งานประกวด／พืชผล,MATCHED,งานประกวด／ชผล
+238,63,TIPS_FAIR_NOTICE_CROPS,LINE_1,今日は10時から作物の品評会だ,The Crop Evaluation starts at 10 AM today.,วันนี้มีงานประกวดพืชผล,วันนี้มีงานประกวดพืชผล,MATCHED,นงานประกวดชผล
+239,64,TIPS_FAIR_NOTICE_LIVESTOCK,TITLE,品評会／家畜,evaluation/livestock,งานประกวด／สัตว์เลี้ยง,งานประกวด／สัตว์เลี้ยง,MATCHED,งานประกวด／ตเยง
+240,64,TIPS_FAIR_NOTICE_LIVESTOCK,LINE_1,今日は10時から家畜の品評会だ,The Livestock Evaluation starts at 10 AM today.,วันนี้มีงานประกวดสัตว์เลี้ยง,วันนี้มีงานประกวดสัตว์เลี้ยง,MATCHED,นงานประกวดตเยง
+241,65,TIPS_FAIR_NOTICE_HORSE,TITLE,品評会／馬,evaluation/horse,งานประกวด／ม้า,งานประกวด／ม้า,MATCHED,งานประกวด／า
+242,65,TIPS_FAIR_NOTICE_HORSE,LINE_1,今日は10時から馬の品評会だ,The Horse Evaluation starts at 10 AM today.,วันนี้มีงานประกวดม้า,วันนี้มีงานประกวดม้า,MATCHED,นงานประกวดา
+243,66,TIPS_FAIR_NOTICE_UNKNOWN,TITLE,品評会,evaluation,งานประกวด,งานประกวด,MATCHED,งานประกวด
+244,66,TIPS_FAIR_NOTICE_UNKNOWN,LINE_1,今日は10時から品評会だ,The evaluation starts at 10 AM today.,วันนี้มีงานประกวด,วันนี้มีงานประกวด,MATCHED,นงานประกวด
+245,67,TIPS_HOLIDAY_SPR_NOTICE,TITLE,祭日／春,festival/spring,วันเทศกาล／ฤดูใบไม้ผลิ,วันเทศกาล／ฤดูใบไม้ผลิ,MATCHED,นเทศกาล／ฤใบไผ
+246,67,TIPS_HOLIDAY_SPR_NOTICE,LINE_1,今日は10時からお花見だ,The Cherry Blossom Festival starts at 10 AM today.,วันนี้มีเทศกาลชมดอกไม้,วันนี้มีเทศกาลชมดอกไม้,MATCHED,นเทศกาลชมดอกไ
+247,68,TIPS_HOLIDAY_SUM_NOTICE,TITLE,祭日／夏,festival/summer,วันเทศกาล／ฤดูร้อน,วันเทศกาล／ฤดูร้อน,MATCHED,นเทศกาล／ฤอน
+248,68,TIPS_HOLIDAY_SUM_NOTICE,LINE_1,今日は16時から縁日だ,The festival starts at 4 PM today.,วันนี้มีงานเทศกาลฤดูร้อน,วันนี้มีงานเทศกาลฤดูร้อน,MATCHED,นงานเทศกาลฤอน
+249,69,TIPS_HOLIDAY_AUT_NOTICE,TITLE,祭日／秋,festival/autumn,วันเทศกาล／ฤดูใบไม้ร่วง,วันเทศกาล／ฤดูใบไม้ร่วง,MATCHED,นเทศกาล／ฤใบไวง
+250,69,TIPS_HOLIDAY_AUT_NOTICE,LINE_1,今日は10時から収穫祭だ,The Harvest Festival starts at 10 AM today.,วันนี้มีเทศกาลเก็บเกี่ยว,วันนี้มีเทศกาลเก็บเกี่ยว,MATCHED,นเทศกาลเบเยว
+251,70,TIPS_HOLIDAY_WIN_NOTICE,TITLE,祭日／冬,festival/winter,วันเทศกาล／ฤดูหนาว,วันเทศกาล／ฤดูหนาว,MATCHED,นเทศกาล／ฤหนาว
+252,70,TIPS_HOLIDAY_WIN_NOTICE,LINE_1,今日は16時から年越しだ,The New Year's Eve celebration starts at 4 PM today.,วันนี้มีเทศกาลส่งท้ายปีเก่า,วันนี้มีเทศกาลส่งท้ายปีเก่า,MATCHED,นเทศกาลงายเา
+253,71,TIPS_HOLIDAY_SPR_GAME,TITLE,バドミントン,Badminton,แบดมินตัน,แบดมินตัน,MATCHED,แบดนน
+254,71,TIPS_HOLIDAY_SPR_GAME,LINE_1,<cmd CMD_OK -offsetY -5>でラケットを振る,Swing your racket with <cmd CMD_OK -offsetY -5> at the right time to hit,กด<cmd CMD_OK -offsetY -5>เหวี่ยงไม้ตี,กด<cmd CMD_OK -offsetY -5>เหวี่ยงไม้ตี,MATCHED,กด<cmd CMD_OK -offsetY -5>เหยงไ
+255,71,TIPS_HOLIDAY_SPR_GAME,LINE_2,タイミングよく羽根を打ち返して,the shuttlecock back to Komako. Try for a long rally!,กะจังหวะตีลูกขนไก่โต้ตอบกลับไป,กะจังหวะตีลูกขนไก่โต้ตอบกลับไป,MATCHED,กะงหวะกขนไโตอบกบไป
+256,71,TIPS_HOLIDAY_SPR_GAME,LINE_3,コマコとラリーをしよう,Rally with Komako,เล่นแรลลี่โต้ลูกกับโคมะโกะ,เล่นแรลลี่โต้ลูกกับโคมะโกะ,MATCHED,เนแรลโกบโคมะโกะ
+257,72,TIPS_HOLIDAY_AUT_GAME,TITLE,焼き芋,Sweet Potato Roasting,เผามันเทศ,เผามันเทศ,MATCHED,เผานเทศ
+258,72,TIPS_HOLIDAY_AUT_GAME,LINE_1,ちょうどいい焼き加減になったら,"Once it's roasted to perfection, take the sweet potato",เมื่อระดับความสุกกำลังพอเหมาะ,เมื่อระดับความสุกกำลังพอเหมาะ,MATCHED,เอระบความกงพอเหมาะ
+259,72,TIPS_HOLIDAY_AUT_GAME,LINE_2,<cmd CMD_OK -offsetY -5>でサツマイモを取り出そう,out with<cmd CMD_OK -offsetY -5>.,ให้กด<cmd CMD_OK -offsetY -5>นำมันเทศออกมา,ให้กด<cmd CMD_OK -offsetY -5>นำมันเทศออกมา,MATCHED,ใกด<cmd CMD_OK -offsetY -5>นเทศออกมา
+260,73,TIPS_HOLIDAY_WIN_GAME,TITLE,餅つき,Mochi Pounding,การตำโมจิ,การตำโมจิ,MATCHED,การโม
+261,73,TIPS_HOLIDAY_WIN_GAME,LINE_1,時間内に<cmd CMD_OK -offsetY -5>でモチをつこう,Press <cmd CMD_OK -offsetY -5> to pound the rice cakes before time runs out.,กด<cmd CMD_OK -offsetY -5>ตำโมจิภายในเวลากำหนด,กด<cmd CMD_OK -offsetY -5>ตำโมจิภายในเวลากำหนด,MATCHED,กด<cmd CMD_OK -offsetY -5>โมภายในเวลาหนด
+262,73,TIPS_HOLIDAY_WIN_GAME,LINE_2,キスケを叩かないよう注意する,Be careful not to hit Kisuke!,ระวังอย่าตีโดนคิสุเกะเป็นอันขาด,ระวังอย่าตีโดนคิสุเกะเป็นอันขาด,MATCHED,ระงอาโดนเกะเนนขาด
+263,74,TIPS_63_TOOL_UPDATE,TITLE,使用範囲の切り替え,Changing Tool Range,,สลับระยะการใช้งานอุปกรณ์ทำฟาร์ม,AUTO-FILLED (PC Exclusive),สบระยะการใงานปกรฟาม
+264,74,TIPS_63_TOOL_UPDATE,LINE_1,ジョウロやクワなどの農具は、,"For tools such as the watering can and hoe,",,อุปกรณ์ทำฟาร์ม,AUTO-FILLED (PC Exclusive),ปกรฟาม
+265,74,TIPS_63_TOOL_UPDATE,LINE_2,<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>で構えながら,"hold <cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5> to ready them,",,ขณะกด<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>ตั้งท่าเตรียมใช้,AUTO-FILLED (PC Exclusive),ขณะกด<cmd CMD_INTERACTION_LONG_SQUARE -offsetY -5>งาเตยมใ
+266,74,TIPS_63_TOOL_UPDATE,LINE_3,<cmd CMD_UNIT_ACTION_LEFT CMD_UNIT_ACTION_RIGHT>で使用範囲を変更できる,then change their range with <cmd CMD_UNIT_ACTION_LEFT CMD_UNIT_ACTION_RIGHT>.,,กด<cmd CMD_UNIT_ACTION_LEFT CMD_UNIT_ACTION_RIGHT>เปลี่ยนระยะการใช้งาน,AUTO-FILLED (PC Exclusive),กด<cmd CMD_UNIT_ACTION_LEFT CMD_UNIT_ACTION_RIGHT>เปยนระยะการใงาน
+267,75,TIPS_64_TOOL_RESET_PICKAXE,TITLE,水田や畑の消去,Removing Paddies and Fields,,ใช้พลั่วลบแปลงผัก/กู้คืนเมล็ด,AUTO-FILLED (PC Exclusive),ใพวลบแปลงก/นเมด
+268,75,TIPS_64_TOOL_RESET_PICKAXE,LINE_1,ツルハシを使えば、,Use the pickaxe to,,หากใช้พลั่วขุดดิน,AUTO-FILLED (PC Exclusive),หากใพวดน
+269,75,TIPS_64_TOOL_RESET_PICKAXE,LINE_2,水田や畑を地面に戻し、,return paddies and fields to bare ground,,จะเปลี่ยนแปลงผักกลับเป็นพื้นดิน,AUTO-FILLED (PC Exclusive),จะเปยนแปลงกกบเนนน
+270,75,TIPS_64_TOOL_RESET_PICKAXE,LINE_3,種を回収することができる,and recover the seeds.,,สามารถเก็บเมล็ดคืนมาได้,AUTO-FILLED (PC Exclusive),สามารถเบเมดนมาไ

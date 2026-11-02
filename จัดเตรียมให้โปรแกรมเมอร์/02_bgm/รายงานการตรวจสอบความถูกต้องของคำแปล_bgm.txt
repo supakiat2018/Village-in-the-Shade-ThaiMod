@@ -1,0 +1,77 @@
+﻿====================================================================================================
+ รายงานการตรวจสอบเปรียบเทียบความถูกต้องของคำแปล: bgm_แปลจาก_JP.csv vs bgm_แปลจาก_EN.csv
+ โฟลเดอร์: Village_PC_v130_Database_CSVs\bgm
+====================================================================================================
+
+1. สรุปภาพรวมความแตกต่าง (Executive Summary)
+----------------------------------------------------------------------------------------------------
+- จำนวนเรคคอร์ดทั้งหมด: 38 เรคคอร์ด (Index 0 ถึง 37 / ลำดับ 1 ถึง 38)
+- การจัดวางแถว: ตรงกันเป๊ะ 1:1 ทุกแถว (Zero Row-Shift 100%)
+- การจำแนกประเภทบทเพลง:
+  * เพลงธีมหลักประจำเกม (ลำดับ 1 / BGM01.wav): 'ほの暮しの庭／メインテーマ' (สวนในเงามัว／เพลงธีมหลัก)
+  * เพลงบรรยากาศ 4 ฤดู (ลำดับ 2 ถึง 25 / BGM02 - BGM25): ครอบคลุม 4 ฤดู (ใบไม้ผลิ, ร้อน, ใบไม้ร่วง, หนาว) ใน 3 ช่วงเวลา (เช้า, กลางวัน, ค่ำคืน) และ 2 สภาพอากาศ (ฟ้าโปร่ง, ฝนตก/หิมะตก)
+    - ฤดูหนาว (Winter): JP ใช้ '雪の朝/雪の昼/雪の夜' (เช้า/กลางวัน/ค่ำคืนวันหิมะตก) ซึ่งตรงกับสภาพอากาศจริงในฤดูหนาวของหมู่บ้าน
+  * เพลงงานเทศกาลและกิจกรรมหมู่บ้าน (ลำดับ 26 ถึง 28 / BGM26 - BGM28):
+    - ลำดับ 26: '品評会' -> 'งานประกวดผลผลิต' (EN: Evaluation)
+    - ลำดับ 27: '賑わい祭り' -> 'เทศกาลรื่นเริง' (EN: Bustling Festival)
+    - ลำดับ 28: '厳か祭り' -> 'พิธีเทศกาลอันศักดิ์สิทธิ์' (EN: Solemn Festival)
+  * เพลงฉากต่อสู้/ปะทะบอส (ลำดับ 29 ถึง 34 / BGM29 - BGM34):
+    - ลำดับ 29: 'vsヅ主' -> 'ปะทะสึนุชิ' (EN: An Encounter with Zunushi)
+    - ลำดับ 30: 'vs鵺の皮' -> 'ปะทะหนังนูเอะ' (EN: An Encounter with the Nue)
+    - ลำดับ 31: 'vs以津真天' -> 'ปะทะอิตสึมาเดะ' (EN: An Encounter with the Itsumade)
+    - ลำดับ 32: 'vs化け狐' -> 'ปะทะจิ้งจอกแปลงกาย' (EN: An Encounter with the Bake Kitsune)
+    - ลำดับ 33: 'vsタタリ神' -> 'ปะทะเทพแห่งคำสาป' (EN: An Encounter with the Tatarigami)
+    - ลำดับ 34: 'vs桃の樹' -> 'ปะทะต้นท้อวิเศษ' (EN: An Encounter with the Peach Tree)
+  * เพลงชาวบ้านและสถานที่พิเศษ (ลำดับ 35 ถึง 38 / BGM35 - BGM38):
+    - ลำดับ 35: '彼ヶ津村の住人たち' -> 'เหล่าชาวหมู่บ้านคางัตสึ' (EN: Residents of Kagatsu Village)
+    - ลำดับ 36 ถึง 38: '石切場／上層・中層・下層' -> 'เหมืองหิน／ชั้นบน, ชั้นกลาง, ชั้นล่าง' (EN: Quarry - Upper/Mid/Lower Levels)
+- สไตล์และฟีลลิ่งการแปล: คงบรรยากาศและจิตวิญญาณญี่ปุ่นแท้ 100% สละสลวย ชัดเจน และสอดคล้องกับคลังชื่อตัวละครและเนื้อเรื่องหลัก
+
+2. ตารางตรวจสอบเทียบข้อความและคำแปล ครบทั้ง 38 เพลง (Full Tracks Verification)
+----------------------------------------------------------------------------------------------------
+ลำดับ | BGM_ID                       | ไฟล์เสียง  | ต้นฉบับ JP                | ต้นฉบับ EN                       | คำแปลไทย (TH/PUA)              | สถานะ
+---------------------------------------------------------------------------------------------------------------------------------------
+1     | BGM_ID_1                     | BGM01.wav  | ほの暮しの庭／メインテーマ             | Village in the Shade - Main Theme | สวนในเงามัว／เพลงธีมหลัก        | สมบูรณ์
+2     | BGM_ID_SPRING_MORNING_SUNNY  | BGM02.wav  | 春／晴の朝                     | Spring - Sunny Morning           | ฤดูใบไม้ผลิ／เช้าฟ้าโปร่ง       | สมบูรณ์
+3     | BGM_ID_SPRING_NOON_SUNNY     | BGM03.wav  | 春／晴の昼                     | Spring - Sunny Afternoon         | ฤดูใบไม้ผลิ／กลางวันฟ้าโปร่ง    | สมบูรณ์
+4     | BGM_ID_SPRING_NIGHT_SUNNY    | BGM04.wav  | 春／晴の夜                     | Spring - Sunny Evening           | ฤดูใบไม้ผลิ／ค่ำคืนฟ้าโปร่ง     | สมบูรณ์
+5     | BGM_ID_SPRING_MORNING_RAIN   | BGM05.wav  | 春／雨の朝                     | Spring - Rainy Morning           | ฤดูใบไม้ผลิ／เช้าวันฝนตก        | สมบูรณ์
+6     | BGM_ID_SPRING_NOON_RAIN      | BGM06.wav  | 春／雨の昼                     | Spring - Rainy Afternoon         | ฤดูใบไม้ผลิ／กลางวันฝนตก        | สมบูรณ์
+7     | BGM_ID_SPRING_NIGHT_RAIN     | BGM07.wav  | 春／雨の夜                     | Spring - Rainy Evening           | ฤดูใบไม้ผลิ／ค่ำคืนฝนตก         | สมบูรณ์
+8     | BGM_ID_SUMMER_MORNING_SUNNY  | BGM08.wav  | 夏／晴の朝                     | Summer - Sunny Morning           | ฤดูร้อน／เช้าฟ้าโปร่ง           | สมบูรณ์
+9     | BGM_ID_SUMMER_NOON_SUNNY     | BGM09.wav  | 夏／晴の昼                     | Summer - Sunny Afternoon         | ฤดูร้อน／กลางวันฟ้าโปร่ง        | สมบูรณ์
+10    | BGM_ID_SUMMER_NIGHT_SUNNY    | BGM10.wav  | 夏／晴の夜                     | Summer - Sunny Evening           | ฤดูร้อน／ค่ำคืนฟ้าโปร่ง         | สมบูรณ์
+11    | BGM_ID_SUMMER_MORNING_RAIN   | BGM11.wav  | 夏／雨の朝                     | Summer - Rainy Morning           | ฤดูร้อน／เช้าวันฝนตก            | สมบูรณ์
+12    | BGM_ID_SUMMER_NOON_RAIN      | BGM12.wav  | 夏／雨の昼                     | Summer - Rainy Afternoon         | ฤดูร้อน／กลางวันฝนตก            | สมบูรณ์
+13    | BGM_ID_SUMMER_NIGHT_RAIN     | BGM13.wav  | 夏／雨の夜                     | Summer - Rainy Evening           | ฤดูร้อน／ค่ำคืนฝนตก             | สมบูรณ์
+14    | BGM_ID_AUTUMN_MORNING_SUNNY  | BGM14.wav  | 秋／晴の朝                     | Autumn - Sunny Morning           | ฤดูใบไม้ร่วง／เช้าฟ้าโปร่ง      | สมบูรณ์
+15    | BGM_ID_AUTUMN_NOON_SUNNY     | BGM15.wav  | 秋／晴の昼                     | Autumn - Sunny Afternoon         | ฤดูใบไม้ร่วง／กลางวันฟ้าโปร่ง   | สมบูรณ์
+16    | BGM_ID_AUTUMN_NIGHT_SUNNY    | BGM16.wav  | 秋／晴の夜                     | Autumn - Sunny Evening           | ฤดูใบไม้ร่วง／ค่ำคืนฟ้าโปร่ง    | สมบูรณ์
+17    | BGM_ID_AUTUMN_MORNING_RAIN   | BGM17.wav  | 秋／雨の朝                     | Autumn - Rainy Morning           | ฤดูใบไม้ร่วง／เช้าวันฝนตก       | สมบูรณ์
+18    | BGM_ID_AUTUMN_NOON_RAIN      | BGM18.wav  | 秋／雨の昼                     | Autumn - Rainy Afternoon         | ฤดูใบไม้ร่วง／กลางวันฝนตก       | สมบูรณ์
+19    | BGM_ID_AUTUMN_NIGHT_RAIN     | BGM19.wav  | 秋／雨の夜                     | Autumn - Rainy Evening           | ฤดูใบไม้ร่วง／ค่ำคืนฝนตก        | สมบูรณ์
+20    | BGM_ID_WINTER_MORNING_SUNNY  | BGM20.wav  | 冬／晴の朝                     | Winter - Sunny Morning           | ฤดูหนาว／เช้าฟ้าโปร่ง           | สมบูรณ์
+21    | BGM_ID_WINTER_NOON_SUNNY     | BGM21.wav  | 冬／晴の昼                     | Winter - Sunny Afternoon         | ฤดูหนาว／กลางวันฟ้าโปร่ง        | สมบูรณ์
+22    | BGM_ID_WINTER_NIGHT_SUNNY    | BGM22.wav  | 冬／晴の夜                     | Winter - Sunny Evening           | ฤดูหนาว／ค่ำคืนฟ้าโปร่ง         | สมบูรณ์
+23    | BGM_ID_WINTER_MORNING_RAIN   | BGM23.wav  | 冬／雪の朝                     | Winter - Snowy Morning           | ฤดูหนาว／เช้าวันหิมะตก          | สมบูรณ์
+24    | BGM_ID_WINTER_NOON_RAIN      | BGM24.wav  | 冬／雪の昼                     | Winter - Snowy Afternoon         | ฤดูหนาว／กลางวันหิมะตก          | สมบูรณ์
+25    | BGM_ID_WINTER_NIGHT_RAIN     | BGM25.wav  | 冬／雪の夜                     | Winter - Snowy Evening           | ฤดูหนาว／ค่ำคืนหิมะตก           | สมบูรณ์
+26    | BGM_ID_26                    | BGM26.wav  | 品評会                       | Evaluation                       | งานประกวดผลผลิต                | สมบูรณ์
+27    | BGM_ID_27                    | BGM27.wav  | 賑わい祭り                     | Bustling Festival                | เทศกาลรื่นเริง                 | สมบูรณ์
+28    | BGM_ID_28                    | BGM28.wav  | 厳か祭り                      | Solemn Festival                  | พิธีเทศกาลอันศักดิ์สิทธิ์      | สมบูรณ์
+29    | BGM_ID_29                    | BGM29.wav  | vsヅ主                      | An Encounter with Zunushi        | ปะทะสึนุชิ                     | สมบูรณ์
+30    | BGM_ID_30                    | BGM30.wav  | vs鵺の皮                     | An Encounter with the Nue        | ปะทะหนังนูเอะ                  | สมบูรณ์
+31    | BGM_ID_31                    | BGM31.wav  | vs以津真天                    | An Encounter with the Itsumade   | ปะทะอิตสึมาเดะ                 | สมบูรณ์
+32    | BGM_ID_32                    | BGM32.wav  | vs化け狐                     | An Encounter with the Bake Kitsune | ปะทะจิ้งจอกแปลงกาย             | สมบูรณ์
+33    | BGM_ID_33                    | BGM33.wav  | vsタタリ神                    | An Encounter with the Tatarigami | ปะทะเทพแห่งคำสาป               | สมบูรณ์
+34    | BGM_ID_34                    | BGM34.wav  | vs桃の樹                     | An Encounter with the Peach Tree | ปะทะต้นท้อวิเศษ                | สมบูรณ์
+35    | BGM_ID_35                    | BGM35.wav  | 彼ヶ津村の住人たち                 | Residents of Kagatsu Village     | เหล่าชาวหมู่บ้านคางัตสึ        | สมบูรณ์
+36    | BGM_ID_36                    | BGM36.wav  | 石切場／上層                    | Quarry - Upper Levels            | เหมืองหิน／ชั้นบน               | สมบูรณ์
+37    | BGM_ID_37                    | BGM37.wav  | 石切場／中層                    | Quarry - Mid Levels              | เหมืองหิน／ชั้นกลาง             | สมบูรณ์
+38    | BGM_ID_38                    | BGM38.wav  | 石切場／下層                    | Quarry - Lower Levels            | เหมืองหิน／ชั้นล่าง             | สมบูรณ์
+
+3. การตรวจสอบความเข้ากันได้กับการฉีดเข้าตัวเกม (Compatibility & Verification)
+----------------------------------------------------------------------------------------------------
+- ไฟล์ทั้ง 5 เป็น UTF-8 with BOM (utf-8-sig) ตามมาตรฐานสูงสุด
+- สคริปต์ inject_bgm.py รองรับการอ่านจาก bgm_แปลจาก_JP.csv โดยตรง (มีคอลัมน์ BGM_ID, ไฟล์เสียง, ชื่อ_JP, ชื่อ_EN, ชื่อ_PUA ครบถ้วน)
+- ตรวจสอบเทียบกับไฟล์ Steam ที่ฉีดแล้ว: ผลลัพธ์ PUA ตรงกันทุกเรคคอร์ด 100% (38/38 แทร็ก)

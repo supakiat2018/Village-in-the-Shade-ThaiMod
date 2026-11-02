@@ -1,0 +1,183 @@
+﻿Key,Line,ต้นฉบับ_JP,MODEN_EN,คำแปลไทย
+DIFF_TOKEN_1,0,タマネギ,Onion,หอมหัวใหญ่
+DIFF_TOKEN_43,0,祟られタマネギ,Cursed Onion,หอมหัวใหญ่ต้องสาป
+DIFF_TOKEN_56,0,キャベツ,Cabbage,กะหล่ำปลี
+DIFF_TOKEN_98,0,祟られキャベツ,Cursed Cabbage,กะหล่ำปลีต้องสาป
+DIFF_TOKEN_111,0,カブ,Turnip,หัวผักกาดขาว
+DIFF_TOKEN_160,0,ジャガイモ,Potato,มันฝรั่ง
+DIFF_TOKEN_209,0,白ネギ,Scallion,ต้นหอมญี่ปุ่น
+DIFF_TOKEN_251,0,祟られ白ネギ,Cursed Scallion,ต้นหอมญี่ปุ่นต้องสาป
+DIFF_TOKEN_264,0,カモミール,Chamomile,คาโมมายล์
+DIFF_TOKEN_307,0,ポピー,Poppy,ดอกป๊อปปี้
+DIFF_TOKEN_350,0,カーネーション,Carnation,คาร์เนชัน
+DIFF_TOKEN_393,0,エンドウ豆,Green Peas,ถั่วลันเตา
+DIFF_TOKEN_423,0,サヤエンドウ,Snap Peas,ถั่วแขก
+DIFF_TOKEN_441,0,サヤエンドウ,Snap Peas,ถั่วแขก
+DIFF_TOKEN_459,0,サヤエンドウ,Snap Peas,ถั่วแขก
+DIFF_TOKEN_478,0,レタス,Lettuce,ผักกาดหอม
+DIFF_TOKEN_527,0,ニンジン,Carrot,แครอท
+DIFF_TOKEN_576,0,イチゴ,Strawberry,สตรอว์เบอร์รี
+DIFF_TOKEN_636,0,祟られイチゴ,Cursed Strawberry,สตรอว์เบอร์รีต้องสาป
+DIFF_TOKEN_649,0,ヒヤシンス,Hyacinth,ไฮยาซินธ์
+DIFF_TOKEN_692,0,チューリップ,Tulip,ทิวลิป
+DIFF_TOKEN_735,0,なでしこ,Dianthus,ดอกนาเดชิโกะ
+DIFF_TOKEN_778,0,勿忘草,Forget-Me-Not,ดอกฟอร์เก็ตมีน็อต
+DIFF_TOKEN_821,0,アスパラガス,Asparagus,หน่อไม้ฝรั่ง
+DIFF_TOKEN_888,0,ラディッシュ,Radish,แรดิช
+DIFF_TOKEN_937,0,アヤメ,Iris,ดอกไอริส
+DIFF_TOKEN_980,0,水芭蕉,Swamp Lantern,ดอกมิซึบาโช
+DIFF_TOKEN_1023,0,トマト,Tomato,มะเขือเทศ
+DIFF_TOKEN_1083,0,祟られトマト,Cursed Tomato,มะเขือเทศต้องสาป
+DIFF_TOKEN_1096,0,ナス,Eggplant,มะเขือม่วง
+DIFF_TOKEN_1163,0,ピーマン,Bell Pepper,พริกหยวก
+DIFF_TOKEN_1230,0,キュウリ,Cucumber,แตงกวา
+DIFF_TOKEN_1290,0,祟られキュウリ,Cursed Cucumber,แตงกวาต้องสาป
+DIFF_TOKEN_1303,0,トウモロコシ,Corn,ข้าวโพด
+DIFF_TOKEN_1370,0,スイカ,Watermelon,แตงโม
+DIFF_TOKEN_1412,0,祟られスイカ,Cursed Watermelon,แตงโมต้องสาป
+DIFF_TOKEN_1425,0,小麦,Wheat,ข้าวสาลี
+DIFF_TOKEN_1467,0,祟られ小麦,Cursed Wheat,ข้าวสาลีต้องสาป
+DIFF_TOKEN_1480,0,サトウキビ,Sugarcane,อ้อย
+DIFF_TOKEN_1529,0,アサガオ,Morning Glory,ดอกผักบุ้ง
+DIFF_TOKEN_1572,0,ヒマワリ,Sunflower,ดอกทานตะวัน
+DIFF_TOKEN_1615,0,ラベンダー,Lavender,ลาเวนเดอร์
+DIFF_TOKEN_1658,0,カボチャ,Pumpkin,ฟักทอง
+DIFF_TOKEN_1707,0,ショウガ,Ginger,ขิง
+DIFF_TOKEN_1749,0,祟られショウガ,Cursed Ginger,ขิงต้องสาป
+DIFF_TOKEN_1762,0,エダマメ,Edamame,ถั่วแระญี่ปุ่น
+DIFF_TOKEN_1774,0,もやし,Bean Sprouts,ถั่วงอก
+DIFF_TOKEN_1822,0,大豆,Soybean,ถั่วเหลือง
+DIFF_TOKEN_1828,0,祟られ大豆,Cursed Soybean,ถั่วเหลืองต้องสาป
+DIFF_TOKEN_1835,0,ブルーベリー,Blueberries,บลูเบอร์รี
+DIFF_TOKEN_1902,0,ホップ,Hops,ฮอปส์
+DIFF_TOKEN_1969,0,カスミソウ,Baby's Breath,ดอกยิปโซ
+DIFF_TOKEN_2012,0,マリーゴールド,Marigold,ดอกดาวเรือง
+DIFF_TOKEN_2055,0,ハイビスカス,Hibiscus,ดอกชบา
+DIFF_TOKEN_2098,0,バラ,Rose,ดอกกุหลาบ
+DIFF_TOKEN_2141,0,メロン,Melon,เมลอน
+DIFF_TOKEN_2190,0,パイナップル,Pineapple,สับปะรด
+DIFF_TOKEN_2239,0,ニンニク,Garlic,กระเทียม
+DIFF_TOKEN_2288,0,スズラン,Lily of the Valley,ดอกลิลลี่แห่งหุบเขา
+DIFF_TOKEN_2331,0,ソバ,Buckwheat,บักวีต
+DIFF_TOKEN_2373,0,祟られソバ,Cursed Buckwheat,บักวีตต้องสาป
+DIFF_TOKEN_2386,0,サトイモ,Taro,เผือก
+DIFF_TOKEN_2435,0,サツマイモ,Sweet Potato,มันเทศ
+DIFF_TOKEN_2484,0,オリーブ,Olive,มะกอก
+DIFF_TOKEN_2544,0,祟られオリーブ,Cursed Olive,มะกอกต้องสาป
+DIFF_TOKEN_2557,0,コスモス,Cosmos,ดอกดาวกระจาย
+DIFF_TOKEN_2600,0,キク,Chrysanthemum,ดอกเบญจมาศ
+DIFF_TOKEN_2643,0,ゴマ,Sesame,งา
+DIFF_TOKEN_2710,0,シメジ,Shimeji Mushroom,เห็ดชิเมจิ
+DIFF_TOKEN_2771,0,ダリア,Dahlia,ดอกรักเร่
+DIFF_TOKEN_2814,0,シイタケ,Shiitake Mushroom,เห็ดหอม
+DIFF_TOKEN_2875,0,キクラゲ,Wood Ear Mushroom,เห็ดหูหนู
+DIFF_TOKEN_2936,0,ダイコン,Daikon,หัวไชเท้า
+DIFF_TOKEN_2978,0,祟られダイコン,Cursed Daikon,หัวไชเท้าต้องสาป
+DIFF_TOKEN_2991,0,ホウレンソウ,Spinach,ผักปวยเล้ง
+DIFF_TOKEN_3033,0,祟られホウレンソウ,Cursed Spinach,ผักปวยเล้งต้องสาป
+DIFF_TOKEN_3046,0,パンジー,Pansy,ดอกแพนซี่
+DIFF_TOKEN_3089,0,ローズマリー,Rosemary,โรสแมรี
+DIFF_TOKEN_3132,0,ハクサイ,Napa Cabbage,ผักกาดขาว
+DIFF_TOKEN_3181,0,スイセン,Daffodil,ดอกแดโฟดิล
+DIFF_TOKEN_3224,0,お米,Rice,ข้าวสาร
+DIFF_TOKEN_3273,0,お茶,Tea,ใบชา
+DIFF_TOKEN_3346,0,ワサビ,Wasabi,วาซาบิ
+DIFF_TOKEN_3383,0,レンコン,Lotus,รากบัว
+DIFF_TOKEN_3420,0,桑の葉,Mulberry Leaf,ใบหม่อน
+DIFF_TOKEN_3493,0,リンゴの木,Apple Tree,ต้นแอปเปิล
+DIFF_TOKEN_3542,0,サクランボの木,Cherry Tree,ต้นเชอร์รี
+DIFF_TOKEN_3591,0,ユズの木,Yuzu Tree,ต้นส้มยูซุ
+DIFF_TOKEN_3640,0,カキの木,Persimmon Tree,ต้นลูกพลับ
+DIFF_TOKEN_3689,0,ミカンの木,Orange Tree,ต้นส้ม
+DIFF_TOKEN_3738,0,レモンの木,Lemon Tree,ต้นมะนาวเลมอน
+DIFF_TOKEN_3787,0,梅の木,Plum Tree,ต้นบ๊วย
+DIFF_TOKEN_3836,0,モモの木,Peach Tree,ต้นพีช
+DIFF_TOKEN_3885,0,ブドウの木,Grapevine,ต้นองุ่น
+DIFF_TOKEN_3934,0,ナシの木,Pear Tree,ต้นสาลี่
+DIFF_TOKEN_3983,0,バナナの木,Banana Tree,ต้นกล้วย
+DIFF_TOKEN_4032,0,カカオの木,Cacao Tree,ต้นโกโก้
+DIFF_TOKEN_4081,0,マンゴーの木,Mango Tree,ต้นมะม่วง
+DIFF_TOKEN_4130,0,泥の種(オブジェクト),Dorotabo Seed (Object),เมล็ดโคลน (ออบเจกต์)
+DIFF_TOKEN_4148,0,幽霊の花,Phantom Flower,ดอกไม้วิญญาณ
+DIFF_TOKEN_4155,0,泥の種,Dorotabo Seed,เมล็ดโคลน
+DIFF_TOKEN_4174,0,魔除けナンテン,Nandina,ต้นนันทินาขับไล่ภูตผี
+DIFF_TOKEN_4205,0,見知らぬ家畜_埋まってるアイテム,UnfamiliarLivestock_BuriedItem,สัตว์เลี้ยงนิรนาม_ไอเทมที่ถูกฝัง
+DIFF_TOKEN_4224,0,見知らぬ家畜_埋まってるアイテム,UnfamiliarLivestock_BuriedItem,สัตว์เลี้ยงนิรนาม_ไอเทมที่ถูกฝัง
+DIFF_TOKEN_4243,0,見知らぬ家畜_埋まってるアイテム,UnfamiliarLivestock_BuriedItem,สัตว์เลี้ยงนิรนาม_ไอเทมที่ถูกฝัง
+DIFF_TOKEN_4262,0,巨大作物_カブ,GiantCrop_turnip,พืชผลยักษ์_หัวผักกาดขาว
+DIFF_TOKEN_4275,0,巨大作物_トウモロコシ,GiantCrop_corn,พืชผลยักษ์_ข้าวโพด
+DIFF_TOKEN_4288,0,巨大作物_サトイモ,GiantCrop_taro,พืชผลยักษ์_เผือก
+DIFF_TOKEN_4301,0,巨大作物_ハクサイ,GiantCrop_NapaCabbage,พืชผลยักษ์_ผักกาดขาว
+DIFF_TOKEN_4314,0,クリ,Chestnut,เกาลัด
+DIFF_TOKEN_4363,0,スギ,Cedar,สนซีดาร์
+DIFF_TOKEN_4412,0,マツ,Pine,สนญี่ปุ่น
+DIFF_TOKEN_4461,0,カシワ,Oak,ต้นโอ๊กคาชิวะ
+DIFF_TOKEN_4510,0,ヒノキ,Cypress,สนฮิโนกิ
+DIFF_TOKEN_4559,0,雑草,Wild Grass,วัชพืช
+DIFF_TOKEN_4572,0,雑草,Wild Grass,วัชพืช
+DIFF_TOKEN_4585,0,小枝,Twig,กิ่งไม้
+DIFF_TOKEN_4598,0,倒木,Fallen Tree,ขอนไม้ล้ม
+DIFF_TOKEN_4611,0,切り株,Stump,ตอไม้
+DIFF_TOKEN_4624,0,堅い切り株,Sturdy Stump,ตอไม้แข็ง
+DIFF_TOKEN_4637,0,すごく堅い切り株,Petrified Stump,ตอไม้แข็งมาก
+DIFF_TOKEN_4650,0,石,Rock,หิน
+DIFF_TOKEN_4663,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4676,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4689,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4702,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4715,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4728,0,石切場の石,Quarry Rock,หินเหมืองหิน
+DIFF_TOKEN_4741,0,銅鉱脈の石,Copper Deposit Rock,หินสายแร่ทองแดง
+DIFF_TOKEN_4754,0,鉄鉱脈の石,Iron Deposit Rock,หินสายแร่เหล็ก
+DIFF_TOKEN_4767,0,金鉱脈の石,Gold Deposit Rock,หินสายแร่ทองคำ
+DIFF_TOKEN_4780,0,隕鉄鉱脈の石,Meteoric Iron Deposit Rock,หินสายแร่เหล็กอุกกาบาต
+DIFF_TOKEN_4793,0,宝石鉱脈の石,Gemstone Deposit Rock,หินสายแร่อัญมณี
+DIFF_TOKEN_4806,0,岩,Boulder,โขดหิน
+DIFF_TOKEN_4819,0,石切場の岩,Quarry Boulder,โขดหินเหมืองหิน
+DIFF_TOKEN_4832,0,石切場の岩,Quarry Boulder,โขดหินเหมืองหิน
+DIFF_TOKEN_4845,0,石切場の岩,Quarry Boulder,โขดหินเหมืองหิน
+DIFF_TOKEN_4858,0,銅鉱脈の岩,Copper Deposit Boulder,โขดหินสายแร่ทองแดง
+DIFF_TOKEN_4871,0,鉄鉱脈の岩,Iron Deposit Boulder,โขดหินสายแร่เหล็ก
+DIFF_TOKEN_4884,0,金鉱脈の岩,Gold Deposit Boulder,โขดหินสายแร่ทองคำ
+DIFF_TOKEN_4897,0,隕鉄鉱脈の岩,Meteoric Iron Deposit Boulder,โขดหินสายแร่เหล็กอุกกาบาต
+DIFF_TOKEN_4910,0,宝石鉱脈の岩,Gemstone Deposit Boulder,โขดหินสายแร่อัญมณี
+DIFF_TOKEN_4923,0,巨岩,Giant Boulder,โขดหินยักษ์
+DIFF_TOKEN_4936,0,堅い巨岩,Giant Sturdy Boulder,โขดหินยักษ์แข็ง
+DIFF_TOKEN_4949,0,すごく堅い巨岩,Giant Stalwart Boulder,โขดหินยักษ์แข็งมาก
+DIFF_TOKEN_4962,0,牧草,Hay,หญ้าเลี้ยงสัตว์
+DIFF_TOKEN_4975,0,竹,Bamboo,ต้นไผ่
+DIFF_TOKEN_5024,0,水田の雑草,Paddy Weeds,วัชพืชในนาข้าว
+DIFF_TOKEN_5030,0,雑草,Wild Grass,วัชพืช
+DIFF_TOKEN_5037,0,ワラビ,Bracken,ผักกูดวาราบิ
+DIFF_TOKEN_5050,0,タンポポ,Dandelion,ดอกแดนดิไลออน
+DIFF_TOKEN_5063,0,ミツバ,Honewort,ผักมิตสึบะ
+DIFF_TOKEN_5076,0,つくし,Horsetail,ยอดสึคุชิ
+DIFF_TOKEN_5089,0,彼岸花,Red Spider Lily,ดอกฮิกังบานะ
+DIFF_TOKEN_5102,0,ササノコ,Bamaboo Grass Shoot,หน่อไผ่แคระ
+DIFF_TOKEN_5115,0,ユリ,Lily,ดอกลิลลี่
+DIFF_TOKEN_5128,0,ユリ根,Lily Bulb,หัวลิลลี่
+DIFF_TOKEN_5141,0,山椒,Prickly Ash,พริกไทยญี่ปุ่น
+DIFF_TOKEN_5154,0,タケノコ,Bamboo Shoot,หน่อไม้
+DIFF_TOKEN_5167,0,ふきのとう,Butterbur,ดอกฟุคิโนโต
+DIFF_TOKEN_5180,0,ホテイアオイ,Water Hyacinth,ผักตบชวา
+DIFF_TOKEN_5193,0,ヤマモモ,Red Bayberry,ลูกยามะโมโมะ
+DIFF_TOKEN_5206,0,キイチゴ,Wild Raspberry,ราสเบอร์รีป่า
+DIFF_TOKEN_5219,0,ビワ,Loquat,ลูกปีแป่
+DIFF_TOKEN_5232,0,まつぼっくり,Pine Cone,ลูกสน
+DIFF_TOKEN_5245,0,アケビ,Akebi,ลูกอาเคบิ
+DIFF_TOKEN_5258,0,自然薯,Wild Yam,มันป่าจิเน็นโจ
+DIFF_TOKEN_5271,0,クルミ,Walnut,วอลนัต
+DIFF_TOKEN_5284,0,マツタケ,Matsutake Mushroom,เห็ดมัตสึทาเกะ
+DIFF_TOKEN_5297,0,クコの実,Goji Berry,โกจิเบอร์รี
+DIFF_TOKEN_5310,0,フユイチゴ,Winter Raspberry,ราสเบอร์รีฤดูหนาว
+DIFF_TOKEN_5323,0,ギンナン,Ginkgo Nut,แปะก๊วย
+DIFF_TOKEN_5336,0,カブトムシ,Rhinoceros Beetle,ด้วงกว่าง
+DIFF_TOKEN_5349,0,クワガタムシ,Stag Beetle,ด้วงคีม
+DIFF_TOKEN_5362,0,タラの芽,Taranome,ยอดทาระ
+DIFF_TOKEN_5375,0,埋められたコイン,Buried Token,เหรียญที่ถูกฝัง
+DIFF_TOKEN_5394,0,トウキ,Toki Plant,สมุนไพรโทคิ
+DIFF_TOKEN_5407,0,紫の花,Purple Flowers,ดอกไม้สีม่วง
+DIFF_TOKEN_5420,0,ススキ,Silver Grass,หญ้าสึสึคิ
+DIFF_TOKEN_5433,0,木霊の岩,Large Kodama Rock,โขดหินโคดามะ
+DIFF_TOKEN_5446,0,木霊の岩,Large Kodama Rock,โขดหินโคดามะ
+DIFF_TOKEN_5459,0,木霊の岩,Large Kodama Rock,โขดหินโคดามะ

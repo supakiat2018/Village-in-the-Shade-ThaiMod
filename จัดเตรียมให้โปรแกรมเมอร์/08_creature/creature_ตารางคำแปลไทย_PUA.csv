@@ -1,0 +1,192 @@
+﻿Key,Line,ต้นฉบับ_JP,MODEN_EN,คำแปลไทย,Thai_PUA
+CREATURE_ID_HONEYBEE,0,ミツバチ,Honeybee,ผึ้งมิ้ม,งม
+CREATURE_ID_CROW,0,カラス,Crow,อีกา,กา
+CREATURE_ID_CROW_DEMO,0,カラス_デモ用,Crow_Demo,อีกา (สำหรับเดโม),กา (หบเดโม)
+CREATURE_ID_SPARROW,0,雀,Sparrow,นกกระจอก,นกกระจอก
+CREATURE_ID_JAPANESE_WHITE_EYE,0,メジロ,Warbling White-Eye,นกแว่นตาขาว,นกแนตาขาว
+CREATURE_ID_VARIED_TIT,0,ヤマガラ,Varied Tit,นกติ๊ดหลังส้ม,นกดหงม
+CREATURE_ID_BLUE_AND_WHITE_FLYCATCHER,0,ルリビタキ,Red-Flanked Bluetail,นกเขนน้อยหางฟ้า,นกเขนอยหางา
+CREATURE_ID_KINGFISHER,0,カワセミ,Kingfisher,นกกระเต็น,นกกระเน
+CREATURE_ID_CUCKOO,0,カッコウ,Cuckoo,นกคัคคู,นกค
+CREATURE_ID_HERON,0,サギ,Heron,นกยาง,นกยาง
+CREATURE_ID_CORMORANT,0,鵜,Cormorant,นกกาน้ำ,นกกา
+CREATURE_ID_SWAN,0,白鳥,Swan,หงส์ขาว,หงขาว
+CREATURE_ID_GIANT_SALAMANDER,0,オオサンショウウオ,Giant Salamander,ซาลาแมนเดอร์ยักษ์ญี่ปุ่น,ซาลาแมนเดอกน
+CREATURE_ID_PIGEON,0,ハト,Pigeon,นกพิราบ,นกราบ
+CREATURE_ID_OWL,0,フクロウ,Owl,นกฮูก,นกก
+CREATURE_ID_FROG,0,カエル,Frog,กบ,กบ
+CREATURE_ID_PARROT,0,オウム,Parrot,นกแก้ว,นกแว
+CREATURE_ID_CABBAGE_WHITE_BUTTERFLY,0,モンシロチョウ,Cabbage Butterfly,ผีเสื้อหนอนกะหล่ำ,เอหนอนกะห
+CREATURE_ID_ALFALFA_BUTTERFLY,0,モンキチョウ,Sulfur Butterfly,ผีเสื้อหนอนถั่ว,เอหนอนว
+CREATURE_ID_RED_ADMIRAL,0,アカタテハ,Asian Admiral,ผีเสื้อหางเต่าแดง,เอหางเาแดง
+CREATURE_ID_SWALLOWTAIL_BUTTERFLY,0,アゲハチョウ,Swallowtail Butterfly,ผีเสื้อหางติ่ง,เอหางง
+CREATURE_ID_GREAT_PURPLE_EMPEROR,0,オオムラサキ,Great Purple Emperor,ผีเสื้อจักรพรรดิม่วง,เอกรพรรวง
+CREATURE_ID_CICADA,0,セミ,Cicada,จักจั่น,กน
+CREATURE_ID_FIREFLY,0,ホタル,Firefly,หิ่งห้อย,งอย
+CREATURE_ID_SYMPETRUM_FREQUENS,0,アキアカネ,Autumn Darter,แมลงปอดาร์เตอร์แดง,แมลงปอดาเตอแดง
+CREATURE_ID_JUMBO_DRAGONFLY,0,オニヤンマ,Golden-Ringed Dragonfly,แมลงปอยักษ์โอนิยันมะ,แมลงปอกโอนมะ
+CREATURE_ID_CALOPTERYX_ATRATA,0,ハグロトンボ,Damselfly,แมลงปอเข็มปีกดำ,แมลงปอเมก
+CREATURE_ID_CAT_BROWN,0,茶トラ猫,Ginger Cat,แมวส้มลายเสือ,แมวมลายเอ
+CREATURE_ID_CAT_WHITE,0,白猫,White Cat,แมวขาว,แมวขาว
+CREATURE_ID_CAT_BLACK,0,黒猫,Black Cat,แมวดำ,แมว
+CREATURE_ID_CAT_BICOLOR,0,ハチワレ猫,Mask-and-Mantle Cat,แมวหน้ากากสองสี,แมวหากากสอง
+CREATURE_ID_CAT_CALICO,0,三毛猫,Calico Cat,แมวสามสี,แมวสาม
+CREATURE_ID_CAT_FLUFFY,0,フワフワ猫,Fluffy Cat,แมวขนปุย,แมวขนย
+CREATURE_ID_CAT_NAGO_PET,0,ココ,Coco,โคโค่,โคโ
+CREATURE_ID_SQUIRREL,0,リス,Squirrel,กระรอก,กระรอก
+CREATURE_ID_FOX,0,狐,Fox,จิ้งจอก,งจอก
+CREATURE_ID_RACCOON_DOG,0,タヌキ,Tanuki,ทานุกิ,ทา
+CREATURE_ID_WEASEL,0,イタチ,Weasel,วีเซิล,เล
+CREATURE_ID_RABBIT,0,ウサギ,Rabbit,กระต่าย,กระาย
+CREATURE_ID_PHEASANT,0,キジ,Pheasant,ไก่ฟ้า,ไา
+CREATURE_ID_BOAR,0,イノシシ,Boar,หมูป่า,หา
+CREATURE_ID_BOAR_BIG,0,大イノシシ,Large Boar,หมูป่ายักษ์,หาก
+CREATURE_ID_DEER,0,鹿,Deer,กวาง,กวาง
+CREATURE_ID_DEER_BIG,0,大鹿,Large Deer,กวางยักษ์,กวางก
+CREATURE_ID_BEAR,0,熊,Bear,หมี,ห
+CREATURE_ID_BEAR_BIG,0,大熊,Large Bear,หมียักษ์,หก
+CREATURE_ID_ENEMY_BAT,0,コウモリ,Bat,ค้างคาว,างคาว
+CREATURE_ID_ENEMY_BAT_LV2,0,コウモリ,Bat,ค้างคาว,างคาว
+CREATURE_ID_ENEMY_BEE,0,蜂,Bee,ผึ้ง,ง
+CREATURE_ID_ENEMY_RAT,0,ネズミ,Rat,หนู,ห
+CREATURE_ID_ENEMY_POISONOUS_MOTH,0,毒蛾,Poisonous Moth,ผีเสื้อกลางคืนพิษ,เอกลางนษ
+CREATURE_ID_ENEMY_SPIDER,0,蜘蛛,Spider,แมงมุม,แมงม
+CREATURE_ID_GIANT_CENTIPEDE,0,大ムカデ,Omukade,ตะขาบยักษ์โอมุคาเดะ,ตะขาบกโอคาเดะ
+CREATURE_ID_HORROR_MOYAMOYASAN_LV1,0,たたずむ霊,Lingering Ghost,วิญญาณผู้เฝ้ามอง,ญญาณเามอง
+CREATURE_ID_HORROR_MOYAMOYASAN_LV2,0,たたずむ霊,Lingering Ghost,วิญญาณผู้เฝ้ามอง,ญญาณเามอง
+CREATURE_ID_HORROR_MOYAMOYASAN_LV3,0,たたずむ霊,Lingering Ghost,วิญญาณผู้เฝ้ามอง,ญญาณเามอง
+CREATURE_ID_HORROR_MOYAMOYASAN_LV3_DUNGEON,0,たたずむ霊,Lingering Ghost,วิญญาณผู้เฝ้ามอง,ญญาณเามอง
+CREATURE_ID_HORROR_COW_SPIRIT_POSSESSION,0,牛霊憑き,Cow Spirit,วิญญาณวัวผีสิง,ญญาณวง
+CREATURE_ID_HORROR_WALKING_STONE,0,歩く石,Walking Stone,หินเดินได้,นเนไ
+CREATURE_ID_RED_MERCHANT,0,赤の行商人,Red Merchant,พ่อค้าเร่ชุดแดง,อาเดแดง
+CREATURE_ID_BLUE_MERCHANT,0,青の行商人,Blue Merchant,พ่อค้าเร่ชุดน้ำเงิน,อาเดเน
+CREATURE_ID_HORROR_WANDERING_GHOST,0,うろうろお化け,Wandering Ghost,ผีพเนจร,พเนจร
+CREATURE_ID_HORROR_WANDERING_GHOST_DUNGEON,0,うろうろお化け,Wandering Ghost,ผีพเนจร,พเนจร
+CREATURE_ID_HORROR_KUNEKUNE,0,くねくね,Kunekune,คุเนะคุเนะ,เนะเนะ
+CREATURE_ID_HORROR_KUNEKUNE_DUNGEON,0,くねくね,Kunekune,คุเนะคุเนะ,เนะเนะ
+CREATURE_ID_HORROR_PLASTERED_WALL_PLANE,0,塗り壁プレーン,Nurikabe_Plane,นูริคาเบะ (ธรรมดา),คาเบะ (ธรรมดา)
+CREATURE_ID_HORROR_PLASTERED_WALL_FACE_PLANE,0,塗り壁_顔_プレーン,Nurikabe_Face_Plane,นูริคาเบะ (หน้าธรรมดา),คาเบะ (หาธรรมดา)
+CREATURE_ID_HORROR_PLASTERED_WALL_ONE,0,塗り壁_1マス,Nurikabe_1 Square,นูริคาเบะ (1 ช่อง),คาเบะ (1 อง)
+CREATURE_ID_HORROR_WARP_GHOST,0,ワープお化け,Warp Ghost,ผีวาร์ป,วาป
+CREATURE_ID_HORROR_BLOCKAGE,0,通せんぼ,Roadblocker,ผีขวางทาง,ขวางทาง
+CREATURE_ID_HORROR_BLOCKAGE_PLANE,0,通せんぼ_プレーン,Roadblocker_Plane,ผีขวางทาง (ธรรมดา),ขวางทาง (ธรรมดา)
+CREATURE_ID_HORROR_TWO_MOUTHS_WOMAN,0,二口女,Two-Mouthed Woman,หญิงสาวสองปาก,หงสาวสองปาก
+CREATURE_ID_HORROR_OBO,0,オボ,Obo,โอโบะ,โอโบะ
+CREATURE_ID_HORROR_SOUL_EYE,0,人魂_目,Will-o'-Wisp_Eye,ดวงวิญญาณฮิโตดามะ (ตา),ดวงญญาณโตดามะ (ตา)
+CREATURE_ID_HORROR_SOUL_MOUTH,0,人魂_口,Will-o'-Wisp_Mouth,ดวงวิญญาณฮิโตดามะ (ปาก),ดวงญญาณโตดามะ (ปาก)
+CREATURE_ID_HORROR_GROUND_SPIRIT,0,幽霊が地面から生えて騒ぐ,Ghost Rising from the Ground and Causing a Stir,ผีโผล่จากดินส่งเสียงโวยวาย,โผจากนงเยงโวยวาย
+CREATURE_ID_HORROR_HOUSE_SPIRIT,0,家の裏から大きな影が覗いている,Large Shadow Peeking out from Behind a House,เงาร่างยักษ์แอบมองจากหลังบ้าน,เงาางกแอบมองจากหงาน
+CREATURE_ID_HORROR_CICADA_FINAL_PT1,0,セミファイナル_パターン1,Final Cicada_Pattern1,จักจั่นไฟนอล (รูปแบบ 1),กนไฟนอล (ปแบบ 1)
+CREATURE_ID_HORROR_CICADA_FINAL_PT2,0,セミファイナル_パターン2,Final Cicada_Pattern2,จักจั่นไฟนอล (รูปแบบ 2),กนไฟนอล (ปแบบ 2)
+CREATURE_ID_HORROR_FAKE_ITEM,0,偽のアイテム,False Item,ไอเทมปลอมแปลง,ไอเทมปลอมแปลง
+CREATURE_ID_HORROR_EYE_OF_HAND,0,手の目,Tenome,เทะโนะเมะ,เทะโนะเมะ
+CREATURE_ID_STORY_HORROR_EYE_OF_HAND,0,ストーリー用手の目,Story Tenome,เทะโนะเมะ (สำหรับเนื้อเรื่อง),เทะโนะเมะ (หบเอเอง)
+CREATURE_ID_HORROR_LANTERN_FIXED,0,提灯（固定）,Paper Lantern (Stationary),โคมไฟผี (อยู่กับที่),โคมไฟ (อบ)
+CREATURE_ID_HORROR_LANTERN_MOVE,0,提灯（移動）,Paper Lantern (Moving),โคมไฟผี (เคลื่อนที่),โคมไฟ (เคอน)
+CREATURE_ID_HORROR_STATUE_GAME,0,達磨さんが転んだ,The Daruma Doll Fell Down,ดารุมะซังล้มแล้ว,ดามะงมแว
+CREATURE_ID_HORROR_SEDGE_HAT_GHOST,0,菅笠おばけ,Sedge Hat Ghost,ผีหมวกงอบซูเกะงาสะ,หมวกงอบเกะงาสะ
+CREATURE_ID_HORROR_RED_MASK_GHOST,0,赤の面霊気,Red Mask Ghost,เมนเรกิหน้ากากแดง,เมนเรหากากแดง
+CREATURE_ID_HORROR_BLUE_MASK_GHOST,0,青の面霊気,Blue Mask Ghost,เมนเรกิหน้ากากน้ำเงิน,เมนเรหากากเน
+CREATURE_ID_HORROR_PURPLE_MASK_GHOST,0,紫の面霊気,Purple Mask Ghost,เมนเรกิหน้ากากม่วง,เมนเรหากากวง
+CREATURE_ID_HORROR_SOOT_SPRITE,0,ススワタリ,Soot Sprite,ภูตเขม่าดำสึสึวาตาริ,ตเขาวาตา
+CREATURE_ID_HORROR_BOSS_SOOT_SPRITE,0,親玉ススワタリ,Soot Sprite Boss,จ่าฝูงภูตเขม่าดำสึสึวาตาริ,างตเขาวาตา
+CREATURE_ID_HORROR_NOZUCHI,0,野槌,Nozuchi,โนซึจิ,โน
+CREATURE_ID_HORROR_NOZUCHI_TAIL,0,野槌の尻尾,Nozuchi Tail,หางของโนซึจิ,หางของโน
+CREATURE_ID_HORROR_NIGHT_GRASS_MIMIC,0,擬態した夜の草,Night Grass Mimic,หญ้าราตรีพรางกาย,หาราตพรางกาย
+CREATURE_ID_HORROR_MIZUCHI_FUJIN,0,ミズチ（風神）,Mizuchi (Fujin),มิซึจิ (เทพวายุ), (เทพวา)
+CREATURE_ID_HORROR_MIZUCHI_FUJIN_SMALL,0,ミズチ（風神）（小）,Mizuchi (Fujin) (Small),มิซึจิ (เทพวายุ) (ตัวเล็ก), (เทพวา) (วเก)
+CREATURE_ID_HORROR_MIZUCHI_RAIJIN,0,ミズチ（雷神）,Mizuchi (Raijin),มิซึจิ (เทพอัสนี), (เทพส)
+CREATURE_ID_HORROR_MIZUCHI_RAIJIN_SMALL,0,ミズチ（雷神）（小）,Mizuchi (Raijin) (Small),มิซึจิ (เทพอัสนี) (ตัวเล็ก), (เทพส) (วเก)
+CREATURE_ID_HORROR_SNOW_WOMAN,0,雪女,Snow Woman,สาวหิมะ,สาวมะ
+CREATURE_ID_HORROR_SNOW_WOMAN_DEMO,0,雪女_デモ用,Snow Woman_Demo,สาวหิมะ (สำหรับเดโม),สาวมะ (หบเดโม)
+CREATURE_ID_HORROR_SNOW_CHILD,0,雪ん子,Snow Child,เด็กหิมะ,เกมะ
+CREATURE_ID_HORROR_WHELK,0,ツブ,Whelk,หอยสังข์สึบุ,หอยง
+CREATURE_ID_HORROR_VEGETABLE_MONSTER,0,怪異野菜,Vegetable Monster,ผักประหลาดต้องสาป,กประหลาดองสาป
+CREATURE_ID_HORROR_FISH_MONSTER,0,怪異魚,Fish Monster,ปลาประหลาดต้องสาป,ปลาประหลาดองสาป
+CREATURE_ID_HORROR_LONG_HAIR_LADY,0,長い髪の女,Long-Haired Woman,หญิงสาวผมยาว,หงสาวผมยาว
+CREATURE_ID_HORROR_DOROTABO,0,泥田坊,Dorotabo,โดโรทาโบ,โดโรทาโบ
+CREATURE_ID_HORROR_DIVINE_FOX,0,神狐,Sacred Fox,จิ้งจอกศักดิ์สิทธิ์,งจอกกท
+CREATURE_ID_HORROR_JAPANESE_DOLL_BODY,0,日本人形（体）,Japanese Doll (Body),ตุ๊กตาญี่ปุ่น (ลำตัว),กตาน (ว)
+CREATURE_ID_HORROR_JAPANESE_DOLL_BODY_ITEM,0,日本人形（体）アイテム,Japanese Doll (Body) Item,ตุ๊กตาญี่ปุ่น (ลำตัว) ไอเทม,กตาน (ว) ไอเทม
+CREATURE_ID_HORROR_JAPANESE_DOLL_HEAD_ITEM,0,日本人形（頭）アイテム,Japanese Doll (Head) Item,ตุ๊กตาญี่ปุ่น (ส่วนหัว) ไอเทม,กตาน (วนว) ไอเทม
+CREATURE_ID_HORROR_THUNDER_BEAST,0,雷獣,Raiju,สัตว์อสูรสายฟ้าไรจู,ตอรสายาไร
+CREATURE_ID_HORROR_KAPPA,0,河童,Kappa,กัปปะ,ปปะ
+CREATURE_ID_HORROR_TREASURE_BOX,0,玉手箱,Tamatebako,กล่องสมบัติทามาเตบาโกะ,กองสมทามาเตบาโกะ
+CREATURE_ID_HORROR_TOFU_BOY,0,豆腐小僧,Tofu Kozo,โทฟุโคโซ,โทโคโซ
+CREATURE_ID_HORROR_NEKOMATA,0,猫又,Nekomata,เนโกะมาตะ,เนโกะมาตะ
+CREATURE_ID_HORROR_GHOST_RAT,0,幽霊ネズミ,Ghost Rat,หนูวิญญาณ,หญญาณ
+CREATURE_ID_HORROR_PETOPETO,0,ぺとぺとさん,Peto-Peto,เปโตะเปโตะซัง,เปโตะเปโตะง
+CREATURE_ID_HORROR_GIANT_RABBIT,0,巨大うさぎ,Giant Rabbit,กระต่ายยักษ์,กระายก
+CREATURE_ID_HORROR_MYSTERIOUS_FIRE,0,怪火,Ghost Light,ดวงไฟประหลาด,ดวงไฟประหลาด
+CREATURE_ID_HORROR_MYSTERIOUS_FIRE_MUTATION,0,怪火_変異,Ghost Light_Mutation,ดวงไฟประหลาด (กลายพันธุ์),ดวงไฟประหลาด (กลายน)
+CREATURE_ID_HORROR_HUMANOID,0,人型,Humanoid,ร่างคล้ายมนุษย์,างคายมษ
+CREATURE_ID_HORROR_HUMANOID_MUTATION,0,人型_変異,Humanoid_Mutation,ร่างคล้ายมนุษย์ (กลายพันธุ์),างคายมษ (กลายน)
+CREATURE_ID_HORROR_DEMON,0,鬼,Demon,ยักษ์โอนิ,กโอ
+CREATURE_ID_HORROR_DEMON_METEORITE,0,鬼の隕石攻撃,Demon Meteorite Attack,อุกกาบาตโจมตีของยักษ์โอนิ,กกาบาตโจมของกโอ
+CREATURE_ID_HORROR_DEMON_ROCK,0,鬼の岩,Demon Boulder,โขดหินของยักษ์โอนิ,โขดนของกโอ
+CREATURE_ID_STORY_HORROR_DEMON,0,ストーリー用鬼,Story Demon,ยักษ์โอนิ (สำหรับเนื้อเรื่อง),กโอ (หบเอเอง)
+CREATURE_ID_STORY_HORROR_DEMON_DUMMY,0,ストーリ用・鬼（中身ナシ）,Story Demon (Empty Inside),ยักษ์โอนิ (สำหรับเนื้อเรื่อง) (ไม่มีร่างข้างใน),กโอ (หบเอเอง) (ไางางใน)
+CREATURE_ID_HORROR_DEMON_BOSS,0,ヅ主,Zunushi,สึนุชิ,
+CREATURE_ID_HORROR_DEMON_BOSS_KEYSTONE,0,ヅ主の要石,Zunushi's Keystone,หินหลักของสึนุชิ,นหกของ
+CREATURE_ID_HORROR_ITSUMADE,0,以津真天,Itsumade,อิตสึมาเดะ,ตมาเดะ
+CREATURE_ID_HORROR_NUE,0,鵺の皮,Nue Pelt,หนังนูเอะ,หงเอะ
+CREATURE_ID_HORROR_NUE_STAKE,0,鵺の杭,Nue Stake,เสาหลักนูเอะ,เสาหกเอะ
+CREATURE_ID_HORROR_NUE_STAKE_NORMAL,0,雷の落ちる杭,Lightningstruck Stake,เสาหลักฟ้าผ่า,เสาหกาา
+CREATURE_ID_HORROR_FOX_SPIRIT_FACE,0,化け狐(顔),Bake Kitsune (Face),จิ้งจอกแปลงกาย (ใบหน้า),งจอกแปลงกาย (ใบหา)
+CREATURE_ID_HORROR_FOX_SPIRIT_LEFT,0,化け狐(右手),Bake Kitsune (Right Hand),จิ้งจอกแปลงกาย (มือขวา),งจอกแปลงกาย (อขวา)
+CREATURE_ID_HORROR_FOX_SPIRIT_RIGHT,0,化け狐(左手),Bake Kitsune (Left Hand),จิ้งจอกแปลงกาย (มือซ้าย),งจอกแปลงกาย (อาย)
+CREATURE_ID_HORROR_SPOTTED_DOG,0,斑犬,Spotted Dog,สุนัขลายจุด,ขลายด
+CREATURE_ID_HORROR_FIGURE,0,人影,Shadowy Figure,เงามนุษย์,เงามษ
+CREATURE_ID_HORROR_FOX_SHADOW_1,0,狐の影,Kitsune Shadow,เงาจิ้งจอก,เงางจอก
+CREATURE_ID_HORROR_FOX_SHADOW_2,0,狐の影,Kitsune Shadow,เงาจิ้งจอก,เงางจอก
+CREATURE_ID_HORROR_FOX_SHADOW_3,0,狐の影,Kitsune Shadow,เงาจิ้งจอก,เงางจอก
+CREATURE_ID_HORROR_FUJIN,0,風神,Fujin,เทพวายุฟูจิน,เทพวาน
+CREATURE_ID_HORROR_RAIJIN,0,雷神,Raijin,เทพอัสนีไรจิน,เทพสไรน
+CREATURE_ID_HORROR_RAIJIN_THUNDER_SMALL,0,雷神_雷（小）,Raijin_Lightning (Small),สายฟ้าไรจิน (เล็ก),สายาไรน (เก)
+CREATURE_ID_HORROR_RAIJIN_THUNDER_LARGE,0,雷神_雷（大）,Raijin_Lightning (Large),สายฟ้าไรจิน (ใหญ่),สายาไรน (ให)
+CREATURE_ID_HORROR_KODAMA,0,木霊,Kodama,โคดามะ,โคดามะ
+CREATURE_ID_HORROR_KODAMA_TREE,0,コダマ（木）,Kodama (Tree),โคดามะ (ต้นไม้),โคดามะ (นไ)
+CREATURE_ID_STORY_CHICKEN_00,0,ストーリー用ニワトリ・０章,Story Chicken (Chapter 0),ไก่ (สำหรับเนื้อเรื่อง) (บทที่ 0),ไ (หบเอเอง) (บท 0)
+CREATURE_ID_STORY_CHICKEN_01,0,ストーリー用ニワトリ・１章,Story Chicken (Chapter 1),ไก่ (สำหรับเนื้อเรื่อง) (บทที่ 1),ไ (หบเอเอง) (บท 1)
+CREATURE_ID_STORY_DOG,0,ストーリー用犬,Story Dog,สุนัข (สำหรับเนื้อเรื่อง),ข (หบเอเอง)
+CREATURE_ID_STORY_CHICK,0,ストーリー用ヒヨコ,Story Chick,ลูกเจี๊ยบ (สำหรับเนื้อเรื่อง),กเยบ (หบเอเอง)
+CREATURE_ID_STORY_PLASTERED_WALL,0,ストーリー用ぬり壁・全身,Story Nurikabe: Full Body,นูริคาเบะ (สำหรับเนื้อเรื่อง) (เต็มตัว),คาเบะ (หบเอเอง) (เมว)
+CREATURE_ID_STORY_PLASTERED_WALL_FACE,0,ストーリー用ぬり壁・顔のみ,Story Nurikabe: Face Only,นูริคาเบะ (สำหรับเนื้อเรื่อง) (เฉพาะใบหน้า),คาเบะ (หบเอเอง) (เฉพาะใบหา)
+CREATURE_ID_STORY_BLOCKAGE,0,ストーリー用通せんぼ,Story Roadblocker,ผีขวางทาง (สำหรับเนื้อเรื่อง),ขวางทาง (หบเอเอง)
+CREATURE_ID_STORY_PLASTERED_WALL_ONE,0,ストーリー用ぬり壁・1マス,Story Nurikabe: One Square,นูริคาเบะ (สำหรับเนื้อเรื่อง) (1 ช่อง),คาเบะ (หบเอเอง) (1 อง)
+CREATURE_ID_STORY_TWO_MOUTHS_WOMAN,0,ストーリー用二口女（往復）,Story Two-Mouthed Woman (Pacing),หญิงสาวสองปาก (สำหรับเนื้อเรื่อง) (เดินไปกลับ),หงสาวสองปาก (หบเอเอง) (เนไปกบ)
+CREATURE_ID_STORY_WANDERING_GHOST,0,ストーリー用一反木綿(うろうろ),Story Ittan-Momen (Wandering),อิตตันโมเมน (สำหรับเนื้อเรื่อง) (ลอยไปมา),ตนโมเมน (หบเอเอง) (ลอยไปมา)
+CREATURE_ID_STORY_MOYAMOYASAN_LV3_STRONG,0,ストーリー用たたずむ霊Lv3_強,Story Lingering Ghost Lv3_Strong,วิญญาณผู้เฝ้ามอง Lv.3 (สำหรับเนื้อเรื่อง) (แข็งแกร่ง),ญญาณเามอง Lv.3 (หบเอเอง) (แงแกง)
+CREATURE_ID_STORY_MOYAMOYASAN_LV3_WEAK,0,ストーリー用たたずむ霊Lv3_弱,Story Lingering Ghost Lv3_Weak,วิญญาณผู้เฝ้ามอง Lv.3 (สำหรับเนื้อเรื่อง) (อ่อนแอ),ญญาณเามอง Lv.3 (หบเอเอง) (อนแอ)
+CREATURE_ID_SUBEVENT_GHOST_CHICKEN,0,サブイベント用・幽霊ニワトリ,Sub-Event Chicken Ghost,ไก่วิญญาณ (สำหรับเควสต์ย่อย),ไญญาณ (หบเควสอย)
+CREATURE_ID_HORROR_KODAMA_NPC_CARPENTER,0,木霊戦用・キスケ,Kodama Battle - Kisuke,คิสุเกะ (สำหรับศึกโคดามะ),เกะ (หบกโคดามะ)
+CREATURE_ID_STORY_NPC_ORPHAN,0,デモ用NPC_みなしご(トバリ),DemoNPC_Orphan(Tobari),NPC สำหรับเดโม_เด็กกำพร้า (โทบาริ),NPC หบเดโม_เกพา (โทบา)
+CREATURE_ID_STORY_NPC_ORPHAN_FOLLOW,0,デモ用NPC_みなしご(トバリ)・追従,DemoNPC_Orphan(Tobari)_Follow,NPC สำหรับเดโม_เด็กกำพร้า (โทบาริ) (เดินตาม),NPC หบเดโม_เกพา (โทบา) (เนตาม)
+CREATURE_ID_STORY_NPC_CARPENTER,0,デモ用NPC_大工（キスケ）,DemoNPC_Carpenter(Kisuke),NPC สำหรับเดโม_ช่างไม้ (คิสุเกะ),NPC หบเดโม_างไ (เกะ)
+CREATURE_ID_STORY_NPC_LUMBERJACK,0,デモ用NPC_木こり（シロージ）,DemoNPC_Woodcutter(Shiroji),NPC สำหรับเดโม_คนตัดไม้ (ชิโรจิ),NPC หบเดโม_คนดไ (โร)
+CREATURE_ID_STORY_NPC_VILLAGE_HEAD,0,デモ用NPC_村長（リン）,DemoNPC_Village_Head(Rin),NPC สำหรับเดโม_ผู้ใหญ่บ้าน (ริน),NPC หบเดโม_ใหาน (น)
+CREATURE_ID_STORY_NPC_HUNTER,0,デモ用NPC_狩人（コマコ）,DemoNPC_Hunter(Komako),NPC สำหรับเดโม_นายพราน (โคมะโกะ),NPC หบเดโม_นายพราน (โคมะโกะ)
+CREATURE_ID_STORY_NPC_HUNTER_FOLLOW,0,デモ用NPC_狩人（コマコ）・追従,DemoNPC_Hunter(Komako)_Follow,NPC สำหรับเดโม_นายพราน (โคมะโกะ) (เดินตาม),NPC หบเดโม_นายพราน (โคมะโกะ) (เนตาม)
+CREATURE_ID_STORY_NPC_GENERAL_STORE_MANAGER,0,デモ用NPC_雑貨屋（サザンカ）,DemoNPC_General_Store_Manager(Sazanka),NPC สำหรับเดโม_ร้านขายของชำ (ซาซังกะ),NPC หบเดโม_านขายของ (ซางกะ)
+CREATURE_ID_STORY_NPC_GENERAL_STORE_MANAGER_FOLLOW,0,デモ用NPC_雑貨屋（サザンカ）・追従,DemoNPC_General_Store_Manager(Sazanka)_Follow,NPC สำหรับเดโม_ร้านขายของชำ (ซาซังกะ) (เดินตาม),NPC หบเดโม_านขายของ (ซางกะ) (เนตาม)
+CREATURE_ID_STORY_NPC_OLD_MAN,0,デモ用NPC_おっさん（ロッカク）,DemoNPC_Old_Man(Rokkaku),NPC สำหรับเดโม_ลุง (ร็อกคาคุ),NPC หบเดโม_ง (อกคา)
+CREATURE_ID_STORY_NPC_SECRETARY,0,デモ用NPC_秘書（コンノ）,DemoNPC_Secretary(Konno),NPC สำหรับเดโม_เลขา (คอนโนะ),NPC หบเดโม_เลขา (คอนโนะ)
+CREATURE_ID_STORY_NPC_SECRETARY_STATUE_GAME,0,デモ用NPC_秘書（コンノ）・だるまさんがころんだ,DemoNPC_Secretary(Konno)_Daruma-san_Fell_Down,NPC สำหรับเดโม_เลขา (คอนโนะ) (เล่นดารุมะล้ม),NPC หบเดโม_เลขา (คอนโนะ) (เนดามะม)
+CREATURE_ID_STORY_NPC_CITY_HALL_STAFF_FOLLOW,0,デモ用NPC_市役所員（ナゴ）・追従,DemoNPC_City_Hall_Staff(Nago)_Follow,NPC สำหรับเดโม_เจ้าหน้าที่เทศบาล (นาโงะ) (เดินตาม),NPC หบเดโม_เาหาเทศบาล (นาโงะ) (เนตาม)
+CREATURE_ID_STORY_NPC_GIRL,0,デモ用NPC_幼女（ヨウ）,DemoNPC_Girl(Yoh),NPC สำหรับเดโม_เด็กหญิง (โย),NPC หบเดโม_เกหง (โย)
+CREATURE_ID_STORY_NPC_GIRL_FOLLOW,0,デモ用NPC_幼女（ヨウ）・追従,DemoNPC_Girl(Yoh)_Follow,NPC สำหรับเดโม_เด็กหญิง (โย) (เดินตาม),NPC หบเดโม_เกหง (โย) (เนตาม)
+CREATURE_ID_STORY_NPC_YOUNG_MAN,0,デモ用NPC_青年（ユータ）,DemoNPC_Young_Man(Yuta),NPC สำหรับเดโม_ชายหนุ่ม (ยูตะ),NPC หบเดโม_ชายหม (ตะ)
+CREATURE_ID_STORY_NPC_YOUNG_MAN_FOLLOW,0,デモ用NPC_青年（ユータ）・追従,DemoNPC_Young_Man(Yuta)_Follow,NPC สำหรับเดโม_ชายหนุ่ม (ยูตะ) (เดินตาม),NPC หบเดโม_ชายหม (ตะ) (เนตาม)
+CREATURE_ID_STORY_NPC_BOY,0,デモ用NPC_少年（スミレ）,DemoNPC_Boy(Sumire),NPC สำหรับเดโม_เด็กหนุ่ม (สุมิเระ),NPC หบเดโม_เกหม (เระ)
+CREATURE_ID_STORY_NPC_FAMALE_DOCTOR,0,デモ用NPC_女医(ハスミ),DemoNPC_Female_Doctor(Hasumi),NPC สำหรับเดโม_แพทย์หญิง (ฮาสุมิ),NPC หบเดโม_แพทหง (ฮา)
+CREATURE_ID_STORY_NPC_STREET_VENDOR,0,デモ用NPC_露天商（チナナ）,DemoNPC_Street_Vendor(Chinana),NPC สำหรับเดโม_แม่ค้าแผงลอย (ชินานะ),NPC หบเดโม_แาแผงลอย (นานะ)
+CREATURE_ID_STORY_NPC_GHORST_GIRL,0,デモ用NPC_幽霊少女(コダマ),DemoNPC_Ghost_Girl(Kodama),NPC สำหรับเดโม_เด็กสาววิญญาณ (โคดามะ),NPC หบเดโม_เกสาวญญาณ (โคดามะ)
+CREATURE_ID_STORY_NPC_GHORST_GIRL_FIELDWORK,0,デモ用NPC_幽霊少女(コダマ)・畑仕事,DemoNPC_Ghost_Girl(Kodama)_Fieldwork,NPC สำหรับเดโม_เด็กสาววิญญาณ (โคดามะ) (ทำไร่ทำสวน),NPC หบเดโม_เกสาวญญาณ (โคดามะ) (ไสวน)
+CREATURE_ID_FAIR_STAFF_00,0,品評会スタッフ（会話可）,Evaluation Staff (Talkable),เจ้าหน้าที่งานประกวด (คุยได้),เาหางานประกวด (ยไ)
+CREATURE_ID_FAIR_STAFF_01,0,品評会スタッフ（会話不可）,Evaluation Staff (Untalkable),เจ้าหน้าที่งานประกวด (คุยไม่ได้),เาหางานประกวด (ยไไ)
+CREATURE_ID_STORY_NPC_GIRL_MOTHER,0,デモ用NPC_ヨウの母,DemoNPC_YohMother,NPC สำหรับเดโม_แม่ของโย,NPC หบเดโม_แของโย
+CREATURE_ID_STORY_NPC_GIRL_FATHER,0,デモ用NPC_ヨウの父,DemoNPC_YohFather,NPC สำหรับเดโม_พ่อของโย,NPC หบเดโม_อของโย
+CREATURE_ID_STORY_NPC_YOUNG_OLD_MAN,0,デモ用NPC_若いおっさん(若いロッカク),DemoNPC_Young_Old_Man(Young_Rokkaku),NPC สำหรับเดโม_ร็อกคาคุวัยหนุ่ม,NPC หบเดโม_อกคายหม
+CREATURE_ID_STORY_NPC_YOUNG_CARPENTER,0,デモ用NPC_キスケ少年,DemoNPC_Young_Kisuke,NPC สำหรับเดโม_คิสุเกะวัยเด็ก,NPC หบเดโม_เกะยเก
+CREATURE_ID_STORY_NPC_CARPENTER_FOLLOW,0,デモ用NPC_大工（キスケ）・追従,デモ用NPC_大工（キスケ）・追従,NPC เดโม_ช่างไม้ (คิสุเกะ)·ติดตาม,NPC เดโม_างไ (เกะ)·ดตาม
+CREATURE_ID_STORY_NPC_CITY_HALL_STAFF,0,デモ用NPC_市役所員（ナゴ）,デモ用NPC_市役所員（ナゴ）,NPC เดโม_เจ้าหน้าที่ศาลาว่าการ (นาโงะ),NPC เดโม_เาหาศาลาาการ (นาโงะ)

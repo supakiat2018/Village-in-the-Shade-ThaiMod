@@ -1,0 +1,381 @@
+﻿Item_No,Index,Key,Key_Offset_Hex,DAT_JP_Text,DAT_JP_Offset,DAT_EN_Text,DAT_EN_Offset,Target_CSV_JP,Target_CSV_EN,Target_คำแปลไทย,Target_Thai_PUA,สถานะตรวจสอบ,หมายเหตุ
+1,0,CMD_START,0x1526C,,(none),,(none),,,,,ตรงกัน (ไม่มีข้อความทั้งคู่),คีย์ว่างเปล่าทั้ง JP และ EN ตามระบบเกม
+2,1,CMD_REF_ALL,0x1527D,全ボタン,0x15289,All Buttons,0x15296,全ボタン,All Buttons,ปุ่มทั้งหมด,มงหมด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+3,2,CMD_REF_OK,0x152ED,決定ボタン,0x152F8,Confirm,0x15308,決定ボタン,Confirm,ปุ่มยืนยัน,มนน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+4,3,CMD_REF_CANCEL,0x15361,キャンセルボタン,0x15370,Cancel,0x15389,キャンセルボタン,Cancel,ปุ่มยกเลิก,มยกเก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+5,4,CMD_TALK_BACKLOG_VIEW,0x153DA,会話ログ,0x153F0,Text Log,0x153FD,会話ログ,Text Log,บันทึกบทสนทนา,นกบทสนทนา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+6,5,CMD_ANY,0x1545F,いずれかのボタン,0x15467,Any Button,0x15480,いずれかのボタン,Any Button,กดปุ่มใดก็ได้,กดมใดไ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+7,6,CMD_UNIT_MOVE_STICK,0x154E2,移動,0x154F6,Move,0x154FD,移動,Move,เคลื่อนที่,เคอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+8,7,CMD_UNIT_MOVE_LEFT,0x1552C,移動(未実装),0x1553F,Move (Not Implemented),0x15551,移動(未実装),Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+9,8,CMD_UNIT_MOVE_UP,0x155C5,移動(未実装),0x155D6,Move (Not Implemented),0x155E8,移動(未実装),Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+10,9,CMD_UNIT_MOVE_DOWN,0x1565C,移動(未実装),0x1566F,Move (Not Implemented),0x15681,移動(未実装),Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+11,10,CMD_UNIT_MOVE_RIGHT,0x156F5,移動(未実装),0x15709,Move (Not Implemented),0x1571B,移動(未実装),Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+12,11,CMD_UNIT_MOVE_STICK_FIRST,0x1578F,移動(未実装),0x157A9,Move (Not Implemented),0x157BB,移動(未実装),Move (Not Implemented),เคลื่อนที่ (ยังไม่เปิดใช้),เคอน (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+13,12,CMD_UNIT_ACTION,0x1582F,使う,0x1583F,Use,0x15846,使う,Use,ใช้งาน,ใงาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+14,13,CMD_UNIT_ACTION_BUFFERING,0x1586D,アクション(先行入力),0x15887,Action (Queue Input),0x158A5,アクション(先行入力),Action (Queue Input),แอ็กชัน (กดล่วงหน้า),แกน (กดวงหา),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+15,14,CMD_UNIT_ACTION_PRESS,0x1592E,アクション,0x15944,Action,0x15954,アクション,Action,แอ็กชัน,แกน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+16,15,CMD_UNIT_ACTION_LEFT,0x1597F,アクション左,0x15994,Action Left,0x159A7,アクション左,Action Left,แอ็กชันซ้าย,แกนาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+17,16,CMD_UNIT_ACTION_UP,0x159F5,アクション上,0x15A08,Action Up,0x15A1B,アクション上,Action Up,แอ็กชันบน,แกนบน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+18,17,CMD_UNIT_ACTION_DOWN,0x15A62,アクション下,0x15A77,Action Down,0x15A8A,アクション下,Action Down,แอ็กชันล่าง,แกนาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+19,18,CMD_UNIT_ACTION_RIGHT,0x15AD1,アクション右,0x15AE7,Action Right,0x15AFA,アクション右,Action Right,แอ็กชันขวา,แกนขวา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+20,19,CMD_UNIT_ACTION_CANCEL,0x15B47,アクションキャンセル,0x15B5E,Cancel Action,0x15B7D,アクションキャンセル,Cancel Action,ยกเลิกแอ็กชัน,ยกเกแกน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+21,20,CMD_UNIT_ITEM,0x15BD7,使う,0x15BE5,Use,0x15BEC,使う,Use,ใช้งาน,ใงาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+22,21,CMD_UNIT_ITEM_BUFFERING,0x15C13,使う(先行入力),0x15C2B,Use (Queue Input),0x15C40,使う(先行入力),Use (Queue Input),ใช้งาน (กดล่วงหน้า),ใงาน (กดวงหา),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+23,22,CMD_UNIT_ITEM_PRESS,0x15CC5,アイテム使用長押し,0x15CD9,Use Item (Hold),0x15CF5,アイテム使用長押し,Use Item (Hold),ใช้ไอเทม (กดค้าง),ใไอเทม (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+24,23,CMD_UNIT_NUE_DASH,0x15DD2,鵺の皮ダッシュ,0x15DE4,Nue Pelt Dash,0x15DFA,鵺の皮ダッシュ,Nue Pelt Dash,พุ่งตัวด้วยหนังนูเอะ,งววยหงเอะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+25,24,CMD_UNIT_ACTION_CONTINUS_PLACEMENT,0x15E64,連続配置,0x15E87,Place (Continuous),0x15E94,連続配置,Place (Continuous),วางต่อเนื่อง,วางอเอง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+26,25,CMD_UNIT_ACTION_CONTINUS_PLACEMENT_HELP,0x15EF6,連続配置,0x15F1E,Place (Continuous),0x15F2B,連続配置,Place (Continuous),วางต่อเนื่อง,วางอเอง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+27,26,CMD_UNIT_CHANGE_HANDHELD_PREV,0x15F8D,アイテム変更（未実装？）,0x15FAB,Switch Item (Not Implemented?),0x15FD0,アイテム変更（未実装？）,Switch Item (Not Implemented?),เปลี่ยนไอเทม (ยังไม่เปิดใช้?),เปยนไอเทม (งไเดใ?),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+28,27,CMD_UNIT_CHANGE_HANDHELD_NEXT,0x16077,アイテム変更（未実装？）,0x16095,Switch Item (Not Implemented?),0x160BA,アイテム変更（未実装？）,Switch Item (Not Implemented?),เปลี่ยนไอเทม (ยังไม่เปิดใช้?),เปยนไอเทม (งไเดใ?),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+29,28,CMD_UNIT_JUMP,0x16161,ジャンプ,0x1616F,Jump,0x1617C,ジャンプ,Jump,กระโดด,กระโดด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+30,29,CMD_UNIT_MOVE_PARALLEL,0x161A3,平行移動,0x161BA,Sidestep,0x161C7,平行移動,Sidestep,เคลื่อนที่สไลด์ข้าง,เคอนสไลาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+31,30,CMD_UNIT_MOVE_STICK_PARALLEL,0x16225,平行移動のスティック操作,0x16242,Sidestep (Stick),0x16267,平行移動のスティック操作,Sidestep (Stick),โยกอนาล็อกสไลด์ข้าง,โยกอนาอกสไลาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+32,31,CMD_UNIT_MOVE_ANGLE,0x16315,向き変更,0x16329,Rotate,0x16336,向き変更,Rotate,เปลี่ยนทิศทาง,เปยนศทาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+33,32,CMD_UNIT_MOVE_STICK_ANGLE,0x16385,向き変更のスティック操作,0x1639F,Rotate (Stick),0x163C4,向き変更のスティック操作,Rotate (Stick),โยกอนาล็อกเปลี่ยนทิศทาง,โยกอนาอกเปยนศทาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+34,33,CMD_UNIT_DETAIL,0x16463,詳細表示,0x16473,Show Details,0x16480,詳細表示,Show Details,แสดงรายละเอียด,แสดงรายละเยด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+35,34,CMD_UNIT_ITEM_INVENTORY_LEFT,0x164CB,アイテムインベントリ内移動,0x164E8,Move Inventory Cursor,0x16510,アイテムインベントリ内移動,Move Inventory Cursor,เลื่อนช่องกระเป๋าเก็บของ,เอนองกระเาเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+36,35,CMD_UNIT_ITEM_INVENTORY_RIGHT,0x165C1,アイテムインベントリ内移動,0x165DF,Move Inventory Cursor,0x16607,アイテムインベントリ内移動,Move Inventory Cursor,เลื่อนช่องกระเป๋าเก็บของ,เอนองกระเาเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+37,36,CMD_UNIT_ITEM_INVENTORY_NEXT,0x166B8,アイテムインベントリ切り替え,0x166D5,Switch Inventory Row,0x16700,アイテムインベントリ切り替え,Switch Inventory Row,สลับแถวกระเป๋าเก็บของ,สบแถวกระเาเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+38,37,CMD_UNIT_ITEM_INVENTORY_DETAIL,0x16783,詳細,0x167A2,Details,0x167A9,詳細,Details,รายละเอียด,รายละเยด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+39,38,CMD_UNIT_MAIN_MENU,0x167DB,メインメニュー,0x167EE,Main Menu,0x16804,メインメニュー,Main Menu,เมนูหลัก,เมหก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+40,39,CMD_UNIT_CHANGE_CAMERA,0x1684F,カメラの拡縮,0x16866,Zoom Camera,0x16879,カメラの拡縮,Zoom Camera,ซูมกล้องเข้า/ออก,มกองเา/ออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+41,40,CMD_UNIT_SHORTCUT_MEMO,0x168CF,メモ機能,0x168E6,Note Function,0x168F3,メモ機能,Note Function,สมุดบันทึก,สดนก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+42,41,CMD_UNIT_SHORTCUT_TOOL,0x1694A,道具,0x16961,Tools,0x16968,道具,Tools,อุปกรณ์,ปกร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+43,42,CMD_UNIT_SHORTCUT_INVENTORY,0x16997,インベントリ,0x169B3,Inventory,0x169C6,インベントリ,Inventory,กระเป๋าเก็บของ,กระเาเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+44,43,CMD_UNIT_FLUTTER,0x16A07,ジタバタする（実装なし）,0x16A18,Flail (No Implementation),0x16A3D,ジタバタする（実装なし）,Flail (No Implementation),ดิ้นไปมา (ยังไม่เปิดใช้),นไปมา (งไเดใ),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+45,44,CMD_INTERACTION,0x16ACB,インタラクション✕,0x16ADB,Interact ✕,0x16AF7,インタラクション✕,Interact ✕,โต้ตอบ ✕,โตอบ ✕,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+46,45,CMD_INTERACTION_INVISIBLE,0x16B4A,インタラクション✕(非表示),0x16B64,Interact ✕ (Not Displayed),0x16B8B,インタラクション✕(非表示),Interact ✕ (Not Displayed),โต้ตอบ ✕ (ซ่อน),โตอบ ✕ (อน),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+47,46,CMD_INTERACTION_TRIANGLE,0x16C23,インタラクション△,0x16C3C,Interact △,0x16C58,インタラクション△,Interact △,โต้ตอบ △,โตอบ △,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+48,47,CMD_INTERACTION_CANCEL,0x16CAB,インタラクション〇,0x16CC2,Interact 〇,0x16CDE,インタラクション〇,Interact 〇,โต้ตอบ 〇,โตอบ 〇,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+49,48,CMD_INTERACTION_CANCEL_INVISIBLE,0x16D31,インタラクション○(非表示),0x16D52,Interact ○ (Not Displayed),0x16D79,インタラクション○(非表示),Interact ○ (Not Displayed),โต้ตอบ 〇 (ซ่อน),โตอบ 〇 (อน),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+50,49,CMD_INTERACTION_SQUARE,0x16E11,インタラクション□,0x16E28,Interact □,0x16E44,インタラクション□,Interact □,โต้ตอบ □,โตอบ □,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+51,50,CMD_INTERACTION_DOWN,0x16E97,インタラクション✕(押下),0x16EAC,Interact ✕ (Press),0x16ED0,インタラクション✕(押下),Interact ✕ (Press),โต้ตอบ ✕ (กด),โตอบ ✕ (กด),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+52,51,CMD_INTERACTION_TRIANGLE_DOWN,0x16F54,インタラクション△(押下),0x16F72,Interact △ (Press),0x16F96,インタラクション△(押下),Interact △ (Press),โต้ตอบ △ (กด),โตอบ △ (กด),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+53,52,CMD_INTERACTION_CANCEL_DOWN,0x1701A,インタラクション〇(押下),0x17036,Interact 〇 (Press),0x1705A,インタラクション〇(押下),Interact 〇 (Press),โต้ตอบ 〇 (กด),โตอบ 〇 (กด),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+54,53,CMD_INTERACTION_SQUARE_DOWN,0x170DE,インタラクション□(押下),0x170FA,Interact □ (Press),0x1711E,インタラクション□(押下),Interact □ (Press),โต้ตอบ □ (กด),โตอบ □ (กด),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+55,54,CMD_INTERACTION_L1_INVISIBLE,0x171A2,インタラクションL1(非表示),0x171BF,Interact L1 (Not Displayed),0x171E5,インタラクションL1(非表示),Interact L1 (Not Displayed),โต้ตอบ L1 (ซ่อน),โตอบ L1 (อน),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+56,55,CMD_INTERACTION_PRESS,0x17277,インタラクション(押しっぱなし),0x1728D,Interact (Hold),0x172BA,インタラクション(押しっぱなし),Interact (Hold),โต้ตอบ (กดค้าง),โตอบ (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+57,56,CMD_INTERACTION_TRIANGLE_PRESS,0x17354,インタラクション△(押しっぱなし),0x17373,Interact △ (Hold),0x173A3,インタラクション△(押しっぱなし),Interact △ (Hold),โต้ตอบ △ (กดค้าง),โตอบ △ (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+58,57,CMD_INTERACTION_CANCEL_PRESS,0x17453,インタラクション〇(押しっぱなし),0x17470,Interact 〇 (Hold),0x174A0,インタラクション〇(押しっぱなし),Interact 〇 (Hold),โต้ตอบ 〇 (กดค้าง),โตอบ 〇 (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+59,58,CMD_INTERACTION_SQUARE_PRESS,0x17550,インタラクション□(押しっぱなし),0x1756D,Interact □ (Hold),0x1759D,インタラクション□(押しっぱなし),Interact □ (Hold),โต้ตอบ □ (กดค้าง),โตอบ □ (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+60,59,CMD_INTERACTION_LONG,0x1764D,インタラクション長押し,0x17662,Interact: Hold,0x17684,インタラクション長押し,Interact: Hold,โต้ตอบ (กดค้าง),โตอบ (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+61,60,CMD_INTERACTION_LONG_TRIANGLE,0x1770B,インタラクション長押し△,0x17729,Interaction: Hold △,0x1774E,インタラクション長押し△,Interaction: Hold △,โต้ตอบ (กดค้าง) △,โตอบ (กดาง) △,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+62,61,CMD_INTERACTION_LONG_CANCEL,0x177EE,インタラクション長押し〇,0x1780A,Interaction: Hold 〇,0x1782F,インタラクション長押し〇,Interaction: Hold 〇,โต้ตอบ (กดค้าง) 〇,โตอบ (กดาง) 〇,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+63,62,CMD_INTERACTION_LONG_SQUARE,0x178CF,インタラクション長押し□,0x178EB,Interaction: Hold □,0x17910,インタラクション長押し□,Interaction: Hold □,โต้ตอบ (กดค้าง) □,โตอบ (กดาง) □,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+64,63,CMD_INTERACTION_ENTER,0x179B0,入る,0x179C6,Enter,0x179CD,入る,Enter,เข้าไป,เาไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+65,64,CMD_INTERACTION_EXIT,0x179FC,出る,0x17A11,Exit,0x17A18,出る,Exit,ออกไป,ออกไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+66,65,CMD_INTERACTION_OPEN,0x17A42,開ける,0x17A57,Open,0x17A61,開ける,Open,เปิด,เด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+67,66,CMD_INTERACTION_CLOSE,0x17A88,閉じる,0x17A9E,Close,0x17AA8,閉じる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+68,67,CMD_INTERACTION_SHAKE,0x17AD1,揺らす,0x17AE7,Shake,0x17AF1,揺らす,Shake,เขย่า,เขา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+69,68,CMD_INTERACTION_HARVEST,0x17B1F,収穫,0x17B37,Harvest,0x17B3E,収穫,Harvest,เก็บเกี่ยว,เบเยว,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+70,69,CMD_INTERACTION_HARVEST_BUFFERING,0x17B6E,収穫(先行入力),0x17B90,Harvest (Queue Input),0x17BA5,収穫(先行入力),Harvest (Queue Input),เก็บเกี่ยว (กดล่วงหน้า),เบเยว (กดวงหา),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+71,70,CMD_INTERACTION_HARVEST_PRESS,0x17C33,収穫長押し,0x17C51,Harvest (Hold),0x17C61,収穫長押し,Harvest (Hold),เก็บเกี่ยว (กดค้าง),เบเยว (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+72,71,CMD_INTERACTION_LIVESTOCK_ACTION,0x17CDC,家畜へのアクション,0x17CFD,Action (Livestock),0x17D19,家畜へのアクション,Action (Livestock),แอ็กชันกับสัตว์เลี้ยง,แกนบตเยง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+73,72,CMD_INTERACTION_MILKING,0x17D8F,ミルクをとる,0x17DA7,Milk,0x17DBA,ミルクをとる,Milk,รีดนม,ดนม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+74,73,CMD_INTERACTION_ON,0x17DED,つける,0x17E00,Turn On,0x17E0A,つける,Turn On,เปิดไฟ,เดไฟ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+75,74,CMD_INTERACTION_OFF,0x17E38,消す,0x17E4C,Turn Off,0x17E53,消す,Turn Off,ปิดไฟ,ดไฟ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+76,75,CMD_INTERACTION_SWITCH_ON,0x17E82,スイッチをオンにする,0x17E9C,Switch On,0x17EBB,スイッチをオンにする,Switch On,เปิดสวิตช์,เดสต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+77,76,CMD_INTERACTION_SWITCH_OFF,0x17F27,スイッチをオフにする,0x17F42,Switch Off,0x17F61,スイッチをオフにする,Switch Off,ปิดสวิตช์,ดสต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+78,77,CMD_INTERACTION_ITEM_IN,0x17FD4,入れる,0x17FEC,Insert,0x17FF6,入れる,Insert,ใส่เข้าไป,ใเาไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+79,78,CMD_INTERACTION_ITEM_OUT,0x18025,出す,0x1803E,Take Out,0x18045,出す,Take Out,หยิบออกมา,หบออกมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+80,79,CMD_INTERACTION_SLEEP,0x18078,寝る,0x1808E,Sleep,0x18095,寝る,Sleep,เข้านอน,เานอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+81,80,CMD_INTERACTION_AWAKE,0x180BE,起きる,0x180D4,Wake Up,0x180DE,起きる,Wake Up,ตื่นนอน,นนอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+82,81,CMD_INTERACTION_SIT,0x18115,座る,0x18129,Sit,0x18130,座る,Sit,นั่งลง,งลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+83,82,CMD_INTERACTION_STAND,0x1815E,立つ,0x18174,Stand,0x1817B,立つ,Stand,ยืนขึ้น,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+84,83,CMD_INTERACTION_SPEAK,0x181B6,会話,0x181CC,Talk,0x181D3,会話,Talk,พูดคุย,ดย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+85,84,CMD_INTERACTION_LET_GO,0x181FB,逃がす,0x18212,Release,0x1821C,逃がす,Release,ปล่อยไป,ปอยไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+86,85,CMD_INTERACTION_CHANGE_CLOTHES,0x18252,着替える,0x18271,Change Clothes,0x1827E,着替える,Change Clothes,เปลี่ยนชุด,เปยนด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+87,86,CMD_INTERACTION_CHECK,0x182C0,調べる,0x182D6,Examine,0x182E0,調べる,Examine,สำรวจ,รวจ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+88,87,CMD_INTERACTION_PUT_AWAY,0x18312,しまう,0x1832B,Put Away,0x18335,しまう,Put Away,เก็บของ,เบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+89,88,CMD_INTERACTION_PUMP,0x18368,水をくむ,0x1837D,Draw Water,0x1838A,水をくむ,Draw Water,ตักน้ำ,ก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+90,89,CMD_INTERACTION_INSERT_FLOWER,0x183CB,花を挿す,0x183E9,Insert Flower,0x183F6,花を挿す,Insert Flower,ปักดอกไม้,กดอกไ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+91,90,CMD_INTERACTION_ANSWER_PHONE,0x1843C,電話に出る,0x18459,Answer Phone,0x18469,電話に出る,Answer Phone,รับโทรศัพท์,บโทรพ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+92,91,CMD_INTERACTION_CONFIRM,0x184C4,確認,0x184DC,Check,0x184E3,確認,Check,ตรวจสอบ,ตรวจสอบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+93,92,CMD_INTERACTION_TAKEOUT_LONG,0x18512,出す,0x1852F,Take Out,0x18536,出す,Take Out,หยิบออกมา,หบออกมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+94,93,CMD_INTERACTION_OBTAIN,0x18564,入手,0x1857B,Acquire,0x18582,入手,Acquire,ได้รับไอเทม,ไบไอเทม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+95,94,CMD_INTERACTION_PICK_UP,0x185AF,拾う,0x185C7,Pick Up,0x185CE,拾う,Pick Up,เก็บขึ้นมา,เบนมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+96,95,CMD_INTERACTION_PICK_UP_ITEMFULL,0x185FC,拾う,0x1861D,Pick Up,0x18624,拾う,Pick Up,เก็บขึ้นมา,เบนมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+97,96,CMD_INTERACTION_TAKEOUT,0x18652,取り出す,0x1866A,Withdraw,0x18677,取り出す,Withdraw,นำออกมา,ออกมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+98,97,CMD_INTERACTION_RETURN,0x186A9,入れる,0x186C0,Insert,0x186CA,入れる,Insert,เก็บใส่คืน,เบใน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+99,98,CMD_INTERACTION_PUT,0x186FA,置く,0x1870E,Place,0x18715,置く,Place,วางลง,วางลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+100,99,CMD_INTERACTION_AXE,0x1873E,オノを振る,0x18752,Swing Axe,0x18762,オノを振る,Swing Axe,เหวี่ยงขวาน,เหยงขวาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+101,100,CMD_INTERACTION_GENERALSTORE,0x187B5,田上雑貨店,0x187D2,Tagami General Store,0x187E2,田上雑貨店,Tagami General Store,ร้านของชำทากามิ,านของทากา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+102,101,CMD_INTERACTION_SHOPPING,0x18848,商品を見る,0x18861,Browse,0x18871,商品を見る,Browse,ดูสินค้า,นา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+103,102,CMD_INTERACTION_ANIMAL_SHOPPING,0x188C4,家畜を購入,0x188E4,Purchase Livestock,0x188F4,家畜を購入,Purchase Livestock,ซื้อสัตว์เลี้ยง,อตเยง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+104,103,CMD_INTERACTION_ITEM_SHOPPING,0x1894F,商品を見る,0x1896D,Browse,0x1897D,商品を見る,Browse,ดูสินค้า,นา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+105,104,CMD_INTERACTION_CONSTRUCTION_SHED,0x189D0,樹木建設,0x189F2,Kiki Construction,0x189FF,樹木建設,Kiki Construction,ร้านก่อสร้างคิกิ,านอสาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+106,105,CMD_INTERACTION_RESTAURANT,0x18A5F,茶碗亭,0x18A7A,Chawantei,0x18A84,茶碗亭,Chawantei,ร้านชาวันเท,านชานเท,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+107,106,CMD_INTERACTION_FIRST_FLOOR,0x18AC8,2階,0x18AE4,Second Floor,0x18AE9,2階,Second Floor,ชั้น 2,น 2,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+108,107,CMD_INTERACTION_DINING_ROOM,0x18B1C,食堂,0x18B38,Diner,0x18B3F,食堂,Diner,ห้องอาหาร,องอาหาร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+109,108,CMD_INTERACTION_MAYOR_HOUSE,0x18B71,村長邸,0x18B8D,Kiki Manor,0x18B97,村長邸,Kiki Manor,คฤหาสน์ผู้ใหญ่บ้าน,คฤหาสใหาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+110,109,CMD_INTERACTION_CORRIDOR,0x18BF7,廊下,0x18C10,Corridor,0x18C17,廊下,Corridor,ทางเดิน,ทางเน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+111,110,CMD_INTERACTION_RIN_ROOM,0x18C45,リンの部屋,0x18C5E,Rin's Room,0x18C6E,リンの部屋,Rin's Room,ห้องของริน,องของน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+112,111,CMD_INTERACTION_KONNO_ROOM,0x18CC0,コンノの部屋,0x18CDB,Konno's Room,0x18CEE,コンノの部屋,Konno's Room,ห้องของคอนโนะ,องของคอนโนะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+113,112,CMD_INTERACTION_BACK_ROAD,0x18D4F,屋敷の裏道,0x18D69,Estate Backroad,0x18D79,屋敷の裏道,Estate Backroad,ทางลัดหลังคฤหาสน์,ทางดหงคฤหาส,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+114,113,CMD_INTERACTION_CLINIC,0x18DF1,くすのき診療所,0x18E08,Kusunoki Clinic,0x18E1E,くすのき診療所,Kusunoki Clinic,คลินิกคุสุโนกิ,คกโน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+115,114,CMD_INTERACTION_CLINIC_ENTRANCE,0x18E83,受付,0x18EA3,Reception,0x18EAA,受付,Reception,แผนกต้อนรับ,แผนกอนบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+116,115,CMD_INTERACTION_CLINIC_ROOM,0x18EDF,病室,0x18EFB,Sickroom,0x18F02,病室,Sickroom,ห้องพักผู้ป่วย,องกวย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+117,116,CMD_INTERACTION_LIBRARY,0x18F2D,図書館,0x18F45,Library,0x18F4F,図書館,Library,ห้องสมุด,องสด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+118,117,CMD_INTERACTION_HUNTINGLODGE,0x18F8E,狩人詰所,0x18FAB,Hunting Lodge,0x18FB8,狩人詰所,Hunting Lodge,ป้อมพรานล่าสัตว์,อมพรานาต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+119,118,CMD_INTERACTION_CARPENTER_HOUSE,0x1901B,キスケの家,0x1903B,Kisuke's House,0x1904B,キスケの家,Kisuke's House,บ้านของคิสุเกะ,านของเกะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+120,119,CMD_INTERACTION_GENERALSTORE_HOUSE,0x190A5,サザンカの家,0x190C8,Sazanka's House,0x190DB,サザンカの家,Sazanka's House,บ้านของซาซังกะ,านของซางกะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+121,120,CMD_INTERACTION_HUNTERS_HOUSE,0x19138,コマコとシロージの家,0x19156,Komako & Shiroji's House,0x19175,コマコとシロージの家,Komako & Shiroji's House,บ้านของโคมะโกะและชิโรจิ,านของโคมะโกะและโร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+122,121,CMD_INTERACTION_KOMAKO_ROOM,0x19213,コマコの部屋,0x1922F,Komako's Room,0x19242,コマコの部屋,Komako's Room,ห้องของโคมะโกะ,องของโคมะโกะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+123,122,CMD_INTERACTION_SHIROJI_ROOM,0x192A9,シロージの部屋,0x192C6,Shiroji's Room,0x192DC,シロージの部屋,Shiroji's Room,ห้องของชิโรจิ,องของโร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+124,123,CMD_INTERACTION_YOUTH_HOUSE,0x1934C,ユータの家,0x19368,Yuta's House,0x19378,ユータの家,Yuta's House,บ้านของยูตะ,านของตะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+125,124,CMD_INTERACTION_DOCTOR_AND_BOY_HOUSE,0x193C9,ハスミとスミレの家,0x193EE,Hasumi & Sumire's House,0x1940A,ハスミとスミレの家,Hasumi & Sumire's House,บ้านของฮาสุมิและสุมิเระ,านของฮาและเระ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+126,125,CMD_INTERACTION_HASUMI_ROOM,0x1949F,ハスミの部屋,0x194BB,Hasumi's Room,0x194CE,ハスミの部屋,Hasumi's Room,ห้องของฮาสุมิ,องของฮา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+127,126,CMD_INTERACTION_SUMIRE_ROOM,0x19535,スミレの部屋,0x19551,Sumire's Room,0x19564,スミレの部屋,Sumire's Room,ห้องของสุมิเระ,องของเระ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+128,127,CMD_INTERACTION_HALL_EMPLOYEE_HOUSE,0x195CB,ナゴの家,0x195EF,Nago's House,0x195FC,ナゴの家,Nago's House,บ้านของนาโงะ,านของนาโงะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+129,128,CMD_INTERACTION_MAYOR_DETACHED_BUILDING,0x1964D,村長邸の離れ,0x19675,Kiki Guest House,0x19688,村長邸の離れ,Kiki Guest House,เรือนรับรองคฤหาสน์ผู้ใหญ่บ้าน,เอนบรองคฤหาสใหาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+130,129,CMD_INTERACTION_MAYOR_STOREHOUSE,0x19700,村長邸の蔵,0x19721,Kiki Storehouse,0x19731,村長邸の蔵,Kiki Storehouse,โกดังคฤหาสน์ผู้ใหญ่บ้าน,โกงคฤหาสใหาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+131,130,CMD_INTERACTION_CLOCK_TOWER,0x197A8,時計塔,0x197C4,Clock Tower,0x197CE,時計塔,Clock Tower,หอนาฬิกา,หอนากา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+132,131,CMD_INTERACTION_CHINANA_TRUCK,0x19816,チナナのトラック,0x19834,Chinana's Truck,0x1984D,チナナのトラック,Chinana's Truck,รถบรรทุกของชินานะ,รถบรรกของนานะ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+133,132,CMD_INTERACTION_ROOM_OUT,0x198C1,出る,0x198DA,Exit,0x198E1,出る,Exit,ออกไป,ออกไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+134,133,CMD_INTERACTION_MYHOUSE,0x1990B,自宅,0x19923,My House,0x1992A,自宅,My House,บ้านของฉัน,านของน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+135,134,CMD_INTERACTION_MYHOUSE_UNDERGROUND,0x19966,地下,0x1998A,Underground,0x19991,地下,Underground,ชั้นใต้ดิน,นใน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+136,135,CMD_INTERACTION_MYHOUSE_GROUND_FLOOR,0x199C9,１階,0x199EE,Ground Floor,0x199F5,１階,Ground Floor,ชั้น 1,น 1,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+137,136,CMD_INTERACTION_AVIARY,0x19A21,鶏小屋,0x19A38,Coop,0x19A42,鶏小屋,Coop,เล้าไก่,เาไ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+138,137,CMD_INTERACTION_LIVESTOCKHOUSE,0x19A71,家畜小屋,0x19A90,Barn,0x19A9D,家畜小屋,Barn,คอกสัตว์,คอกต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+139,138,CMD_INTERACTION_BARN,0x19AC7,納屋,0x19ADC,Storage Shed,0x19AE3,納屋,Storage Shed,โรงนา,โรงนา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+140,139,CMD_INTERACTION_GREENHOUSE,0x19B14,温室,0x19B2F,Greenhouse,0x19B36,温室,Greenhouse,เรือนกระจก,เอนกระจก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+141,140,CMD_INTERACTION_MAILBOX,0x19B68,ポスト,0x19B80,Mailbox,0x19B8A,ポスト,Mailbox,ตู้จดหมาย,จดหมาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+142,141,CMD_INTERACTION_ONIZUKA,0x19BC4,屋敷の裏道,0x19BDC,Estate Backroad,0x19BEC,屋敷の裏道,Estate Backroad,ทางลัดหลังคฤหาสน์,ทางดหงคฤหาส,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+143,142,CMD_INTERACTION_UNDERGROUND_ROAD,0x19C64,地下通路,0x19C85,Underground Passage,0x19C92,地下通路,Underground Passage,ทางเดินใต้ดิน,ทางเนใน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+144,143,CMD_INTERACTION_LOST_HOUSE,0x19CF5,廃屋,0x19D10,Deserted House,0x19D17,廃屋,Deserted House,บ้านร้าง,านาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+145,144,CMD_INTERACTION_MOVE_ON,0x19D64,進む,0x19D7C,Advance,0x19D83,進む,Advance,เดินหน้า,เนหา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+146,145,CMD_INTERACTION_RETURN_MOUNTAIN,0x19DB8,戻る,0x19DD8,Return,0x19DDF,戻る,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+147,146,CMD_INTERACTION_MOVE_FORWARD,0x19E13,進む,0x19E30,Advance,0x19E37,進む,Advance,เดินหน้า,เนหา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+148,147,CMD_INTERACTION_RETURN_EXIT,0x19E6C,戻る,0x19E88,Return,0x19E8F,戻る,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+149,148,CMD_INTERACTION_DUNGEON,0x19EC3,石切場,0x19EDB,Quarry,0x19EE5,石切場,Quarry,เหมืองหิน,เหองน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+150,149,CMD_INTERACTION_BACK,0x19F1C,登る,0x19F31,Ascend,0x19F38,登る,Ascend,ปีนขึ้น,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+151,150,CMD_INTERACTION_NEXT_FLOOR,0x19F68,下る,0x19F83,Descend,0x19F8A,下る,Descend,ลงไปข้างล่าง,ลงไปางาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+152,151,CMD_INTERACTION_ELEVATOR,0x19FBD,エレベーター,0x19FD6,Elevator,0x19FE9,エレベーター,Elevator,ลิฟต์,ฟ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+153,152,CMD_INTERACTION_SHIPPINGBOX,0x1A029,出荷,0x1A045,Ship,0x1A04C,出荷,Ship,จัดส่งสินค้า,ดงนา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+154,153,CMD_INTERACTION_CHEST,0x1A077,収納箱,0x1A08D,Storage Chest,0x1A097,収納箱,Storage Chest,หีบเก็บของ,บเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+155,154,CMD_INTERACTION_REWARD_BOX,0x1A0DE,報酬箱,0x1A0F9,Reward Box,0x1A103,報酬箱,Reward Box,กล่องรางวัล,กองรางล,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+156,155,CMD_INTERACTION_CONSTRUCTION_BOX,0x1A157,回収箱,0x1A178,Collection Box,0x1A182,回収箱,Collection Box,กล่องรวบรวมของ,กองรวบรวมของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+157,156,CMD_INTERACTION_BOARD,0x1A1CB,掲示板,0x1A1E1,Bulletin Board,0x1A1EB,掲示板,Bulletin Board,กระดานข่าว,กระดานาว,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+158,157,CMD_INTERACTION_BUNDLE,0x1A236,バンドル,0x1A24D,Bundle,0x1A25A,バンドル,Bundle,ชุดของถวาย,ดของถวาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+159,158,CMD_INTERACTION_SUBMIT_CERTIFICATE,0x1A283,狩猟証明を入れる,0x1A2A6,Insert Hunting Certificate,0x1A2BF,狩猟証明を入れる,Insert Hunting Certificate,ใส่ใบรับรองการล่าสัตว์,ใใบบรองการาต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+160,159,CMD_INTERACTION_PUSH_ITEM,0x1A353,入れる,0x1A36D,Insert,0x1A377,入れる,Insert,ใส่เข้าไป,ใเาไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+161,160,CMD_INTERACTION_PUSH_ITEM_LONG,0x1A3A6,全て入れる,0x1A3C5,Insert All,0x1A3D5,全て入れる,Insert All,ใส่ทั้งหมด,ใงหมด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+162,161,CMD_INTERACTION_TICKET,0x1A426,お手伝い券を渡す,0x1A43D,Hand Over Errand Coupon,0x1A456,お手伝い券を渡す,Hand Over Errand Coupon,มอบคูปองช่วยงาน,มอบปองวยงาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+163,162,CMD_INTERACTION_SUBMIT_QUEST_ITEM,0x1A4DE,渡す,0x1A500,Give,0x1A507,渡す,Give,ส่งมอบ,งมอบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+164,163,CMD_INTERACTION_PRESENT,0x1A534,贈り物をする,0x1A54C,Gift,0x1A55F,贈り物をする,Gift,มอบของขวัญ,มอบของขญ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+165,164,CMD_INTERACTION_PRESENT_DISABLE,0x1A5A7,贈り物をする,0x1A5C7,Gift,0x1A5DA,贈り物をする,Gift,มอบของขวัญ,มอบของขญ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+166,165,CMD_INTERACTION_DELIVER_SUBQUEST_ITEM,0x1A622,納品,0x1A648,Deliver,0x1A64F,納品,Deliver,ส่งของ,งของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+167,166,CMD_INTERACTION_CARESS,0x1A67C,撫でる,0x1A693,Pet,0x1A69D,撫でる,Pet,ลูบตัว,บว,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+168,167,CMD_INTERACTION_FEED,0x1A6CF,エサをあげる,0x1A6E4,Feed,0x1A6F7,エサをあげる,Feed,ให้อาหาร,ใอาหาร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+169,168,CMD_INTERACTION_RETRIEVE,0x1A730,回収,0x1A749,Retrieve,0x1A750,回収,Retrieve,เก็บคืน,เบน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+170,169,CMD_INTERACTION_RETRIEVE_PRESS,0x1A77E,回収押しっぱなし,0x1A79D,Retrieve (Hold),0x1A7B6,回収押しっぱなし,Retrieve (Hold),เก็บคืน (กดค้าง),เบน (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+171,170,CMD_INTERACTION_COLLECT,0x1A82F,採取,0x1A847,Collect,0x1A84E,採取,Collect,เก็บเกี่ยววัตถุดิบ,เบเยวตบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+172,171,CMD_INTERACTION_OBTAIN_CREATURE,0x1A880,回収,0x1A8A0,Retrieve,0x1A8A7,回収,Retrieve,จับสัตว์,บต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+173,172,CMD_INTERACTION_RELEASE_CREATURE,0x1A8D5,逃がす,0x1A8F6,Release,0x1A900,逃がす,Release,ปล่อยสัตว์ไป,ปอยตไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+174,173,CMD_INTERACTION_PUT_BAIT,0x1A936,エサを置く,0x1A94F,Place Bait,0x1A95F,エサを置く,Place Bait,วางเหยื่อ,วางเหอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+175,174,CMD_INTERACTION_FISHING,0x1A9A5,釣り,0x1A9BD,Fish,0x1A9C4,釣り,Fish,ตกปลา,ตกปลา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+176,175,CMD_INTERACTION_FISHING_CANCEL,0x1A9ED,やめる,0x1AA0C,Stop,0x1AA16,やめる,Stop,หยุดตกปลา,หดตกปลา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+177,176,CMD_INTERACTION_FISHING_HIT,0x1AA45,釣り上げる,0x1AA61,Reel In,0x1AA71,釣り上げる,Reel In,ดึงเบ็ดขึ้นมา,งเดนมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+178,177,CMD_INTERACTION_GACHAPON,0x1AABE,回す,0x1AAD7,Turn,0x1AADE,回す,Turn,หมุนกาชาปอง,หนกาชาปอง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+179,178,CMD_INTERACTION_FHONE_BOX,0x1AB0F,電話ボックス,0x1AB29,Phone Booth,0x1AB3C,電話ボックス,Phone Booth,ตู้โทรศัพท์,โทรพ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+180,179,CMD_INTERACTION_HIDE,0x1AB8D,隠れる,0x1ABA2,Hide,0x1ABAC,隠れる,Hide,ซ่อนตัว,อนว,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+181,180,CMD_INTERACTION_HIDE_OUT,0x1ABDB,出る,0x1ABF4,Exit,0x1ABFB,出る,Exit,ออกจากที่ซ่อน,ออกจากอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+182,181,CMD_INTERACTION_COVER,0x1AC25,調べる,0x1AC3B,Examine,0x1AC45,調べる,Examine,สำรวจ,รวจ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+183,182,CMD_INTERACTION_TAKE,0x1AC75,取る,0x1AC8A,Take,0x1AC91,取る,Take,หยิบเอาไป,หบเอาไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+184,183,CMD_INTERACTION_PUT_GROUND,0x1ACB9,地面に置く,0x1ACD4,Place on Ground,0x1ACE4,地面に置く,Place on Ground,วางบนพื้น,วางบนน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+185,184,CMD_INTERACTION_EXPLORE,0x1AD43,調べる,0x1AD5B,Explore,0x1AD65,調べる,Explore,สำรวจ,รวจ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+186,185,CMD_INTERACTION_PUT_ALTAR,0x1AD96,投げ入れる,0x1ADB0,Toss in,0x1ADC0,投げ入れる,Toss in,โยนลงไป,โยนลงไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+187,186,CMD_INTERACTION_WRITE_LETTERS,0x1AE01,文字を書く,0x1AE1F,Write,0x1AE2F,文字を書く,Write,เขียนตัวหนังสือ,เยนวหงอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+188,187,CMD_INTERACTION_REPAIR,0x1AE71,修復する,0x1AE88,Repair,0x1AE95,修復する,Repair,ซ่อมแซม,อมแซม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+189,188,CMD_INTERACTION_PASS,0x1AEC8,通る,0x1AEDD,Pass,0x1AEE4,通る,Pass,เดินผ่าน,เนาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+190,189,CMD_INTERACTION_OFFERING,0x1AF12,お供えする,0x1AF2B,Make Offering,0x1AF3B,お供えする,Make Offering,ถวายเครื่องเซ่น,ถวายเคองเน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+191,190,CMD_INTERACTION_CLEAN_UP,0x1AF85,片づける,0x1AF9E,Clean Up,0x1AFAB,片づける,Clean Up,เก็บกวาด,เบกวาด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+192,191,CMD_INTERACTION_PULL_OUT,0x1AFE0,引っこ抜く,0x1AFF9,Pull Out,0x1B009,引っこ抜く,Pull Out,ดึงถอนออกมา,งถอนออกมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+193,192,CMD_INTERACTION_LOOK,0x1B03D,見る,0x1B052,Look,0x1B059,見る,Look,มองดู,มอง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+194,193,CMD_INTERACTION_CROPS_DEVOTE,0x1B082,作物を捧げる,0x1B09F,Offer Crops,0x1B0B2,作物を捧げる,Offer Crops,ถวายพืชผล,ถวายชผล,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+195,194,CMD_INTERACTION_SOUND_TEST,0x1B119,音楽を聞く,0x1B134,Listen to Music,0x1B144,音楽を聞く,Listen to Music,ฟังเพลง,งเพลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+196,195,CMD_INTERACTION_CALENDAR,0x1B19E,カレンダー,0x1B1B7,Calendar,0x1B1C7,カレンダー,Calendar,ปฏิทิน,ปน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+197,196,CMD_INTERACTION_DUNGEON_MINECART,0x1B1FB,トロッコ,0x1B21C,Minecart,0x1B229,トロッコ,Minecart,รถราง,รถราง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+198,197,CMD_INTERACTION_DRESS_UP,0x1B259,着替える,0x1B272,Change Clothes,0x1B27F,着替える,Change Clothes,เปลี่ยนชุด,เปยนด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+199,198,CMD_INTERACTION_PUT_TO_GRAVE,0x1B2C1,赤子を置く,0x1B2DE,Place Baby,0x1B2EE,赤子を置く,Place Baby,วางทารก,วางทารก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+200,199,CMD_INTERACTION_PUT_IN_HAY,0x1B347,牧草を入れる,0x1B362,Insert Hay,0x1B375,牧草を入れる,Insert Hay,ใส่หญ้าแห้ง,ใหาแง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+201,200,CMD_INTERACTION_REMOVE_HAY,0x1B3C9,牧草を取り出す,0x1B3E4,Withdraw Hay,0x1B3FA,牧草を取り出す,Withdraw Hay,หยิบหญ้าแห้งออกมา,หบหาแงออกมา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+202,201,CMD_INTERACTION_PRESENT_CHEESE,0x1B454,チーズを渡す,0x1B473,Give Cheese,0x1B486,チーズを渡す,Give Cheese,มอบชีส,มอบส,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+203,202,CMD_INTERACTION_GHOST_RAT,0x1B4DE,ネズミ？,0x1B4F8,Rat?,0x1B505,ネズミ？,Rat?,หนูงั้นเหรอ?,หนเหรอ?,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+204,203,CMD_INTERACTION_POUND_MOCHI,0x1B539,餅つき,0x1B555,Pound Mochi,0x1B55F,餅つき,Pound Mochi,ตำโมจิ,โม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+205,204,CMD_INTERACTION_KAGAMI_MOCHI,0x1B5A5,鏡餅を作る,0x1B5C2,Make Kagami Mochi,0x1B5D2,鏡餅を作る,Make Kagami Mochi,ทำคางามิโมจิ,คางาโม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+206,205,CMD_INTERACTION_ROAST_POTATO,0x1B643,芋を焼く,0x1B660,Roast Sweet Potato,0x1B66D,芋を焼く,Roast Sweet Potato,เผามันเทศ,เผานเทศ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+207,206,CMD_INTERACTION_SHOOT_GAME,0x1B6CF,射的で遊ぶ,0x1B6EA,Play Shooting Gallery,0x1B6FA,射的で遊ぶ,Play Shooting Gallery,เล่นเกมยิงเป้า,เนเกมงเา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+208,207,CMD_INTERACTION_RESTAURANT_ORDER,0x1B772,注文する,0x1B793,Order,0x1B7A0,注文する,Order,สั่งอาหาร,งอาหาร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+209,208,CMD_INTERACTION_STORY_00_013,0x1B7D1,？？？,0x1B7EE,???,0x1B7F8,？？？,???,???,???,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+210,209,CMD_INTERACTION_STORY_04_040,0x1B81C,話しかける,0x1B839,Speak To,0x1B849,話しかける,Speak To,เข้าไปคุย,เาไปย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+211,210,CMD_INTERACTION_PULL,0x1B87B,引っ張る,0x1B890,Pull,0x1B89D,引っ張る,Pull,ดึง,ง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+212,211,CMD_INTERACTION_STORY_05_036,0x1B8CC,斬る,0x1B8E9,Cut,0x1B8F0,斬る,Cut,ฟัน,น,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+213,212,CMD_INTERACTION_STORY_06_009,0x1B917,飛び込む,0x1B934,Jump Down,0x1B941,飛び込む,Jump Down,กระโจนลงไป,กระโจนลงไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+214,213,CMD_INTERACTION_STORY_06_010,0x1B975,受け取る,0x1B992,Accept,0x1B99F,受け取る,Accept,รับไว้,บไ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+215,214,CMD_INTERACTION_STORY_06_054,0x1B9CC,押す,0x1B9E9,Push,0x1B9F0,押す,Push,ผลัก,ผก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+216,215,CMD_INTERACTION_STORY_06_062,0x1BA1A,跳ぶ,0x1BA37,Jump Down,0x1BA3E,跳ぶ,Jump Down,กระโดด,กระโดด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+217,216,CMD_INTERACTION_CRAFT_TABLE,0x1BA74,作業台,0x1BA90,Workbench,0x1BA9A,作業台,Workbench,โต๊ะคราฟต์ของ,โะคราฟของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+218,217,CMD_INTERACTION_DYEING_MACHINE,0x1BADB,染色台,0x1BAFA,Dye Station,0x1BB04,染色台,Dye Station,โต๊ะย้อมสี,โะอม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+219,218,CMD_INTERACTION_ANVIL,0x1BB50,金床,0x1BB66,Anvil,0x1BB6D,金床,Anvil,ทั่งตีเหล็ก,งเหก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+220,219,CMD_INTERACTION_COOKING,0x1BB97,料理,0x1BBAF,Cook,0x1BBB6,料理,Cook,ทำอาหาร,อาหาร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+221,220,CMD_INTERACTION_LIVESTOCK_LIST,0x1BBE0,家畜一覧,0x1BBFF,Livestock List,0x1BC0C,家畜一覧,Livestock List,รายชื่อสัตว์เลี้ยง,รายอตเยง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+222,221,CMD_PROCESS_MACHINE_CLOSE,0x1BC64,とじる,0x1BC7E,Close,0x1BC88,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+223,222,CMD_CRAFT_TABLE_FOCUS_DETAIL,0x1BCB3,詳細,0x1BCD0,Details,0x1BCD7,詳細,Details,รายละเอียด,รายละเยด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+224,223,CMD_CRAFT_TABLE_FOCUS_LIST,0x1BD09,もどる,0x1BD24,Return,0x1BD2E,もどる,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+225,224,CMD_CRAFT_TABLE_CRAFT,0x1BD60,作る,0x1BD76,Craft,0x1BD7D,作る,Craft,สร้าง,สาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+226,225,CMD_CRAFT_TABLE_CRAFT_KEEP,0x1BDAE,作る（連続）,0x1BDC9,Craft (Multi),0x1BDDC,作る（連続）,Craft (Multi),สร้าง (ต่อเนื่อง),สาง (อเอง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+227,226,CMD_COOKING_COOK,0x1BE49,調理,0x1BE5A,Cooking,0x1BE61,調理,Cooking,ปรุงอาหาร,ปงอาหาร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+228,227,CMD_COOKING_COOK_KEEP,0x1BE8F,調理（連続）,0x1BEA5,Cooking (Multi),0x1BEB8,調理（連続）,Cooking (Multi),ปรุงอาหาร (ต่อเนื่อง),ปงอาหาร (อเอง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+229,228,CMD_CRAFT_TABLE_CHANGE_TAB,0x1BF22,切替,0x1BF3D,Tab,0x1BF44,切替,Tab,สลับแท็บ,สบแบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+230,229,CMD_CRAFT_TABLE_TOGGLE_FAVORITE,0x1BF6D,お気に入り,0x1BF8D,Favorite,0x1BF9D,お気に入り,Favorite,รายการโปรด,รายการโปรด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+231,230,CMD_STORAGE_MENU_CLOSE,0x1BFDE,とじる,0x1BFF5,Close,0x1BFFF,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+232,231,CMD_STORAGE_MENU_PUSH,0x1C028,移動,0x1C03E,Move,0x1C045,移動,Move,ย้าย,าย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+233,232,CMD_STORAGE_MENU_PUSH_KEEP,0x1C077,移動（連続）,0x1C092,Move (Continuous),0x1C0A5,移動（連続）,Move (Continuous),ย้าย (ต่อเนื่อง),าย (อเอง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+234,233,CMD_STORAGE_MENU_PUSH_ALL,0x1C10D,全て移動,0x1C127,Move All,0x1C134,全て移動,Move All,ย้ายทั้งหมด,ายงหมด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+235,234,CMD_STORAGE_MENU_SORT,0x1C17F,整頓,0x1C195,Sort,0x1C19C,整頓,Sort,จัดเรียง,ดเยง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+236,235,CMD_STORAGE_MENU_PUSH_SAME,0x1C1C4,同じものを移動,0x1C1DF,Group Identical Items,0x1C1F5,同じものを移動,Group Identical Items,ย้ายของที่เหมือนกัน,ายของเหอนน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+237,236,CMD_STORAGE_MENU_CHANGE_TARGET,0x1C273,切替,0x1C292,Switch,0x1C299,切替,Switch,สลับฝั่ง,สบง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+238,237,CMD_STORAGE_MENU_NAMING,0x1C2C5,名前を付ける,0x1C2DD,Name,0x1C2F0,名前を付ける,Name,ตั้งชื่อ,งอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+239,238,CMD_STORAGE_MENU_CHANGE_BAG,0x1C325,バッグを入れ替える(未実装？),0x1C341,Swap Bag (Not Implemented?),0x1C36B,バッグを入れ替える(未実装？),Swap Bag (Not Implemented?),สลับกระเป๋า (ยังไม่เปิดใช้?),สบกระเา (งไเดใ?),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+240,239,CMD_STORAGE_MENU_SHOW_LIST,0x1C402,リストの開閉,0x1C41D,Open/Close List,0x1C430,リストの開閉,Open/Close List,เปิด/ปิดรายการ,เด/ดรายการ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+241,240,CMD_STORAGE_MENU_LINK_CHANGE_LEFT,0x1C49D,収納箱の切替,0x1C4BF,Switch Storage Chest,0x1C4D2,収納箱の切替,Switch Storage Chest,สลับหีบเก็บของ,สบบเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+242,241,CMD_STORAGE_MENU_LINK_CHANGE_RIGHT,0x1C539,収納箱の切替,0x1C55C,Switch Storage Chest,0x1C56F,収納箱の切替,Switch Storage Chest,สลับหีบเก็บของ,สบบเบของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+243,242,CMD_INTERACTION_PUT_TABLETOP,0x1C5D6,置く,0x1C5F3,Place,0x1C5FA,置く,Place,วาง,วาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+244,243,CMD_PUT_TABLETOP_CLOSE,0x1C623,とじる,0x1C63A,Close,0x1C644,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+245,244,CMD_PUT_TABLETOP_FOCUS_BELONGINGS,0x1C66D,決定,0x1C68F,Confirm,0x1C696,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+246,245,CMD_PUT_TABLETOP_FOCUS_TABLETOP,0x1C6C9,もどる,0x1C6E9,Return,0x1C6F3,もどる,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+247,246,CMD_PUT_TABLETOP_PUT_ON,0x1C725,置く,0x1C73D,Place,0x1C744,置く,Place,วางลง,วางลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+248,247,CMD_PUT_TABLETOP_PUT_AWAY,0x1C76D,取り除く,0x1C787,Remove,0x1C794,取り除く,Remove,นำออก,ออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+249,248,CMD_PUT_TABLETOP_PUT_ROTATE_R,0x1C7C5,回す,0x1C7E3,Rotate,0x1C7EA,回す,Rotate,หมุนขวา,หนขวา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+250,249,CMD_PUT_TABLETOP_PUT_ROTATE_L,0x1C827,回す,0x1C845,Rotate,0x1C84C,回す,Rotate,หมุนซ้าย,หนาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+251,250,CMD_INVENTORY_MENU_BOUND_UP,0x1C889,選択,0x1C8A5,Select,0x1C8AC,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+252,251,CMD_INVENTORY_MENU_BOUND_DOWN,0x1C8D9,選択,0x1C8F7,Select,0x1C8FE,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+253,252,CMD_INVENTORY_MENU_BOUND_LEFT,0x1C92A,選択,0x1C948,Select,0x1C94F,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+254,253,CMD_INVENTORY_MENU_BOUND_RIGHT,0x1C97E,選択,0x1C99D,Select,0x1C9A4,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+255,254,CMD_DAIRY_RESULT_CHANGE,0x1C9D3,切替,0x1C9EB,Switch,0x1C9F2,切替,Switch,สลับหน้า,สบหา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+256,255,CMD_WHISTLE_NOTE_INPUT_1,0x1CA1E,音符入力,0x1CA37,Input Musical Note,0x1CA44,音符入力,Input Musical Note,กดตัวโน้ต,กดวโต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+257,256,CMD_WHISTLE_NOTE_INPUT_2,0x1CA9F,音符入力,0x1CAB8,Input Musical Note,0x1CAC5,音符入力,Input Musical Note,กดตัวโน้ต,กดวโต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+258,257,CMD_WHISTLE_NOTE_INPUT_STICK,0x1CB20,音符入力,0x1CB3D,Input Musical Note,0x1CB4A,音符入力,Input Musical Note,โยกอนาล็อกกดตัวโน้ต,โยกอนาอกกดวโต,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+259,258,CMD_WHISTLE_CHANGE_SONG,0x1CBA5,楽譜切替,0x1CBBD,Switch Sheet Music,0x1CBCA,楽譜切替,Switch Sheet Music,สลับโน้ตเพลง,สบโตเพลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+260,259,CMD_TOOL_CIRCLE_CANCEL,0x1CC2A,とじる,0x1CC41,Close,0x1CC4B,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+261,260,CMD_TOOL_CIRCLE_DECIDE,0x1CC74,決定,0x1CC8B,Confirm,0x1CC92,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+262,261,CMD_TOOL_CIRCLE_WHISTLE,0x1CCC5,指笛,0x1CCDD,Finger Whistle,0x1CCE4,指笛,Finger Whistle,ผิวปาก,วปาก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+263,262,CMD_TOOL_CIRCLE_HATCHET,0x1CD24,ナタ,0x1CD3C,Machete,0x1CD43,ナタ,Machete,มีดพร้า,ดพา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+264,263,CMD_TOOL_CIRCLE_STICK,0x1CD74,選択,0x1CD8A,Select,0x1CD91,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+265,264,CMD_MEMOLIST_REMOVE_PRESS,0x1CDBF,メモを削除,0x1CDD9,Delete Note,0x1CDE9,メモを削除,Delete Note,ลบบันทึก,ลบนก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+266,265,CMD_MEMOLIST_REMOVE_PRESS_KEEP,0x1CE3D,メモを削除,0x1CE5C,Delete Note,0x1CE6C,メモを削除,Delete Note,ลบบันทึก,ลบนก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+267,266,CMD_MEMOLIST_REMOVE_PRESS_HELP,0x1CEC0,メモを削除,0x1CEDF,Delete Note,0x1CEEF,メモを削除,Delete Note,ลบบันทึก,ลบนก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+268,267,CMD_MEMOLIST_REMOVE_RELEASE,0x1CF43,削除をやめる,0x1CF5F,Cancel Deletion,0x1CF72,削除をやめる,Cancel Deletion,ยกเลิกการลบ,ยกเกการลบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+269,268,CMD_STORE_ADD,0x1CFCA,いれる,0x1CFD8,Add,0x1CFE2,いれる,Add,เพิ่ม,เม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+270,269,CMD_STORE_ADD_KEEP,0x1D00E,いれる（連続）,0x1D021,Add (Continuous),0x1D037,いれる（連続）,Add (Continuous),เพิ่ม (ต่อเนื่อง),เม (อเอง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+271,270,CMD_STORE_RETURN,0x1D0A4,もどす,0x1D0B5,Return,0x1D0BF,もどす,Return,ลดลง,ลดลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+272,271,CMD_STORE_RETURN_KEEP,0x1D0F1,もどす（連続）,0x1D107,Return (Continuous),0x1D11D,もどす（連続）,Return (Continuous),ลดลง (ต่อเนื่อง),ลดลง (อเอง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+273,272,CMD_STORE_CHANGE_TARGET,0x1D190,切替,0x1D1A8,Switch,0x1D1AF,切替,Switch,สลับแท็บ,สบแบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+274,273,CMD_STORE_BUY,0x1D1DB,購入,0x1D1E9,Purchase,0x1D1F0,購入,Purchase,ซื้อ,อ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+275,274,CMD_STORE_ORDER,0x1D21E,注文,0x1D22E,Order,0x1D235,注文,Order,สั่งซื้อ,งอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+276,275,CMD_INTERACTION_SHRINE,0x1D260,辻の祠,0x1D277,Crossroads Hokora,0x1D281,辻の祠,Crossroads Hokora,ศาลเจ้าทางแยก,ศาลเาทางแยก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+277,276,CMD_SHRINE_CLOSE,0x1D2F3,とじる,0x1D304,Close,0x1D30E,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+278,277,CMD_SHRINE_GENERATE_SPHERE,0x1D337,スキル玉生成,0x1D352,Generate Skill Sphere,0x1D365,スキル玉生成,Generate Skill Sphere,สร้างลูกแก้วสกิล,สางกแวสล,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+279,278,CMD_SHRINE_CHANGE_SKILLTREE,0x1D3E1,スキルツリー,0x1D3FD,Skill Tree,0x1D410,スキルツリー,Skill Tree,ผังสกิล,งสล,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+280,279,CMD_SKILLTREE_MOVE_STICK,0x1D469,移動,0x1D482,Move,0x1D489,移動,Move,เลื่อนดู,เอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+281,280,CMD_SKILLTREE_MOVE_UP,0x1D4B8,移動,0x1D4CE,Move,0x1D4D5,移動,Move,เลื่อนขึ้น,เอนน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+282,281,CMD_SKILLTREE_MOVE_DOWN,0x1D507,移動,0x1D51F,Move,0x1D526,移動,Move,เลื่อนลง,เอนลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+283,282,CMD_SKILLTREE_MOVE_LEFT,0x1D556,移動,0x1D56E,Move,0x1D575,移動,Move,เลื่อนซ้าย,เอนาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+284,283,CMD_SKILLTREE_MOVE_RIGHT,0x1D5B1,移動,0x1D5CA,Move,0x1D5D1,移動,Move,เลื่อนขวา,เอนขวา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+285,284,CMD_SKILLTREE_RELEASE,0x1D60B,スキル解放,0x1D621,Unlock Skill,0x1D631,スキル解放,Unlock Skill,ปลดล็อกสกิล,ปลดอกสล,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+286,285,CMD_SKILLTREE_CHANGE_SHRINE,0x1D697,もどる,0x1D6B3,Return,0x1D6BD,もどる,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+287,286,CMD_INTERACTION_CONSTRUCTION,0x1D6EF,樹木建設,0x1D70C,Kiki Construction,0x1D719,樹木建設,Kiki Construction,ร้านก่อสร้างคิกิ,านอสาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+288,287,CMD_CONSTRUCTION_CLOSE,0x1D779,とじる,0x1D790,Close,0x1D79A,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+289,288,CMD_CONSTRUCTION_DECIDE,0x1D7C3,決定,0x1D7DB,Confirm,0x1D7E2,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+290,289,CMD_CONSTRUCTION_EDIT_DECIDE,0x1D815,決定,0x1D832,Confirm,0x1D839,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+291,290,CMD_CONSTRUCTION_EDIT_CANCEL,0x1D86C,もどる,0x1D889,Return,0x1D893,もどる,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+292,291,CMD_CONSTRUCTION_EDIT_ROTATE,0x1D8C5,反転,0x1D8E2,Flip,0x1D8E9,反転,Flip,กลับด้าน,กบาน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+293,292,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET,0x1D917,対象切替,0x1D93B,Change Target,0x1D948,対象切替,Change Target,เปลี่ยนเป้าหมาย,เปยนเาหมาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+294,293,CMD_CONSTRUCTION_MAP_MOVE_STICK,0x1D9A0,移動,0x1D9C0,Move,0x1D9C7,移動,Move,เลื่อนแผนที่,เอนแผน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+295,294,CMD_MAINMENU_SHIFT_L,0x1D9F3,メインメニュー左シフト,0x1DA08,Toggle Main Menu (Left),0x1DA2A,メインメニュー左シフト,Toggle Main Menu (Left),เลื่อนเมนูหลักซ้าย,เอนเมหกาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+296,295,CMD_MAINMENU_SHIFT_R,0x1DAC6,メインメニュー右シフト,0x1DADB,Toggle Main Menu (Right),0x1DAFD,メインメニュー右シフト,Toggle Main Menu (Right),เลื่อนเมนูหลักขวา,เอนเมหกขวา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+297,296,CMD_MAINMENU_CLOSE,0x1DB9D,とじる,0x1DBB0,Close,0x1DBBA,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+298,297,CMD_MAINMENU_INVENTORY_POP_PUSH,0x1DBE3,持つ/置く,0x1DC03,Grab/Place,0x1DC11,持つ/置く,Grab/Place,หยิบ / วาง,หบ / วาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+299,298,CMD_MAINMENU_INVENTORY_PUSH,0x1DC66,ひとつ置く,0x1DC82,Place One,0x1DC92,ひとつ置く,Place One,วางทีละชิ้น,วางละน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+300,299,CMD_MAINMENU_INVENTORY_POP_CANCEL,0x1DCD7,もどす,0x1DCF9,Return,0x1DD03,もどす,Return,เก็บคืนที่เดิม,เบนเม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+301,300,CMD_MAINMENU_INVENTORY_PUTAWAY,0x1DD36,床に置く,0x1DD55,Place on Floor,0x1DD62,床に置く,Place on Floor,วางบนพื้น,วางบนน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+302,301,CMD_MAINMENU_INVENTORY_DECIDE,0x1DDC1,決定,0x1DDDF,Confirm,0x1DDE6,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+303,302,CMD_MAINMENU_INVENTORY_MENU,0x1DE19,手放す,0x1DE35,Discard,0x1DE3F,手放す,Discard,ทิ้งของ,งของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+304,303,CMD_MAINMENU_MAP_DETAIL_NPC,0x1DE6C,詳細,0x1DE88,Details,0x1DE8F,詳細,Details,รายละเอียด,รายละเยด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+305,304,CMD_MAINMENU_MAP_STAMP,0x1DEC1,スタンプ,0x1DED8,Stamp,0x1DEE5,スタンプ,Stamp,ปักหมุด,กหด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+306,305,CMD_MAINMENU_MAP_LIST,0x1DF10,リスト,0x1DF26,List,0x1DF30,リスト,List,รายการ,รายการ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+307,306,CMD_MAINMENU_MAP_RETURN,0x1DF59,もどる,0x1DF71,Return,0x1DF7B,もどる,Return,ย้อนกลับ,อนกบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+308,307,CMD_MAINMENU_MAP_QUICK,0x1DFAD,高速化,0x1DFC4,Cursor Speed,0x1DFCE,高速化,Cursor Speed,เลื่อนเร็ว,เอนเว,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+309,308,CMD_MAINMENU_MAP_MOVE,0x1E010,移動,0x1E026,Move,0x1E02D,移動,Move,เลื่อนดู,เอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+310,309,CMD_MAINMENU_MAP_SCALE_UP,0x1E059,拡大,0x1E073,Zoom In,0x1E07A,拡大,Zoom In,ซูมเข้า,มเา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+311,310,CMD_MAINMENU_MAP_SCALE_DOWN,0x1E0A4,縮小,0x1E0C0,Zoom Out,0x1E0C7,縮小,Zoom Out,ซูมออก,มออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+312,311,CMD_MAINMENU_QUEST_OPEN,0x1E0FE,展開,0x1E116,Expand,0x1E11D,展開,Expand,ขยาย,ขยาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+313,312,CMD_MAINMENU_QUEST_CLOSE,0x1E14C,畳む,0x1E165,Collapse,0x1E16C,畳む,Collapse,ย่อเก็บ,อเบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+314,313,CMD_MAINMENU_VILLAGER_SEARCH,0x1E199,居場所を確認,0x1E1B6,Check Location,0x1E1C9,居場所を確認,Check Location,ดูตำแหน่งที่อยู่,แหงอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+315,314,CMD_MAINMENU_ENCYCLOPEDIA_SKIP,0x1E226,次ページ,0x1E245,Next Page,0x1E252,次ページ,Next Page,หน้าถัดไป,หาดไป,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+316,315,CMD_MAINMENU_QUEST_CHECKLIST_SCROLL,0x1E2A1,チェックリスト上下（翻訳不要）,0x1E2C5,Checklist Up/Down (No translation needed),0x1E2F3,チェックリスト上下（翻訳不要）,Checklist Up/Down (No translation needed),เลื่อนเช็กลิสต์ขึ้น/ลง,เอนเกสน/ลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+317,316,CMD_INPUT_STRING_DELETE,0x1E3A7,１文字消す,0x1E3BF,Backspace,0x1E3CF,１文字消す,Backspace,ลบตัวอักษร,ลบวกษร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+318,317,CMD_INPUT_STRING_SPACE,0x1E427,スペース,0x1E43E,Space,0x1E44B,スペース,Space,เว้นวรรค,เนวรรค,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+319,318,CMD_INPUT_STRING_CANCEL,0x1E47B,キャンセル,0x1E493,Cancel,0x1E4A3,キャンセル,Cancel,ยกเลิก,ยกเก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+320,319,CMD_INPUT_STRING_OK,0x1E4D0,決定,0x1E4E4,Confirm,0x1E4EB,決定,Confirm,ยืนยัน,นน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+321,320,CMD_INPUT_STRING_BOUND_DOWN,0x1E519,選択,0x1E535,Select,0x1E53C,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+322,321,CMD_INPUT_STRING_BOUND_UP,0x1E568,選択,0x1E582,Select,0x1E589,選択,Select,เลือก,เอก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+323,322,CMD_IPUNT_STRING_CHAR_FIX,0x1E5B6,文字確定,0x1E5D0,Input confirmed,0x1E5DD,文字確定,Input confirmed,ยืนยันตัวอักษร,นนวกษร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+324,323,CMD_CHARACTERMAKE_BAR_LEFT,0x1E632,左シフト,0x1E64D,Left Shift,0x1E65A,左シフト,Left Shift,เลื่อนซ้าย,เอนาย,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+325,324,CMD_CHARACTERMAKE_BAR_RIGHT,0x1E69D,右シフト,0x1E6B9,Right Shift,0x1E6C6,右シフト,Right Shift,เลื่อนขวา,เอนขวา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+326,325,CMD_CHARACTERMAKE_BAR_LEFT_KEEP,0x1E70D,左シフト（長押し）,0x1E72D,Left Shift (Hold),0x1E749,左シフト（長押し）,Left Shift (Hold),เลื่อนซ้าย (กดค้าง),เอนาย (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+327,326,CMD_CHARACTERMAKE_BAR_RIGHT_KEEP,0x1E7E4,右シフト（長押し）,0x1E805,Right Shift (Hold),0x1E821,右シフト（長押し）,Right Shift (Hold),เลื่อนขวา (กดค้าง),เอนขวา (กดาง),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+328,327,CMD_CHARACTERMAKE_ROTATE_PLAYER,0x1E8C0,向き変更,0x1E8E0,Rotate,0x1E8ED,向き変更,Rotate,หมุนตัวละคร,หนวละคร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+329,328,CMD_CHARACTERMAKE_CLOSE,0x1E93C,完了,0x1E954,Finish,0x1E95B,完了,Finish,เสร็จสิ้น,เสจน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+330,329,CMD_CHARACTERMAKE_TAB_CONTROL,0x1E98A,切替,0x1E9A8,Tab,0x1E9AF,切替,Tab,สลับแท็บ,สบแบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+331,330,CMD_CHARACTERMAKE_CURSOR,0x1E9D8,移動,0x1E9F1,Move,0x1E9F8,移動,Move,เลื่อนเคอร์เซอร์,เอนเคอเซอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+332,331,CMD_CHARACTERMAKE_PRESET_COLOR,0x1EA24,色を反映,0x1EA43,Apply Color,0x1EA50,色を反映,Apply Color,นำสีมาใช้,มาใ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+333,332,CMD_CHARACTERMAKE_RESET_ACCESSORY,0x1EAA5,外す,0x1EAC7,Remove,0x1EACE,外す,Remove,ถอดออก,ถอดออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+334,333,CMD_NUMBER_SELECT_LEFT,0x1EAF9,減らす,0x1EB10,Decrease,0x1EB1A,減らす,Decrease,ลดจำนวน,ลดนวน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+335,334,CMD_NUMBER_SELECT_RIGHT,0x1EB4E,増やす,0x1EB66,Increase,0x1EB70,増やす,Increase,เพิ่มจำนวน,เมนวน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+336,335,CMD_NUMBER_SELECT_DECIDE_BUY,0x1EBA4,買う,0x1EBC1,Buy,0x1EBC8,買う,Buy,ซื้อ,อ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+337,336,CMD_NUMBER_SELECT_DECIDE_CRAFT,0x1EBF1,作る,0x1EC10,Craft,0x1EC17,作る,Craft,สร้าง,สาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+338,337,CMD_NUMBER_SELECT_CANCEL,0x1EC48,とじる,0x1EC61,Close,0x1EC6B,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+339,338,CMD_SOUND_TEST_PLAY,0x1EC95,再生,0x1ECA9,Play,0x1ECB0,再生,Play,เล่นเพลง,เนเพลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+340,339,CMD_SOUND_TEST_STOP,0x1ECDB,停止,0x1ECEF,Stop,0x1ECF6,停止,Stop,หยุดเพลง,หดเพลง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+341,340,CMD_SOUND_TEST_CLOSE,0x1ED1F,とじる,0x1ED34,Close,0x1ED3E,とじる,Close,ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+342,341,CMD_SETTING_RESET,0x1ED67,設定初期化,0x1ED79,Reset to Default,0x1ED89,設定初期化,Reset to Default,คืนค่าเริ่มต้น,นาเมน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+343,342,CMD_DEMO_SKIP,0x1EDF7,スキップ,0x1EE05,Skip,0x1EE12,スキップ,Skip,ข้าม,าม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+344,343,CMD_TITLE_RIGHTS_NOTATION,0x1EE3A,権利表記,0x1EE54,Copyright Notice,0x1EE61,権利表記,Copyright Notice,ข้อมูลลิขสิทธิ์,อลขท,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+345,344,CMD_SAVE_DELETE,0x1EECA,セーブデータ削除,0x1EEDA,Delete Save Data,0x1EEF3,セーブデータ削除,Delete Save Data,ลบข้อมูลบันทึก,ลบอลนก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+346,345,CMD_SWAP_SELECT,0x1EF80,入替え,0x1EF90,Swap,0x1EF9A,入替え,Swap,สลับตำแหน่ง,สบแหง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+347,346,CMD_SWAP_CANCEL,0x1EFD2,やめる,0x1EFE2,Cancel,0x1EFEC,やめる,Cancel,ยกเลิก,ยกเก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+348,347,CMD_BANDLE_SUBMIT,0x1F01F,納品,0x1F031,Deliver,0x1F038,納品,Deliver,ถวายของ,ถวายของ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+349,348,CMD_POPUP_OK_CLOSE,0x1F065,閉じる（翻訳不要）,0x1F078,Close (No translation needed),0x1F094,閉じる（翻訳不要）,Close (No translation needed),ปิด,ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+350,349,CMD_SELECT_CANCEL,0x1F10C,やめる,0x1F11E,Cancel,0x1F128,やめる,Cancel,ยกเลิก,ยกเก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+351,350,CMD_OPTION_CLOSE,0x1F15B,やめる,0x1F16C,Cancel,0x1F176,やめる,Cancel,ยกเลิก,ยกเก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+352,351,CMD_PLACEMENT_EDITOR_SYSTEM_MENU,0x1F1A9,システムメニュー,0x1F1CA,System Menu,0x1F1E3,システムメニュー,System Menu,เมนูระบบ,เมระบบ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+353,352,CMD_PLACEMENT_EDITOR_PLACEMENT_MENU,0x1F23A,配置メニュー,0x1F25E,Placement Menu,0x1F271,配置メニュー,Placement Menu,เมนูการจัดวาง,เมการดวาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+354,353,CMD_PLACEMENT_EDITOR_PLACEMENT,0x1F2CE,配置,0x1F2ED,Place,0x1F2F4,配置,Place,จัดวาง,ดวาง,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+355,354,CMD_PLACEMENT_EDITOR_ERASE,0x1F324,削除,0x1F33F,Delete,0x1F346,削除,Delete,ลบออก,ลบออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+356,355,CMD_DEBUG_WORLDMAP_MOVE_STICK,0x1F371,移動,0x1F38F,Move,0x1F396,移動,Move,เลื่อนดู,เอน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+357,356,CMD_DEBUG_WORLDMAP_MOVE_RESET,0x1F3C2,現在地へ,0x1F3E0,To Current Location,0x1F3ED,現在地へ,To Current Location,ไปยังตำแหน่งปัจจุบัน,ไปงแหงจน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+358,357,CMD_DEBUG_WORLDMAP_ZOOM_OUT,0x1F469,ズーム,0x1F485,Zoom,0x1F48F,ズーム,Zoom,ซูมออก,มออก,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+359,358,CMD_DEBUG_WORLDMAP_ZOOM_IN,0x1F4C3,ズーム,0x1F4DE,Zoom,0x1F4E8,ズーム,Zoom,ซูมเข้า,มเา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+360,359,CMD_DEBUG_WORLDMAP_ZOOM_RESET,0x1F519,ズームリセット,0x1F537,Reset Zoom,0x1F54D,ズームリセット,Reset Zoom,คืนค่าการซูมเริ่มต้น,นาการมเมน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+361,360,CMD_DEBUG_WORLDMAP_AREA_PREV,0x1F5A0,エリア移動,0x1F5BD,Change Area,0x1F5CD,エリア移動,Change Area,เปลี่ยนพื้นที่ (ก่อนหน้า),เปยนน (อนหา),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+362,361,CMD_DEBUG_WORLDMAP_AREA_NEXT,0x1F623,エリア移動,0x1F640,Change Area,0x1F650,エリア移動,Change Area,เปลี่ยนพื้นที่ (ถัดไป),เปยนน (ดไป),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+363,362,CMD_DEBUG_EVENTCHART_MENU_OPEN,0x1F6A2,メニューを開く,0x1F6C1,Open Menu,0x1F6D7,メニューを開く,Open Menu,เปิดเมนู,เดเม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+364,363,CMD_DEBUG_EVENTCHART_SHORTCUT,0x1F724,便利ボタン,0x1F742,Shortcuts,0x1F752,便利ボタン,Shortcuts,ปุ่มลัด,มด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+365,364,CMD_DEBUG_NPC_ENABLE_CHANGE,0x1F794,有効/無効切り替え,0x1F7B0,Toggle On/Off,0x1F7CA,有効/無効切り替え,Toggle On/Off,สลับ เปิด/ปิด,สบ เด/ด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+366,365,CMD_CHARACTERMAKE_DEFAULT_RETURN,0x1F841,デフォルトに戻す,0x1F862,Restore to Default,0x1F87B,デフォルトに戻す,Restore to Default,คืนค่าเริ่มต้น,นาเมน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+367,366,CMD_INTERACTION_DELIVER_HORROR_ITEM,0x1F900,納品,0x1F924,Deliver,0x1F92B,納品,Deliver,ส่งมอบไอเทมอาถรรพ์,งมอบไอเทมอาถรร,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+368,367,CMD_GAME_END,0x1F958,ゲームを終了する,0x1F965,Exit Game,0x1F97E,ゲームを終了する,Exit Game,ออกจากเกม,ออกจากเกม,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+369,368,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_L,0x1F9CF,対象切替,0x1F9F5,Change Target,0x1FA02,対象切替,Change Target,เปลี่ยนเป้าหมาย (ซ้าย),เปยนเาหมาย (าย),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+370,369,CMD_CONSTRUCTION_EDIT_CHANGE_TARGET_R,0x1FA5A,対象切替,0x1FA80,Change Target,0x1FA8D,対象切替,Change Target,เปลี่ยนเป้าหมาย (ขวา),เปยนเาหมาย (ขวา),ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+371,370,CMD_FISHING,0x1FAE5,釣り,0x1FAF1,Fish,0x1FAF8,釣り,Fish,ตกปลา,ตกปลา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+372,371,CMD_UNIT_WALK_STICK,0x1FB21,スティック歩行,0x1FB35,Stick Movement,0x1FB4B,スティック歩行,Stick Movement,โยกอนาล็อกเดิน,โยกอนาอกเน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+373,372,CMD_UNIT_WALK_KEY,0x1FB9A,キーボード移動,0x1FBAC,Keyboard Movement,0x1FBC2,キーボード移動,Keyboard Movement,ปุ่มคีย์บอร์ดเดิน,มบอดเน,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+374,373,CMD_INPUT_IMESTRING_CANCEL,0x1FC0F,,(none),,(none),,,,,ตรงกัน (ไม่มีข้อความทั้งคู่),คีย์ว่างเปล่าทั้ง JP และ EN ตามระบบเกม
+375,374,CMD_INPUT_IME_STRING_OK,0x1FC31,,(none),,(none),,,,,ตรงกัน (ไม่มีข้อความทั้งคู่),คีย์ว่างเปล่าทั้ง JP และ EN ตามระบบเกม
+376,375,CMD_INTERACTION_CATALOG,0x1FC50,家具カタログ,0x1FC68,Furniture Catalog,0x1FC7B,家具カタログ,Furniture Catalog,แคตตาล็อกเฟอร์นิเจอร์,แคตตาอกเฟอเจอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+377,376,CMD_SAVEDATA_SELECT,0x1FCE5,以前のセーブデータ,0x1FCF9,Previous Save Data,0x1FD15,以前のセーブデータ,Previous Save Data,ข้อมูลบันทึกก่อนหน้า,อลนกอนหา,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+378,377,CMD_SOFTWAREKEYBOARD_OPEN,0x1FDAA,ソフトウェアキーボード,0x1FDC4,,(none),ソフトウェアキーボード,,คีย์บอร์ดเสมือน,บอดเสอน,ตรงตามมาตรฐาน (JP มีคำ / EN ว่างตามต้นฉบับ),"CMD_SOFTWAREKEYBOARD_OPEN: JP มีคำ ('ソフトウェアキーボード'), EN เว้นว่างไว้ ไม่ตกแถว"
+379,378,CMD_ITME_RENAME,0x1FDEC,命名変更,0x1FDFC,Change Name,0x1FE09,命名変更,Change Name,เปลี่ยนชื่อ,เปยนอ,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN
+380,379,CMD_TOOL_CIRCLE_SEEDER,0x1FE56,種まき機,0x1FE6D,Seeder,0x1FE7A,種まき機,Seeder,เครื่องหว่านเมล็ด,เคองหานเมด,ตรงกันสมบูรณ์ (MATCH),ตรงแถว 1:1 ครบทั้ง JP และ EN

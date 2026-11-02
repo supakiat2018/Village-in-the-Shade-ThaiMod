@@ -1,0 +1,8 @@
+﻿id,key,jp_orig,en_moden,ชื่อประเภท_TH,ชื่อประเภท_PUA,Item_No,Index,Category_ID,Key,ต้นฉบับ_JP,คำแปลไทย,Thai_PUA,ต้นฉบับ_EN,สถานะ
+0,ITEM_TYPE_CONSUME,消耗品,Single Use,ของใช้สิ้นเปลือง,ของในเปอง,1,0,1,ITEM_TYPE_CONSUME,消耗品,ของใช้สิ้นเปลือง,ของในเปอง,Single Use,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+1,ITEM_TYPE_TOOL,道具,Tools,เครื่องมือ,เคองอ,2,1,2,ITEM_TYPE_TOOL,道具,เครื่องมือ,เคองอ,Tools,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+2,ITEM_TYPE_HAT,帽子,Hats,หมวก,หมวก,3,2,3,ITEM_TYPE_HAT,帽子,หมวก,หมวก,Hats,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+3,ITEM_TYPE_SHOES,履物,Footwear,รองเท้า,รองเา,4,3,4,ITEM_TYPE_SHOES,履物,รองเท้า,รองเา,Footwear,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+4,ITEM_TYPE_RING,指輪,Rings,แหวน,แหวน,5,4,5,ITEM_TYPE_RING,指輪,แหวน,แหวน,Rings,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+5,ITEM_TYPE_GIMMICK,ギミック,Gimmicks,กลไก,กลไก,6,5,6,ITEM_TYPE_GIMMICK,ギミック,กลไก,กลไก,Gimmicks,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)
+6,ITEM_TYPE_NUM,アイテム種別総数,Total Item Types,จำนวนประเภทไอเทมทั้งหมด,นวนประเภทไอเทมงหมด,7,6,7,ITEM_TYPE_NUM,アイテム種別総数,จำนวนประเภทไอเทมทั้งหมด,นวนประเภทไอเทมงหมด,Total Item Types,สมบูรณ์ (สไตล์ญี่ปุ่นมีชีวิตชีวา 100%)

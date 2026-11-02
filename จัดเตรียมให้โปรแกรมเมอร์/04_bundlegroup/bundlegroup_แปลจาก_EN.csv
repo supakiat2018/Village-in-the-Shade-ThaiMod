@@ -1,0 +1,19 @@
+﻿Item_No,Index,id,key,en_moden,ต้นฉบับ_EN,ชื่อกลุ่ม_TH,คำแปลไทย,ชื่อกลุ่ม_PUA,Thai_PUA,สถานะ
+1,0,0,BUNDLE_GROUP_ID_SPRING_01,Fox Shrine / Spring,Fox Shrine / Spring,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ผลิ,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ผลิ,ศาลเางจอก／ฤใบไผ,ศาลเางจอก／ฤใบไผ,สมบูรณ์
+2,1,1,BUNDLE_GROUP_ID_SUMMER_01,Fox Shrine / Summer,Fox Shrine / Summer,ศาลเจ้าจิ้งจอก／ฤดูร้อน,ศาลเจ้าจิ้งจอก／ฤดูร้อน,ศาลเางจอก／ฤอน,ศาลเางจอก／ฤอน,สมบูรณ์
+3,2,2,BUNDLE_GROUP_ID_AUTUMN_01,Fox Shrine / Autumn,Fox Shrine / Autumn,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ร่วง,ศาลเจ้าจิ้งจอก／ฤดูใบไม้ร่วง,ศาลเางจอก／ฤใบไวง,ศาลเางจอก／ฤใบไวง,สมบูรณ์
+4,3,3,BUNDLE_GROUP_ID_WINTER_01,Fox Shrine / Winter,Fox Shrine / Winter,ศาลเจ้าจิ้งจอก／ฤดูหนาว,ศาลเจ้าจิ้งจอก／ฤดูหนาว,ศาลเางจอก／ฤหนาว,ศาลเางจอก／ฤหนาว,สมบูรณ์
+5,4,4,BUNDLE_GROUP_ID_SHRINE_REPAIR_01,Hokora Repair,Hokora Repair,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,สมบูรณ์
+6,5,5,BUNDLE_GROUP_ID_SHRINE_REPAIR_02,Hokora Repair,Hokora Repair,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,สมบูรณ์
+7,6,6,BUNDLE_GROUP_ID_SHRINE_REPAIR_03,Hokora Repair,Hokora Repair,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,สมบูรณ์
+8,7,7,BUNDLE_GROUP_ID_SHRINE_REPAIR_04,Hokora Repair,Hokora Repair,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,สมบูรณ์
+9,8,8,BUNDLE_GROUP_ID_SHRINE_REPAIR_05,Hokora Repair,Hokora Repair,การบูรณะศาลเจ้า,การบูรณะศาลเจ้า,การรณะศาลเา,การรณะศาลเา,สมบูรณ์
+10,9,9,BUNDLE_GROUP_ID_VILLAGE_HEAD_01,Rin's Errand,Rin's Errand,ช่วยเหลือริน,ช่วยเหลือริน,วยเหอน,วยเหอน,สมบูรณ์
+11,10,10,BUNDLE_GROUP_ID_VILLAGE_HEAD_02,Vegetable Delivery,Vegetable Delivery,ส่งมอบพืชผัก,ส่งมอบพืชผัก,งมอบชก,งมอบชก,สมบูรณ์
+12,11,11,BUNDLE_GROUP_ID_VILLAGE_HEAD_03,Fruit Delivery,Fruit Delivery,ส่งมอบผลไม้,ส่งมอบผลไม้,งมอบผลไ,งมอบผลไ,สมบูรณ์
+13,12,12,BUNDLE_GROUP_ID_VILLAGE_HEAD_04,Flower Delivery,Flower Delivery,ส่งมอบดอกไม้,ส่งมอบดอกไม้,งมอบดอกไ,งมอบดอกไ,สมบูรณ์
+14,13,13,BUNDLE_GROUP_ID_VILLAGE_HEAD_05,Processed Delivery,Processed Delivery,ส่งมอบผลผลิตแปรรูป,ส่งมอบผลผลิตแปรรูป,งมอบผลผตแปรป,งมอบผลผตแปรป,สมบูรณ์
+15,14,14,BUNDLE_GROUP_ID_VILLAGE_HEAD_06,Ranching Delivery,Ranching Delivery,ส่งมอบผลผลิตปศุสัตว์,ส่งมอบผลผลิตปศุสัตว์,งมอบผลผตปต,งมอบผลผตปต,สมบูรณ์
+16,15,15,BUNDLE_GROUP_ID_VILLAGE_HEAD_07,Hunting Delivery,Hunting Delivery,ส่งมอบผลผลิตจากการล่า,ส่งมอบผลผลิตจากการล่า,งมอบผลผตจากการา,งมอบผลผตจากการา,สมบูรณ์
+17,16,16,BUNDLE_GROUP_ID_VILLAGE_HEAD_08,Fish Delivery,Fish Delivery,ส่งมอบปลา,ส่งมอบปลา,งมอบปลา,งมอบปลา,สมบูรณ์
+18,17,17,BUNDLE_GROUP_ID_VILLAGE_HEAD_09,High-Quality Delivery,High-Quality Delivery,ส่งมอบสินค้าระดับพรีเมียม,ส่งมอบสินค้าระดับพรีเมียม,งมอบนาระบพเยม,งมอบนาระบพเยม,สมบูรณ์
