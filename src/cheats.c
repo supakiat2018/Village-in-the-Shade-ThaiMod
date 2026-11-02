@@ -108,10 +108,14 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
             g_settings.texture_mode = 0;
             g_settings.enable_custom_textures = 0;
             g_settings.use_english_textures = 0;
+            /* If Thai textures are disabled, automatically force disable Thai keyboard! */
+            g_settings.enable_thai_keyboard = 0;
         } else if (g_settings.texture_mode == 2 || g_settings.use_english_textures == 1) {
             g_settings.texture_mode = 2;
             g_settings.enable_custom_textures = 1;
             g_settings.use_english_textures = 1;
+            /* If all-English textures are used, also force disable Thai keyboard! */
+            g_settings.enable_thai_keyboard = 0;
         } else {
             g_settings.texture_mode = 1;
             g_settings.enable_custom_textures = 1;

@@ -3322,11 +3322,11 @@ static DWORD WINAPI worker_thread(LPVOID param)
     }
 
     #ifdef ENABLE_THAI_KEYBOARD
-    /* 2. Patch In-Game Virtual Keyboard string table in memory (Respects settings.ini) */
-    if (g_settings.enable_thai_keyboard) {
+    /* 2. Patch In-Game Virtual Keyboard string table in memory (Requires Thai textures enabled) */
+    if (g_settings.enable_thai_keyboard && g_settings.texture_mode == 1 && g_settings.enable_custom_textures && !g_settings.use_english_textures) {
         patch_virtual_keyboard_v130(base, log_msg);
     } else {
-        log_msg("[SETTINGS] Thai virtual keyboard DISABLED in settings.ini.");
+        log_msg("[SETTINGS] Thai virtual keyboard DISABLED (Thai textures are off or keyboard toggle is 0).");
     }
 #else
     log_msg("[KEYBOARD] Original Keyboard retained (Thai Virtual Keyboard disabled).");
