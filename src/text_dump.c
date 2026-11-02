@@ -1626,8 +1626,8 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
     if (!g_settings.enable_thai_mod) return FALSE;
     const char* base_name = get_basename(vfs_name);
 
-    /* If Thai minimap is disabled, do not override any minimap texture */
-    if (!g_settings.enable_thai_minimap && strstr(base_name, "minimap_") != NULL) {
+    /* If Thai minimap is not in Thai mode (1), do not override any minimap texture (2 = English, 0 = Original) */
+    if (g_settings.enable_thai_minimap != 1 && strstr(base_name, "minimap_") != NULL) {
         return FALSE;
     }
 
@@ -2526,8 +2526,8 @@ static void patch_texture_database_in_ram(void* buffer, DWORD size)
     for (size_t i = 0; i < num_patches; i++) {
         const char* tgt = kTextureDbPatches[i].target;
 
-        /* If Thai minimap is disabled, do not patch minimap database redirections */
-        if (!g_settings.enable_thai_minimap && strstr(tgt, "minimap_") != NULL) {
+        /* If Thai minimap is set to 0 (game original), do not patch minimap database redirections */
+        if (g_settings.enable_thai_minimap == 0 && strstr(tgt, "minimap_") != NULL) {
             continue;
         }
 

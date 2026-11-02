@@ -16,7 +16,7 @@ typedef struct {
     int enable_custom_textures;   /* 1 = enable VFS texture replacement */
     int use_english_textures;     /* 1 = redirect/load English textures instead of Thai */
     int texture_mode;             /* 0 = Original game, 1 = Thai + EN fallback, 2 = All EN */
-    int enable_thai_minimap;      /* 1 = enable Thai minimap, 0 = disable (fallback to original game map) */
+    int enable_thai_minimap;      /* 1 = Thai minimap, 2 = English minimap, 0 = Game Original */
     int enable_speedhack;         /* 1 = enable in-memory Speedhack (game speed multiplier), 0 = disable */
 } ModSettings;
 
