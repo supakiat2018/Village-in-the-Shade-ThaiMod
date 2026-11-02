@@ -1,8 +1,0 @@
-﻿id,key,en_official,en_moden,ชื่อประเภท_TH,ชื่อประเภท_PUA,Item_No,Index,Category_ID,Key,ต้นฉบับ_EN,คำแปลไทย,Thai_PUA,สถานะ
-0,ITEM_TYPE_CONSUME,Single Use,Single Use,ของใช้สิ้นเปลือง,ของในเปอง,1,0,1,ITEM_TYPE_CONSUME,Single Use,ของใช้สิ้นเปลือง,ของในเปอง,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-1,ITEM_TYPE_TOOL,,Tools,เครื่องมือ,เคองอ,2,1,2,ITEM_TYPE_TOOL,Tools,เครื่องมือ,เคองอ,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-2,ITEM_TYPE_HAT,,Hats,หมวก,หมวก,3,2,3,ITEM_TYPE_HAT,Hats,หมวก,หมวก,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-3,ITEM_TYPE_SHOES,,Footwear,รองเท้า,รองเา,4,3,4,ITEM_TYPE_SHOES,Footwear,รองเท้า,รองเา,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-4,ITEM_TYPE_RING,,Rings,แหวน,แหวน,5,4,5,ITEM_TYPE_RING,Rings,แหวน,แหวน,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-5,ITEM_TYPE_GIMMICK,,Gimmicks,กลไก,กลไก,6,5,6,ITEM_TYPE_GIMMICK,Gimmicks,กลไก,กลไก,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
-6,ITEM_TYPE_NUM,,Total Item Types,จำนวนประเภทไอเทมทั้งหมด,นวนประเภทไอเทมงหมด,7,6,7,ITEM_TYPE_NUM,Total Item Types,จำนวนประเภทไอเทมทั้งหมด,นวนประเภทไอเทมงหมด,สมบูรณ์ (ยึดฟีลลิ่งญี่ปุ่นแท้ 100%)
