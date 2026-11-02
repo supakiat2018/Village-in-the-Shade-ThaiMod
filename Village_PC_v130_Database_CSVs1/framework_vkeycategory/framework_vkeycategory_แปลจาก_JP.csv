@@ -1,0 +1,5 @@
+﻿Item_No,Category_ID,Key,ต้นฉบับ_JP,คำแปลไทย,Thai_PUA
+1,1,VKEY_CATEGORY_GENERAL,全般,ทั่วไป,วไป
+2,2,VKEY_CATEGORY_PAD,パッド操作,เกมแพด,เกมแพด
+3,3,VKEY_CATEGORY_MOUSE,マウス操作,เมาส์,เมา
+4,4,VKEY_CATEGORY_NOT_CONFIG,設定不許可,ไม่สามารถตั้งค่าได้,ไสามารถงาไ

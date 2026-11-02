@@ -1,0 +1,37 @@
+﻿Item_No,Index,Livestock_ID,ต้นฉบับ_EN,คำแปลไทย,Thai_PUA,สถานะ
+1,0,LIVESTOCK_ID_CHICKEN,Chicken,ไก่,ไ,สมบูรณ์
+2,1,LIVESTOCK_ID_CHICK,Chick,ลูกเจี๊ยบ,กเยบ,สมบูรณ์
+3,2,LIVESTOCK_ID_DUCK,Duck,เป็ด,เด,สมบูรณ์
+4,3,LIVESTOCK_ID_DUCK_CHICK,Duckling,ลูกเป็ด,กเด,สมบูรณ์
+5,4,LIVESTOCK_ID_TURKEY,Turkey,ไก่งวง,ไงวง,สมบูรณ์
+6,5,LIVESTOCK_ID_TURKEY_CHICK,Poult,ลูกไก่งวง,กไงวง,สมบูรณ์
+7,6,LIVESTOCK_ID_COW,Cow,วัว,ว,สมบูรณ์
+8,7,LIVESTOCK_ID_CALF,Calf,ลูกวัว,กว,สมบูรณ์
+9,8,LIVESTOCK_ID_SHEEP,Sheep,แกะ,แกะ,สมบูรณ์
+10,9,LIVESTOCK_ID_LAMB,Lamb,ลูกแกะ,กแกะ,สมบูรณ์
+11,10,LIVESTOCK_ID_GOAT,Goat,แพะ,แพะ,สมบูรณ์
+12,11,LIVESTOCK_ID_BABY_GOAT,Kid,ลูกแพะ,กแพะ,สมบูรณ์
+13,12,LIVESTOCK_ID_CASHMERE_GOAT,Cashmere Goat,แพะแคชเมียร์,แพะแคชเย,สมบูรณ์
+14,13,LIVESTOCK_ID_BABY_CASHMERE_GOAT,Cashmere Kid,ลูกแพะแคชเมียร์,กแพะแคชเย,สมบูรณ์
+15,14,LIVESTOCK_ID_PIG,Pig,หมู,ห,สมบูรณ์
+16,15,LIVESTOCK_ID_PIGLET,Piglet,ลูกหมู,กห,สมบูรณ์
+17,16,LIVESTOCK_ID_HORSE,Horse,ม้า,า,สมบูรณ์
+18,17,LIVESTOCK_ID_BABY_HORSE,Foal,ลูกม้า,กา,สมบูรณ์
+19,18,LIVESTOCK_ID_COLOR_CHICK_RED,Dyed Chick (R),ลูกเจี๊ยบย้อมสี / สีแดง,กเยบอม / แดง,สมบูรณ์
+20,19,LIVESTOCK_ID_COLOR_CHICK_ORANGE,Dyed Chick (O),ลูกเจี๊ยบย้อมสี / สีส้ม,กเยบอม / ม,สมบูรณ์
+21,20,LIVESTOCK_ID_COLOR_CHICK_GREEN,Dyed Chick (G),ลูกเจี๊ยบย้อมสี / สีเขียว,กเยบอม / เยว,สมบูรณ์
+22,21,LIVESTOCK_ID_COLOR_CHICK_LIGHT_BLUE,Dyed Chick (L. B),ลูกเจี๊ยบย้อมสี / สีฟ้า,กเยบอม / า,สมบูรณ์
+23,22,LIVESTOCK_ID_COLOR_CHICK_BLUE,Dyed Chick (B),ลูกเจี๊ยบย้อมสี / สีน้ำเงิน,กเยบอม / เน,สมบูรณ์
+24,23,LIVESTOCK_ID_COLOR_CHICK_PURPLE,Dyed Chick (P),ลูกเจี๊ยบย้อมสี / สีม่วง,กเยบอม / วง,สมบูรณ์
+25,24,LIVESTOCK_ID_COLOR_CHICK_GRAY,Dyed Chick (Gy),ลูกเจี๊ยบย้อมสี / สีเทา,กเยบอม / เทา,สมบูรณ์
+26,25,LIVESTOCK_ID_ROOSTER,Rooster,ไก่ตัวผู้,ไว,สมบูรณ์
+27,26,LIVESTOCK_ID_GHOST_COW,Ghost Cow,ผีวัว,ว,สมบูรณ์
+28,27,LIVESTOCK_ID_DOG,Dog,สุนัข,ข,สมบูรณ์
+29,28,LIVESTOCK_ID_CHICK_SILKIE,Silkie Chick,ลูกเจี๊ยบซิลกี้,กเยบล,สมบูรณ์
+30,29,LIVESTOCK_ID_CHICKEN_SILKIE,Silkie,ไก่ซิลกี้,ไล,สมบูรณ์
+31,30,LIVESTOCK_ID_DUCK_CHICK_WILD,Mallard Duckling,ลูกเป็ดป่า,กเดา,สมบูรณ์
+32,31,LIVESTOCK_ID_DUCK_WILD,Mallard,เป็ดป่า,เดา,สมบูรณ์
+33,32,LIVESTOCK_ID_COWCHILD_FLUFFY,Fluffy Calf,ลูกวัวขนฟู,กวขน,สมบูรณ์
+34,33,LIVESTOCK_ID_COW_FLUFFY,Fluffy Cow,วัวขนฟู,วขน,สมบูรณ์
+35,34,LIVESTOCK_ID_BABY_GOAT_MOTTLED,Spotted Kid,ลูกแพะลายจุด,กแพะลายด,สมบูรณ์
+36,35,LIVESTOCK_ID_GOAT_MOTTLED,Spotted Goat,แพะลายจุด,แพะลายด,สมบูรณ์

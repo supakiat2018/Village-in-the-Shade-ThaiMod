@@ -1,0 +1,19 @@
+﻿Item_No,Index,id,key,ต้นฉบับ_EN,คำแปลไทย,Thai_PUA,สถานะ
+1,0,3,BUNDLE_GROUP_ID_SPRING_01,Fox Shrine / Spring,ศาลจิ้งจอก / ฤดูใบไม้ผลิ,ศาลงจอก / ฤใบไผ,สมบูรณ์
+2,1,4,BUNDLE_GROUP_ID_SUMMER_01,Fox Shrine / Summer,ศาลจิ้งจอก / ฤดูร้อน,ศาลงจอก / ฤอน,สมบูรณ์
+3,2,5,BUNDLE_GROUP_ID_AUTUMN_01,Fox Shrine / Autumn,ศาลจิ้งจอก / ฤดูใบไม้ร่วง,ศาลงจอก / ฤใบไวง,สมบูรณ์
+4,3,6,BUNDLE_GROUP_ID_WINTER_01,Fox Shrine / Winter,ศาลจิ้งจอก / ฤดูหนาว,ศาลงจอก / ฤหนาว,สมบูรณ์
+5,4,7,BUNDLE_GROUP_ID_SHRINE_REPAIR_01,Hokora Repair,การบูรณะศาลเจ้า,การรณะศาลเา,สมบูรณ์
+6,5,8,BUNDLE_GROUP_ID_SHRINE_REPAIR_02,Hokora Repair,การบูรณะศาลเจ้า 2,การรณะศาลเา 2,สมบูรณ์
+7,6,9,BUNDLE_GROUP_ID_SHRINE_REPAIR_03,Hokora Repair,การบูรณะศาลเจ้า 3,การรณะศาลเา 3,สมบูรณ์
+8,7,10,BUNDLE_GROUP_ID_SHRINE_REPAIR_04,Hokora Repair,การบูรณะศาลเจ้า 4,การรณะศาลเา 4,สมบูรณ์
+9,8,11,BUNDLE_GROUP_ID_SHRINE_REPAIR_05,Hokora Repair,Hokora Repair,Hokora Repair,สมบูรณ์
+10,9,12,BUNDLE_GROUP_ID_VILLAGE_HEAD_01,Rin's Errand,Rin's Errand,Rin's Errand,สมบูรณ์
+11,10,13,BUNDLE_GROUP_ID_VILLAGE_HEAD_02,Vegetable Delivery,Vegetable Delivery,Vegetable Delivery,สมบูรณ์
+12,11,14,BUNDLE_GROUP_ID_VILLAGE_HEAD_03,Fruit Delivery,Fruit Delivery,Fruit Delivery,สมบูรณ์
+13,12,15,BUNDLE_GROUP_ID_VILLAGE_HEAD_04,Flower Delivery,Flower Delivery,Flower Delivery,สมบูรณ์
+14,13,16,BUNDLE_GROUP_ID_VILLAGE_HEAD_05,Processed Delivery,Processed Delivery,Processed Delivery,สมบูรณ์
+15,14,17,BUNDLE_GROUP_ID_VILLAGE_HEAD_06,Ranching Delivery,Ranching Delivery,Ranching Delivery,สมบูรณ์
+16,15,18,BUNDLE_GROUP_ID_VILLAGE_HEAD_07,Hunting Delivery,Hunting Delivery,Hunting Delivery,สมบูรณ์
+17,16,19,BUNDLE_GROUP_ID_VILLAGE_HEAD_08,Fish Delivery,Fish Delivery,Fish Delivery,สมบูรณ์
+18,17,20,BUNDLE_GROUP_ID_VILLAGE_HEAD_09,High-Quality Delivery,High-Quality Delivery,High-Quality Delivery,สมบูรณ์

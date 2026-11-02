@@ -1,0 +1,12 @@
+﻿Item_No,Index,Category_ID,Key,ต้นฉบับ_EN,คำแปลไทย,Thai_PUA,สถานะ
+1,0,1,WHISTLE_ID_CALL_DOG,Dog Whistle,นกหวีดสุนัข,นกหดข,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+2,1,2,WHISTLE_ID_CALL_LIVESTOCK,Livestock Whistle,นกหวีดสัตว์เลี้ยง,นกหดตเยง,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+3,2,3,WHISTLE_ID_CALL_MOUNTAIN_GUARD,Ranger Whistle,นกหวีดผู้พิทักษ์เขา,นกหดกเขา,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+4,3,4,WHISTLE_ID_LULLABY,Lullaby Song,เพลงกล่อมเด็ก,เพลงกอมเก,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+5,4,5,WHISTLE_ID_RETURN,Miracle Whistle,นกหวีดปาฏิหาริย์,นกหดปาหา,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+6,5,6,WHISTLE_ID_REVERSAL,Reversal Song,เพลงพลิกผัน,เพลงพกน,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+7,6,7,WHISTLE_ID_VISION,Illusion Song,เพลงภาพลวงตา,เพลงภาพลวงตา,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+8,7,8,WHISTLE_ID_ARMOR,Armor Song,เพลงเกราะ,เพลงเกราะ,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+9,8,9,WHISTLE_ID_SWORD,Sword Song,เพลงดาบ,เพลงดาบ,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+10,9,10,WHISTLE_ID_RAINMAKING,Rain Whistle,นกหวีดเรียกฝน,นกหดเยกฝน,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)
+11,10,11,WHISTLE_ID_RETURN_FALSE,Miracle Whistle?,นกหวีดปาฏิหาริย์?,นกหดปาหา?,สมบูรณ์ (กระชับ สละสลวย เข้าใจง่าย)

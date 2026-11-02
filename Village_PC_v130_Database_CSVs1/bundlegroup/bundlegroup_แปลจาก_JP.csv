@@ -1,0 +1,19 @@
+﻿Item_No,Index,id,key,tag_jp,ต้นฉบับ_JP,คำแปลไทย,Thai_PUA,ต้นฉบับ_EN,สถานะ
+1,0,3,BUNDLE_GROUP_ID_SPRING_01,狐のお社・春_01,狐の社／春,ศาลจิ้งจอก / ฤดูใบไม้ผลิ,ศาลงจอก / ฤใบไผ,Fox Shrine / Spring,สมบูรณ์
+2,1,4,BUNDLE_GROUP_ID_SUMMER_01,狐のお社・夏_01,狐の社／夏,ศาลจิ้งจอก / ฤดูร้อน,ศาลงจอก / ฤอน,Fox Shrine / Summer,สมบูรณ์
+3,2,5,BUNDLE_GROUP_ID_AUTUMN_01,狐のお社・秋_01,狐の社／秋,ศาลจิ้งจอก / ฤดูใบไม้ร่วง,ศาลงจอก / ฤใบไวง,Fox Shrine / Autumn,สมบูรณ์
+4,3,6,BUNDLE_GROUP_ID_WINTER_01,狐のお社・冬_01,狐の社／冬,ศาลจิ้งจอก / ฤดูหนาว,ศาลงจอก / ฤหนาว,Fox Shrine / Winter,สมบูรณ์
+5,4,7,BUNDLE_GROUP_ID_SHRINE_REPAIR_01,ほこら修復_01,祠の修復,การบูรณะศาลเจ้า,การรณะศาลเา,Hokora Repair,สมบูรณ์
+6,5,8,BUNDLE_GROUP_ID_SHRINE_REPAIR_02,ほこら修復_02,祠の修復,การบูรณะศาลเจ้า 2,การรณะศาลเา 2,Hokora Repair,สมบูรณ์
+7,6,9,BUNDLE_GROUP_ID_SHRINE_REPAIR_03,ほこら修復_03,祠の修復,การบูรณะศาลเจ้า 3,การรณะศาลเา 3,Hokora Repair,สมบูรณ์
+8,7,10,BUNDLE_GROUP_ID_SHRINE_REPAIR_04,ほこら修復_04,祠の修復,การบูรณะศาลเจ้า 4,การรณะศาลเา 4,Hokora Repair,สมบูรณ์
+9,8,11,BUNDLE_GROUP_ID_SHRINE_REPAIR_05,ほこら修復_05,祠の修復,Hokora Repair,Hokora Repair,Hokora Repair,สมบูรณ์
+10,9,12,BUNDLE_GROUP_ID_VILLAGE_HEAD_01,リンの依頼_01,リンのお手伝い,Rin's Errand,Rin's Errand,Rin's Errand,สมบูรณ์
+11,10,13,BUNDLE_GROUP_ID_VILLAGE_HEAD_02,リンの依頼_02,野菜の納品,Vegetable Delivery,Vegetable Delivery,Vegetable Delivery,สมบูรณ์
+12,11,14,BUNDLE_GROUP_ID_VILLAGE_HEAD_03,リンの依頼_03,果物の納品,Fruit Delivery,Fruit Delivery,Fruit Delivery,สมบูรณ์
+13,12,15,BUNDLE_GROUP_ID_VILLAGE_HEAD_04,リンの依頼_04,花の納品,Flower Delivery,Flower Delivery,Flower Delivery,สมบูรณ์
+14,13,16,BUNDLE_GROUP_ID_VILLAGE_HEAD_05,リンの依頼_05,加工品の納品,Processed Delivery,Processed Delivery,Processed Delivery,สมบูรณ์
+15,14,17,BUNDLE_GROUP_ID_VILLAGE_HEAD_06,リンの依頼_06,畜産物の納品,Ranching Delivery,Ranching Delivery,Ranching Delivery,สมบูรณ์
+16,15,18,BUNDLE_GROUP_ID_VILLAGE_HEAD_07,リンの依頼_07,狩猟品の納品,Hunting Delivery,Hunting Delivery,Hunting Delivery,สมบูรณ์
+17,16,19,BUNDLE_GROUP_ID_VILLAGE_HEAD_08,リンの依頼_08,魚の納品,Fish Delivery,Fish Delivery,Fish Delivery,สมบูรณ์
+18,17,20,BUNDLE_GROUP_ID_VILLAGE_HEAD_09,リンの依頼_09,高級品の納品,High-Quality Delivery,High-Quality Delivery,High-Quality Delivery,สมบูรณ์

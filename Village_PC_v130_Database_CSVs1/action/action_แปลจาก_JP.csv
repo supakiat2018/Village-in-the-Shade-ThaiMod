@@ -1,0 +1,30 @@
+﻿Item_No,Index,Action_ID,ชื่อ_JP,กริยา_JP,ชื่อ_TH,กริยา_TH,ชื่อ_PUA,กริยา_PUA,ชื่อ_EN,สถานะ
+1,0,ACTION_ID_PLAYER_WAIT,待機,,รอ,,รอ,,Idle,สมบูรณ์
+2,1,ACTION_ID_PLAYER_WALK,歩行,,เดิน,,เน,,Walk,สมบูรณ์
+3,2,ACTION_ID_PLAYER_WATERING_CAN,ジョウロ,使う,บัวรดน้ำ,ใช้,วรด,ใ,Watering Can (Use),สมบูรณ์
+4,3,ACTION_ID_PLAYER_MULBERRY,クワ,使う,จอบ,ใช้,จอบ,ใ,Hoe (Use),สมบูรณ์
+5,4,ACTION_ID_PLAYER_AXE,オノ,使う,ขวาน,ใช้,ขวาน,ใ,Axe (Use),สมบูรณ์
+6,5,ACTION_ID_PLAYER_PICKAXE,ツルハシ,使う,อีเตอร์ขุดหิน,ใช้,เตอดน,ใ,Pickaxe (Use),สมบูรณ์
+7,6,ACTION_ID_PLAYER_SICKLE,カマ,使う,เคียว,ใช้,เยว,ใ,Sickle (Use),สมบูรณ์
+8,7,ACTION_ID_PLAYER_FISHING_ROD,釣竿,使う,คันเบ็ด,ใช้,นเด,ใ,Fishing Rod (Use),สมบูรณ์
+9,8,ACTION_ID_PLAYER_SOWING,種蒔き,植える,หว่านเมล็ด,ปลูก,หานเมด,ปก,Sowing (Plant),สมบูรณ์
+10,9,ACTION_ID_PLAYER_FERTILIZER,肥料,撒く,ปุ๋ย,หว่าน,ย,หาน,Fertilizer (Scatter),สมบูรณ์
+11,10,ACTION_ID_PLAYER_HARVEST,収穫,,เก็บเกี่ยว,,เบเยว,,Harvest,สมบูรณ์
+12,11,ACTION_ID_PLAYER_LIGHT,ライト,使う,ไฟ,ใช้,ไฟ,ใ,Light (Use),สมบูรณ์
+13,12,ACTION_ID_PLAYER_PLOW,スキ,使う,เสียม,ใช้,เยม,ใ,Plow (Use),สมบูรณ์
+14,13,ACTION_ID_PLAYER_JUMP,ジャンプ,,กระโดด,,กระโดด,,Jump,สมบูรณ์
+15,14,ACTION_ID_PLAYER_HATCHET,ナタ,使う,มีดพร้า,ใช้,ดพา,ใ,Hatchet (Use),สมบูรณ์
+16,15,ACTION_ID_PLAYER_USEITEM,アイテム使用,使う,ใช้ไอเทม,ใช้,ใไอเทม,ใ,Use Item (Use),สมบูรณ์
+17,16,ACTION_ID_PLAYER_SHAKE_TREE,木を揺らす,,เขย่าต้นไม้,,เขานไ,,Shake Tree,สมบูรณ์
+18,17,ACTION_ID_PLAYER_PLACEMENT,配置,置く,จัดวาง,วาง,ดวาง,วาง,Place (Place),สมบูรณ์
+19,18,ACTION_ID_PLAYER_RETRIEVE,回収,,เก็บกู้,,เบ,,Retrieve,สมบูรณ์
+20,19,ACTION_ID_PLAYER_FATIGUE,疲労,,เหนื่อยล้า,,เหอยา,,Fatigue,สมบูรณ์
+21,20,ACTION_ID_PLAYER_BOW_SHOOT,弓射撃,撃つ,ยิงธนู,ยิง,งธ,ง,Bow Shooting (Shoot),สมบูรณ์
+22,21,ACTION_ID_PLAYER_HIDING_GRASS,草に隠れる,,ซ่อนในพงหญ้า,,อนในพงหา,,Hide in Grass,สมบูรณ์
+23,22,ACTION_ID_PLAYER_STUN,スタン,,มึนงง,,นงง,,Stun,สมบูรณ์
+24,23,ACTION_ID_PLAYER_LIFTING,持ち運び,,ยกถือ,,ยกอ,,Carry,สมบูรณ์
+25,24,ACTION_ID_PLAYER_LIFTING_CHEST,収納箱持ち運び,,ยกกล่องเก็บของ,,ยกกองเบของ,,Carry Chest,สมบูรณ์
+26,25,ACTION_ID_PLAYER_SCRIPT,スクリプト再生,,เล่นสคริปต์,,เนสคป,,Play Script,สมบูรณ์
+27,26,ACTION_ID_ENEMY_BODY_SLAM,敵_体当たり,,ศัตรู_พุ่งชน,,ต_งชน,,Enemy Body Slam,สมบูรณ์
+28,27,ACTION_ID_PLAYER_SOUL,人魂,,ดวงวิญญาณ,,ดวงญญาณ,,Spirit,สมบูรณ์
+29,28,ACTION_ID_PLAYER_SEEDER,種まき機,使う,เครื่องหว่านเมล็ด,ใช้งาน,เคองหานเมด,ใงาน,Seeder,สมบูรณ์
