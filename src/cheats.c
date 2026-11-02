@@ -1,7 +1,6 @@
-/* cheats.c - In-memory Cheats System for Village in the Shade
- * Directly ports Cheat Engine AOB injections and memory pointer locks into C.
- * Includes In-Game NoClip Hotkey (F3).
- * Supports hot-reloading and instant safe disable when cheats.ini is renamed or removed.
+/* cheats.c - Mod Engine Settings & In-memory Cheats System for Village in the Shade
+ * Manages settings.ini (Font kerning, Thai Keyboard, Custom Textures)
+ * Manages cheats.ini (Cheats, Hotkeys, Memory Patches)
  */
 
 #include "cheats.h"
@@ -11,12 +10,94 @@
 
 static void (*g_log)(const char* fmt, ...) = NULL;
 
-static wchar_t g_cheats_ini_path_w[MAX_PATH] = { 0 };
 static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
-static FILETIME g_last_ini_write_time = { 0 };
+static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
+ModSettings g_settings = { 1, 1, 1, 0 };
 CheatConfig g_config = { 0 };
+
+
+
+/* Helper logging */
+static void cheat_log(const char* fmt, ...)
+{
+    if (!g_log) return;
+    char buf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+    g_log("%s", buf);
+}
+
+/* ==================================================================
+ * Settings Loader (settings.ini - Engine & Hook Toggles)
+ * ================================================================== */
+void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log_fn)(const char* fmt, ...))
+{
+    if (log_fn && !g_log) g_log = log_fn;
+    if (game_dir_w && !g_game_dir_w[0]) wcscpy(g_game_dir_w, game_dir_w);
+    if (mod_dir_w && !g_mod_dir_w[0]) wcscpy(g_mod_dir_w, mod_dir_w);
+
+    wchar_t root_path[MAX_PATH];
+    swprintf(root_path, MAX_PATH, L"%ls\\settings.ini", g_game_dir_w);
+    if (GetFileAttributesW(root_path) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_settings_ini_path_w, root_path);
+    } else {
+        swprintf(g_settings_ini_path_w, MAX_PATH, L"%ls\\settings.ini", g_mod_dir_w);
+    }
+
+    FILE* f = _wfopen(g_settings_ini_path_w, L"r");
+    if (!f) {
+        cheat_log("[Settings] 'settings.ini' not found. Using safe defaults (all engine features enabled).");
+        return;
+    }
+
+    char line[512];
+    while (fgets(line, sizeof(line), f)) {
+        char* p = line;
+        while (*p == ' ' || *p == '\t' || (unsigned char)*p == 0xEF || (unsigned char)*p == 0xBB || (unsigned char)*p == 0xBF) p++;
+        if (*p == '#' || *p == ';' || *p == '[' || *p == '\0' || *p == '\r' || *p == '\n') continue;
+
+        char* eq = strchr(p, '=');
+        if (!eq) continue;
+        *eq = '\0';
+        char* key = p;
+        char* val = eq + 1;
+
+        size_t klen = strlen(key);
+        while (klen > 0 && (key[klen - 1] == ' ' || key[klen - 1] == '\t')) key[--klen] = '\0';
+        if (klen == 0) continue;
+
+        while (*val == ' ' || *val == '\t') val++;
+        size_t vlen = strlen(val);
+        while (vlen > 0 && (val[vlen - 1] == ' ' || val[vlen - 1] == '\t' || val[vlen - 1] == '\r' || val[vlen - 1] == '\n')) val[--vlen] = '\0';
+
+        char* comment = strchr(val, '#');
+        if (!comment) comment = strchr(val, ';');
+        if (comment) {
+            *comment = '\0';
+            vlen = strlen(val);
+            while (vlen > 0 && (val[vlen - 1] == ' ' || val[vlen - 1] == '\t')) val[--vlen] = '\0';
+        }
+
+        int ival = atoi(val);
+        if (_stricmp(key, "enable_proportional_font") == 0) g_settings.enable_proportional_font = ival;
+        else if (_stricmp(key, "enable_thai_keyboard") == 0) g_settings.enable_thai_keyboard = ival;
+        else if (_stricmp(key, "enable_custom_textures") == 0) g_settings.enable_custom_textures = ival;
+        else if (_stricmp(key, "use_english_textures") == 0) g_settings.use_english_textures = ival;
+    }
+    fclose(f);
+    cheat_log("[Settings] Loaded settings.ini (Font=%d, Keyboard=%d, Textures=%d, EnglishTextures=%d)",
+              g_settings.enable_proportional_font, g_settings.enable_thai_keyboard,
+              g_settings.enable_custom_textures, g_settings.use_english_textures);
+}
+
+
+#ifdef ENABLE_CHEATS
+static wchar_t g_cheats_ini_path_w[MAX_PATH] = { 0 };
+static FILETIME g_last_ini_write_time = { 0 };
 static int64_t g_frozen_time = 0;
 static int g_cheats_applied = 0;
 
@@ -135,17 +216,6 @@ static CheatPatch g_patches[] = {
 /* Global Game State Pointer resolved dynamically */
 static uintptr_t g_global_ptr_addr = 0;
 
-/* Helper logging */
-static void cheat_log(const char* fmt, ...)
-{
-    if (!g_log) return;
-    char buf[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(buf, sizeof(buf), fmt, args);
-    va_end(args);
-    g_log("%s", buf);
-}
 
 /* Safe memory read verification */
 static BOOL is_readable(const void* ptr, size_t size)
@@ -312,14 +382,8 @@ static void load_cheats_ini(void)
     FILE* f = _wfopen(g_cheats_ini_path_w, L"r");
     if (!f) return;
 
-    /* Defaults: Settings, Cheats, and Hotkeys */
+    /* Defaults: Cheats and Hotkeys ONLY */
     g_config.active = 1;
-
-    /* [Settings] Engine and hook defaults */
-    g_config.enable_proportional_font = 1;
-    g_config.enable_thai_keyboard = 1;
-    g_config.enable_custom_textures = 1;
-    g_config.use_english_textures = 0;
 
     /* [Cheats] Gameplay hacks defaults */
     g_config.god_mode = 0;
@@ -382,14 +446,8 @@ static void load_cheats_ini(void)
 
         int ival = atoi(val);
 
-        /* [Settings] Engine toggles */
-        if (_stricmp(key, "enable_proportional_font") == 0) g_config.enable_proportional_font = ival;
-        else if (_stricmp(key, "enable_thai_keyboard") == 0) g_config.enable_thai_keyboard = ival;
-        else if (_stricmp(key, "enable_custom_textures") == 0) g_config.enable_custom_textures = ival;
-        else if (_stricmp(key, "use_english_textures") == 0) g_config.use_english_textures = ival;
-
         /* [Cheats] Gameplay hacks */
-        else if (_stricmp(key, "god_mode") == 0) g_config.god_mode = ival;
+        if (_stricmp(key, "god_mode") == 0) g_config.god_mode = ival;
         else if (_stricmp(key, "infinite_items") == 0) g_config.infinite_items = ival;
         else if (_stricmp(key, "no_materials_crafting") == 0) g_config.no_materials_crafting = ival;
         else if (_stricmp(key, "no_materials_cooking") == 0) g_config.no_materials_cooking = ival;
@@ -724,3 +782,4 @@ void cheats_cleanup(void)
     g_config.active = 0;
     g_cheats_applied = 0;
 }
+#endif /* ENABLE_CHEATS */

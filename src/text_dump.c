@@ -10,9 +10,7 @@
 #endif
 #include "minhook-master/include/MinHook.h"
 #include "addrsig.h"
-#ifdef ENABLE_CHEATS
 #include "cheats.h"
-#endif
 
 #ifdef ENABLE_THAI_KEYBOARD
 #include "keyboard_v130_patch.h"
@@ -1644,8 +1642,8 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
     }
 
     /* 1b. Mods\TextDump\textures\<basename> (UI & Minimaps) */
-    if (g_config.enable_custom_textures) {
-        if (g_config.use_english_textures) {
+    if (g_settings.enable_custom_textures) {
+        if (g_settings.use_english_textures) {
             swprintf(candidate, MAX_PATH, L"%ls\\textures_en\\%ls", g_mod_dir_w, base_name_w);
             if (file_exists_and_size_w(candidate, out_size)) {
                 wcsncpy(out_path_w, candidate, out_max - 1);
@@ -3229,27 +3227,30 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    #ifdef ENABLE_CHEATS
-    /* Initialize in-memory cheats and user settings (monitors cheats.ini) */
-    cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
-#endif
+    /* Initialize engine settings from settings.ini */
+    settings_init(g_game_dir_w, g_mod_dir_w, log_msg);
 
-    /* 1. Apply Proportional Kerning internal branch patches (Respects [Settings]) */
-    if (g_config.enable_proportional_font) {
+    /* 1. Apply Proportional Kerning internal branch patches (Respects settings.ini) */
+    if (g_settings.enable_proportional_font) {
         patch_proportional_kerning_v130(base, log_msg);
     } else {
-        log_msg("[SETTINGS] Proportional kerning DISABLED by user configuration.");
+        log_msg("[SETTINGS] Proportional kerning DISABLED in settings.ini.");
     }
 
     #ifdef ENABLE_THAI_KEYBOARD
-    /* 2. Patch In-Game Virtual Keyboard string table in memory (Respects [Settings]) */
-    if (g_config.enable_thai_keyboard) {
+    /* 2. Patch In-Game Virtual Keyboard string table in memory (Respects settings.ini) */
+    if (g_settings.enable_thai_keyboard) {
         patch_virtual_keyboard_v130(base, log_msg);
     } else {
-        log_msg("[SETTINGS] Thai virtual keyboard DISABLED by user configuration.");
+        log_msg("[SETTINGS] Thai virtual keyboard DISABLED in settings.ini.");
     }
 #else
     log_msg("[KEYBOARD] Original Keyboard retained (Thai Virtual Keyboard disabled).");
+#endif
+
+    #ifdef ENABLE_CHEATS
+    /* Initialize in-memory cheats system (monitors cheats.ini) */
+    cheats_init(g_game_dir_w, g_mod_dir_w, log_msg);
 #endif
 
     log_msg("System ready! Both VFS and Text Translation are active.");
