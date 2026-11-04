@@ -108,6 +108,8 @@ DIALOGUE_SCREENSHOT_CORRECTIONS = OrderedDict([
     ('Move the inventory bar cursor left and right', 'เลื่อนเคอร์เซอร์แถบอุปกรณ์ (ซ้าย/ขวา)'),
 
     # Rin dialogues
+    ('Good morning, <player>. Here...take a look at this!', 'อรุณสวัสดิ์ <player>! นี่... ลองดูนี่สิ!'),
+    ('Good morning, <player>. Here...take a look at this', 'อรุณสวัสดิ์ <player>! นี่... ลองดูนี่สิ'),
     ('this very opportunity? Gainful employment AND your', 'ที่ได้ทำงานหาเงิน แถมยังมี'),
     ('own house?', 'บ้านเป็นของตัวเองอีกด้วยเนี่ยนะ?'),
     ('So we have an agreement. Please accept this magnificent', 'ถ้าอย่างนั้นก็ถือว่าตกลงเรียบร้อย เชิญรับ'),
@@ -140,6 +142,36 @@ DIALOGUE_SCREENSHOT_CORRECTIONS = OrderedDict([
 ])
 
 UI_CMD_PHRASES = OrderedDict([
+    # Common command prefixes
+    ('Press ', 'กด '),
+    ('Press', 'กด'),
+    ('Hold ', 'กดค้าง '),
+    ('Hold', 'กดค้าง'),
+
+    # Harvesting tips chunks
+    (' to harvest matured crops in front of you.', ' เพื่อเก็บเกี่ยวพืชผลที่โตเต็มที่ตรงหน้า'),
+    ('to harvest matured crops in front of you.', 'เพื่อเก็บเกี่ยวพืชผลที่โตเต็มที่ตรงหน้า'),
+    (' to harvest matured crops in front of you', ' เพื่อเก็บเกี่ยวพืชผลที่โตเต็มที่ตรงหน้า'),
+    ('to harvest matured crops in front of you', 'เพื่อเก็บเกี่ยวพืชผลที่โตเต็มที่ตรงหน้า'),
+    (' in front of a crop to continuously harvest', ' ตรงหน้าพืชผลเพื่อเก็บเกี่ยวอย่างต่อเนื่อง'),
+    ('in front of a crop to continuously harvest', 'ตรงหน้าพืชผลเพื่อเก็บเกี่ยวอย่างต่อเนื่อง'),
+    (' in front of a crop to continuously harvest.', ' ตรงหน้าพืชผลเพื่อเก็บเกี่ยวอย่างต่อเนื่อง'),
+    ('in front of a crop to continuously harvest.', 'ตรงหน้าพืชผลเพื่อเก็บเกี่ยวอย่างต่อเนื่อง'),
+    ('crops of the same type.', 'พืชผลชนิดเดียวกันอย่างต่อเนื่อง'),
+    ('crops of the same type', 'พืชผลชนิดเดียวกันอย่างต่อเนื่อง'),
+    ('Now, go ahead and harvest them.', 'ตอนนี้ ไปเก็บเกี่ยวพืชผลได้เลย'),
+    ('Now, go ahead and harvest them', 'ตอนนี้ ไปเก็บเกี่ยวพืชผลได้เลย'),
+    ('ow, go ahead and harvest them.', 'ตอนนี้ ไปเก็บเกี่ยวพืชผลได้เลย'),
+    ('ow, go ahead and harvest them', 'ตอนนี้ ไปเก็บเกี่ยวพืชผลได้เลย'),
+
+    # Jumping tips chunks
+    (' while moving toward a fence with', ' ขณะเคลื่อนที่เข้าหารั้วด้วย'),
+    ('while moving toward a fence with', 'ขณะเคลื่อนที่เข้าหารั้วด้วย'),
+    (' to jump over it.', ' เพื่อกระโดดข้ามรั้ว'),
+    ('to jump over it.', 'เพื่อกระโดดข้ามรั้ว'),
+    (' to jump over it', ' เพื่อกระโดดข้ามรั้ว'),
+    ('to jump over it', 'เพื่อกระโดดข้ามรั้ว'),
+
     ('to set configurations', 'ไปที่หน้าจอตั้งค่า'),
     (' to set configurations', ' ไปที่หน้าจอตั้งค่า'),
     ('to change assignments', 'เพื่อเปลี่ยนปุ่มที่กำหนด'),
@@ -171,6 +203,27 @@ UI_CMD_PHRASES = OrderedDict([
     ('slightly, or', 'เบาๆ หรือ'),
     (' slightly, or', ' เบาๆ หรือ'),
 ])
+
+def add_pair_and_cmd_chunks(pairs_dict, orig, trans):
+    if not orig or not trans or orig == trans: return
+    pairs_dict[orig] = trans
+    orig_trim = orig.rstrip('、,。.!?！？')
+    if orig_trim and orig_trim != orig and orig_trim not in pairs_dict:
+        pairs_dict[orig_trim] = trans
+
+    if '<cmd' in orig.lower():
+        orig_parts = re.split(r'<cmd[^>]*>', orig, flags=re.IGNORECASE)
+        trans_parts = re.split(r'<cmd[^>]*>', trans, flags=re.IGNORECASE)
+        if len(orig_parts) == len(trans_parts) and len(orig_parts) > 1:
+            for op, tp in zip(orig_parts, trans_parts):
+                op_c = op.strip()
+                tp_c = tp.strip()
+                if len(op_c) >= 2 and tp_c:
+                    if op not in pairs_dict: pairs_dict[op] = tp
+                    if op_c not in pairs_dict: pairs_dict[op_c] = tp_c
+                    op_t = op_c.rstrip('、,。.!?！？')
+                    if op_t and op_t != op_c and op_t not in pairs_dict:
+                        pairs_dict[op_t] = tp_c
 
 print('Parsing CSV database directly from master CSVs...')
 total_entries = 0
@@ -243,11 +296,7 @@ with open(out_path, 'w', encoding='utf-8') as out_f:
                             elif t_idx >= 0 and t_idx < len(row) and row[t_idx].strip():
                                 trans = to_pua(clean_str(row[t_idx]))
                             trans = clean_trans(trans, orig)
-                            if orig and trans and orig != trans:
-                                jp_pairs[orig] = trans
-                                orig_trim = orig.rstrip('、,。.!?！？')
-                                if orig_trim and orig_trim != orig and orig_trim not in jp_pairs:
-                                    jp_pairs[orig_trim] = trans
+                            add_pair_and_cmd_chunks(jp_pairs, orig, trans)
 
                     # EN pairs from JP CSV (e.g. column บทสนทนา_EN)
                     for o_idx, p_idx, t_idx in en_cols:
@@ -260,11 +309,7 @@ with open(out_path, 'w', encoding='utf-8') as out_f:
                             elif t_idx >= 0 and t_idx < len(row) and row[t_idx].strip():
                                 trans = to_pua(clean_str(row[t_idx]))
                             trans = clean_trans(trans, orig)
-                            if orig and trans and orig != trans:
-                                en_pairs[orig] = trans
-                                orig_trim = orig.rstrip('、,。.!?！？')
-                                if orig_trim and orig_trim != orig and orig_trim not in en_pairs:
-                                    en_pairs[orig_trim] = trans
+                            add_pair_and_cmd_chunks(en_pairs, orig, trans)
 
         # 2. Process EN CSV
         if os.path.exists(en_csv):
@@ -300,11 +345,7 @@ with open(out_path, 'w', encoding='utf-8') as out_f:
                             elif t_idx >= 0 and t_idx < len(row) and row[t_idx].strip():
                                 trans = to_pua(clean_str(row[t_idx]))
                             trans = clean_trans(trans, orig)
-                            if orig and trans and orig != trans:
-                                en_pairs[orig] = trans
-                                orig_trim = orig.rstrip('、,。.!?！？')
-                                if orig_trim and orig_trim != orig and orig_trim not in en_pairs:
-                                    en_pairs[orig_trim] = trans
+                            add_pair_and_cmd_chunks(en_pairs, orig, trans)
 
         # Write category pairs
         category_stats.append((cat, len(jp_pairs), len(en_pairs)))
@@ -354,12 +395,8 @@ print(f'Successfully built clean translation.txt with {total_entries:,} entries!
 for cat, jcnt, ecnt in category_stats:
     print(f'  {cat:22} -> JP: {jcnt:5,}, EN: {ecnt:5,}, Total: {jcnt+ecnt:5,}')
 
-# Deploy translation.txt to Dev and Steam TextDump folders
-mod_textdump = os.path.join(dev_dir, 'Mods', 'TextDump', 'translation.txt')
-shutil.copy2(out_path, mod_textdump)
-print(f'Copied translation.txt to: {mod_textdump}')
-
-steam_trans = r'C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\Mods\TextDump\translation.txt'
-if os.path.exists(os.path.dirname(steam_trans)):
-    shutil.copy2(out_path, steam_trans)
-    print(f'Copied translation.txt to Steam: {steam_trans}')
+# Deploy translation.txt to Steam Game Root
+steam_root_trans = r'C:\Program Files (x86)\Steam\steamapps\common\Village in the Shade\translation.txt'
+if os.path.exists(os.path.dirname(steam_root_trans)):
+    shutil.copy2(out_path, steam_root_trans)
+    print(f'Copied translation.txt to Steam Root: {steam_root_trans}')

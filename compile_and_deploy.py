@@ -68,7 +68,11 @@ if os.path.exists(steam_root):
     safe_copy(settings_ini, os.path.join(steam_root, "settings.ini"))
     if os.path.exists(trans_txt):
         safe_copy(trans_txt, os.path.join(steam_root, "translation.txt"))
-        safe_copy(trans_txt, os.path.join(steam_mod, "translation.txt"))
+    # Ensure no translation.txt remains inside steam_mod (keep it only at steam_root)
+    dup_steam_mod_trans = os.path.join(steam_mod, "translation.txt")
+    if os.path.exists(dup_steam_mod_trans):
+        try: os.remove(dup_steam_mod_trans)
+        except: pass
     dup_steam = os.path.join(steam_mod, "cheats.ini")
     if os.path.exists(dup_steam):
         os.remove(dup_steam)

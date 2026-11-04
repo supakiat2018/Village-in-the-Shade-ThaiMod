@@ -203,6 +203,136 @@ typedef struct TransNode {
 static TransNode* g_trans_table[HASH_TABLE_SIZE] = { 0 };
 static int g_trans_count = 0;
 
+/* ==================================================================
+ * RVA Context-Aware Translation Table & Tracing System
+ * ================================================================== */
+typedef struct RvaNode {
+    uint32_t rva;
+    uint32_t hash;
+    char* orig;
+    float scale;
+    char* trans;
+    struct RvaNode* next;
+} RvaNode;
+
+#define RVA_TABLE_SIZE 4096
+static RvaNode* g_rva_table[RVA_TABLE_SIZE] = { 0 };
+static int g_rva_count = 0;
+static uintptr_t g_game_base_addr = 0;
+static wchar_t g_rva_trace_path_w[MAX_PATH] = { 0 };
+
+static void clear_rva_table(void)
+{
+    for (int i = 0; i < RVA_TABLE_SIZE; i++) {
+        RvaNode* node = g_rva_table[i];
+        while (node) {
+            RvaNode* next = node->next;
+            free(node->orig);
+            free(node->trans);
+            free(node);
+            node = next;
+        }
+        g_rva_table[i] = NULL;
+    }
+    g_rva_count = 0;
+}
+
+static void insert_rva_override(const char* orig, uint32_t rva, float scale, const char* trans)
+{
+    if (!orig || !trans || *orig == '\0' || *trans == '\0' || rva == 0) return;
+    uint32_t h = hash_str(orig) ^ rva;
+    uint32_t bucket = h % RVA_TABLE_SIZE;
+
+    RvaNode* node = g_rva_table[bucket];
+    while (node) {
+        if (node->rva == rva && node->hash == h && strcmp(node->orig, orig) == 0) {
+            free(node->trans);
+            node->trans = _strdup(trans);
+            node->scale = scale;
+            return;
+        }
+        node = node->next;
+    }
+
+    RvaNode* new_node = (RvaNode*)malloc(sizeof(RvaNode));
+    if (new_node) {
+        new_node->rva = rva;
+        new_node->hash = h;
+        new_node->orig = _strdup(orig);
+        new_node->scale = scale;
+        new_node->trans = _strdup(trans);
+        new_node->next = g_rva_table[bucket];
+        g_rva_table[bucket] = new_node;
+        g_rva_count++;
+    }
+}
+
+static const char* lookup_rva_override(const char* orig, uint32_t rva, float* out_scale)
+{
+    if (!orig || orig[0] == '\0' || rva == 0 || g_rva_count == 0) return NULL;
+    uint32_t h = hash_str(orig) ^ rva;
+    uint32_t bucket = h % RVA_TABLE_SIZE;
+
+    EnterCriticalSection(&g_cs);
+    RvaNode* node = g_rva_table[bucket];
+    while (node) {
+        if (node->rva == rva && node->hash == h && strcmp(node->orig, orig) == 0) {
+            LeaveCriticalSection(&g_cs);
+            if (out_scale) *out_scale = node->scale;
+            return node->trans;
+        }
+        node = node->next;
+    }
+    LeaveCriticalSection(&g_cs);
+    return NULL;
+}
+
+#define RVA_TRACE_CACHE_SIZE 2048
+typedef struct {
+    uint32_t rva;
+    uint32_t hash;
+} RvaTraceEntry;
+static RvaTraceEntry g_rva_trace_cache[RVA_TRACE_CACHE_SIZE];
+static volatile LONG g_rva_trace_cache_count = 0;
+static FILE* g_rva_trace_fp = NULL;
+
+static void log_rva_trace(const char* str, uintptr_t caller_rva)
+{
+    if (!str || str[0] == '\0' || caller_rva == 0) return;
+
+    /* Only trace short strings / potential UI buttons / labels (1 to 24 chars) */
+    size_t len = strlen(str);
+    if (len > 24 || strchr(str, '\n')) return;
+
+    uint32_t h = hash_str(str);
+    uint32_t rva32 = (uint32_t)caller_rva;
+
+    /* Check if already logged */
+    LONG count = g_rva_trace_cache_count;
+    if (count > RVA_TRACE_CACHE_SIZE) count = RVA_TRACE_CACHE_SIZE;
+    for (LONG i = 0; i < count; i++) {
+        if (g_rva_trace_cache[i].rva == rva32 && g_rva_trace_cache[i].hash == h) {
+            return;
+        }
+    }
+
+    LONG idx = InterlockedIncrement(&g_rva_trace_cache_count) - 1;
+    if (idx < RVA_TRACE_CACHE_SIZE) {
+        g_rva_trace_cache[idx].rva = rva32;
+        g_rva_trace_cache[idx].hash = h;
+    }
+
+    EnterCriticalSection(&g_cs);
+    if (!g_rva_trace_fp && g_rva_trace_path_w[0] != L'\0') {
+        g_rva_trace_fp = _wfopen(g_rva_trace_path_w, L"a+");
+    }
+    if (g_rva_trace_fp) {
+        fprintf(g_rva_trace_fp, "[RVA 0x%08X] \"%s\"\n", rva32, str);
+        fflush(g_rva_trace_fp);
+    }
+    LeaveCriticalSection(&g_cs);
+}
+
 static void clear_translation_table(void)
 {
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
@@ -297,6 +427,112 @@ static BOOL replace_str(const char* src, const char* from, const char* to, char*
 static const char* lookup_translation(const char* orig);
 static char g_player_name[64] = { 0 };
 static char g_dog_name[64] = { 0 };
+
+/* ==================================================================
+ * Player Name Wildcard Matching (Method A: Prefix + Suffix)
+ * ================================================================== */
+typedef struct PlayerWildcard {
+    char* prefix;
+    size_t prefix_len;
+    char* suffix;
+    size_t suffix_len;
+    char* trans_template;
+    struct PlayerWildcard* next;
+} PlayerWildcard;
+
+static PlayerWildcard* g_player_wildcards = NULL;
+static int g_player_wildcard_count = 0;
+
+static void clear_player_wildcards(void)
+{
+    PlayerWildcard* cur = g_player_wildcards;
+    while (cur) {
+        PlayerWildcard* next = cur->next;
+        free(cur->prefix);
+        free(cur->suffix);
+        free(cur->trans_template);
+        free(cur);
+        cur = next;
+    }
+    g_player_wildcards = NULL;
+    g_player_wildcard_count = 0;
+}
+
+static void register_player_wildcard(const char* orig, const char* trans)
+{
+    if (!orig || !trans) return;
+    const char* tag = strstr(orig, "<player>");
+    if (!tag) return;
+    if (strstr(tag + 8, "<player>")) return; /* Only single <player> templates */
+
+    size_t pfx_len = (size_t)(tag - orig);
+    const char* sfx_start = tag + 8;
+    size_t sfx_len = strlen(sfx_start);
+
+    /* Strict guard against false positives:
+     * We need reliable context to extract a player name without ambiguity:
+     * 1) Must have alphanumeric characters in prefix or suffix.
+     * 2) Cannot be suffix-only with just punctuation/dots.
+     */
+    int pfx_has_alnum = 0;
+    for (size_t i = 0; i < pfx_len; i++) {
+        if (isalnum((unsigned char)orig[i])) pfx_has_alnum = 1;
+    }
+    int sfx_has_alnum = 0;
+    for (size_t i = 0; i < sfx_len; i++) {
+        if (isalnum((unsigned char)sfx_start[i])) sfx_has_alnum = 1;
+    }
+
+    /* Suffix-only (pfx_len == 0): e.g. "<player>..." - must have words and >= 12 chars */
+    if (pfx_len == 0 && (!sfx_has_alnum || sfx_len < 12)) return;
+
+    /* Prefix-only (sfx_len == 0): e.g. "...<player>" - must have words and >= 8 chars */
+    if (sfx_len == 0 && (!pfx_has_alnum || pfx_len < 8)) return;
+
+    /* If both exist, require meaningful words and combined length >= 8 */
+    if (pfx_len > 0 && sfx_len > 0) {
+        if (!pfx_has_alnum && !sfx_has_alnum) return;
+        if (pfx_len + sfx_len < 8) return;
+        if (!sfx_has_alnum && (pfx_len < 6 || !pfx_has_alnum)) return;
+    }
+
+    PlayerWildcard* node = (PlayerWildcard*)malloc(sizeof(PlayerWildcard));
+    if (!node) return;
+
+    node->prefix = (char*)malloc(pfx_len + 1);
+    if (node->prefix) {
+        memcpy(node->prefix, orig, pfx_len);
+        node->prefix[pfx_len] = '\0';
+    }
+    node->prefix_len = pfx_len;
+
+    node->suffix = _strdup(sfx_start);
+    node->suffix_len = sfx_len;
+
+    node->trans_template = _strdup(trans);
+    node->next = g_player_wildcards;
+    g_player_wildcards = node;
+    g_player_wildcard_count++;
+}
+
+static void strip_cmd_tags_in_place(char* str)
+{
+    if (!str) return;
+    char* p = str;
+    while (*p) {
+        if (p[0] == '<' &&
+            (p[1] == 'c' || p[1] == 'C') &&
+            (p[2] == 'm' || p[2] == 'M') &&
+            (p[3] == 'd' || p[3] == 'D')) {
+            char* end = strchr(p, '>');
+            if (end) {
+                memmove(p, end + 1, strlen(end + 1) + 1);
+                continue;
+            }
+        }
+        p++;
+    }
+}
 
 static char s_dynamic_buffers[4][1024];
 static volatile LONG s_dynamic_buf_idx = 0;
@@ -436,47 +672,41 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         }
     }
 
-    /* 2.4. Automatic Player Name Detection from Dialogue Prefix (e.g. "tob......... If you want to live here") */
-    if (g_player_name[0] == '\0' || strstr(orig, g_player_name) == NULL) {
-        const char* p_dots = strstr(orig, "...");
-        if (!p_dots) p_dots = strstr(orig, "\xe2\x80\xa6");
-        if (p_dots && p_dots > orig && (size_t)(p_dots - orig) <= 24) {
-            size_t nlen = (size_t)(p_dots - orig);
-            BOOL is_name = TRUE;
-            for (size_t k = 0; k < nlen; k++) {
-                unsigned char ch = (unsigned char)orig[k];
-                if (ch <= ' ' || ch == '<' || ch == '>' || ch == ',' || ch == '?' || ch == '!' || ch == ';' || ch == ':') {
-                    is_name = FALSE;
-                    break;
-                }
+    /* 2.4. Wildcard Player Name Resolver (Method A: Prefix + Suffix matching) */
+    if (g_player_name[0] == '\0') {
+        size_t orig_len = strlen(orig);
+        for (PlayerWildcard* pw = g_player_wildcards; pw != NULL; pw = pw->next) {
+            if (orig_len <= pw->prefix_len + pw->suffix_len) continue;
+
+            /* Check prefix */
+            if (pw->prefix_len > 0 && strncmp(orig, pw->prefix, pw->prefix_len) != 0) {
+                continue;
             }
-            if (is_name) {
-                char cand[32];
-                memcpy(cand, orig, nlen);
-                cand[nlen] = '\0';
-                const char* p_after = p_dots;
-                while (*p_after == '.' || (unsigned char)*p_after == 0x85 || (unsigned char)*p_after == 0xa6) p_after++;
-                
-                char test_templ[1024];
-                snprintf(test_templ, sizeof(test_templ), "<player>...%s", p_after);
-                
-                uint32_t th = hash_str(test_templ);
-                uint32_t tbucket = th % HASH_TABLE_SIZE;
-                EnterCriticalSection(&g_cs);
-                TransNode* tn = g_trans_table[tbucket];
-                BOOL found_template = FALSE;
-                while (tn) {
-                    if (tn->hash == th && strcmp(tn->orig, test_templ) == 0) {
-                        found_template = TRUE;
+            /* Check suffix */
+            if (pw->suffix_len > 0 && strcmp(orig + (orig_len - pw->suffix_len), pw->suffix) != 0) {
+                continue;
+            }
+
+            /* Candidate extracted name between prefix and suffix */
+            const char* name_start = orig + pw->prefix_len;
+            size_t name_len = orig_len - pw->prefix_len - pw->suffix_len;
+
+            /* Validate name (1 to 24 chars, no tags or control chars) */
+            if (name_len > 0 && name_len <= 24) {
+                BOOL valid_name = TRUE;
+                for (size_t i = 0; i < name_len; i++) {
+                    unsigned char ch = (unsigned char)name_start[i];
+                    if (ch < 0x20 || ch == '<' || ch == '>' || ch == '\n' || ch == '\r') {
+                        valid_name = FALSE;
                         break;
                     }
-                    tn = tn->next;
                 }
-                LeaveCriticalSection(&g_cs);
-                
-                if (found_template) {
-                    strncpy(g_player_name, cand, sizeof(g_player_name) - 1);
-                    log_msg("[PLAYER] Auto-detected player name from dialogue prefix: '%s'", g_player_name);
+                if (valid_name) {
+                    memcpy(g_player_name, name_start, name_len);
+                    g_player_name[name_len] = '\0';
+                    log_msg("[PLAYER] *** LOCKED PLAYER NAME via Wildcard Match: '%s' (from template: '%s<player>%s') ***",
+                            g_player_name, pw->prefix, pw->suffix);
+                    break;
                 }
             }
         }
@@ -1395,9 +1625,34 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
             }
         }
 
+        /* Extract [RVA:0x...] target or @0x... */
+        uint32_t target_rva = 0;
+        char* rva_tag = strstr(orig, "[RVA:");
+        if (rva_tag) {
+            char* tag_end = strchr(rva_tag, ']');
+            if (tag_end) {
+                target_rva = (uint32_t)strtoul(rva_tag + 5, NULL, 0);
+                memmove(rva_tag, tag_end + 1, strlen(tag_end + 1) + 1);
+            }
+        }
+        if (!target_rva) {
+            char* at_tag = strchr(orig, '@');
+            if (at_tag && (at_tag[1] == '0' && (at_tag[2] == 'x' || at_tag[2] == 'X'))) {
+                target_rva = (uint32_t)strtoul(at_tag + 1, NULL, 0);
+                *at_tag = '\0';
+            }
+        }
+
         if (orig[0] == '\0') continue;
 
-        insert_translation(orig, scale, trans);
+        if (target_rva != 0) {
+            insert_rva_override(orig, target_rva, scale, trans);
+        } else {
+            insert_translation(orig, scale, trans);
+        }
+        if (strstr(orig, "<player>")) {
+            register_player_wildcard(orig, trans);
+        }
         loaded++;
     }
 
@@ -1409,6 +1664,8 @@ static void load_translation_file(void)
 {
     EnterCriticalSection(&g_cs);
     clear_translation_table();
+    clear_rva_table();
+    clear_player_wildcards();
     int loaded = 0;
 
     /* Check game root first (C:\...\Village in the Shade\translation.txt), then Mods\TextDump */
@@ -3205,13 +3462,34 @@ static void hk_putStr(void* this_ptr, const char* str)
     }
     process_captured_text(str, "putStr");
 
+    void* ret_addr = _ReturnAddress();
+    uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
+    log_rva_trace(str, caller_rva);
+
     float scale = 1.0f;
-    const char* rep = lookup_translation_ex(str, &scale);
+    const char* rep = lookup_rva_override(str, (uint32_t)caller_rva, &scale);
+    if (!rep) {
+        rep = lookup_translation_ex(str, &scale);
+    }
+    char clean_buf[2048];
     if (rep) {
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-        str = rep;
+        if (strstr(rep, "<cmd") || strstr(rep, "<CMD") || strstr(rep, "<Cmd")) {
+            strncpy(clean_buf, rep, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        } else {
+            str = rep;
+        }
     } else {
         check_and_log_missing(str, "putStr");
+        if (str && (strstr(str, "<cmd") || strstr(str, "<CMD") || strstr(str, "<Cmd"))) {
+            strncpy(clean_buf, str, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        }
     }
 
     if (this_ptr) {
@@ -3238,13 +3516,34 @@ static void hk_putStrProp(void* this_ptr, const char* str)
     }
     process_captured_text(str, "putStrProp");
 
+    void* ret_addr = _ReturnAddress();
+    uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
+    log_rva_trace(str, caller_rva);
+
     float scale = 1.0f;
-    const char* rep = lookup_translation_ex(str, &scale);
+    const char* rep = lookup_rva_override(str, (uint32_t)caller_rva, &scale);
+    if (!rep) {
+        rep = lookup_translation_ex(str, &scale);
+    }
+    char clean_buf[2048];
     if (rep) {
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-        str = rep;
+        if (strstr(rep, "<cmd") || strstr(rep, "<CMD") || strstr(rep, "<Cmd")) {
+            strncpy(clean_buf, rep, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        } else {
+            str = rep;
+        }
     } else {
         check_and_log_missing(str, "putStrProp");
+        if (str && (strstr(str, "<cmd") || strstr(str, "<CMD") || strstr(str, "<Cmd"))) {
+            strncpy(clean_buf, str, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        }
     }
 
     if (this_ptr) {
@@ -3262,13 +3561,34 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
     }
     process_captured_text(str, "putStrAlign");
 
+    void* ret_addr = _ReturnAddress();
+    uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
+    log_rva_trace(str, caller_rva);
+
     float scale = 1.0f;
-    const char* rep = lookup_translation_ex(str, &scale);
+    const char* rep = lookup_rva_override(str, (uint32_t)caller_rva, &scale);
+    if (!rep) {
+        rep = lookup_translation_ex(str, &scale);
+    }
+    char clean_buf[2048];
     if (rep) {
         InterlockedIncrement64((volatile LONG64*)&g_total_replacements);
-        str = rep;
+        if (strstr(rep, "<cmd") || strstr(rep, "<CMD") || strstr(rep, "<Cmd")) {
+            strncpy(clean_buf, rep, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        } else {
+            str = rep;
+        }
     } else {
         check_and_log_missing(str, "putStrAlign");
+        if (str && (strstr(str, "<cmd") || strstr(str, "<CMD") || strstr(str, "<Cmd"))) {
+            strncpy(clean_buf, str, sizeof(clean_buf) - 1);
+            clean_buf[sizeof(clean_buf) - 1] = '\0';
+            strip_cmd_tags_in_place(clean_buf);
+            str = clean_buf;
+        }
     }
 
     if (this_ptr) {
@@ -3387,6 +3707,7 @@ static void init_paths(void)
     swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
     swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
     swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
+    swprintf(g_rva_trace_path_w, MAX_PATH, L"%ls\\rva_trace.txt", g_mod_dir_w);
 
     /* Missing files directory: Mods/TextDump/missing */
     wchar_t missing_dir_w[MAX_PATH];
@@ -3449,6 +3770,7 @@ static void patch_proportional_kerning_v130(uintptr_t base, void (*log_fn)(const
 static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
+    g_game_base_addr = (uintptr_t)GetModuleHandleA(NULL);
 
     /* Initialize MinHook immediately - zero delay */
     if (MH_Initialize() != MH_OK) {
