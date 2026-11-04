@@ -295,6 +295,12 @@ static BOOL replace_str(const char* src, const char* from, const char* to, char*
 }
 
 static const char* lookup_translation(const char* orig);
+static char g_player_name[64] = { 0 };
+static char g_dog_name[64] = { 0 };
+
+static char s_dynamic_buffers[4][1024];
+static volatile LONG s_dynamic_buf_idx = 0;
+
 static const char* try_match_dynamic_template(const char* orig);
 
 static const char* lookup_translation_ex(const char* orig, float* out_scale)
@@ -402,6 +408,7 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         if (name_len < sizeof(captured_name)) {
             memcpy(captured_name, p_name_start, name_len);
             captured_name[name_len] = '\0';
+            strncpy(g_player_name, captured_name, sizeof(g_player_name) - 1);
         }
 
         static char name_confirm_buf[512];
@@ -429,10 +436,211 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         }
     }
 
+    /* 2.4. Automatic Player Name Detection from Dialogue Prefix (e.g. "tob......... If you want to live here") */
+    if (g_player_name[0] == '\0' || strstr(orig, g_player_name) == NULL) {
+        const char* p_dots = strstr(orig, "...");
+        if (!p_dots) p_dots = strstr(orig, "\xe2\x80\xa6");
+        if (p_dots && p_dots > orig && (size_t)(p_dots - orig) <= 24) {
+            size_t nlen = (size_t)(p_dots - orig);
+            BOOL is_name = TRUE;
+            for (size_t k = 0; k < nlen; k++) {
+                unsigned char ch = (unsigned char)orig[k];
+                if (ch <= ' ' || ch == '<' || ch == '>' || ch == ',' || ch == '?' || ch == '!' || ch == ';' || ch == ':') {
+                    is_name = FALSE;
+                    break;
+                }
+            }
+            if (is_name) {
+                char cand[32];
+                memcpy(cand, orig, nlen);
+                cand[nlen] = '\0';
+                const char* p_after = p_dots;
+                while (*p_after == '.' || (unsigned char)*p_after == 0x85 || (unsigned char)*p_after == 0xa6) p_after++;
+                
+                char test_templ[1024];
+                snprintf(test_templ, sizeof(test_templ), "<player>...%s", p_after);
+                
+                uint32_t th = hash_str(test_templ);
+                uint32_t tbucket = th % HASH_TABLE_SIZE;
+                EnterCriticalSection(&g_cs);
+                TransNode* tn = g_trans_table[tbucket];
+                BOOL found_template = FALSE;
+                while (tn) {
+                    if (tn->hash == th && strcmp(tn->orig, test_templ) == 0) {
+                        found_template = TRUE;
+                        break;
+                    }
+                    tn = tn->next;
+                }
+                LeaveCriticalSection(&g_cs);
+                
+                if (found_template) {
+                    strncpy(g_player_name, cand, sizeof(g_player_name) - 1);
+                    log_msg("[PLAYER] Auto-detected player name from dialogue prefix: '%s'", g_player_name);
+                }
+            }
+        }
+    }
+
+    /* 2.5. Dynamic Player & Dog Name Matcher */
+    if ((g_player_name[0] != '\0' && strstr(orig, g_player_name)) ||
+        (g_dog_name[0] != '\0' && strstr(orig, g_dog_name))) {
+        char templ_query[2048];
+        char step1[2048];
+        const char* p_src = orig;
+
+        if (g_player_name[0] != '\0' && strstr(p_src, g_player_name)) {
+            replace_str(p_src, g_player_name, "<player>", step1, sizeof(step1));
+            p_src = step1;
+        }
+        if (g_dog_name[0] != '\0' && strstr(p_src, g_dog_name)) {
+            replace_str(p_src, g_dog_name, "<dog>", templ_query, sizeof(templ_query));
+        } else {
+            strncpy(templ_query, p_src, sizeof(templ_query) - 1);
+            templ_query[sizeof(templ_query) - 1] = '\0';
+        }
+
+        /* 1) Exact template lookup */
+        uint32_t qh = hash_str(templ_query);
+        uint32_t qbucket = qh % HASH_TABLE_SIZE;
+        EnterCriticalSection(&g_cs);
+        TransNode* qnode = g_trans_table[qbucket];
+        const char* matched_trans = NULL;
+        float matched_scale = 1.0f;
+        while (qnode) {
+            if (qnode->hash == qh && strcmp(qnode->orig, templ_query) == 0) {
+                matched_trans = qnode->trans;
+                matched_scale = qnode->scale;
+                break;
+            }
+            qnode = qnode->next;
+        }
+
+        /* 1b) Normalized dots template lookup (e.g. "<player>........." -> "<player>...") */
+        if (!matched_trans && strstr(templ_query, "....")) {
+            char norm_query[2048];
+            int nq_idx = 0;
+            int dot_count = 0;
+            for (int i = 0; templ_query[i] && nq_idx < (int)sizeof(norm_query) - 2; i++) {
+                if (templ_query[i] == '.') {
+                    dot_count++;
+                    if (dot_count <= 3) norm_query[nq_idx++] = '.';
+                } else {
+                    dot_count = 0;
+                    norm_query[nq_idx++] = templ_query[i];
+                }
+            }
+            norm_query[nq_idx] = '\0';
+            uint32_t nh = hash_str(norm_query);
+            uint32_t nbucket = nh % HASH_TABLE_SIZE;
+            TransNode* nnode = g_trans_table[nbucket];
+            while (nnode) {
+                if (nnode->hash == nh && strcmp(nnode->orig, norm_query) == 0) {
+                    matched_trans = nnode->trans;
+                    matched_scale = nnode->scale;
+                    break;
+                }
+                nnode = nnode->next;
+            }
+        }
+
+        /* 2) Punctuation-trimmed template lookup fallback */
+        if (!matched_trans) {
+            size_t tlen = strlen(templ_query);
+            size_t trim_bytes = 0;
+            if (tlen >= 3) {
+                const unsigned char* end_u = (const unsigned char*)(templ_query + tlen - 3);
+                if ((end_u[0] == 0xe3 && end_u[1] == 0x80 && (end_u[2] == 0x81 || end_u[2] == 0x82)) ||
+                    (end_u[0] == 0xef && end_u[1] == 0xbc && (end_u[2] == 0x81 || end_u[2] == 0x9f))) {
+                    trim_bytes = 3;
+                }
+            }
+            if (trim_bytes == 0 && tlen >= 1) {
+                char last_c = templ_query[tlen - 1];
+                if (last_c == ',' || last_c == '.' || last_c == '!' || last_c == '?') {
+                    trim_bytes = 1;
+                }
+            }
+            if (trim_bytes > 0 && tlen - trim_bytes < sizeof(step1)) {
+                size_t trimmed_len = tlen - trim_bytes;
+                memcpy(step1, templ_query, trimmed_len);
+                step1[trimmed_len] = '\0';
+                uint32_t th = hash_str(step1);
+                uint32_t tbucket = th % HASH_TABLE_SIZE;
+                TransNode* tnode = g_trans_table[tbucket];
+                while (tnode) {
+                    if (tnode->hash == th && strcmp(tnode->orig, step1) == 0) {
+                        matched_trans = tnode->trans;
+                        matched_scale = tnode->scale;
+                        break;
+                    }
+                    tnode = tnode->next;
+                }
+            }
+        }
+        LeaveCriticalSection(&g_cs);
+
+        if (matched_trans) {
+            if (out_scale) *out_scale = matched_scale;
+            LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+            char* buf = s_dynamic_buffers[b_idx & 3];
+            char temp_buf[1024];
+            const char* cur_trans = matched_trans;
+            if (strstr(cur_trans, "<player>") && g_player_name[0] != '\0') {
+                replace_str(cur_trans, "<player>", g_player_name, temp_buf, sizeof(temp_buf));
+                cur_trans = temp_buf;
+            }
+            if (strstr(cur_trans, "<dog>") && g_dog_name[0] != '\0') {
+                replace_str(cur_trans, "<dog>", g_dog_name, buf, sizeof(s_dynamic_buffers[0]));
+            } else {
+                strncpy(buf, cur_trans, sizeof(s_dynamic_buffers[0]) - 1);
+                buf[sizeof(s_dynamic_buffers[0]) - 1] = '\0';
+            }
+            return buf;
+        }
+    }
+
     /* 3. Dynamic Template Matching (<value ...> patterns: save dates, currency, items) */
     const char* dyn_match = try_match_dynamic_template(orig);
     if (dyn_match) {
         return dyn_match;
+    }
+
+    /* 3.5. General Punctuation Trimming Fallback */
+    {
+        size_t olen = strlen(orig);
+        size_t ptrim = 0;
+        if (olen >= 3) {
+            const unsigned char* end_u = (const unsigned char*)(orig + olen - 3);
+            if ((end_u[0] == 0xe3 && end_u[1] == 0x80 && (end_u[2] == 0x81 || end_u[2] == 0x82)) ||
+                (end_u[0] == 0xef && end_u[1] == 0xbc && (end_u[2] == 0x81 || end_u[2] == 0x9f))) {
+                ptrim = 3;
+            }
+        }
+        if (ptrim == 0 && olen >= 1) {
+            char lc = orig[olen - 1];
+            if (lc == ',' || lc == '.' || lc == '!' || lc == '?') {
+                ptrim = 1;
+            }
+        }
+        if (ptrim > 0 && olen - ptrim < 512) {
+            char ptrimmed[512];
+            memcpy(ptrimmed, orig, olen - ptrim);
+            ptrimmed[olen - ptrim] = '\0';
+            uint32_t ph = hash_str(ptrimmed);
+            uint32_t pbucket = ph % HASH_TABLE_SIZE;
+            EnterCriticalSection(&g_cs);
+            TransNode* pnode = g_trans_table[pbucket];
+            while (pnode) {
+                if (pnode->hash == ph && strcmp(pnode->orig, ptrimmed) == 0) {
+                    LeaveCriticalSection(&g_cs);
+                    if (out_scale) *out_scale = pnode->scale;
+                    return pnode->trans;
+                }
+                pnode = pnode->next;
+            }
+            LeaveCriticalSection(&g_cs);
+        }
     }
 
     return NULL;
@@ -446,9 +654,6 @@ static const char* lookup_translation(const char* orig)
 /* ==================================================================
  * Dynamic Template Matching (<value ...> patterns)
  * ================================================================== */
-static char s_dynamic_buffers[4][1024];
-static volatile LONG s_dynamic_buf_idx = 0;
-
 static const char* try_match_dynamic_template(const char* orig)
 {
     if (!orig || orig[0] == '\0') return NULL;
@@ -1206,6 +1411,16 @@ static void load_translation_file(void)
     clear_translation_table();
     int loaded = 0;
 
+    /* Check game root first (C:\...\Village in the Shade\translation.txt), then Mods\TextDump */
+    wchar_t root_trans_w[MAX_PATH];
+    swprintf(root_trans_w, MAX_PATH, L"%ls\\translation.txt", g_game_dir_w);
+    if (GetFileAttributesW(root_trans_w) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_translation_path_w, root_trans_w);
+    } else {
+        swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+    }
+    WideCharToMultiByte(CP_UTF8, 0, g_translation_path_w, -1, g_translation_path, sizeof(g_translation_path), NULL, NULL);
+
     /* 1. Load primary translation.txt */
     loaded += parse_and_insert_translation_file(g_translation_path_w);
 
@@ -1231,15 +1446,24 @@ static void load_translation_file(void)
     }
 
     LeaveCriticalSection(&g_cs);
-    log_msg("Loaded %d translation entries (translation.txt and translations folder)", loaded);
+    log_msg("Loaded %d translation entries (path=%ls)", loaded, g_translation_path_w);
 }
 
 static void check_hot_reload_translation(void)
 {
+    wchar_t active_path_w[MAX_PATH];
+    wchar_t root_trans_w[MAX_PATH];
+    swprintf(root_trans_w, MAX_PATH, L"%ls\\translation.txt", g_game_dir_w);
+    if (GetFileAttributesW(root_trans_w) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(active_path_w, root_trans_w);
+    } else {
+        swprintf(active_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+    }
+
     WIN32_FILE_ATTRIBUTE_DATA fad;
-    if (GetFileAttributesExW(g_translation_path_w, GetFileExInfoStandard, &fad)) {
-        if (CompareFileTime(&fad.ftLastWriteTime, &g_trans_filetime) != 0) {
-            log_msg("translation.txt changed on disk, hot-reloading...");
+    if (GetFileAttributesExW(active_path_w, GetFileExInfoStandard, &fad)) {
+        if (wcscmp(active_path_w, g_translation_path_w) != 0 || CompareFileTime(&fad.ftLastWriteTime, &g_trans_filetime) != 0) {
+            log_msg("translation.txt (%ls) changed on disk, hot-reloading...", active_path_w);
             load_translation_file();
         }
     }
@@ -1631,6 +1855,18 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         return FALSE;
     }
 
+    /* If database .dat override is disabled (enable_dat_override == 0), do not override database .dat files,
+     * allowing translation.txt to handle text translation cleanly without external binary .dat overrides! */
+    if (!g_settings.enable_dat_override) {
+        size_t b_len = strlen(base_name);
+        if (_stricmp(base_name, "font.dat") != 0) {
+            if ((b_len > 4 && _stricmp(base_name + b_len - 4, ".dat") == 0) ||
+                strstr(vfs_name, "database/") != NULL || strstr(vfs_name, "database\\") != NULL) {
+                return FALSE;
+            }
+        }
+    }
+
     wchar_t base_name_w[MAX_PATH];
     MultiByteToWideChar(CP_UTF8, 0, base_name, -1, base_name_w, MAX_PATH);
 
@@ -1679,7 +1915,24 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         }
     }
 
-    /* 1d. Mods\TextDump\dat\<basename> */
+    /* 1d. Mods\TextDump\dat_en\<basename> or dat_ja\<basename> */
+    if (g_settings.dat_en) {
+        swprintf(candidate, MAX_PATH, L"%ls\\dat_en\\%ls", g_mod_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
+    } else if (g_settings.dat_ja) {
+        swprintf(candidate, MAX_PATH, L"%ls\\dat_ja\\%ls", g_mod_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
+    }
+
+    /* 1d2. Fallback: Mods\TextDump\dat\<basename> */
     swprintf(candidate, MAX_PATH, L"%ls\\dat\\%ls", g_mod_dir_w, base_name_w);
     if (file_exists_and_size_w(candidate, out_size)) {
         wcsncpy(out_path_w, candidate, out_max - 1);
@@ -1907,7 +2160,7 @@ static const FadMappingDef g_fad_mapping_defs_en[] = {
     {  48, "ui_0010_itemcategory03.nltx", "ui_0010_itemcategory03_thai.nltx",  256,  512 }, /* RelOff=0x01536170 (ui_0010_itemcategory03.tga) */
     { 102, "名前_steam版_04.nltx", "名前_steam版_04_thai.nltx", 1024, 2048 }, /* RelOff=0x04610B60 (名前_steam版_04.tga) */
     { 109, "ui_5080_00.nltx", "ui_5080_00_thai.nltx", 2048, 2048 }, /* RelOff=0x049B3BB0 (ui_5080_00.tga) */
-    { 114, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 }, /* RelOff=0x04BD0600 (ui_1100_名前入力_text.tga) */
+    /* { 114, "ui_keyboard_font.nltx", "ui_keyboard_font_thai.nltx", 1024, 2048 }, -- Disabled in EN mode so virtual keyboard displays original English letters */
     { 116, "ui_5100_bandolPU01.nltx", "ui_5100_bandolPU01_thai.nltx",  256,  256 }, /* RelOff=0x04BEAC50 (ui_5100_bandolPU01.tga) */
     { 121, "ui_1170_投げ銭_text.nltx", "ui_1170_投げ銭_text_thai.nltx",  256,  128 }, /* RelOff=0x04BF1290 (ui_1170_投げ銭_text.tga) */
     { 123, "ui_0120_汎用テキスト01.nltx", "ui_0120_汎用テキスト01_thai.nltx",  512,  256 }, /* RelOff=0x04BF5B20 (ui_0120_汎用テキスト01.tga) */
@@ -3121,7 +3374,16 @@ static void init_paths(void)
     swprintf(g_dump_unique_path_w, MAX_PATH, L"%ls\\dump_unique.txt", g_mod_dir_w);
     swprintf(g_dump_log_path_w, MAX_PATH, L"%ls\\dump_log.txt", g_mod_dir_w);
     swprintf(g_tags_log_path_w, MAX_PATH, L"%ls\\tags_dump.log", g_mod_dir_w);
-    swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+
+    /* Prefer translation.txt at game root (C:\...\Village in the Shade\translation.txt) */
+    wchar_t root_trans_init_w[MAX_PATH];
+    swprintf(root_trans_init_w, MAX_PATH, L"%ls\\translation.txt", g_game_dir_w);
+    if (GetFileAttributesW(root_trans_init_w) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_translation_path_w, root_trans_init_w);
+    } else {
+        swprintf(g_translation_path_w, MAX_PATH, L"%ls\\translation.txt", g_mod_dir_w);
+    }
+
     swprintf(g_file_access_log_w, MAX_PATH, L"%ls\\file_access.log", g_mod_dir_w);
     swprintf(g_id_log_path_w, MAX_PATH, L"%ls\\id_dump.log", g_mod_dir_w);
     swprintf(g_dump_missing_path_w, MAX_PATH, L"%ls\\dump_missing.txt", g_mod_dir_w);
@@ -3202,6 +3464,18 @@ static DWORD WINAPI worker_thread(LPVOID param)
 
     /* 0. Load engine settings from settings.ini */
     settings_init(g_game_dir_w, g_mod_dir_w, log_msg);
+
+    wchar_t settings_path_w[MAX_PATH];
+    swprintf(settings_path_w, MAX_PATH, L"%ls\\settings.ini", g_game_dir_w);
+    char settings_path_a[MAX_PATH];
+    WideCharToMultiByte(CP_UTF8, 0, settings_path_w, -1, settings_path_a, sizeof(settings_path_a), NULL, NULL);
+    GetPrivateProfileStringA("Settings", "player_name", "", g_player_name, sizeof(g_player_name), settings_path_a);
+    GetPrivateProfileStringA("Settings", "dog_name", "", g_dog_name, sizeof(g_dog_name), settings_path_a);
+    if (g_player_name[0] != '\0') {
+        log_msg("[PLAYER] Configured player name: %s, dog name: %s", g_player_name, g_dog_name);
+    } else {
+        log_msg("[PLAYER] Dynamic player name auto-detection active (zero configuration needed).");
+    }
 
     /* Speedhack Hook (QueryPerformanceCounter & GetTickCount) - Respects settings.ini */
     if (g_settings.enable_speedhack) {

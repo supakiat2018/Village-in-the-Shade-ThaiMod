@@ -14,7 +14,7 @@ tasks = [
     (
         "text_dump.dll (All-in-One: Thai + Keyboard + Cheats + Speedhack + Hotkeys)",
         ["zig", "cc", "-shared", "-O2", "-s", "-m64", "-DENABLE_THAI_KEYBOARD", "-DENABLE_CHEATS",
-         r"src\text_dump.c", r"src\addrsig.c", r"src\cheats.c"] + minhook_sources +
+         r"src\text_dump.c", r"src\addrsig.c", r"src\cheats.c", r"src\speedhack.c"] + minhook_sources +
         ["-Isrc", "-o", r"bin\text_dump.dll", "-lkernel32", "-luser32", "-lgdi32"]
     ),
     (
@@ -41,26 +41,37 @@ steam_mod  = os.path.join(steam_root, "Mods", "TextDump")
 bin_dll    = os.path.join(dev_dir, "bin", "text_dump.dll")
 bin_winmm  = os.path.join(dev_dir, "bin", "winmm.dll")
 cheats_ini = os.path.join(dev_dir, "cheats.ini")
+settings_ini = os.path.join(dev_dir, "settings.ini")
+trans_txt  = os.path.join(dev_dir, "translation.txt")
+
+def safe_copy(src, dst):
+    try:
+        shutil.copy2(src, dst)
+    except PermissionError:
+        old = dst + ".old"
+        if os.path.exists(old):
+            try: os.remove(old)
+            except: pass
+        try:
+            if os.path.exists(old):
+                os.replace(dst, old)
+            else:
+                os.rename(dst, old)
+        except Exception:
+            pass
+        shutil.copy2(src, dst)
 
 if os.path.exists(steam_root):
-    shutil.copy2(bin_dll, os.path.join(steam_mod, "text_dump.dll"))
-    shutil.copy2(bin_winmm, os.path.join(steam_root, "winmm.dll"))
-    shutil.copy2(cheats_ini, os.path.join(steam_root, "cheats.ini"))
+    safe_copy(bin_dll, os.path.join(steam_mod, "text_dump.dll"))
+    safe_copy(bin_winmm, os.path.join(steam_root, "winmm.dll"))
+    safe_copy(cheats_ini, os.path.join(steam_root, "cheats.ini"))
+    safe_copy(settings_ini, os.path.join(steam_root, "settings.ini"))
+    if os.path.exists(trans_txt):
+        safe_copy(trans_txt, os.path.join(steam_root, "translation.txt"))
+        safe_copy(trans_txt, os.path.join(steam_mod, "translation.txt"))
     dup_steam = os.path.join(steam_mod, "cheats.ini")
     if os.path.exists(dup_steam):
         os.remove(dup_steam)
     print(f"[OK] Deployed to Steam Game Directory: {steam_root}")
 
-# Deploy to Desktop Complete Mod Package
-desktop_pkg = r"C:\Users\Administrator\Desktop\ม็อดภาษาไทย_เวอร์ชันสมบูรณ์_มีสูตรโกง_v1.30"
-if os.path.exists(desktop_pkg):
-    pkg_mod = os.path.join(desktop_pkg, "Mods", "TextDump")
-    shutil.copy2(bin_dll, os.path.join(pkg_mod, "text_dump.dll"))
-    shutil.copy2(bin_winmm, os.path.join(desktop_pkg, "winmm.dll"))
-    shutil.copy2(cheats_ini, os.path.join(desktop_pkg, "cheats.ini"))
-    dup_pkg = os.path.join(pkg_mod, "cheats.ini")
-    if os.path.exists(dup_pkg):
-        os.remove(dup_pkg)
-    print(f"[OK] Deployed to Desktop Complete Package: {desktop_pkg}")
-
-print("\n[COMPLETE] Unified All-in-One build and deployment finished successfully!")
+print("\n[COMPLETE] Unified All-in-One Full build deployed to Steam successfully!")

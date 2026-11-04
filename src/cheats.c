@@ -15,7 +15,7 @@ static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
-ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1, 1 };
+ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1, 0, 1 };
 CheatConfig g_config = { 0 };
 
 
@@ -91,9 +91,33 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         else if (_stricmp(key, "use_english_textures") == 0) g_settings.use_english_textures = ival;
         else if (_stricmp(key, "texture_mode") == 0) g_settings.texture_mode = ival;
         else if (_stricmp(key, "enable_thai_minimap") == 0) g_settings.enable_thai_minimap = ival;
+        else if (_stricmp(key, "enable_dat_override") == 0) g_settings.enable_dat_override = ival;
+        else if (_stricmp(key, "dat_en") == 0) g_settings.dat_en = ival;
+        else if (_stricmp(key, "dat_ja") == 0) g_settings.dat_ja = ival;
         else if (_stricmp(key, "enable_speedhack") == 0) g_settings.enable_speedhack = ival;
     }
     fclose(f);
+
+    /* Failsafe Rule: If both dat_en and dat_ja are enabled, force dat_en = 1, dat_ja = 0 (English always wins) */
+    if (g_settings.dat_en && g_settings.dat_ja) {
+        cheat_log("[Settings] WARNING: Both dat_en and dat_ja were enabled! Failsafe enforced: Defaulting to dat_en = 1, dat_ja = 0.");
+        g_settings.dat_en = 1;
+        g_settings.dat_ja = 0;
+    }
+
+    /* Update-Proof Rule: If both dat_en and dat_ja are 0, completely disable DAT overrides */
+    if (!g_settings.dat_en && !g_settings.dat_ja) {
+        if (g_settings.enable_dat_override == 1) {
+            g_settings.dat_en = 1;
+            cheat_log("[Settings] Legacy enable_dat_override=1 detected. Using dat_en = 1.");
+        } else {
+            g_settings.enable_dat_override = 0;
+            cheat_log("[Settings] UPDATE-PROOF MODE: Both dat_en=0 and dat_ja=0. DAT overrides disabled. Using 100%% runtime memory translation via translation.txt.");
+        }
+    } else {
+        g_settings.enable_dat_override = 1;
+        cheat_log("[Settings] DAT Override ENABLED: Base = %s", g_settings.dat_en ? "English (dat_en)" : "Japanese (dat_ja)");
+    }
 
     /* If Master Switch enable_thai_mod is turned off (0): disable all Thai-specific subsystems */
     if (g_settings.enable_thai_mod == 0) {
@@ -103,20 +127,19 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         g_settings.texture_mode = 0;
         g_settings.use_english_textures = 0;
         g_settings.enable_thai_minimap = 0;
+        g_settings.enable_dat_override = 0;
         cheat_log("[Settings] MASTER SWITCH: Thai Mod DISABLED (Original Game Text & Assets, Cheats/Speedhack Active)!");
     } else {
-        /* Synchronize texture_mode with legacy flags */
-        if (g_settings.texture_mode == 0 || g_settings.enable_custom_textures == 0) {
-            g_settings.texture_mode = 0;
+        /* Synchronize legacy texture flags from texture_mode */
+        if (g_settings.texture_mode == 0) {
             g_settings.enable_custom_textures = 0;
             g_settings.use_english_textures = 0;
-            /* If Thai textures are disabled, automatically force disable Thai keyboard! */
+            /* If textures are disabled, automatically disable Thai keyboard */
             g_settings.enable_thai_keyboard = 0;
-        } else if (g_settings.texture_mode == 2 || g_settings.use_english_textures == 1) {
-            g_settings.texture_mode = 2;
+        } else if (g_settings.texture_mode == 2) {
             g_settings.enable_custom_textures = 1;
             g_settings.use_english_textures = 1;
-            /* If all-English textures are used, also force disable Thai keyboard! */
+            /* If English textures are forced, disable Thai keyboard */
             g_settings.enable_thai_keyboard = 0;
         } else {
             g_settings.texture_mode = 1;
@@ -125,9 +148,9 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         }
     }
 
-    cheat_log("[Settings] Loaded settings.ini (ThaiMod=%d, Font=%d, Keyboard=%d, TextureMode=%d, ThaiMinimap=%d, Speedhack=%d)",
+    cheat_log("[Settings] Loaded settings.ini (ThaiMod=%d, Font=%d, Keyboard=%d, TextureMode=%d, ThaiMinimap=%d, DatOverride=%d, Speedhack=%d)",
               g_settings.enable_thai_mod, g_settings.enable_proportional_font, g_settings.enable_thai_keyboard,
-              g_settings.texture_mode, g_settings.enable_thai_minimap, g_settings.enable_speedhack);
+              g_settings.texture_mode, g_settings.enable_thai_minimap, g_settings.enable_dat_override, g_settings.enable_speedhack);
 }
 
 
