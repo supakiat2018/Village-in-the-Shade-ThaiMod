@@ -425,7 +425,7 @@ static BOOL replace_str(const char* src, const char* from, const char* to, char*
 }
 
 static const char* lookup_translation(const char* orig);
-static char g_player_name[64] = { 0 };
+static char g_player_name[64] = "tob";
 static char g_dog_name[64] = { 0 };
 
 /* ==================================================================
@@ -520,10 +520,7 @@ static void strip_cmd_tags_in_place(char* str)
     if (!str) return;
     char* p = str;
     while (*p) {
-        if (p[0] == '<' &&
-            (p[1] == 'c' || p[1] == 'C') &&
-            (p[2] == 'm' || p[2] == 'M') &&
-            (p[3] == 'd' || p[3] == 'D')) {
+        if (*p == '<') {
             char* end = strchr(p, '>');
             if (end) {
                 memmove(p, end + 1, strlen(end + 1) + 1);
@@ -532,6 +529,16 @@ static void strip_cmd_tags_in_place(char* str)
         }
         p++;
     }
+}
+
+static BOOL is_safe_ptr(const void* ptr, size_t size)
+{
+    if (!ptr || (uintptr_t)ptr < 0x10000 || (uintptr_t)ptr >= 0x7FFFFFFFFFFFULL) return FALSE;
+    MEMORY_BASIC_INFORMATION mbi;
+    if (VirtualQuery(ptr, &mbi, sizeof(mbi)) == 0) return FALSE;
+    if (mbi.State != MEM_COMMIT) return FALSE;
+    if (mbi.Protect & (PAGE_NOACCESS | PAGE_GUARD)) return FALSE;
+    return TRUE;
 }
 
 /* ==================================================================
@@ -1809,6 +1816,54 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
         }
         if (strstr(orig, "<player>")) {
             register_player_wildcard(orig, trans);
+        }
+
+        /* Auto-split <cmd ...> entries into Prefix and Suffix for Tip windows */
+        if (strchr(orig, '<') && strchr(trans, '<')) {
+            const char* cmd_o = strstr(orig, "<cmd");
+            if (!cmd_o) cmd_o = strstr(orig, "<CMD");
+            const char* cmd_t = strstr(trans, "<cmd");
+            if (!cmd_t) cmd_t = strstr(trans, "<CMD");
+            if (cmd_o && cmd_t) {
+                const char* end_o = strchr(cmd_o, '>');
+                const char* end_t = strchr(cmd_t, '>');
+                if (end_o && end_t) {
+                    size_t pfx_o_len = (size_t)(cmd_o - orig);
+                    size_t pfx_t_len = (size_t)(cmd_t - trans);
+                    if (pfx_o_len > 0 && pfx_t_len > 0 && pfx_o_len < 256 && pfx_t_len < 512) {
+                        char pfx_o[256], pfx_t[512];
+                        memcpy(pfx_o, orig, pfx_o_len); pfx_o[pfx_o_len] = '\0';
+                        memcpy(pfx_t, trans, pfx_t_len); pfx_t[pfx_t_len] = '\0';
+                        insert_translation(pfx_o, scale, pfx_t);
+                    }
+                    const char* sfx_o = end_o + 1;
+                    const char* sfx_t = end_t + 1;
+                    if (*sfx_o != '\0' && *sfx_t != '\0') {
+                        insert_translation(sfx_o, scale, sfx_t);
+                    }
+                }
+            }
+        }
+
+        /* Auto-split <player> entries into Prefix and Suffix for Dialogue Chunks */
+        if (strstr(orig, "<player>") && strstr(trans, "<player>")) {
+            const char* tag_o = strstr(orig, "<player>");
+            const char* tag_t = strstr(trans, "<player>");
+            if (tag_o && tag_t) {
+                size_t pfx_o_len = (size_t)(tag_o - orig);
+                size_t pfx_t_len = (size_t)(tag_t - trans);
+                if (pfx_o_len > 0 && pfx_t_len > 0 && pfx_o_len < 256 && pfx_t_len < 512) {
+                    char pfx_o[256], pfx_t[512];
+                    memcpy(pfx_o, orig, pfx_o_len); pfx_o[pfx_o_len] = '\0';
+                    memcpy(pfx_t, trans, pfx_t_len); pfx_t[pfx_t_len] = '\0';
+                    insert_translation(pfx_o, scale, pfx_t);
+                }
+                const char* sfx_o = tag_o + 8;
+                const char* sfx_t = tag_t + 8;
+                if (*sfx_o != '\0' && *sfx_t != '\0') {
+                    insert_translation(sfx_o, scale, sfx_t);
+                }
+            }
         }
 
         /* Auto-register Tag Tokenizer template if tags exist */
@@ -3779,57 +3834,172 @@ static void* hk_GetStringByID(void* rcx, uint32_t string_id, void* r8)
 }
 
 /* ==================================================================
- * Hook Definitions: Upstream Dialogue & Tip Interceptor (Sentence Level)
- * Target: 0x1407f9430 in village.exe (Called by TalkWindow, Tips, Monologues)
+ * Steam DRM Interceptor
+ * Prevents game self-termination when launched standalone / test mode
  * ================================================================== */
-typedef void (*t_TalkRenderLine)(
-    void* rcx,
-    void* rdx,
-    void* r8,
-    void* r9,
-    const char* text,
-    size_t length,
-    uint32_t a7,
-    void* a8,
-    void* dummy_a9,
-    void* a10,
-    uint8_t a11
-);
-static t_TalkRenderLine fp_original_TalkRenderLine = NULL;
+typedef uint8_t (*t_SteamAPI_RestartAppIfNecessary)(uint32_t unOwnAppID);
+static t_SteamAPI_RestartAppIfNecessary fp_original_SteamAPI_RestartAppIfNecessary = NULL;
 
-static void hk_TalkRenderLine(
-    void* rcx,
-    void* rdx,
-    void* r8,
-    void* r9,
-    const char* text,
-    size_t length,
-    uint32_t a7,
-    void* a8,
-    void* dummy_a9,
-    void* a10,
-    uint8_t a11)
+static uint8_t hk_SteamAPI_RestartAppIfNecessary(uint32_t unOwnAppID)
 {
-    if (!g_settings.enable_thai_mod || !text || length == 0) {
-        if (fp_original_TalkRenderLine) {
-            fp_original_TalkRenderLine(rcx, rdx, r8, r9, text, length, a7, a8, dummy_a9, a10, a11);
+    log_msg("[STEAM] SteamAPI_RestartAppIfNecessary(%u) intercepted -> returning FALSE (staying alive)!", unOwnAppID);
+    return 0;
+}
+
+/* ==================================================================
+ * Anime Subtitle / Audio Controller Guard
+ * When sound_id == 0, returns NULL immediately to prevent map lookup crash
+ * ================================================================== */
+typedef void* (*t_GetAnimeController)(void* rcx, int32_t edx, void* r8);
+static t_GetAnimeController fp_original_GetAnimeController = NULL;
+
+static void* hk_GetAnimeController(void* rcx, int32_t edx, void* r8)
+{
+    if (edx == 0) return NULL;
+    return fp_original_GetAnimeController(rcx, edx, r8);
+}
+
+/* ==================================================================
+ * Vectored Exception Handler: Native Crash Shield
+ * Intercepts engine bugs (e.g. unhandled NULL dereference in CResource_Anime at 0x14077A1F7)
+ * and safely redirects execution so the game never crashes.
+ * ================================================================== */
+static LONG WINAPI AnimeCrashFilter(PEXCEPTION_POINTERS pExceptionInfo)
+{
+    if (pExceptionInfo && pExceptionInfo->ExceptionRecord &&
+        pExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION) {
+        uintptr_t rip = pExceptionInfo->ContextRecord->Rip;
+        uintptr_t base = g_game_base_addr;
+        if (base && rip == base + 0x0077A1F7) {
+            log_msg("[CRASH GUARD] Intercepted Anime audio null dereference at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x0077A232));
+            pExceptionInfo->ContextRecord->Rip = base + 0x0077A232;
+            return EXCEPTION_CONTINUE_EXECUTION;
         }
-        return;
+        if (base && rip == base + 0x00620FE5) {
+            log_msg("[CRASH GUARD] Intercepted Anime resource null dereference at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x00621009));
+            pExceptionInfo->ContextRecord->Rip = base + 0x00621009;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x0094D140) {
+            log_msg("[CRASH GUARD] Intercepted AnimeSub null dereference at 0x%p! Recovering...",
+                    (void*)rip);
+            pExceptionInfo->ContextRecord->Rip = *(uintptr_t*)(pExceptionInfo->ContextRecord->Rsp);
+            pExceptionInfo->ContextRecord->Rsp += 8;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
+/* ==================================================================
+ * Hook Definitions: Anime Sound Crash Guard (Engine Bug at 0x14094d140)
+ * village.exe calls 0x14094d140 with rcx=NULL in English mode
+ * ================================================================== */
+typedef void (*t_AnimeSub)(void* rcx, uint8_t dl);
+static t_AnimeSub fp_original_AnimeSub = NULL;
+
+static void hk_AnimeSub(void* rcx, uint8_t dl)
+{
+    if (!rcx) return;
+    fp_original_AnimeSub(rcx, dl);
+}
+
+/* ==================================================================
+ * RAM Talk Database Pre-Patcher & Player Name Auto-Resolver (Method B)
+ * ================================================================== */
+static void patch_talk_database_in_ram(uintptr_t base)
+{
+    static int s_last_count = 0;
+    uintptr_t mgr_ptr_addr = base + 0x01124CF0;
+    if (!is_safe_ptr((const void*)mgr_ptr_addr, sizeof(uintptr_t))) return;
+    void* mgr = *(void**)mgr_ptr_addr;
+    if (!mgr || !is_safe_ptr(mgr, 0x100)) return;
+
+    /* Outer Map: Scenarios / Talk Groups (MSVC std::unordered_map _Myhead at +0x48) */
+    void** p_outer_head = (void**)((char*)mgr + 0x48);
+    if (!is_safe_ptr(p_outer_head, sizeof(void*))) return;
+    void* outer_head = *p_outer_head;
+    if (!outer_head || !is_safe_ptr(outer_head, 0x20)) return;
+
+    int count = 0;
+    int outer_visited = 0;
+    void* outer_cur = *(void**)((char*)outer_head + 8);
+
+    while (outer_cur && outer_cur != outer_head && outer_visited < 1000 && is_safe_ptr(outer_cur, 0x20)) {
+        outer_visited++;
+        void* node_val = *(void**)((char*)outer_cur + 0x18);
+        if (node_val && is_safe_ptr(node_val, 0x80)) {
+            /* Case 1: 2-Level Map (node_val is ScenarioTalkData*, with inner map _Myhead at +0x60) */
+            void** p_inner_head = (void**)((char*)node_val + 0x60);
+            if (is_safe_ptr(p_inner_head, sizeof(void*)) && *p_inner_head && is_safe_ptr(*p_inner_head, 0x20)) {
+                void* inner_head = *p_inner_head;
+                int inner_visited = 0;
+                void* inner_cur = *(void**)((char*)inner_head + 8);
+                while (inner_cur && inner_cur != inner_head && inner_visited < 5000 && is_safe_ptr(inner_cur, 0x20)) {
+                    inner_visited++;
+                    void* rec = *(void**)((char*)inner_cur + 0x18);
+                    if (rec && is_safe_ptr(rec, 0x40)) {
+                        const char** p_en = (const char**)((char*)rec + 0x38);
+                        if (p_en && is_safe_ptr(p_en, sizeof(void*)) && *p_en) {
+                            const char* orig = *p_en;
+                            float scale = 1.0f;
+                            const char* rep = lookup_translation_ex(orig, &scale);
+                            if (rep && *rep && rep != orig) {
+                                *p_en = rep;
+                                count++;
+                            }
+                        }
+                    }
+                    inner_cur = *(void**)((char*)inner_cur + 8);
+                }
+            }
+
+            /* Case 2: 1-Level Map direct (node_val is directly a TalkRecord*) */
+            const char** p_direct_en = (const char**)((char*)node_val + 0x38);
+            if (is_safe_ptr(p_direct_en, sizeof(void*)) && *p_direct_en) {
+                const char* orig = *p_direct_en;
+                if (is_safe_ptr(orig, 4) && orig[0] != '\0') {
+                    float scale = 1.0f;
+                    const char* rep = lookup_translation_ex(orig, &scale);
+                    if (rep && *rep && rep != orig) {
+                        *p_direct_en = rep;
+                        count++;
+                    }
+                }
+            }
+        }
+        outer_cur = *(void**)((char*)outer_cur + 8);
     }
 
-    char safe_text[4096];
-    size_t copy_len = length < sizeof(safe_text) - 1 ? length : sizeof(safe_text) - 1;
-    memcpy(safe_text, text, copy_len);
-    safe_text[copy_len] = '\0';
-
-    float scale = 1.0f;
-    const char* rep = lookup_translation_ex(safe_text, &scale);
-    if (rep && rep[0] != '\0') {
-        text = rep;
-        length = strlen(rep);
+    if (count > s_last_count) {
+        log_msg("[TALK RAM] Successfully pre-translated %d dialogue records in RAM (across %d scenarios)!", count, outer_visited);
+        s_last_count = count;
     }
+}
 
-    fp_original_TalkRenderLine(rcx, rdx, r8, r9, text, length, a7, a8, dummy_a9, a10, a11);
+static void refresh_player_name_from_memory(uintptr_t base)
+{
+    uintptr_t gi_addr = base + 0x111CC90;
+    if (is_safe_ptr((const void*)gi_addr, sizeof(uintptr_t))) {
+        uintptr_t gi = *(uintptr_t*)gi_addr;
+        if (is_safe_ptr((const void*)gi, 0x210)) {
+            uintptr_t state = *(uintptr_t*)(gi + 0x208);
+            if (is_safe_ptr((const void*)state, 0x3300)) {
+                const char* p_name = (const char*)(state + 0x350);
+                if (p_name[0] >= 'A' && p_name[0] <= 'z') {
+                    size_t len = strlen(p_name);
+                    if (len > 0 && len <= 20) {
+                        if (strcmp(g_player_name, p_name) != 0) {
+                            strncpy(g_player_name, p_name, sizeof(g_player_name) - 1);
+                            log_msg("[PLAYER] *** Auto-detected Player Name from Memory: '%s' ***", g_player_name);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /* ==================================================================
@@ -3865,10 +4035,10 @@ static const AddrSig kSigs[] = {
         .off = 0
     },
     {
-        .name = "TalkRenderLine",
+        .name = "AnimeSub",
         .kind = ADDRSIG_FUNC,
-        .pat_hex = "40555356574154415541564157488dac24c8efff",
-        .mask_hex = "ffffffffffffffffffffffffffffffffffffffff",
+        .pat_hex = "488b41484533db440fb6d24c8bc1",
+        .mask_hex = "ffffffffffffffffffffffffffff",
         .off = 0
     }
 };
@@ -3996,10 +4166,75 @@ static void patch_proportional_kerning_v130(uintptr_t base, void (*log_fn)(const
     }
 }
 
+/* ==================================================================
+ * Anime Cutscene Audio Fallback Patcher
+ * Fixes native engine null-pointer crash at 0x14077a1f7 & 0x14094d140
+ * when running in English mode (no English dub track in cutscenes).
+ * Forces language index for anime sound/video lookup to 0 (Japanese).
+ * ================================================================== */
+typedef struct {
+    uint32_t rva;
+    uint8_t orig[7];
+    uint8_t patch[7];
+    size_t size;
+    const char* desc;
+} AnimePatchEntry;
+
+static void patch_anime_audio_fallback(uintptr_t base, void (*log_fn)(const char*, ...))
+{
+    const AnimePatchEntry patches[] = {
+        /* Target 1: Anime Sound Init (0x140779EB2) -> xor edx, edx; 5 nops */
+        {
+            0x00779EB2,
+            { 0x48, 0x63, 0x15, 0x27, 0xAE, 0x9A, 0x00 },
+            { 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 },
+            7,
+            "Anime Sound Init (force JP track)"
+        },
+        /* Target 2: Anime Video/Sub Init (0x14077A11E) -> xor esi, esi; 5 nops */
+        {
+            0x0077A11E,
+            { 0x48, 0x63, 0x35, 0xBB, 0xAB, 0x9A, 0x00 },
+            { 0x31, 0xF6, 0x90, 0x90, 0x90, 0x90, 0x90 },
+            7,
+            "Anime Video/Sub Init (force JP track)"
+        },
+        /* Target 3: Anime Sound Play (0x14077A18A) -> xor edx, edx; 5 nops */
+        {
+            0x0077A18A,
+            { 0x48, 0x63, 0x15, 0x4F, 0xAB, 0x9A, 0x00 },
+            { 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 },
+            7,
+            "Anime Sound Play (force JP track)"
+        }
+    };
+
+    int count = 0;
+    for (size_t i = 0; i < sizeof(patches) / sizeof(patches[0]); i++) {
+        uint8_t* target = (uint8_t*)(base + patches[i].rva);
+        DWORD old_protect;
+        if (VirtualProtect(target, patches[i].size, PAGE_EXECUTE_READWRITE, &old_protect)) {
+            if (memcmp(target, patches[i].orig, patches[i].size) == 0 ||
+                memcmp(target, patches[i].patch, patches[i].size) == 0) {
+                memcpy(target, patches[i].patch, patches[i].size);
+                count++;
+            }
+            VirtualProtect(target, patches[i].size, old_protect, &old_protect);
+            FlushInstructionCache(GetCurrentProcess(), target, patches[i].size);
+        }
+    }
+    if (log_fn) {
+        log_fn("[ANIME V1.30] Applied %d/3 anime audio fallback patches in RAM!", count);
+    }
+}
+
 static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
     g_game_base_addr = (uintptr_t)GetModuleHandleA(NULL);
+
+    /* Register Vectored Exception Handler to intercept native engine null pointers */
+    AddVectoredExceptionHandler(1, AnimeCrashFilter);
 
     /* Initialize MinHook immediately - zero delay */
     if (MH_Initialize() != MH_OK) {
@@ -4090,6 +4325,20 @@ static DWORD WINAPI worker_thread(LPVOID param)
             }
         }
 
+        /* 3a-2. Hook SteamAPI_RestartAppIfNecessary */
+        HMODULE hSteamApi = GetModuleHandleA("steam_api64.dll");
+        if (!hSteamApi) hSteamApi = LoadLibraryA("steam_api64.dll");
+        if (hSteamApi) {
+            FARPROC pRestart = GetProcAddress(hSteamApi, "SteamAPI_RestartAppIfNecessary");
+            if (pRestart) {
+                if (MH_CreateHook((LPVOID)pRestart, (LPVOID)&hk_SteamAPI_RestartAppIfNecessary, (LPVOID*)&fp_original_SteamAPI_RestartAppIfNecessary) == MH_OK) {
+                    if (MH_EnableHook((LPVOID)pRestart) == MH_OK) {
+                        log_msg("SUCCESS: Hooked SteamAPI_RestartAppIfNecessary (Standalone / Steam persistence active)!");
+                    }
+                }
+            }
+        }
+
         /* 3b. Install GetOverlappedResult Hook for Async VFS */
         FARPROC pGetOverlappedResult = GetProcAddress(hKernel32, "GetOverlappedResult");
         if (pGetOverlappedResult) {
@@ -4120,7 +4369,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uintptr_t addr_putStrProp = 0;
     uintptr_t addr_putStrAlign = 0;
     uintptr_t addr_GetStringByID = 0;
-    uintptr_t addr_TalkRenderLine = 0;
+    uintptr_t addr_AnimeSub = 0;
 
     for (int i = 0; i < (int)(sizeof(kSigs) / sizeof(kSigs[0])); i++) {
         if (res[i].hit) {
@@ -4129,7 +4378,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
             if (strcmp(res[i].name, "putStrProp") == 0) addr_putStrProp = res[i].addr;
             if (strcmp(res[i].name, "putStrAlign") == 0) addr_putStrAlign = res[i].addr;
             if (strcmp(res[i].name, "GetStringByID") == 0) addr_GetStringByID = res[i].addr;
-            if (strcmp(res[i].name, "TalkRenderLine") == 0) addr_TalkRenderLine = res[i].addr;
+            if (strcmp(res[i].name, "AnimeSub") == 0) addr_AnimeSub = res[i].addr;
         } else {
             log_msg("  [MISS] %s", res[i].name);
         }
@@ -4167,15 +4416,20 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
-    if (addr_TalkRenderLine) {
-        if (MH_CreateHook((LPVOID)addr_TalkRenderLine, (LPVOID)&hk_TalkRenderLine, (LPVOID*)&fp_original_TalkRenderLine) == MH_OK) {
-            if (MH_EnableHook((LPVOID)addr_TalkRenderLine) == MH_OK) {
-                log_msg("SUCCESS: Hooked TalkRenderLine (Upstream Sentence-Level Interceptor Active)!");
-            } else {
-                log_msg("ERROR: Failed to enable TalkRenderLine hook");
+    if (addr_AnimeSub) {
+        if (MH_CreateHook((LPVOID)addr_AnimeSub, (LPVOID)&hk_AnimeSub, (LPVOID*)&fp_original_AnimeSub) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_AnimeSub) == MH_OK) {
+                log_msg("SUCCESS: Hooked AnimeSub (Engine Null Guard Active)!");
             }
-        } else {
-            log_msg("ERROR: Failed to create TalkRenderLine hook");
+        }
+    }
+
+    uintptr_t addr_GetAnimeController = base + 0x00620EF0;
+    if (addr_GetAnimeController) {
+        if (MH_CreateHook((LPVOID)addr_GetAnimeController, (LPVOID)&hk_GetAnimeController, (LPVOID*)&fp_original_GetAnimeController) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_GetAnimeController) == MH_OK) {
+                log_msg("SUCCESS: Hooked GetAnimeController (Sound ID 0 Guard Active)!");
+            }
         }
     }
 
@@ -4188,6 +4442,9 @@ static DWORD WINAPI worker_thread(LPVOID param)
     } else {
         log_msg("[SETTINGS] Proportional kerning DISABLED in settings.ini.");
     }
+
+    /* 1b. Apply Anime audio fallback patches in RAM (Fixes native cutscene crash) */
+    patch_anime_audio_fallback(base, log_msg);
 
     #ifdef ENABLE_THAI_KEYBOARD
     /* 2. Patch In-Game Virtual Keyboard string table in memory (Requires Thai textures enabled) */
@@ -4212,6 +4469,8 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uint64_t last_rep = 0;
     while (1) {
         Sleep(1000);
+        refresh_player_name_from_memory(base);
+        patch_talk_database_in_ram(base);
         check_hot_reload_translation();
         #ifdef ENABLE_CHEATS
         cheats_tick();
