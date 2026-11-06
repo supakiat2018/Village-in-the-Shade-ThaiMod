@@ -534,7 +534,112 @@ static void strip_cmd_tags_in_place(char* str)
     }
 }
 
-static char s_dynamic_buffers[4][1024];
+/* ==================================================================
+ * Tag Tokenizer & Detokenizer (XUnity.AutoTranslator Architecture)
+ * ================================================================== */
+#define MAX_TAG_TOKENS 16
+#define MAX_TAG_LEN 256
+
+typedef struct {
+    int count;
+    char tags[MAX_TAG_TOKENS][MAX_TAG_LEN];
+} TagTokenList;
+
+static BOOL should_tokenize_tag(const char* tag_content, size_t tag_len)
+{
+    if (tag_len == 0) return FALSE;
+
+    /* Skip <player> and <dog> (handled by specialized wildcard systems) */
+    if (tag_len == 6 && _strnicmp(tag_content, "player", 6) == 0) return FALSE;
+    if (tag_len == 3 && _strnicmp(tag_content, "dog", 3) == 0) return FALSE;
+
+    /* Skip <value ...> (handled by dynamic template matcher) */
+    if (tag_len >= 5 && _strnicmp(tag_content, "value", 5) == 0) return FALSE;
+
+    /* Skip <br> or <br/> */
+    if ((tag_len == 2 && _strnicmp(tag_content, "br", 2) == 0) ||
+        (tag_len == 3 && _strnicmp(tag_content, "br/", 3) == 0)) return FALSE;
+
+    /* All other tags (e.g. cmd, icon, color, speed, ruby, size, etc.) */
+    return TRUE;
+}
+
+static BOOL tokenize_tags(const char* src, char* out_buf, size_t out_size, TagTokenList* out_list)
+{
+    if (!src || !out_buf || out_size == 0) return FALSE;
+    if (out_list) out_list->count = 0;
+
+    const char* p = src;
+    char* dst = out_buf;
+    char* end = out_buf + out_size - 1;
+    int token_idx = 0;
+
+    while (*p && dst < end) {
+        if (*p == '<') {
+            const char* close = strchr(p, '>');
+            if (close) {
+                size_t tag_len = (size_t)(close - (p + 1));
+                if (should_tokenize_tag(p + 1, tag_len)) {
+                    if (out_list && out_list->count < MAX_TAG_TOKENS) {
+                        size_t full_tag_len = (size_t)(close - p + 1);
+                        size_t copy_len = full_tag_len < MAX_TAG_LEN - 1 ? full_tag_len : MAX_TAG_LEN - 1;
+                        memcpy(out_list->tags[out_list->count], p, copy_len);
+                        out_list->tags[out_list->count][copy_len] = '\0';
+                        out_list->count++;
+                    }
+
+                    char placeholder[16];
+                    int ph_len = snprintf(placeholder, sizeof(placeholder), "{%d}", token_idx++);
+                    if (dst + ph_len < end) {
+                        memcpy(dst, placeholder, ph_len);
+                        dst += ph_len;
+                    }
+                    p = close + 1;
+                    continue;
+                }
+            }
+        }
+        *dst++ = *p++;
+    }
+    *dst = '\0';
+    return (token_idx > 0);
+}
+
+static BOOL detokenize_tags(const char* tokenized, const TagTokenList* list, char* out_buf, size_t out_size)
+{
+    if (!tokenized || !out_buf || out_size == 0) return FALSE;
+    if (!list || list->count == 0) {
+        strncpy(out_buf, tokenized, out_size - 1);
+        out_buf[out_size - 1] = '\0';
+        return TRUE;
+    }
+
+    const char* p = tokenized;
+    char* dst = out_buf;
+    char* end = out_buf + out_size - 1;
+
+    while (*p && dst < end) {
+        if (*p == '{' && isdigit((unsigned char)*(p + 1))) {
+            char* close = NULL;
+            long idx = strtol(p + 1, &close, 10);
+            if (close && *close == '}' && idx >= 0 && idx < list->count) {
+                const char* real_tag = list->tags[idx];
+                size_t t_len = strlen(real_tag);
+                if (dst + t_len < end) {
+                    memcpy(dst, real_tag, t_len);
+                    dst += t_len;
+                }
+                p = close + 1;
+                continue;
+            }
+        }
+        *dst++ = *p++;
+    }
+    *dst = '\0';
+    return TRUE;
+}
+
+static char s_dynamic_buffers[16][4096];
 static volatile LONG s_dynamic_buf_idx = 0;
 
 static const char* try_match_dynamic_template(const char* orig);
@@ -808,12 +913,33 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
                 }
             }
         }
+
+        /* 1c) Tag Tokenizer fallback for dynamic templates */
+        if (!matched_trans && strchr(templ_query, '<')) {
+            TagTokenList q_tags;
+            char tok_q[2048];
+            if (tokenize_tags(templ_query, tok_q, sizeof(tok_q), &q_tags) && q_tags.count > 0) {
+                uint32_t tth = hash_str(tok_q);
+                uint32_t ttbucket = tth % HASH_TABLE_SIZE;
+                TransNode* ttnode = g_trans_table[ttbucket];
+                while (ttnode) {
+                    if (ttnode->hash == tth && strcmp(ttnode->orig, tok_q) == 0) {
+                        static char s_tok_temp[2048];
+                        detokenize_tags(ttnode->trans, &q_tags, s_tok_temp, sizeof(s_tok_temp));
+                        matched_trans = s_tok_temp;
+                        matched_scale = ttnode->scale;
+                        break;
+                    }
+                    ttnode = ttnode->next;
+                }
+            }
+        }
         LeaveCriticalSection(&g_cs);
 
         if (matched_trans) {
             if (out_scale) *out_scale = matched_scale;
             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-            char* buf = s_dynamic_buffers[b_idx & 3];
+            char* buf = s_dynamic_buffers[b_idx & 15];
             char temp_buf[1024];
             const char* cur_trans = matched_trans;
             if (strstr(cur_trans, "<player>") && g_player_name[0] != '\0') {
@@ -873,6 +999,37 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
         }
     }
 
+    /* 4. Tag Tokenizer Fallback (XUnity.AutoTranslator Architecture) */
+    if (strchr(orig, '<')) {
+        TagTokenList query_tags;
+        char tok_query[2048];
+        if (tokenize_tags(orig, tok_query, sizeof(tok_query), &query_tags) && query_tags.count > 0) {
+            uint32_t th = hash_str(tok_query);
+            uint32_t tbucket = th % HASH_TABLE_SIZE;
+            EnterCriticalSection(&g_cs);
+            TransNode* tnode = g_trans_table[tbucket];
+            const char* found_trans = NULL;
+            float found_scale = 1.0f;
+            while (tnode) {
+                if (tnode->hash == th && strcmp(tnode->orig, tok_query) == 0) {
+                    found_trans = tnode->trans;
+                    found_scale = tnode->scale;
+                    break;
+                }
+                tnode = tnode->next;
+            }
+            LeaveCriticalSection(&g_cs);
+
+            if (found_trans) {
+                if (out_scale) *out_scale = found_scale;
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 15];
+                detokenize_tags(found_trans, &query_tags, buf, sizeof(s_dynamic_buffers[0]));
+                return buf;
+            }
+        }
+    }
+
     return NULL;
 }
 
@@ -925,7 +1082,7 @@ static const char* try_match_dynamic_template(const char* orig)
                             snprintf(d_buf, sizeof(d_buf), "%ld", day);
 
                             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                            char* buf = s_dynamic_buffers[b_idx & 3];
+                            char* buf = s_dynamic_buffers[b_idx & 15];
 
                             if (replace_str(templ, "<value 1>", y_buf, temp1, sizeof(temp1)) &&
                                 replace_str(temp1, "<value 2>", season_th, temp2, sizeof(temp2)) &&
@@ -978,7 +1135,7 @@ static const char* try_match_dynamic_template(const char* orig)
                             snprintf(d_buf, sizeof(d_buf), "%ld", day);
 
                             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                            char* buf = s_dynamic_buffers[b_idx & 3];
+                            char* buf = s_dynamic_buffers[b_idx & 15];
 
                             if (replace_str(templ, "<value 1>", y_buf, temp1, sizeof(temp1)) &&
                                 replace_str(temp1, "<value 2>", season_th, temp2, sizeof(temp2)) &&
@@ -1039,7 +1196,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     char d_buf[16];
                     snprintf(d_buf, sizeof(d_buf), "%ld", day);
                     LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                    char* buf = s_dynamic_buffers[b_idx & 3];
+                    char* buf = s_dynamic_buffers[b_idx & 15];
                     if (replace_str(templ, "<value 1>", season_th, temp1, sizeof(temp1)) &&
                         replace_str(temp1, "<value 2>", d_buf, buf, sizeof(s_dynamic_buffers[0]))) {
                         return buf;
@@ -1077,7 +1234,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 const char* th1 = lookup_translation(s1);
                 if (!th1) th1 = s1;
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", th1, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         } else if (season_count == 2) {
@@ -1086,7 +1243,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 const char* th1 = lookup_translation(s1); if (!th1) th1 = s1;
                 const char* th2 = lookup_translation(s2); if (!th2) th2 = s2;
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", th1, temp1, sizeof(temp1)) &&
                     replace_str(temp1, "<value 2>", th2, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
@@ -1097,7 +1254,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 const char* th2 = lookup_translation(s2); if (!th2) th2 = s2;
                 const char* th3 = lookup_translation(s3); if (!th3) th3 = s3;
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", th1, temp1, sizeof(temp1)) &&
                     replace_str(temp1, "<value 2>", th2, temp2, sizeof(temp2)) &&
                     replace_str(temp2, "<value 3>", th3, buf, sizeof(s_dynamic_buffers[0]))) return buf;
@@ -1115,7 +1272,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1131,7 +1288,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1147,7 +1304,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1163,7 +1320,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1179,7 +1336,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1195,7 +1352,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 char v_buf[32];
                 snprintf(v_buf, sizeof(v_buf), "%ld", val);
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", v_buf, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1237,7 +1394,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation(r->templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<value 1>", item_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
                     }
                 }
@@ -1254,7 +1411,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation(r->templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<value 1>", item_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
                     }
                 }
@@ -1288,7 +1445,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation(gv_templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<gamevalue GAME_VALUE_STORY_01_NPC_TALK_COUNT>", num_str, buf, sizeof(s_dynamic_buffers[0]))) {
                             return buf;
                         }
@@ -1324,7 +1481,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation(gv_templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<gamevalue GAME_VALUE_TALK_NUM>", num_str, buf, sizeof(s_dynamic_buffers[0]))) {
                             return buf;
                         }
@@ -1391,7 +1548,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation(r->templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<tmpstr>", item_th, buf, sizeof(s_dynamic_buffers[0]))) {
                             return buf;
                         }
@@ -1427,7 +1584,7 @@ static const char* try_match_dynamic_template(const char* orig)
                 const char* templ = lookup_translation("<value 1> <value 2>個の納品");
                 if (templ) {
                     LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                    char* buf = s_dynamic_buffers[b_idx & 3];
+                    char* buf = s_dynamic_buffers[b_idx & 15];
                     if (replace_str(templ, "<value 1>", item_th, temp1, sizeof(temp1)) &&
                         replace_str(temp1, "<value 2>", cnt_str, buf, sizeof(s_dynamic_buffers[0]))) {
                         return buf;
@@ -1446,7 +1603,7 @@ static const char* try_match_dynamic_template(const char* orig)
         const char* templ = lookup_translation("依頼人：<value 1>");
         if (templ) {
             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-            char* buf = s_dynamic_buffers[b_idx & 3];
+            char* buf = s_dynamic_buffers[b_idx & 15];
             if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
         }
     }
@@ -1458,7 +1615,7 @@ static const char* try_match_dynamic_template(const char* orig)
         const char* templ = lookup_translation("物品：<value 1>");
         if (templ) {
             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-            char* buf = s_dynamic_buffers[b_idx & 3];
+            char* buf = s_dynamic_buffers[b_idx & 15];
             if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
         }
     }
@@ -1473,7 +1630,7 @@ static const char* try_match_dynamic_template(const char* orig)
             const char* templ = lookup_translation("個数：<value 1>個");
             if (templ) {
                 LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                char* buf = s_dynamic_buffers[b_idx & 3];
+                char* buf = s_dynamic_buffers[b_idx & 15];
                 if (replace_str(templ, "<value 1>", num_str, buf, sizeof(s_dynamic_buffers[0]))) return buf;
             }
         }
@@ -1486,7 +1643,7 @@ static const char* try_match_dynamic_template(const char* orig)
         const char* templ = lookup_translation("一言：<value 1>");
         if (templ) {
             LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-            char* buf = s_dynamic_buffers[b_idx & 3];
+            char* buf = s_dynamic_buffers[b_idx & 15];
             if (replace_str(templ, "<value 1>", val_th, buf, sizeof(s_dynamic_buffers[0]))) return buf;
         }
     }
@@ -1514,7 +1671,7 @@ static const char* try_match_dynamic_template(const char* orig)
                     const char* templ = lookup_translation("<value 1>を<value 2>個<value 3>へ届けよう");
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
-                        char* buf = s_dynamic_buffers[b_idx & 3];
+                        char* buf = s_dynamic_buffers[b_idx & 15];
                         if (replace_str(templ, "<value 1>", item_th, temp1, sizeof(temp1)) &&
                             replace_str(temp1, "<value 2>", cnt_str, temp2, sizeof(temp2)) &&
                             replace_str(temp2, "<value 3>", npc_th, buf, sizeof(s_dynamic_buffers[0]))) {
@@ -1652,6 +1809,17 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
         }
         if (strstr(orig, "<player>")) {
             register_player_wildcard(orig, trans);
+        }
+
+        /* Auto-register Tag Tokenizer template if tags exist */
+        if (strchr(orig, '<') && strchr(trans, '<')) {
+            TagTokenList list_orig, list_trans;
+            char tok_orig[4096], tok_trans[4096];
+            if (tokenize_tags(orig, tok_orig, sizeof(tok_orig), &list_orig) && list_orig.count > 0) {
+                if (tokenize_tags(trans, tok_trans, sizeof(tok_trans), &list_trans) && list_trans.count > 0) {
+                    insert_translation(tok_orig, scale, tok_trans);
+                }
+            }
         }
         loaded++;
     }
@@ -3611,6 +3779,60 @@ static void* hk_GetStringByID(void* rcx, uint32_t string_id, void* r8)
 }
 
 /* ==================================================================
+ * Hook Definitions: Upstream Dialogue & Tip Interceptor (Sentence Level)
+ * Target: 0x1407f9430 in village.exe (Called by TalkWindow, Tips, Monologues)
+ * ================================================================== */
+typedef void (*t_TalkRenderLine)(
+    void* rcx,
+    void* rdx,
+    void* r8,
+    void* r9,
+    const char* text,
+    size_t length,
+    uint32_t a7,
+    void* a8,
+    void* dummy_a9,
+    void* a10,
+    uint8_t a11
+);
+static t_TalkRenderLine fp_original_TalkRenderLine = NULL;
+
+static void hk_TalkRenderLine(
+    void* rcx,
+    void* rdx,
+    void* r8,
+    void* r9,
+    const char* text,
+    size_t length,
+    uint32_t a7,
+    void* a8,
+    void* dummy_a9,
+    void* a10,
+    uint8_t a11)
+{
+    if (!g_settings.enable_thai_mod || !text || length == 0) {
+        if (fp_original_TalkRenderLine) {
+            fp_original_TalkRenderLine(rcx, rdx, r8, r9, text, length, a7, a8, dummy_a9, a10, a11);
+        }
+        return;
+    }
+
+    char safe_text[4096];
+    size_t copy_len = length < sizeof(safe_text) - 1 ? length : sizeof(safe_text) - 1;
+    memcpy(safe_text, text, copy_len);
+    safe_text[copy_len] = '\0';
+
+    float scale = 1.0f;
+    const char* rep = lookup_translation_ex(safe_text, &scale);
+    if (rep && rep[0] != '\0') {
+        text = rep;
+        length = strlen(rep);
+    }
+
+    fp_original_TalkRenderLine(rcx, rdx, r8, r9, text, length, a7, a8, dummy_a9, a10, a11);
+}
+
+/* ==================================================================
  * Signatures for village.exe
  * ================================================================== */
 static const AddrSig kSigs[] = {
@@ -3639,6 +3861,13 @@ static const AddrSig kSigs[] = {
         .name = "GetStringByID",
         .kind = ADDRSIG_FUNC,
         .pat_hex = "48895c240848897424104c89442418574883ec40",
+        .mask_hex = "ffffffffffffffffffffffffffffffffffffffff",
+        .off = 0
+    },
+    {
+        .name = "TalkRenderLine",
+        .kind = ADDRSIG_FUNC,
+        .pat_hex = "40555356574154415541564157488dac24c8efff",
         .mask_hex = "ffffffffffffffffffffffffffffffffffffffff",
         .off = 0
     }
@@ -3891,6 +4120,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uintptr_t addr_putStrProp = 0;
     uintptr_t addr_putStrAlign = 0;
     uintptr_t addr_GetStringByID = 0;
+    uintptr_t addr_TalkRenderLine = 0;
 
     for (int i = 0; i < (int)(sizeof(kSigs) / sizeof(kSigs[0])); i++) {
         if (res[i].hit) {
@@ -3899,6 +4129,7 @@ static DWORD WINAPI worker_thread(LPVOID param)
             if (strcmp(res[i].name, "putStrProp") == 0) addr_putStrProp = res[i].addr;
             if (strcmp(res[i].name, "putStrAlign") == 0) addr_putStrAlign = res[i].addr;
             if (strcmp(res[i].name, "GetStringByID") == 0) addr_GetStringByID = res[i].addr;
+            if (strcmp(res[i].name, "TalkRenderLine") == 0) addr_TalkRenderLine = res[i].addr;
         } else {
             log_msg("  [MISS] %s", res[i].name);
         }
@@ -3933,6 +4164,18 @@ static DWORD WINAPI worker_thread(LPVOID param)
             if (MH_EnableHook((LPVOID)addr_GetStringByID) == MH_OK) {
                 log_msg("SUCCESS: Hooked GetStringByID (ID Database Interceptor Active)!");
             }
+        }
+    }
+
+    if (addr_TalkRenderLine) {
+        if (MH_CreateHook((LPVOID)addr_TalkRenderLine, (LPVOID)&hk_TalkRenderLine, (LPVOID*)&fp_original_TalkRenderLine) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_TalkRenderLine) == MH_OK) {
+                log_msg("SUCCESS: Hooked TalkRenderLine (Upstream Sentence-Level Interceptor Active)!");
+            } else {
+                log_msg("ERROR: Failed to enable TalkRenderLine hook");
+            }
+        } else {
+            log_msg("ERROR: Failed to create TalkRenderLine hook");
         }
     }
 
