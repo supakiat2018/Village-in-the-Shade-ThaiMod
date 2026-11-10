@@ -1,7 +1,0 @@
-﻿Index,ID,Key,ต้นฉบับ_JP,MODEN_EN,คำแปลไทย,Thai_PUA,Status
-396,1396,STR_ID_CATALOG_TITLE,家具カタログ,Furniture Catalog,แคตตาล็อกเฟอร์นิเจอร์,แคตตาอกเฟอเจอ,Translated_New_v120
-397,1397,STR_ID_CATALOG_ORDER_HEADER,本日注文した家具,Furniture ordered today,เฟอร์นิเจอร์ที่สั่งในวันนี้,เฟอเจองในน,Translated_New_v120
-398,1398,STR_ID_CATALOG_NUMBER,<value 1>個,<value 1> item(s),<value 1> ชิ้น,<value 1> น,Translated_New_v120
-399,1399,STR_ID_MEMO_CATALOG,家具カタログ,Furniture Catalog,แคตตาล็อกเฟอร์นิเจอร์,แคตตาอกเฟอเจอ,Translated_New_v120
-400,1400,STR_ID_SAVE_ERROR_MSG_001,バージョンが異なるセーブデータのため読み込めません,Cannot load save data because the game version differs.,ไม่สามารถโหลดได้เนื่องจากข้อมูลบันทึกเป็นคนละเวอร์ชัน,ไสามารถโหลดไเองจากอลนกเนคนละเวอน,Translated_New_v120
-401,1401,STR_ID_SCARECROW_COUNT_DAYS,あと<value 1>日,<value 1> day(s) left,เหลืออีก <value 1> วัน,เหอก <value 1> น,Translated_New_v120
