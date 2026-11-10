@@ -42,7 +42,6 @@ bin_dll    = os.path.join(dev_dir, "bin", "text_dump.dll")
 bin_winmm  = os.path.join(dev_dir, "bin", "winmm.dll")
 cheats_ini = os.path.join(dev_dir, "cheats.ini")
 settings_ini = os.path.join(dev_dir, "settings.ini")
-trans_txt  = os.path.join(dev_dir, "translation.txt")
 
 def safe_copy(src, dst):
     try:
@@ -64,11 +63,25 @@ def safe_copy(src, dst):
 if os.path.exists(steam_root):
     safe_copy(bin_dll, os.path.join(steam_mod, "text_dump.dll"))
     safe_copy(bin_winmm, os.path.join(steam_root, "winmm.dll"))
-    safe_copy(cheats_ini, os.path.join(steam_root, "cheats.ini"))
-    safe_copy(settings_ini, os.path.join(steam_root, "settings.ini"))
-    if os.path.exists(trans_txt):
-        safe_copy(trans_txt, os.path.join(steam_root, "translation.txt"))
-    # Ensure no translation.txt remains inside steam_mod (keep it only at steam_root)
+    # Config files MUST ONLY be inside Mods\ directory!
+    steam_mods_dir = os.path.join(steam_root, "Mods")
+    os.makedirs(steam_mods_dir, exist_ok=True)
+    safe_copy(cheats_ini, os.path.join(steam_mods_dir, "cheats.ini"))
+    safe_copy(settings_ini, os.path.join(steam_mods_dir, "settings.ini"))
+    # Remove any stray config files from root game folder to avoid confusion
+    stray_cheats = os.path.join(steam_root, "cheats.ini")
+    stray_settings = os.path.join(steam_root, "settings.ini")
+    if os.path.exists(stray_cheats):
+        try: os.remove(stray_cheats)
+        except: pass
+    if os.path.exists(stray_settings):
+        try: os.remove(stray_settings)
+        except: pass
+    # Make sure NO translation.txt exists in Steam root or Mods\ (we use pure dat_ja and 41_string.txt)
+    stray_trans = os.path.join(steam_root, "translation.txt")
+    if os.path.exists(stray_trans):
+        try: os.remove(stray_trans)
+        except: pass
     dup_steam_mod_trans = os.path.join(steam_mod, "translation.txt")
     if os.path.exists(dup_steam_mod_trans):
         try: os.remove(dup_steam_mod_trans)

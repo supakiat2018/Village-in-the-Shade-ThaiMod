@@ -1,0 +1,14 @@
+# ============================================================================
+# 17. หมวดหมู่ไอเทม (Item Types)
+# ============================================================================
+
+# --- [ENGLISH] ---
+ITEM_TYPE_CONSUME=Single Use
+ITEM_TYPE_TOOL=Tools
+ITEM_TYPE_HAT=Hats
+ITEM_TYPE_SHOES=Footwear
+ITEM_TYPE_RING=Rings
+ITEM_TYPE_GIMMICK=Gimmicks
+ITEM_TYPE_NUM=Total Item Types
+
+# --- [JAPANESE] ---

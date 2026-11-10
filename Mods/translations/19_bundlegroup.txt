@@ -1,0 +1,35 @@
+# ============================================================================
+# 19. กลุ่มสินค้า (Bundle Groups)
+# ============================================================================
+
+# --- [ENGLISH] ---
+Fox Shrine / Spring=ศาลจิ้งจอก / ฤดูใบไม้ผลิ
+Fox Shrine / Summer=ศาลจิ้งจอก / ฤดูร้อน
+Fox Shrine / Autumn=ศาลจิ้งจอก / ฤดูใบไม้ร่วง
+Fox Shrine / Winter=ศาลจิ้งจอก / ฤดูหนาว
+Hokora Repair=การบูรณะศาลเจ้า
+Rin's Errand=คำไหว้วานของริน
+Vegetable Delivery=ส่งมอบพืชผัก
+Fruit Delivery=ส่งมอบผลไม้
+Flower Delivery=ส่งมอบดอกไม้
+Processed Delivery=ส่งมอบของแปรรูป
+Ranching Delivery=ส่งมอบผลผลิตปศุสัตว์
+Hunting Delivery=ส่งมอบของจากการล่า
+Fish Delivery=ส่งมอบปลา
+High-Quality Delivery=ส่งมอบสินค้าชั้นเลิศ
+
+# --- [JAPANESE] ---
+狐の社／春=ศาลจิ้งจอก / ฤดูใบไม้ผลิ
+狐の社／夏=ศาลจิ้งจอก / ฤดูร้อน
+狐の社／秋=ศาลจิ้งจอก / ฤดูใบไม้ร่วง
+狐の社／冬=ศาลจิ้งจอก / ฤดูหนาว
+祠の修復=การบูรณะศาลเจ้า
+リンのお手伝い=Rin's Errand
+野菜の納品=Vegetable Delivery
+果物の納品=Fruit Delivery
+花の納品=Flower Delivery
+加工品の納品=Processed Delivery
+畜産物の納品=Ranching Delivery
+狩猟品の納品=Hunting Delivery
+魚の納品=Fish Delivery
+高級品の納品=High-Quality Delivery

@@ -12,10 +12,9 @@
 #include "addrsig.h"
 #include "cheats.h"
 #include "speedhack.h"
+#include "pua_mapping.h"
 
-#ifdef ENABLE_THAI_KEYBOARD
 #include "keyboard_v130_patch.h"
-#endif
 
 static HINSTANCE g_hinst = NULL;
 static char g_mod_dir[MAX_PATH] = { 0 };
@@ -61,27 +60,7 @@ static uint8_t g_logged_ids[65536 / 8] = { 0 };
 
 static void log_id_access(uint32_t id)
 {
-    if (id < 65536) {
-        int byte_idx = id / 8;
-        int bit_idx = id % 8;
-        if (g_logged_ids[byte_idx] & (1 << bit_idx)) {
-            return;
-        }
-        g_logged_ids[byte_idx] |= (1 << bit_idx);
-    }
-
-    EnterCriticalSection(&g_cs);
-    if (!g_fidlog) {
-        g_fidlog = _wfopen(g_id_log_path_w, L"a+");
-    }
-    if (g_fidlog) {
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-        fprintf(g_fidlog, "[%02d:%02d:%02d.%03d] [ID_QUERY] String ID = %u (0x%X)\n",
-                st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, id, id);
-        fflush(g_fidlog);
-    }
-    LeaveCriticalSection(&g_cs);
+    (void)id;
 }
 
 static void log_file_access(const char* fmt, ...)
@@ -99,22 +78,20 @@ static FILETIME g_trans_filetime = { 0 };
  * ================================================================== */
 static void log_msg(const char* fmt, ...)
 {
-    char buf[1024];
-    va_list ap;
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-
-    va_start(ap, fmt);
-    vsnprintf(buf, sizeof(buf), fmt, ap);
-    va_end(ap);
-
+    if (!g_log_path_w[0]) return;
     EnterCriticalSection(&g_cs);
     if (!g_flog) {
-        g_flog = _wfopen(g_log_path_w, L"a+");
+        g_flog = _wfopen(g_log_path_w, L"a");
     }
     if (g_flog) {
-        fprintf(g_flog, "[%02d:%02d:%02d.%03d] %s\n",
-                st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, buf);
+        SYSTEMTIME st;
+        GetLocalTime(&st);
+        fprintf(g_flog, "[%02d:%02d:%02d.%03d] ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+        va_list args;
+        va_start(args, fmt);
+        vfprintf(g_flog, fmt, args);
+        va_end(args);
+        fprintf(g_flog, "\n");
         fflush(g_flog);
     }
     LeaveCriticalSection(&g_cs);
@@ -298,39 +275,8 @@ static FILE* g_rva_trace_fp = NULL;
 
 static void log_rva_trace(const char* str, uintptr_t caller_rva)
 {
-    if (!str || str[0] == '\0' || caller_rva == 0) return;
-
-    /* Only trace short strings / potential UI buttons / labels (1 to 24 chars) */
-    size_t len = strlen(str);
-    if (len > 24 || strchr(str, '\n')) return;
-
-    uint32_t h = hash_str(str);
-    uint32_t rva32 = (uint32_t)caller_rva;
-
-    /* Check if already logged */
-    LONG count = g_rva_trace_cache_count;
-    if (count > RVA_TRACE_CACHE_SIZE) count = RVA_TRACE_CACHE_SIZE;
-    for (LONG i = 0; i < count; i++) {
-        if (g_rva_trace_cache[i].rva == rva32 && g_rva_trace_cache[i].hash == h) {
-            return;
-        }
-    }
-
-    LONG idx = InterlockedIncrement(&g_rva_trace_cache_count) - 1;
-    if (idx < RVA_TRACE_CACHE_SIZE) {
-        g_rva_trace_cache[idx].rva = rva32;
-        g_rva_trace_cache[idx].hash = h;
-    }
-
-    EnterCriticalSection(&g_cs);
-    if (!g_rva_trace_fp && g_rva_trace_path_w[0] != L'\0') {
-        g_rva_trace_fp = _wfopen(g_rva_trace_path_w, L"a+");
-    }
-    if (g_rva_trace_fp) {
-        fprintf(g_rva_trace_fp, "[RVA 0x%08X] \"%s\"\n", rva32, str);
-        fflush(g_rva_trace_fp);
-    }
-    LeaveCriticalSection(&g_cs);
+    (void)str;
+    (void)caller_rva;
 }
 
 static void clear_translation_table(void)
@@ -648,13 +594,77 @@ static BOOL detokenize_tags(const char* tokenized, const TagTokenList* list, cha
 
 static char s_dynamic_buffers[16][4096];
 static volatile LONG s_dynamic_buf_idx = 0;
+static volatile uint64_t g_last_save_screen_tick = 0;
+
+static BOOL has_thai_utf8(const char* s)
+{
+    if (!s) return FALSE;
+    const unsigned char* p = (const unsigned char*)s;
+    while (*p) {
+        /* Standard Thai Unicode block U+0E00..U+0E7F: 0xE0 0xB8..0xB9 0x80..0xBF */
+        if (*p == 0xE0 && (*(p + 1) == 0xB8 || *(p + 1) == 0xB9)) {
+            return TRUE;
+        }
+        /* Thai PUA characters (Private Use Area U+E000..U+F8FF): 0xEE or 0xEF */
+        if (*p == 0xEE || (*p == 0xEF && (*(p + 1) >= 0x80 && *(p + 1) <= 0xA3))) {
+            return TRUE;
+        }
+        p++;
+    }
+    return FALSE;
+}
+
+static BOOL is_hybrid_save_date(const char* s)
+{
+    if (!s) return FALSE;
+    /* Check for hybrid save slot date string that contains Thai year/day but un-translated Japanese/English season */
+    if (strstr(s, "ปี") || strstr(s, "วัน") || strstr(s, "\xe0\xb8\x9b\xe0\xb8\xb5") ||
+        strstr(s, "\xef\x81\xb6") || strstr(s, "\xef\x80\xa6\xe0\xb8\x99") || strstr(s, "Year ")) {
+        if (strstr(s, "\xe5\xa4\x8f") /* 夏 */ || strstr(s, "\xe6\x98\xa5") /* 春 */ ||
+            strstr(s, "\xe7\xa7\x8b") /* 秋 */ || strstr(s, "\xe5\x86\xac") /* 冬 */ ||
+            strstr(s, "Summer") || strstr(s, "Spring") || strstr(s, "Autumn") ||
+            strstr(s, "Winter") || strstr(s, "Fall")) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 static const char* try_match_dynamic_template(const char* orig);
 
 static const char* lookup_translation_ex(const char* orig, float* out_scale)
 {
     if (out_scale) *out_scale = 1.0f;
-    if (!orig || orig[0] == '\0' || g_trans_count == 0) return NULL;
+    if (!orig || orig[0] == '\0') return NULL;
+
+    /* Hard Failsafe: Never translate single ASCII characters/digits (e.g. keyboard typing 'e', 'a', etc.) */
+    if (orig[1] == '\0') {
+        unsigned char c = (unsigned char)orig[0];
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c <= ' ') {
+            return NULL;
+        }
+    }
+
+    /* 0. Contextual Save Screen Override for 'なし' (Japanese Empty Slot) */
+    if (strcmp(orig, "\xe3\x81\xaa\xe3\x81\x97") == 0) { /* なし */
+        if (g_last_save_screen_tick != 0 && (GetTickCount64() - g_last_save_screen_tick) < 2000) {
+            static char s_pua_empty_slot[64] = {0};
+            if (s_pua_empty_slot[0] == '\0') {
+                convert_thai_utf8_to_pua_utf8("ช่องว่าง", s_pua_empty_slot, sizeof(s_pua_empty_slot));
+            }
+            if (out_scale) *out_scale = 1.0f;
+            return s_pua_empty_slot;
+        }
+    }
+
+    /* Fast-Exit: If string already contains Thai characters (e.g. dialogue from talk.dat or pre-translated text),
+       and is NOT a hybrid save date string that needs season translation, return NULL immediately.
+       This bypasses all fallback regex/parsing loop overhead at 60 FPS during dialogue! */
+    if (has_thai_utf8(orig) && !is_hybrid_save_date(orig)) {
+        return NULL;
+    }
+
+    if (g_trans_count == 0) return NULL;
 
     /* 1. Direct Exact Match in Translation Table */
     uint32_t h = hash_str(orig);
@@ -672,12 +682,31 @@ static const char* lookup_translation_ex(const char* orig, float* out_scale)
     }
     LeaveCriticalSection(&g_cs);
 
-    /* 1.5. Whitespace Fallback: if exact match failed, match trimmed version and restore original spaces */
+    /* 1.5. Whitespace Fallback: if exact match failed, match trimmed version and restore original spaces (supports ASCII and Japanese ideographic space \u3000 = 0xE3 0x80 0x80) */
     size_t orig_len = strlen(orig);
     const char* sp_start = orig;
-    while (*sp_start == ' ' || *sp_start == '\t') sp_start++;
+    while (*sp_start) {
+        if (*sp_start == ' ' || *sp_start == '\t' || *sp_start == '\r' || *sp_start == '\n') {
+            sp_start++;
+        } else if ((unsigned char)sp_start[0] == 0xE3 && (unsigned char)sp_start[1] == 0x80 && (unsigned char)sp_start[2] == 0x80) {
+            sp_start += 3;
+        } else {
+            break;
+        }
+    }
     const char* sp_end = orig + orig_len;
-    while (sp_end > sp_start && (*(sp_end - 1) == ' ' || *(sp_end - 1) == '\t')) sp_end--;
+    while (sp_end > sp_start) {
+        if (*(sp_end - 1) == ' ' || *(sp_end - 1) == '\t' || *(sp_end - 1) == '\r' || *(sp_end - 1) == '\n') {
+            sp_end--;
+        } else if ((sp_end - sp_start) >= 3 &&
+                   (unsigned char)*(sp_end - 3) == 0xE3 &&
+                   (unsigned char)*(sp_end - 2) == 0x80 &&
+                   (unsigned char)*(sp_end - 1) == 0x80) {
+            sp_end -= 3;
+        } else {
+            break;
+        }
+    }
 
     if (sp_start > orig || sp_end < orig + orig_len) {
         size_t trimmed_len = (size_t)(sp_end - sp_start);
@@ -1063,6 +1092,7 @@ static const char* try_match_dynamic_template(const char* orig)
         char* end_yr = NULL;
         long year = strtol(orig, &end_yr, 10);
         if (year > 0 && end_yr == p_nen) {
+            g_last_save_screen_tick = GetTickCount64();
             const char* p_season = p_nen + 7; /* skip "年目 " */
             const char* p_sp = strchr(p_season, ' ');
             size_t skip_sp = 1;
@@ -1116,11 +1146,49 @@ static const char* try_match_dynamic_template(const char* orig)
         }
     }
 
-    /* 1b. English Save Game Date: "Year %d - %s %d" with optional suffix (e.g. "Late Night" or "23Late Night") */
+    /* 1b. Direct Season Name Replacement in formatted Save Slot strings */
+    /* Check for "ปี", "วัน", Year, Day, or PUA equivalents (\xef\x81\xb6 for ปี, \xef\x80\xa6 for วัน) */
+    int is_date_string = (strstr(orig, "ปี") != NULL) ||
+                         (strstr(orig, "วัน") != NULL) ||
+                         (strstr(orig, "\xe0\xb8\x9b\xe0\xb8\xb5") != NULL) ||
+                         (strstr(orig, "\xef\x81\xb6") != NULL) ||
+                         (strstr(orig, "\xef\x80\xa6\xe0\xb8\x99") != NULL) ||
+                         (strstr(orig, "Year ") != NULL);
+
+    if (is_date_string &&
+        (strstr(orig, "Summer") || strstr(orig, "Spring") || strstr(orig, "Autumn") || strstr(orig, "Winter") || strstr(orig, "Fall") ||
+         strstr(orig, "\xe5\xa4\x8f") /* 夏 */ || strstr(orig, "\xe6\x98\xa5") /* 春 */ ||
+         strstr(orig, "\xe7\xa7\x8b") /* 秋 */ || strstr(orig, "\xe5\x86\xac") /* 冬 */)) {
+        g_last_save_screen_tick = GetTickCount64();
+        const char* s_target = NULL;
+        if (strstr(orig, "Summer")) s_target = "Summer";
+        else if (strstr(orig, "Spring")) s_target = "Spring";
+        else if (strstr(orig, "Autumn")) s_target = "Autumn";
+        else if (strstr(orig, "Winter")) s_target = "Winter";
+        else if (strstr(orig, "Fall")) s_target = "Fall";
+        else if (strstr(orig, "\xe5\xa4\x8f")) s_target = "\xe5\xa4\x8f"; /* 夏 */
+        else if (strstr(orig, "\xe6\x98\xa5")) s_target = "\xe6\x98\xa5"; /* 春 */
+        else if (strstr(orig, "\xe7\xa7\x8b")) s_target = "\xe7\xa7\x8b"; /* 秋 */
+        else if (strstr(orig, "\xe5\x86\xac")) s_target = "\xe5\x86\xac"; /* 冬 */
+
+        if (s_target) {
+            const char* s_th = lookup_translation(s_target);
+            if (s_th) {
+                LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
+                char* buf = s_dynamic_buffers[b_idx & 15];
+                if (replace_str(orig, s_target, s_th, buf, sizeof(s_dynamic_buffers[0]))) {
+                    return buf;
+                }
+            }
+        }
+    }
+
+    /* 1c. English Save Game Date: "Year %d - %s %d" with optional suffix (e.g. "Late Night" or "23Late Night") */
     if (strncmp(orig, "Year ", 5) == 0) {
         char* end_yr = NULL;
         long year = strtol(orig + 5, &end_yr, 10);
         if (year > 0 && end_yr && strncmp(end_yr, " - ", 3) == 0) {
+            g_last_save_screen_tick = GetTickCount64();
             const char* p_season = end_yr + 3; /* skip " - " */
             const char* p_sp = strchr(p_season, ' ');
             if (p_sp && p_sp > p_season) {
@@ -1409,12 +1477,12 @@ static const char* try_match_dynamic_template(const char* orig)
         } else {
             if (len > r->suffix_len && memcmp(orig + len - r->suffix_len, r->suffix_jp, r->suffix_len) == 0) {
                 size_t item_len = len - r->suffix_len;
-                if (item_len > 0 && item_len < 128) {
+                if (item_len > 0 && item_len <= 36) {
                     char item_jp[128];
                     memcpy(item_jp, orig, item_len);
                     item_jp[item_len] = '\0';
                     const char* item_th = lookup_translation(item_jp);
-                    if (!item_th) item_th = item_jp;
+                    if (!item_th) continue; /* Must be a known item/name to prevent sentence false matches */
                     const char* templ = lookup_translation(r->templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
@@ -1522,7 +1590,6 @@ static const char* try_match_dynamic_template(const char* orig)
         { "", 0, "\xe3\x81\xa3\xe3\x81\xa6\xe3\x80\x81\xe4\xbd\x99\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x9f\xe3\x82\x8a\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xef\xbc\x9f", 36, "<tmpstr>\xe3\x81\xa3\xe3\x81\xa6\xe3\x80\x81\xe4\xbd\x99\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x9f\xe3\x82\x8a\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xef\xbc\x9f" },
         { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xef\xbc\x9f", 33, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\xa6\xe3\x81\x8f\xe3\x82\x8c\xe3\x81\x9f\xe3\x81\xae\xef\xbc\x9f" },
         { "\xe3\x81\x8a\xe3\x80\x81\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xa3\xe3\x81\xa6", 18, "\xef\xbc\x9f", 3, "\xe3\x81\x8a\xe3\x80\x81\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xa3\xe3\x81\xa6<tmpstr>\xef\xbc\x9f" },
-        { "\xe3\x81\xb2\xe3\x82\x87\xe3\x81\xa3\xe3\x81\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x80\x81", 21, "", 0, "\xe3\x81\xb2\xe3\x82\x87\xe3\x81\xa3\xe3\x81\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x80\x81<tmpstr>" },
         { "", 0, "\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x8c\xe2\x80\xa6\xe2\x80\xa6", 27, "<tmpstr>\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x8c\xe2\x80\xa6\xe2\x80\xa6" },
         { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\x9f\xe3\x81\xae\xe3\x81\xad", 24, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\x8d\xe3\x81\x9f\xe3\x81\xae\xe3\x81\xad" },
         { "", 0, "\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xe3\x81\x8b\xef\xbc\x9f", 24, "<tmpstr>\xe3\x82\x92\xe6\x8c\x81\xe3\x81\xa3\xe3\x81\xa6\xe3\x81\xaa\xe3\x81\x84\xe3\x81\x8b\xef\xbc\x9f" },
@@ -1535,10 +1602,7 @@ static const char* try_match_dynamic_template(const char* orig)
         { "\xe3\x81\xbe\xe3\x81\x95\xe3\x81\x8b", 9, "\xe3\x82\x92", 3, "\xe3\x81\xbe\xe3\x81\x95\xe3\x81\x8b<tmpstr>\xe3\x82\x92" },
         { "\xe3\x81\x95\xe3\x81\x99\xe3\x81\x8c", 9, "\xe3\x81\xa0", 3, "\xe3\x81\x95\xe3\x81\x99\xe3\x81\x8c<tmpstr>\xe3\x81\xa0" },
         { "", 0, "\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xa7\xe3\x81\x95", 15, "<tmpstr>\xe3\x81\x8c\xe5\xbf\x85\xe8\xa6\x81\xe3\x81\xa7\xe3\x81\x95" },
-        { "", 0, "\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 15, "<tmpstr>\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" },
-        { "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf", 9, "", 0, "\xe3\x81\x9d\xe3\x82\x8c\xe3\x81\xaf<tmpstr>" },
-        { "", 0, "\xe3\x81\xa0\xe3\x81\xad\xef\xbc\x81", 9, "<tmpstr>\xe3\x81\xa0\xe3\x81\xad\xef\xbc\x81" },
-        { "", 0, "\xe3\x80\x81", 3, "<tmpstr>\xe3\x80\x81" }
+        { "", 0, "\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9", 15, "<tmpstr>\xe3\x81\xaa\xe3\x82\x93\xe3\x81\xa0\xe3\x81\x91\xe3\x81\xa9" }
     };
     for (size_t i = 0; i < sizeof(s_tmpstr_rules) / sizeof(s_tmpstr_rules[0]); i++) {
         const struct TmpstrRule* r = &s_tmpstr_rules[i];
@@ -1546,12 +1610,12 @@ static const char* try_match_dynamic_template(const char* orig)
             if ((r->pfx_len == 0 || memcmp(orig, r->pfx, r->pfx_len) == 0) &&
                 (r->sfx_len == 0 || memcmp(orig + len - r->sfx_len, r->sfx, r->sfx_len) == 0)) {
                 size_t item_len = len - r->pfx_len - r->sfx_len;
-                if (item_len > 0 && item_len < 128) {
+                if (item_len > 0 && item_len <= 36) {
                     char item_jp[128];
                     memcpy(item_jp, orig + r->pfx_len, item_len);
                     item_jp[item_len] = '\0';
                     const char* item_th = lookup_translation(item_jp);
-                    if (!item_th) item_th = item_jp;
+                    if (!item_th) continue; /* Strictly require recognized item translation to prevent false matching general dialogue */
                     const char* templ = lookup_translation(r->templ_key);
                     if (templ) {
                         LONG b_idx = InterlockedIncrement(&s_dynamic_buf_idx);
@@ -1774,6 +1838,9 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
 
         strip_br_tags(trans);
 
+        /* Auto-convert plain Thai UTF-8 to PUA in memory using Mapping.json */
+        convert_thai_utf8_to_pua_utf8(trans, trans, sizeof(trans));
+
         float scale = 1.0f;
 
         /* Extract [SCALE:...] factor */
@@ -1809,6 +1876,14 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
 
         if (orig[0] == '\0') continue;
 
+        /* Hard Failsafe: Never allow single ASCII characters/digits to be inserted as translations */
+        if (orig[1] == '\0') {
+            unsigned char c = (unsigned char)orig[0];
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c <= ' ') {
+                continue;
+            }
+        }
+
         if (target_rva != 0) {
             insert_rva_override(orig, target_rva, scale, trans);
         } else {
@@ -1818,53 +1893,7 @@ static int parse_and_insert_translation_file(const wchar_t* path_w)
             register_player_wildcard(orig, trans);
         }
 
-        /* Auto-split <cmd ...> entries into Prefix and Suffix for Tip windows */
-        if (strchr(orig, '<') && strchr(trans, '<')) {
-            const char* cmd_o = strstr(orig, "<cmd");
-            if (!cmd_o) cmd_o = strstr(orig, "<CMD");
-            const char* cmd_t = strstr(trans, "<cmd");
-            if (!cmd_t) cmd_t = strstr(trans, "<CMD");
-            if (cmd_o && cmd_t) {
-                const char* end_o = strchr(cmd_o, '>');
-                const char* end_t = strchr(cmd_t, '>');
-                if (end_o && end_t) {
-                    size_t pfx_o_len = (size_t)(cmd_o - orig);
-                    size_t pfx_t_len = (size_t)(cmd_t - trans);
-                    if (pfx_o_len > 0 && pfx_t_len > 0 && pfx_o_len < 256 && pfx_t_len < 512) {
-                        char pfx_o[256], pfx_t[512];
-                        memcpy(pfx_o, orig, pfx_o_len); pfx_o[pfx_o_len] = '\0';
-                        memcpy(pfx_t, trans, pfx_t_len); pfx_t[pfx_t_len] = '\0';
-                        insert_translation(pfx_o, scale, pfx_t);
-                    }
-                    const char* sfx_o = end_o + 1;
-                    const char* sfx_t = end_t + 1;
-                    if (*sfx_o != '\0' && *sfx_t != '\0') {
-                        insert_translation(sfx_o, scale, sfx_t);
-                    }
-                }
-            }
-        }
 
-        /* Auto-split <player> entries into Prefix and Suffix for Dialogue Chunks */
-        if (strstr(orig, "<player>") && strstr(trans, "<player>")) {
-            const char* tag_o = strstr(orig, "<player>");
-            const char* tag_t = strstr(trans, "<player>");
-            if (tag_o && tag_t) {
-                size_t pfx_o_len = (size_t)(tag_o - orig);
-                size_t pfx_t_len = (size_t)(tag_t - trans);
-                if (pfx_o_len > 0 && pfx_t_len > 0 && pfx_o_len < 256 && pfx_t_len < 512) {
-                    char pfx_o[256], pfx_t[512];
-                    memcpy(pfx_o, orig, pfx_o_len); pfx_o[pfx_o_len] = '\0';
-                    memcpy(pfx_t, trans, pfx_t_len); pfx_t[pfx_t_len] = '\0';
-                    insert_translation(pfx_o, scale, pfx_t);
-                }
-                const char* sfx_o = tag_o + 8;
-                const char* sfx_t = tag_t + 8;
-                if (*sfx_o != '\0' && *sfx_t != '\0') {
-                    insert_translation(sfx_o, scale, sfx_t);
-                }
-            }
-        }
 
         /* Auto-register Tag Tokenizer template if tags exist */
         if (strchr(orig, '<') && strchr(trans, '<')) {
@@ -1904,20 +1933,30 @@ static void load_translation_file(void)
     /* 1. Load primary translation.txt */
     loaded += parse_and_insert_translation_file(g_translation_path_w);
 
-    /* 2. Load modular translations from translations\ folder if it exists */
-    wchar_t trans_pattern_w[MAX_PATH];
-    swprintf(trans_pattern_w, MAX_PATH, L"%ls\\translations\\*.txt", g_mod_dir_w);
-    WIN32_FIND_DATAW ffd;
-    HANDLE hFind = FindFirstFileW(trans_pattern_w, &ffd);
-    if (hFind != INVALID_HANDLE_VALUE) {
-        do {
-            if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                wchar_t sub_path_w[MAX_PATH];
-                swprintf(sub_path_w, MAX_PATH, L"%ls\\translations\\%ls", g_mod_dir_w, ffd.cFileName);
-                loaded += parse_and_insert_translation_file(sub_path_w);
-            }
-        } while (FindNextFileW(hFind, &ffd));
-        FindClose(hFind);
+    /* 2. Load modular translations from translations\ folder in Mods, Mod Dir or Game Dir */
+    wchar_t trans_dirs[3][MAX_PATH];
+    swprintf(trans_dirs[0], MAX_PATH, L"%ls\\Mods\\translations", g_game_dir_w);
+    swprintf(trans_dirs[1], MAX_PATH, L"%ls\\translations", g_mod_dir_w);
+    swprintf(trans_dirs[2], MAX_PATH, L"%ls\\translations", g_game_dir_w);
+
+    for (int d = 0; d < 3; d++) {
+        wchar_t trans_pattern_w[MAX_PATH];
+        swprintf(trans_pattern_w, MAX_PATH, L"%ls\\*.txt", trans_dirs[d]);
+        WIN32_FIND_DATAW ffd;
+        HANDLE hFind = FindFirstFileW(trans_pattern_w, &ffd);
+        if (hFind != INVALID_HANDLE_VALUE) {
+            do {
+                if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                    wchar_t sub_path_w[MAX_PATH];
+                    swprintf(sub_path_w, MAX_PATH, L"%ls\\%ls", trans_dirs[d], ffd.cFileName);
+                    /* Avoid reloading primary translation.txt if it was placed inside */
+                    if (wcsstr(ffd.cFileName, L"translation.txt") == NULL) {
+                        loaded += parse_and_insert_translation_file(sub_path_w);
+                    }
+                }
+            } while (FindNextFileW(hFind, &ffd));
+            FindClose(hFind);
+        }
     }
 
     WIN32_FILE_ATTRIBUTE_DATA fad;
@@ -1967,34 +2006,13 @@ static BOOL is_safe_str(const char* s, int max_len)
 
 static void process_captured_text(const char* str, const char* source)
 {
+    (void)str;
     (void)source;
-    if (!is_safe_str(str, 8192)) return;
-
-    EnterCriticalSection(&g_cs);
-    g_total_calls++;
-    LeaveCriticalSection(&g_cs);
 }
 
 /* ==================================================================
  * Missing Text Detection (Japanese & English) & Logging
  * ================================================================== */
-static BOOL has_thai_utf8(const char* s)
-{
-    if (!s) return FALSE;
-    const unsigned char* p = (const unsigned char*)s;
-    while (*p) {
-        /* Standard Thai Unicode block U+0E00..U+0E7F: 0xE0 0xB8..0xB9 0x80..0xBF */
-        if (*p == 0xE0 && (*(p + 1) == 0xB8 || *(p + 1) == 0xB9)) {
-            return TRUE;
-        }
-        /* Thai PUA characters (Private Use Area U+E000..U+F8FF): 0xEE or 0xEF */
-        if (*p == 0xEE || (*p == 0xEF && (*(p + 1) >= 0x80 && *(p + 1) <= 0xA3))) {
-            return TRUE;
-        }
-        p++;
-    }
-    return FALSE;
-}
 
 static BOOL has_japanese_content(const char* s)
 {
@@ -2101,83 +2119,15 @@ static void write_utf8_bom(FILE* f)
 
 static void log_missing_text(const char* str, const char* source, const char* lang_tag)
 {
+    (void)str;
     (void)source;
-    if (!is_safe_str(str, 8192)) return;
-
-    EnterCriticalSection(&g_cs);
-    if (!is_missing_seen_or_insert(str)) {
-        g_missing_count++;
-
-
-        /* 2. Open latest file: missing/missing_latest.txt */
-        static BOOL s_latest_opened = FALSE;
-        if (!s_latest_opened && g_missing_latest_path_w[0]) {
-            g_fmissing_latest = _wfopen(g_missing_latest_path_w, L"w");
-            if (g_fmissing_latest) write_utf8_bom(g_fmissing_latest);
-            s_latest_opened = TRUE;
-        } else if (!g_fmissing_latest && g_missing_latest_path_w[0]) {
-            g_fmissing_latest = _wfopen(g_missing_latest_path_w, L"a+");
-            if (g_fmissing_latest) write_utf8_bom(g_fmissing_latest);
-        }
-
-        /* 3. Open legacy cumulative file: dump_missing.txt */
-        if (!g_fmissing_legacy && g_dump_missing_path_w[0]) {
-            g_fmissing_legacy = _wfopen(g_dump_missing_path_w, L"a+");
-            if (g_fmissing_legacy) write_utf8_bom(g_fmissing_legacy);
-        }
-
-        char escaped[8192];
-        escape_string_for_dump(escaped, sizeof(escaped), str);
-
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-
-
-        if (g_fmissing_latest) {
-            fprintf(g_fmissing_latest, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
-                    st.wYear, st.wMonth, st.wDay,
-                    st.wHour, st.wMinute, st.wSecond,
-                    lang_tag, escaped);
-            fflush(g_fmissing_latest);
-        }
-
-        if (g_fmissing_legacy) {
-            fprintf(g_fmissing_legacy, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] %s\n",
-                    st.wYear, st.wMonth, st.wDay,
-                    st.wHour, st.wMinute, st.wSecond,
-                    lang_tag, escaped);
-            fflush(g_fmissing_legacy);
-        }
-
-        log_msg("[MISSING TEXT] [%s] [%04d-%02d-%02d %02d:%02d:%02d] %s",
-                lang_tag,
-                st.wYear, st.wMonth, st.wDay,
-                st.wHour, st.wMinute, st.wSecond,
-                escaped);
-    }
-    LeaveCriticalSection(&g_cs);
+    (void)lang_tag;
 }
 
 static void check_and_log_missing(const char* str, const char* source)
 {
-    if (!str || !*str) return;
-
-    /* Rule 1: Exclude already-translated Thai text (unless it still contains untranslated Japanese) */
-    if (has_thai_utf8(str) && !has_japanese_content(str)) {
-        return;
-    }
-
-    /* Rule 2: Check for Japanese text (Hiragana, Katakana, Kanji) */
-    if (has_japanese_content(str)) {
-        log_missing_text(str, source, "JP");
-        return;
-    }
-
-    /* Rule 3: Check for English text (>=2 ASCII letters outside tags) */
-    if (has_english_content(str)) {
-        log_missing_text(str, source, "EN");
-        return;
-    }
+    (void)str;
+    (void)source;
 }
 
 /* ==================================================================
@@ -2330,8 +2280,14 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
     if (!g_settings.enable_thai_mod) return FALSE;
     const char* base_name = get_basename(vfs_name);
 
-    /* If Thai minimap is not in Thai mode (1), do not override any minimap texture (2 = English, 0 = Original) */
-    if (g_settings.enable_thai_minimap != 1 && strstr(base_name, "minimap_") != NULL) {
+    /* If Thai minimap is set to 0 (game original), do not override any minimap texture */
+    if (g_settings.enable_thai_minimap == 0 && strstr(base_name, "minimap_") != NULL) {
+        return FALSE;
+    }
+
+    /* If Thai virtual keyboard is disabled (enable_thai_keyboard == 0), do not override any keyboard texture */
+    if (!g_settings.enable_thai_keyboard &&
+        (strstr(base_name, "ui_keyboard") != NULL || strstr(vfs_name, "ui_keyboard") != NULL)) {
         return FALSE;
     }
 
@@ -2379,6 +2335,21 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
                 return TRUE;
             }
         }
+        if (g_settings.enable_thai_minimap == 2 && strstr(base_name, "minimap_") != NULL) {
+            char en_map_name[MAX_PATH];
+            size_t blen = strlen(base_name);
+            if (blen > 5 && strcmp(base_name + blen - 5, ".nltx") == 0 && !strstr(base_name, "_en")) {
+                snprintf(en_map_name, sizeof(en_map_name), "%.*s_en.nltx", (int)(blen - 5), base_name);
+                wchar_t en_map_w[MAX_PATH];
+                MultiByteToWideChar(CP_UTF8, 0, en_map_name, -1, en_map_w, MAX_PATH);
+                swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, en_map_w);
+                if (file_exists_and_size_w(candidate, out_size)) {
+                    wcsncpy(out_path_w, candidate, out_max - 1);
+                    out_path_w[out_max - 1] = L'\0';
+                    return TRUE;
+                }
+            }
+        }
         swprintf(candidate, MAX_PATH, L"%ls\\textures\\%ls", g_mod_dir_w, base_name_w);
         if (file_exists_and_size_w(candidate, out_size)) {
             wcsncpy(out_path_w, candidate, out_max - 1);
@@ -2395,8 +2366,14 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         }
     }
 
-    /* 1d. Mods\TextDump\dat_en\<basename> or dat_ja\<basename> */
+    /* 1d. Mods\dat_en\<basename> or Mods\TextDump\dat_en\<basename> */
     if (g_settings.dat_en) {
+        swprintf(candidate, MAX_PATH, L"%ls\\Mods\\dat_en\\%ls", g_game_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
         swprintf(candidate, MAX_PATH, L"%ls\\dat_en\\%ls", g_mod_dir_w, base_name_w);
         if (file_exists_and_size_w(candidate, out_size)) {
             wcsncpy(out_path_w, candidate, out_max - 1);
@@ -2404,6 +2381,12 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
             return TRUE;
         }
     } else if (g_settings.dat_ja) {
+        swprintf(candidate, MAX_PATH, L"%ls\\Mods\\dat_ja\\%ls", g_game_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
         swprintf(candidate, MAX_PATH, L"%ls\\dat_ja\\%ls", g_mod_dir_w, base_name_w);
         if (file_exists_and_size_w(candidate, out_size)) {
             wcsncpy(out_path_w, candidate, out_max - 1);
@@ -2412,12 +2395,14 @@ static BOOL find_override_file_w(const char* vfs_name, wchar_t* out_path_w, size
         }
     }
 
-    /* 1d2. Fallback: Mods\TextDump\dat\<basename> */
-    swprintf(candidate, MAX_PATH, L"%ls\\dat\\%ls", g_mod_dir_w, base_name_w);
-    if (file_exists_and_size_w(candidate, out_size)) {
-        wcsncpy(out_path_w, candidate, out_max - 1);
-        out_path_w[out_max - 1] = L'\0';
-        return TRUE;
+    /* 1d2. Fallback: Mods\TextDump\dat\<basename> (Only if DAT override is explicitly enabled) */
+    if (g_settings.dat_en || g_settings.dat_ja || g_settings.enable_dat_override) {
+        swprintf(candidate, MAX_PATH, L"%ls\\dat\\%ls", g_mod_dir_w, base_name_w);
+        if (file_exists_and_size_w(candidate, out_size)) {
+            wcsncpy(out_path_w, candidate, out_max - 1);
+            out_path_w[out_max - 1] = L'\0';
+            return TRUE;
+        }
     }
 
     /* 1e. Mods\TextDump\data\<basename> */
@@ -3193,13 +3178,7 @@ static void apply_vfs_payload(const PendingIo* pio)
         fclose(fext);
 
         size_t total_written = 32 + actual_read;
-        if (pio->bytes_requested > (DWORD)total_written) {
-            memset((char*)pio->lpBuffer + total_written, 0, pio->bytes_requested - (DWORD)total_written);
-        }
-
-        log_msg("[VFS ASYNC SUCCESS] Applied FAD [%s] (0x%llX) -> %ls (%u NLTX + 32 desc into buffer %u)",
-                pio->filename, (unsigned long long)pio->offset, pio->override_path_w,
-                (unsigned int)actual_read, (unsigned int)pio->bytes_requested);
+        /* Do not zero out trailing memory; the original buffer remains intact */
     } else {
         DWORD to_read = (DWORD)pio->ext_size;
         if (to_read > pio->bytes_requested && pio->bytes_requested > 0) {
@@ -3210,13 +3189,7 @@ static void apply_vfs_payload(const PendingIo* pio)
         size_t actual_read = fread(pio->lpBuffer, 1, to_read, fext);
         fclose(fext);
 
-        if (pio->bytes_requested > (DWORD)actual_read) {
-            memset((char*)pio->lpBuffer + actual_read, 0, pio->bytes_requested - (DWORD)actual_read);
-        }
-
-        log_msg("[VFS ASYNC SUCCESS] Applied VFS [%s] (0x%llX) -> %ls (read %u bytes into buffer %u)",
-                pio->filename, (unsigned long long)pio->offset, pio->override_path_w,
-                (unsigned int)actual_read, (unsigned int)pio->bytes_requested);
+        /* Do not zero out trailing memory; the original buffer remains intact */
     }
 }
 
@@ -3468,6 +3441,12 @@ static BOOL WINAPI hk_ReadFile(
             for (size_t i = 0; i < fad_sub_count; i++) {
                 if (!g_fad_runtime_subfiles[i].has_fad_descriptor) continue;
 
+                if (!g_settings.enable_thai_keyboard &&
+                    ((g_fad_runtime_subfiles[i].filename && strstr(g_fad_runtime_subfiles[i].filename, "ui_keyboard")) ||
+                     (g_fad_runtime_subfiles[i].alt_filename && strstr(g_fad_runtime_subfiles[i].alt_filename, "ui_keyboard")))) {
+                    continue;
+                }
+
                 wchar_t override_path_w[MAX_PATH];
                 long ext_size = 0;
                 BOOL found = FALSE;
@@ -3536,15 +3515,11 @@ static BOOL WINAPI hk_ReadFile(
         wchar_t override_path_w[MAX_PATH];
         long ext_size = 0;
         if (find_override_file_w(entry->name, override_path_w, MAX_PATH, &ext_size)) {
-            log_msg("[VFS OVERRIDE] Target [%s] (0x%llX) -> %ls (requested=%u, ext_size=%ld)",
-                    entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead, ext_size);
             if (lpOverlapped) {
                 add_pending_io(
                     hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
                     override_path_w, ext_size, FALSE, 0, 0, entry->name
                 );
-                log_msg("[VFS ASYNC QUEUED] [%s] (0x%llX) -> %ls (nBytes=%u)",
-                        entry->name, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
                 return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
             } else {
                 BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
@@ -3596,24 +3571,23 @@ static BOOL WINAPI hk_ReadFile(
 
             /* Check for custom Thai texture (only in mode 1) */
             if (g_settings.texture_mode == 1) {
-                if (fad_entry->alt_filename) {
-                    found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
-                }
-                if (!found) {
-                    found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+                if (!g_settings.enable_thai_keyboard &&
+                    ((fad_entry->filename && strstr(fad_entry->filename, "ui_keyboard")) ||
+                     (fad_entry->alt_filename && strstr(fad_entry->alt_filename, "ui_keyboard")))) {
+                    /* Thai virtual keyboard disabled: bypass texture override to show original Japanese keyboard */
+                } else {
+                    if (fad_entry->alt_filename) {
+                        found = find_override_file_w(fad_entry->alt_filename, override_path_w, MAX_PATH, &ext_size);
+                    }
+                    if (!found) {
+                        found = find_override_file_w(fad_entry->filename, override_path_w, MAX_PATH, &ext_size);
+                    }
                 }
             }
 
             if (found) {
-                BOOL is_nltx = FALSE;
-                FILE* ftest = _wfopen(override_path_w, L"rb");
-                if (ftest) {
-                    char magic[8] = { 0 };
-                    size_t nread = fread(magic, 1, 8, ftest);
-                    fclose(ftest);
-                    is_nltx = (nread >= 8 && memcmp(magic, "NMPLTEX1", 8) == 0);
-                }
-
+                size_t olen = wcslen(override_path_w);
+                BOOL is_nltx = (olen >= 5 && _wcsicmp(override_path_w + olen - 5, L".nltx") == 0);
                 BOOL is_fad_desc = fad_entry->has_fad_descriptor && is_nltx;
 
                 if (lpOverlapped) {
@@ -3621,8 +3595,6 @@ static BOOL WINAPI hk_ReadFile(
                         hFile, lpOverlapped, lpBuffer, arch_id, offset, nNumberOfBytesToRead,
                         override_path_w, ext_size, is_fad_desc, fad_entry->width, fad_entry->height, fad_entry->filename
                     );
-                    log_msg("[VFS ASYNC QUEUED] FAD [%s] (0x%llX) -> %ls (nBytes=%u)",
-                            fad_entry->filename, (unsigned long long)offset, override_path_w, nNumberOfBytesToRead);
                     return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
                 } else {
                     BOOL res = fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
@@ -3644,17 +3616,19 @@ static BOOL WINAPI hk_ReadFile(
                        fad_entry->en_offset != 0 && fad_entry->fad_base == g_fad_base_offset_jp) {
                 /* English Fallback: Redirect read to English offset in resident_lang_en.fad! */
                 uint64_t en_off = fad_entry->en_offset;
-                OVERLAPPED ov_en = { 0 };
-                if (lpOverlapped) {
-                    ov_en = *lpOverlapped;
-                }
-                ov_en.Offset = (DWORD)(en_off & 0xFFFFFFFF);
-                ov_en.OffsetHigh = (DWORD)(en_off >> 32);
-
                 log_msg("[VFS FAD -> EN FALLBACK] [%s] (JP 0x%llX -> EN 0x%llX, req=%u)",
                         fad_entry->filename, (unsigned long long)offset, (unsigned long long)en_off, nNumberOfBytesToRead);
 
-                return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, &ov_en);
+                if (lpOverlapped) {
+                    lpOverlapped->Offset = (DWORD)(en_off & 0xFFFFFFFF);
+                    lpOverlapped->OffsetHigh = (DWORD)(en_off >> 32);
+                    return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+                } else {
+                    LARGE_INTEGER li;
+                    li.QuadPart = en_off;
+                    SetFilePointerEx(hFile, li, NULL, FILE_BEGIN);
+                    return fp_original_ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL);
+                }
             }
         }
     }
@@ -3684,6 +3658,14 @@ static void hk_putStr(void* this_ptr, const char* str)
         return;
     }
     process_captured_text(str, "putStr");
+
+    if (str && (strstr(str, "Save Data") || strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") ||
+                strstr(str, "Delete Save") || strstr(str, "Previous Save") ||
+                strstr(str, "ข้อมูลบันทึก") ||
+                strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe5\x89\x8a\xe9\x99\xa4") /* セーブデータ削除 */ ||
+                strstr(str, "\xe4\xbb\xa5\xe5\x89\x8d\xe3\x81\xae\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") /* 以前のセーブデータ */)) {
+        g_last_save_screen_tick = GetTickCount64();
+    }
 
     void* ret_addr = _ReturnAddress();
     uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
@@ -3715,20 +3697,7 @@ static void hk_putStr(void* this_ptr, const char* str)
         }
     }
 
-    if (this_ptr) {
-        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
-    }
-
-    /* Seamless Proportional Redirect: Send to putStrProp without any memory patching conflict */
-    if (fp_original_putStrProp) {
-        if (this_ptr) {
-        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
-    }
-
-    call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
-    } else {
-        call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
-    }
+    call_with_auto_scale(fp_original_putStr, this_ptr, str, scale);
 }
 
 static void hk_putStrProp(void* this_ptr, const char* str)
@@ -3738,6 +3707,14 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         return;
     }
     process_captured_text(str, "putStrProp");
+
+    if (str && (strstr(str, "Save Data") || strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") ||
+                strstr(str, "Delete Save") || strstr(str, "Previous Save") ||
+                strstr(str, "ข้อมูลบันทึก") ||
+                strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe5\x89\x8a\xe9\x99\xa4") /* セーブデータ削除 */ ||
+                strstr(str, "\xe4\xbb\xa5\xe5\x89\x8d\xe3\x81\xae\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") /* 以前のセーブデータ */)) {
+        g_last_save_screen_tick = GetTickCount64();
+    }
 
     void* ret_addr = _ReturnAddress();
     uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
@@ -3769,10 +3746,6 @@ static void hk_putStrProp(void* this_ptr, const char* str)
         }
     }
 
-    if (this_ptr) {
-        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
-    }
-
     call_with_auto_scale(fp_original_putStrProp, this_ptr, str, scale);
 }
 
@@ -3783,6 +3756,14 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
         return;
     }
     process_captured_text(str, "putStrAlign");
+
+    if (str && (strstr(str, "Save Data") || strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") ||
+                strstr(str, "Delete Save") || strstr(str, "Previous Save") ||
+                strstr(str, "ข้อมูลบันทึก") ||
+                strstr(str, "\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe5\x89\x8a\xe9\x99\xa4") /* セーブデータ削除 */ ||
+                strstr(str, "\xe4\xbb\xa5\xe5\x89\x8d\xe3\x81\xae\xe3\x82\xbb\xe3\x83\xbc\xe3\x83\x96\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf") /* 以前のセーブデータ */)) {
+        g_last_save_screen_tick = GetTickCount64();
+    }
 
     void* ret_addr = _ReturnAddress();
     uintptr_t caller_rva = g_game_base_addr ? ((uintptr_t)ret_addr - g_game_base_addr) : 0;
@@ -3812,10 +3793,6 @@ static void hk_putStrAlign(void* this_ptr, const char* str)
             strip_cmd_tags_in_place(clean_buf);
             str = clean_buf;
         }
-    }
-
-    if (this_ptr) {
-        *(uint16_t*)((uintptr_t)this_ptr + 0x26) = 1;
     }
 
     call_with_auto_scale(fp_original_putStrAlign, this_ptr, str, scale);
@@ -3889,6 +3866,61 @@ static LONG WINAPI AnimeCrashFilter(PEXCEPTION_POINTERS pExceptionInfo)
             pExceptionInfo->ContextRecord->Rsp += 8;
             return EXCEPTION_CONTINUE_EXECUTION;
         }
+        if (base && rip == base + 0x009642AD) {
+            log_msg("[CRASH GUARD] Intercepted SoundStart null controller at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x009643E7));
+            pExceptionInfo->ContextRecord->Rip = base + 0x009643E7;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x00964247) {
+            log_msg("[CRASH GUARD] Intercepted SoundController [rbx + 0x28] null pointer at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x00964252));
+            pExceptionInfo->ContextRecord->Rbx = 0;
+            pExceptionInfo->ContextRecord->Rip = base + 0x00964252;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x00964626) {
+            log_msg("[CRASH GUARD] Intercepted SoundSetup null controller at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x00964A13));
+            pExceptionInfo->ContextRecord->Rip = base + 0x00964A13;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x00963EAE) {
+            log_msg("[CRASH GUARD] Intercepted SoundPlay null controller at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x0096426F));
+            pExceptionInfo->ContextRecord->Rbx = 0;
+            pExceptionInfo->ContextRecord->Rax = 0;
+            pExceptionInfo->ContextRecord->Rip = base + 0x0096426F;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x00963D76) {
+            log_msg("[CRASH GUARD] Intercepted SoundStop null controller at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x00963E39));
+            pExceptionInfo->ContextRecord->Rax = 0;
+            pExceptionInfo->ContextRecord->Rip = base + 0x00963E39;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x0096442C) {
+            log_msg("[CRASH GUARD] Intercepted SoundRelease null controller at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x009645BF));
+            pExceptionInfo->ContextRecord->Rip = base + 0x009645BF;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x007F5719) {
+            log_msg("[CRASH GUARD] Intercepted Font glyph null dereference at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x007F572C));
+            pExceptionInfo->ContextRecord->Rip = base + 0x007F572C;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        if (base && rip == base + 0x007F8455) {
+            log_msg("[CRASH GUARD] Intercepted Font metric null dereference at 0x%p! Recovering to 0x%p...",
+                    (void*)rip, (void*)(base + 0x007F8460));
+            pExceptionInfo->ContextRecord->Rip = base + 0x007F8460;
+            return EXCEPTION_CONTINUE_EXECUTION;
+        }
+        log_msg("[CRASH GUARD] Unhandled Access Violation at 0x%p (RVA 0x%08X)! Target=0x%p",
+                (void*)rip, (DWORD)(base ? (rip - base) : 0),
+                (void*)pExceptionInfo->ExceptionRecord->ExceptionInformation[1]);
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -3907,76 +3939,80 @@ static void hk_AnimeSub(void* rcx, uint8_t dl)
 }
 
 /* ==================================================================
+ * Hook Definitions: Sound Controller Crash Guard (Engine Audio Null Pointer Guard)
+ * village.exe calls sound methods with rcx=NULL for animations without audio
+ * ================================================================== */
+typedef uint64_t (*t_SoundStop)(void* rcx, void* rdx, void* r8, void* r9);
+static t_SoundStop fp_original_SoundStop = NULL;
+
+static uint64_t hk_SoundStop(void* rcx, void* rdx, void* r8, void* r9)
+{
+    if (!rcx) return 0;
+    return fp_original_SoundStop(rcx, rdx, r8, r9);
+}
+
+typedef uint64_t (*t_SoundPlay)(void* rcx, void* rdx, int r8d, int r9d, void* a5, void* a6);
+static t_SoundPlay fp_original_SoundPlay = NULL;
+
+static uint64_t hk_SoundPlay(void* rcx, void* rdx, int r8d, int r9d, void* a5, void* a6)
+{
+    if (!rcx) return 0;
+    return fp_original_SoundPlay(rcx, rdx, r8d, r9d, a5, a6);
+}
+
+typedef void (*t_SoundStart)(void* rcx);
+static t_SoundStart fp_original_SoundStart = NULL;
+
+static void hk_SoundStart(void* rcx)
+{
+    if (!rcx) return;
+    fp_original_SoundStart(rcx);
+}
+
+typedef void (*t_SoundRelease)(void* rcx);
+static t_SoundRelease fp_original_SoundRelease = NULL;
+
+static void hk_SoundRelease(void* rcx)
+{
+    if (!rcx) return;
+    fp_original_SoundRelease(rcx);
+}
+
+typedef uint64_t (*t_SoundSetup)(void* rcx, int edx, void* r8, void* r9, void* a5, void* a6);
+static t_SoundSetup fp_original_SoundSetup = NULL;
+
+static uint64_t hk_SoundSetup(void* rcx, int edx, void* r8, void* r9, void* a5, void* a6)
+{
+    if (!rcx) return 0;
+    return fp_original_SoundSetup(rcx, edx, r8, r9, a5, a6);
+}
+
+/* ==================================================================
+ * Game Language Boot Hook (force_jp_database)
+ * Hooks RVA 0x0081ABD0 (Steam language detector) so the game boots
+ * cleanly into Japanese mode, loading the JP font subsystem and JP dat tables.
+ * ================================================================== */
+typedef int (*t_GetGameLanguage)(void* rcx);
+static t_GetGameLanguage fp_original_GetGameLanguage = NULL;
+
+static int hk_GetGameLanguage(void* rcx)
+{
+    if (g_settings.enable_thai_mod && g_settings.force_jp_database) {
+        log_msg("[LANGUAGE HOOK] Boot language queried -> Forcing Japanese (0) for 100%% complete dialogue & font init!");
+        return 0; /* 0 = Japanese */
+    }
+    if (fp_original_GetGameLanguage) {
+        return fp_original_GetGameLanguage(rcx);
+    }
+    return 0;
+}
+
+/* ==================================================================
  * RAM Talk Database Pre-Patcher & Player Name Auto-Resolver (Method B)
  * ================================================================== */
 static void patch_talk_database_in_ram(uintptr_t base)
 {
-    static int s_last_count = 0;
-    uintptr_t mgr_ptr_addr = base + 0x01124CF0;
-    if (!is_safe_ptr((const void*)mgr_ptr_addr, sizeof(uintptr_t))) return;
-    void* mgr = *(void**)mgr_ptr_addr;
-    if (!mgr || !is_safe_ptr(mgr, 0x100)) return;
-
-    /* Outer Map: Scenarios / Talk Groups (MSVC std::unordered_map _Myhead at +0x48) */
-    void** p_outer_head = (void**)((char*)mgr + 0x48);
-    if (!is_safe_ptr(p_outer_head, sizeof(void*))) return;
-    void* outer_head = *p_outer_head;
-    if (!outer_head || !is_safe_ptr(outer_head, 0x20)) return;
-
-    int count = 0;
-    int outer_visited = 0;
-    void* outer_cur = *(void**)((char*)outer_head + 8);
-
-    while (outer_cur && outer_cur != outer_head && outer_visited < 1000 && is_safe_ptr(outer_cur, 0x20)) {
-        outer_visited++;
-        void* node_val = *(void**)((char*)outer_cur + 0x18);
-        if (node_val && is_safe_ptr(node_val, 0x80)) {
-            /* Case 1: 2-Level Map (node_val is ScenarioTalkData*, with inner map _Myhead at +0x60) */
-            void** p_inner_head = (void**)((char*)node_val + 0x60);
-            if (is_safe_ptr(p_inner_head, sizeof(void*)) && *p_inner_head && is_safe_ptr(*p_inner_head, 0x20)) {
-                void* inner_head = *p_inner_head;
-                int inner_visited = 0;
-                void* inner_cur = *(void**)((char*)inner_head + 8);
-                while (inner_cur && inner_cur != inner_head && inner_visited < 5000 && is_safe_ptr(inner_cur, 0x20)) {
-                    inner_visited++;
-                    void* rec = *(void**)((char*)inner_cur + 0x18);
-                    if (rec && is_safe_ptr(rec, 0x40)) {
-                        const char** p_en = (const char**)((char*)rec + 0x38);
-                        if (p_en && is_safe_ptr(p_en, sizeof(void*)) && *p_en) {
-                            const char* orig = *p_en;
-                            float scale = 1.0f;
-                            const char* rep = lookup_translation_ex(orig, &scale);
-                            if (rep && *rep && rep != orig) {
-                                *p_en = rep;
-                                count++;
-                            }
-                        }
-                    }
-                    inner_cur = *(void**)((char*)inner_cur + 8);
-                }
-            }
-
-            /* Case 2: 1-Level Map direct (node_val is directly a TalkRecord*) */
-            const char** p_direct_en = (const char**)((char*)node_val + 0x38);
-            if (is_safe_ptr(p_direct_en, sizeof(void*)) && *p_direct_en) {
-                const char* orig = *p_direct_en;
-                if (is_safe_ptr(orig, 4) && orig[0] != '\0') {
-                    float scale = 1.0f;
-                    const char* rep = lookup_translation_ex(orig, &scale);
-                    if (rep && *rep && rep != orig) {
-                        *p_direct_en = rep;
-                        count++;
-                    }
-                }
-            }
-        }
-        outer_cur = *(void**)((char*)outer_cur + 8);
-    }
-
-    if (count > s_last_count) {
-        log_msg("[TALK RAM] Successfully pre-translated %d dialogue records in RAM (across %d scenarios)!", count, outer_visited);
-        s_last_count = count;
-    }
+    (void)base;
 }
 
 static void refresh_player_name_from_memory(uintptr_t base)
@@ -3988,9 +4024,14 @@ static void refresh_player_name_from_memory(uintptr_t base)
             uintptr_t state = *(uintptr_t*)(gi + 0x208);
             if (is_safe_ptr((const void*)state, 0x3300)) {
                 const char* p_name = (const char*)(state + 0x350);
-                if (p_name[0] >= 'A' && p_name[0] <= 'z') {
+                /* Accept ASCII (English) names AND UTF-8 multi-byte (JP/Thai/etc.) names */
+                unsigned char p0 = (unsigned char)p_name[0];
+                int valid_first = (p0 >= 'A' && p0 <= 'z') || /* ASCII letters */
+                                  (p0 >= 0xE0 && p0 <= 0xEF) || /* 3-byte UTF-8 (JP hiragana/katakana/kanji) */
+                                  (p0 >= 0xC0 && p0 <= 0xDF);   /* 2-byte UTF-8 */
+                if (valid_first) {
                     size_t len = strlen(p_name);
-                    if (len > 0 && len <= 20) {
+                    if (len > 0 && len <= 32) {
                         if (strcmp(g_player_name, p_name) != 0) {
                             strncpy(g_player_name, p_name, sizeof(g_player_name) - 1);
                             log_msg("[PLAYER] *** Auto-detected Player Name from Memory: '%s' ***", g_player_name);
@@ -4206,6 +4247,14 @@ static void patch_anime_audio_fallback(uintptr_t base, void (*log_fn)(const char
             { 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 },
             7,
             "Anime Sound Play (force JP track)"
+        },
+        /* Target 4: Anime IsLoaded fallback (0x14077A037) -> je return 1 (74 64) instead of je return 0 (74 67) */
+        {
+            0x0077A037,
+            { 0x74, 0x67, 0x00, 0x00, 0x00, 0x00, 0x00 },
+            { 0x74, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 },
+            2,
+            "Anime IsLoaded fallback (return 1 if no sound controller)"
         }
     };
 
@@ -4224,7 +4273,88 @@ static void patch_anime_audio_fallback(uintptr_t base, void (*log_fn)(const char
         }
     }
     if (log_fn) {
-        log_fn("[ANIME V1.30] Applied %d/3 anime audio fallback patches in RAM!", count);
+        log_fn("[ANIME V1.30] Applied %d/4 anime audio fallback patches in RAM!", count);
+    }
+}
+
+/* ==================================================================
+ * Force Japanese Database & Dialogue Slots in RAM
+ * Ensures all 36 .dat tables use Japanese slots for 100% complete VN text bubbles
+ * ================================================================== */
+typedef struct {
+    uint32_t rva;
+    uint8_t orig[8];
+    uint8_t patch[8];
+    size_t size;
+    const char* desc;
+} JpDatabasePatchEntry;
+
+static void patch_force_jp_database(uintptr_t base, void (*log_fn)(const char*, ...))
+{
+    if (!g_settings.enable_thai_mod || !g_settings.force_jp_database) {
+        if (log_fn) log_fn("[FORCE_JP] force_jp_database is disabled in settings.ini.");
+        return;
+    }
+
+    const JpDatabasePatchEntry patches[] = {
+        /* RVA 0x81ABD0: Steam GetGameLanguage -> xor eax, eax; ret; nop; nop */
+        { 0x0081ABD0, { 0x48, 0x89, 0x5C, 0x24, 0x18 }, { 0x31, 0xC0, 0xC3, 0x90, 0x90 }, 5, "Steam Boot Lang -> JP (0x81ABD0)" },
+
+        /* RVA 0x1653E9: Engine Init Boot Lang -> xor r9d, r9d; nop */
+        { 0x001653E9, { 0x44, 0x0F, 0x4F, 0xCB },       { 0x45, 0x31, 0xC9, 0x90 },       4, "Engine Init Boot Lang -> JP (0x1653E9)" },
+
+        /* RVA 0x14A772: Save Load Lang Switch -> jmp +0x0B (Bypasses lang change on EN save) */
+        { 0x0014A772, { 0x74, 0x0B },                   { 0xEB, 0x0B },                   2, "Save Load Lang Switch Skip (0x14A772)" },
+
+        /* RVA 0x44B253: Option Lang Switch Skip 1 -> jmp +0x22 */
+        { 0x0044B253, { 0x74, 0x22 },                   { 0xEB, 0x22 },                   2, "Option Lang Switch Skip 1 (0x44B253)" },
+
+        /* RVA 0x44DCB1: Option Lang Switch Skip 2 -> jmp +0x0B */
+        { 0x0044DCB1, { 0x74, 0x0B },                   { 0xEB, 0x0B },                   2, "Option Lang Switch Skip 2 (0x44DCB1)" },
+
+        /* RVA 0x458FC1: Option Lang Switch Skip 3 -> jmp +0x0B */
+        { 0x00458FC1, { 0x74, 0x0B },                   { 0xEB, 0x0B },                   2, "Option Lang Switch Skip 3 (0x458FC1)" },
+
+        /* RVA 0x46DC15: Option Lang Switch Skip 4 -> jmp +0x26 */
+        { 0x0046DC15, { 0x74, 0x26 },                   { 0xEB, 0x26 },                   2, "Option Lang Switch Skip 4 (0x46DC15)" },
+
+        /* RVA 0x47AF82: Option Lang Switch Skip 5 -> jmp +0x0B */
+        { 0x0047AF82, { 0x74, 0x0B },                   { 0xEB, 0x0B },                   2, "Option Lang Switch Skip 5 (0x47AF82)" },
+
+        /* RVA 0xFB5EC: mov eax, [rip+0x10296ee] -> xor eax, eax; nop; nop; nop; nop */
+        { 0x000FB5EC, { 0x8B, 0x05, 0xEE, 0x96, 0x02, 0x01 }, { 0x31, 0xC0, 0x90, 0x90, 0x90, 0x90 }, 6, "Dialogue Lang -> JP (0xFB5EC)" },
+
+        /* RVA 0x1001CD: movsxd rdx, [rip+0x1024b0c] -> xor edx, edx; nop x 5 */
+        { 0x001001CD, { 0x48, 0x63, 0x15, 0x0C, 0x4B, 0x02, 0x01 }, { 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 }, 7, "DB String Index -> JP (0x1001CD)" },
+
+        /* RVA 0x10120E: movsxd eax, [rip+0x1023acc] -> xor eax, eax; nop; nop; nop; nop */
+        { 0x0010120E, { 0x63, 0x05, 0xCC, 0x3A, 0x02, 0x01 }, { 0x31, 0xC0, 0x90, 0x90, 0x90, 0x90 }, 6, "Dialogue Flow Offset -> JP (0x10120E)" }
+    };
+
+    int count = 0;
+    for (size_t i = 0; i < sizeof(patches) / sizeof(patches[0]); i++) {
+        uint8_t* target = (uint8_t*)(base + patches[i].rva);
+        DWORD old_protect;
+        if (VirtualProtect(target, patches[i].size, PAGE_EXECUTE_READWRITE, &old_protect)) {
+            if (memcmp(target, patches[i].orig, patches[i].size) == 0 ||
+                memcmp(target, patches[i].patch, patches[i].size) == 0) {
+                memcpy(target, patches[i].patch, patches[i].size);
+                FlushInstructionCache(GetCurrentProcess(), target, patches[i].size);
+                count++;
+                if (log_fn) log_fn("[FORCE_JP] Success patch: %s", patches[i].desc);
+            } else {
+                if (log_fn) log_fn("[FORCE_JP] Pattern mismatch at %s", patches[i].desc);
+            }
+            VirtualProtect(target, patches[i].size, old_protect, &old_protect);
+        }
+    }
+
+    uint32_t* p_global_lang = (uint32_t*)(base + 0x1124CE0);
+    DWORD old_protect;
+    if (VirtualProtect(p_global_lang, sizeof(uint32_t), PAGE_READWRITE, &old_protect)) {
+        *p_global_lang = 0;
+        VirtualProtect(p_global_lang, sizeof(uint32_t), old_protect, &old_protect);
+        if (log_fn) log_fn("[FORCE_JP] Global Language [0x%p] in RAM set to 0 (JP)", (void*)p_global_lang);
     }
 }
 
@@ -4232,6 +4362,13 @@ static DWORD WINAPI worker_thread(LPVOID param)
 {
     (void)param;
     g_game_base_addr = (uintptr_t)GetModuleHandleA(NULL);
+
+    /* Load standalone Crash Doctor diagnostic plugin if present (dev/testing mode ONLY) */
+    wchar_t doctor_path[MAX_PATH];
+    swprintf(doctor_path, MAX_PATH, L"%ls\\crash_doctor.dll", g_mod_dir_w);
+    if (GetFileAttributesW(doctor_path) != INVALID_FILE_ATTRIBUTES) {
+        LoadLibraryW(doctor_path);
+    }
 
     /* Register Vectored Exception Handler to intercept native engine null pointers */
     AddVectoredExceptionHandler(1, AnimeCrashFilter);
@@ -4251,8 +4388,14 @@ static DWORD WINAPI worker_thread(LPVOID param)
     /* 0. Load engine settings from settings.ini */
     settings_init(g_game_dir_w, g_mod_dir_w, log_msg);
 
+    /* 0b. Apply in-memory patch to force all 36 .dat databases to Japanese slots */
+    patch_force_jp_database(g_game_base_addr, log_msg);
+
     wchar_t settings_path_w[MAX_PATH];
-    swprintf(settings_path_w, MAX_PATH, L"%ls\\settings.ini", g_game_dir_w);
+    swprintf(settings_path_w, MAX_PATH, L"%ls\\Mods\\settings.ini", g_game_dir_w);
+    if (GetFileAttributesW(settings_path_w) == INVALID_FILE_ATTRIBUTES) {
+        swprintf(settings_path_w, MAX_PATH, L"%ls\\settings.ini", g_game_dir_w);
+    }
     char settings_path_a[MAX_PATH];
     WideCharToMultiByte(CP_UTF8, 0, settings_path_w, -1, settings_path_a, sizeof(settings_path_a), NULL, NULL);
     GetPrivateProfileStringA("Settings", "player_name", "", g_player_name, sizeof(g_player_name), settings_path_a);
@@ -4370,7 +4513,6 @@ static DWORD WINAPI worker_thread(LPVOID param)
     uintptr_t addr_putStrAlign = 0;
     uintptr_t addr_GetStringByID = 0;
     uintptr_t addr_AnimeSub = 0;
-
     for (int i = 0; i < (int)(sizeof(kSigs) / sizeof(kSigs[0])); i++) {
         if (res[i].hit) {
             log_msg("  [HIT] %s at 0x%p (RVA: 0x%08X)", res[i].name, (void*)res[i].addr, res[i].rva);
@@ -4424,13 +4566,44 @@ static DWORD WINAPI worker_thread(LPVOID param)
         }
     }
 
+    static const uint8_t s_pAnimeController[5] = { 0x48, 0x89, 0x5C, 0x24, 0x08 };
+    static const uint8_t s_pSoundStart[5]      = { 0x48, 0x89, 0x5C, 0x24, 0x10 };
+    static const uint8_t s_pSoundSetup[5]      = { 0x48, 0x89, 0x5C, 0x24, 0x18 };
+
     uintptr_t addr_GetAnimeController = base + 0x00620EF0;
-    if (addr_GetAnimeController) {
+    if (addr_GetAnimeController && is_safe_ptr((const void*)addr_GetAnimeController, 5) &&
+        memcmp((const void*)addr_GetAnimeController, s_pAnimeController, 5) == 0) {
         if (MH_CreateHook((LPVOID)addr_GetAnimeController, (LPVOID)&hk_GetAnimeController, (LPVOID*)&fp_original_GetAnimeController) == MH_OK) {
             if (MH_EnableHook((LPVOID)addr_GetAnimeController) == MH_OK) {
                 log_msg("SUCCESS: Hooked GetAnimeController (Sound ID 0 Guard Active)!");
             }
         }
+    } else {
+        log_msg("[GUARD] Skipping GetAnimeController hook (version signature mismatch or safe).");
+    }
+
+    uintptr_t addr_SoundStart = base + 0x009642A0;
+    if (addr_SoundStart && is_safe_ptr((const void*)addr_SoundStart, 5) &&
+        memcmp((const void*)addr_SoundStart, s_pSoundStart, 5) == 0) {
+        if (MH_CreateHook((LPVOID)addr_SoundStart, (LPVOID)&hk_SoundStart, (LPVOID*)&fp_original_SoundStart) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_SoundStart) == MH_OK) {
+                log_msg("SUCCESS: Hooked SoundStart (Audio Null Guard Active)!");
+            }
+        }
+    } else {
+        log_msg("[GUARD] Skipping SoundStart hook (version signature mismatch or safe).");
+    }
+
+    uintptr_t addr_SoundSetup = base + 0x009645E0;
+    if (addr_SoundSetup && is_safe_ptr((const void*)addr_SoundSetup, 5) &&
+        memcmp((const void*)addr_SoundSetup, s_pSoundSetup, 5) == 0) {
+        if (MH_CreateHook((LPVOID)addr_SoundSetup, (LPVOID)&hk_SoundSetup, (LPVOID*)&fp_original_SoundSetup) == MH_OK) {
+            if (MH_EnableHook((LPVOID)addr_SoundSetup) == MH_OK) {
+                log_msg("SUCCESS: Hooked SoundSetup (Audio Null Guard Active)!");
+            }
+        }
+    } else {
+        log_msg("[GUARD] Skipping SoundSetup hook (version signature mismatch or safe).");
     }
 
     /* Initialize engine settings from settings.ini */
@@ -4451,9 +4624,11 @@ static DWORD WINAPI worker_thread(LPVOID param)
     if (g_settings.enable_thai_keyboard && g_settings.texture_mode == 1 && g_settings.enable_custom_textures && !g_settings.use_english_textures) {
         patch_virtual_keyboard_v130(base, log_msg);
     } else {
-        log_msg("[SETTINGS] Thai virtual keyboard DISABLED (Thai textures are off or keyboard toggle is 0).");
+        unpatch_virtual_keyboard_v130(base, log_msg);
+        log_msg("[SETTINGS] Thai virtual keyboard DISABLED (Original keyboard layout preserved).");
     }
 #else
+    unpatch_virtual_keyboard_v130(base, log_msg);
     log_msg("[KEYBOARD] Original Keyboard retained (Thai Virtual Keyboard disabled).");
 #endif
 
@@ -4470,22 +4645,10 @@ static DWORD WINAPI worker_thread(LPVOID param)
     while (1) {
         Sleep(1000);
         refresh_player_name_from_memory(base);
-        patch_talk_database_in_ram(base);
         check_hot_reload_translation();
         #ifdef ENABLE_CHEATS
         cheats_tick();
 #endif
-
-        if (g_unique_count != last_unique || g_missing_count != last_missing || g_total_replacements != last_rep) {
-            log_msg("Status: Unique texts=%d, Missing texts=%d, Replacements applied=%llu, Total calls=%llu",
-                    g_unique_count,
-                    g_missing_count,
-                    (unsigned long long)g_total_replacements,
-                    (unsigned long long)g_total_calls);
-            last_unique = g_unique_count;
-            last_missing = g_missing_count;
-            last_rep = g_total_replacements;
-        }
     }
 
     return 0;
@@ -4508,6 +4671,9 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved)
         DisableThreadLibraryCalls(hinst);
         InitializeCriticalSection(&g_cs);
         init_paths();
+        g_game_base_addr = (uintptr_t)GetModuleHandleA(NULL);
+        settings_init(g_game_dir_w, g_mod_dir_w, NULL);
+        patch_force_jp_database(g_game_base_addr, NULL);
         HANDLE hThread = CreateThread(NULL, 0, worker_thread, NULL, 0, NULL);
         if (hThread) CloseHandle(hThread);
     } else if (reason == DLL_PROCESS_DETACH) {

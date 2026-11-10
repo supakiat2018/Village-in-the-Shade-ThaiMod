@@ -221,3 +221,26 @@ static void patch_virtual_keyboard_v130(uintptr_t base, void (*log_fn)(const cha
         if (log_fn) log_fn("[KEYBOARD V1.30] ERROR: Failed to VirtualProtect keyboard memory!");
     }
 }
+
+static void unpatch_virtual_keyboard_v130(uintptr_t base, void (*log_fn)(const char*, ...))
+{
+    DWORD old_protect;
+    uintptr_t table_start = base + 0x00E6E200;
+    size_t table_len = 0x800;
+
+    if (VirtualProtect((LPVOID)table_start, table_len, PAGE_EXECUTE_READWRITE, &old_protect)) {
+        int count = 0;
+        for (size_t i = 0; i < NUM_VIRTUAL_KEY_PATCHES; i++) {
+            char* dest = (char*)(base + g_virtual_key_patches[i].rva);
+            const char* orig_str = g_virtual_key_patches[i].orig;
+            size_t orig_len = strlen(orig_str);
+            if (orig_len <= 3) {
+                memset(dest, 0, 4);
+                memcpy(dest, orig_str, orig_len);
+                count++;
+            }
+        }
+        VirtualProtect((LPVOID)table_start, table_len, old_protect, &old_protect);
+        if (log_fn) log_fn("[KEYBOARD V1.30] Restored %d original virtual keyboard keys in memory.", count);
+    }
+}

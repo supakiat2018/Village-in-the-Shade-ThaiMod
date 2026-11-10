@@ -15,7 +15,7 @@ static wchar_t g_game_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_mod_dir_w[MAX_PATH] = { 0 };
 static wchar_t g_settings_ini_path_w[MAX_PATH] = { 0 };
 
-ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1, 0, 1 };
+ModSettings g_settings = { 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1 };
 CheatConfig g_config = { 0 };
 
 
@@ -41,12 +41,19 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
     if (game_dir_w && !g_game_dir_w[0]) wcscpy(g_game_dir_w, game_dir_w);
     if (mod_dir_w && !g_mod_dir_w[0]) wcscpy(g_mod_dir_w, mod_dir_w);
 
+    wchar_t mods_ini[MAX_PATH];
+    swprintf(mods_ini, MAX_PATH, L"%ls\\Mods\\settings.ini", g_game_dir_w);
+    wchar_t textdump_ini[MAX_PATH];
+    swprintf(textdump_ini, MAX_PATH, L"%ls\\settings.ini", g_mod_dir_w);
     wchar_t root_path[MAX_PATH];
     swprintf(root_path, MAX_PATH, L"%ls\\settings.ini", g_game_dir_w);
-    if (GetFileAttributesW(root_path) != INVALID_FILE_ATTRIBUTES) {
+
+    if (GetFileAttributesW(mods_ini) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_settings_ini_path_w, mods_ini);
+    } else if (GetFileAttributesW(root_path) != INVALID_FILE_ATTRIBUTES) {
         wcscpy(g_settings_ini_path_w, root_path);
     } else {
-        swprintf(g_settings_ini_path_w, MAX_PATH, L"%ls\\settings.ini", g_mod_dir_w);
+        wcscpy(g_settings_ini_path_w, textdump_ini);
     }
 
     FILE* f = _wfopen(g_settings_ini_path_w, L"r");
@@ -92,8 +99,10 @@ void settings_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*l
         else if (_stricmp(key, "texture_mode") == 0) g_settings.texture_mode = ival;
         else if (_stricmp(key, "enable_thai_minimap") == 0) g_settings.enable_thai_minimap = ival;
         else if (_stricmp(key, "enable_dat_override") == 0) g_settings.enable_dat_override = ival;
+        else if (_stricmp(key, "dat") == 0) { g_settings.dat_en = ival; g_settings.enable_dat_override = ival; }
         else if (_stricmp(key, "dat_en") == 0) g_settings.dat_en = ival;
         else if (_stricmp(key, "dat_ja") == 0) g_settings.dat_ja = ival;
+        else if (_stricmp(key, "force_jp_database") == 0) g_settings.force_jp_database = ival;
         else if (_stricmp(key, "enable_speedhack") == 0) g_settings.enable_speedhack = ival;
     }
     fclose(f);
@@ -376,9 +385,23 @@ static inline uintptr_t get_game_state(void)
 {
     if (g_global_ptr_addr && is_readable((const void*)g_global_ptr_addr, sizeof(uintptr_t))) {
         uintptr_t gi = *(uintptr_t*)g_global_ptr_addr;
-        if (is_readable((const void*)gi, 0x210)) {
+        if (gi && is_readable((const void*)gi, 0x210)) {
             uintptr_t state = *(uintptr_t*)(gi + 0x208);
-            if (is_readable((const void*)state, 0x3300)) {
+            if (state && is_readable((const void*)state, 0x10) &&
+                is_readable((const void*)(state + 0x3270), sizeof(int64_t)) &&
+                is_readable((const void*)(state + 0x32B8), sizeof(uintptr_t)) &&
+                is_readable((const void*)(state + 0x32A0), sizeof(int64_t))) {
+
+                /* Only consider game state valid when player is actively in gameplay (cur_time > 0 and status is initialized) */
+                int64_t cur_time = *(int64_t*)(state + 0x3270);
+                if (cur_time <= 0) return 0;
+
+                uintptr_t status = *(uintptr_t*)(state + 0x32B8);
+                if (!status || !is_readable((const void*)status, 0x3C0)) return 0;
+
+                int32_t max_stamina = *(int32_t*)(status + 0x3A4);
+                if (max_stamina <= 0 || max_stamina > 10000) return 0;
+
                 return state;
             }
         }
@@ -569,6 +592,7 @@ static DWORD WINAPI hotkey_thread_proc(LPVOID param)
 {
     (void)param;
     int stam_tick = 0;
+    int money_tick = 0;
 
     while (g_hotkey_running) {
         Sleep(25); /* ~40Hz polling rate with near-zero CPU usage */
@@ -645,25 +669,40 @@ static DWORD WINAPI hotkey_thread_proc(LPVOID param)
             g_frozen_time = 0;
         }
 
-        /* 2. Safe Infinite Stamina refresh (v1.30: Stamina 0x3A0, Stamina Max 0x3AC) */
+        /* 4. Safe Infinite Stamina refresh (v1.30: Stamina 0x398, Stamina Max 0x3A4) */
         if (g_config.infinite_stamina) {
             if (++stam_tick >= 4) { /* ~100ms interval */
                 stam_tick = 0;
-                if (g_global_ptr_addr && is_readable((const void*)g_global_ptr_addr, sizeof(uintptr_t))) {
-                    uintptr_t gi = *(uintptr_t*)g_global_ptr_addr;
-                    if (is_readable((const void*)gi, 0x210)) {
-                        uintptr_t state = *(uintptr_t*)(gi + 0x208);
-                        if (state && is_readable((const void*)state, 0x3300)) {
-                            uintptr_t status = *(uintptr_t*)(state + 0x32B8);
-                            if (status && is_readable((const void*)status, 0x3C0)) {
-                                int32_t max_stamina = *(int32_t*)(status + 0x3AC);
-                                if (max_stamina > 0 && max_stamina <= 10000) {
-                                    int32_t cur = *(int32_t*)(status + 0x3A0);
-                                    if (cur < max_stamina) {
-                                        *(int32_t*)(status + 0x3A0) = max_stamina;
-                                    }
-                                }
+                uintptr_t state = get_game_state();
+                if (state) {
+                    uintptr_t status = *(uintptr_t*)(state + 0x32B8);
+                    if (status && is_readable((const void*)status, 0x3C0)) {
+                        int32_t max_stamina = *(int32_t*)(status + 0x3A4);
+                        if (max_stamina > 0 && max_stamina <= 10000) {
+                            int32_t cur = *(int32_t*)(status + 0x398);
+                            if (cur < max_stamina) {
+                                *(int32_t*)(status + 0x398) = max_stamina;
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        /* 5. Safe Infinite Money refresh (locks Money to >= 999,999) */
+        if (g_config.infinite_money) {
+            if (++money_tick >= 4) { /* ~100ms interval */
+                money_tick = 0;
+                uintptr_t state = get_game_state();
+                if (state) {
+                    int64_t* pMoney = (int64_t*)(state + 0x32A0);
+                    if (*pMoney > 0 && *pMoney < 999999) {
+                        int64_t old_val = *pMoney;
+                        *pMoney = 999999;
+                        static int s_logged_money = 0;
+                        if (!s_logged_money) {
+                            s_logged_money = 1;
+                            cheat_log("[Cheats] Infinite Money applied: %lld -> 999,999 (state=0x%p)", (long long)old_val, (void*)state);
                         }
                     }
                 }
@@ -679,21 +718,29 @@ void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log
     if (game_dir_w) wcscpy(g_game_dir_w, game_dir_w);
     if (mod_dir_w) wcscpy(g_mod_dir_w, mod_dir_w);
 
-    /* Prioritize root game folder (next to village.exe), fallback to mod folder */
+    /* Prioritize Mods\cheats.ini, then Mods\TextDump\cheats.ini, then root game folder */
+    wchar_t mods_path[MAX_PATH];
+    swprintf(mods_path, MAX_PATH, L"%ls\\Mods\\cheats.ini", g_game_dir_w);
+    wchar_t mod_path[MAX_PATH];
+    swprintf(mod_path, MAX_PATH, L"%ls\\cheats.ini", g_mod_dir_w);
     wchar_t root_path[MAX_PATH];
     swprintf(root_path, MAX_PATH, L"%ls\\cheats.ini", g_game_dir_w);
-    if (GetFileAttributesW(root_path) != INVALID_FILE_ATTRIBUTES) {
-        wcscpy(g_cheats_ini_path_w, root_path);
+
+    if (GetFileAttributesW(mods_path) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_cheats_ini_path_w, mods_path);
+    } else if (GetFileAttributesW(mod_path) != INVALID_FILE_ATTRIBUTES) {
+        wcscpy(g_cheats_ini_path_w, mod_path);
     } else {
-        wchar_t mod_path[MAX_PATH];
-        swprintf(mod_path, MAX_PATH, L"%ls\\cheats.ini", g_mod_dir_w);
-        if (GetFileAttributesW(mod_path) != INVALID_FILE_ATTRIBUTES) {
-            wcscpy(g_cheats_ini_path_w, mod_path);
-        } else {
-            wcscpy(g_cheats_ini_path_w, root_path);
-        }
+        wcscpy(g_cheats_ini_path_w, root_path);
     }
     cheat_log("[Cheats] Active config path: %ls", g_cheats_ini_path_w);
+
+    /* Immediately load initial configuration */
+    WIN32_FILE_ATTRIBUTE_DATA fad_init;
+    if (GetFileAttributesExW(g_cheats_ini_path_w, GetFileExInfoStandard, &fad_init)) {
+        g_last_ini_write_time = fad_init.ftLastWriteTime;
+        load_cheats_ini();
+    }
 
     uintptr_t base = (uintptr_t)GetModuleHandleA(NULL);
     if (!base) return;
@@ -743,8 +790,8 @@ void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log
                   (void*)g_global_ptr_addr, (uint32_t)(g_global_ptr_addr - base));
     } else {
         /* Fallback to known static RVA: v1.30 = 0x111CC90, v1.20 = 0x10FCBB0, v1.10 = 0x10DFAD0 */
-        if (is_readable((const void*)(base + 0x111C090), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x111C090) != 0) {
-            g_global_ptr_addr = base + 0x111C090;
+        if (is_readable((const void*)(base + 0x111CC90), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x111CC90) != 0) {
+            g_global_ptr_addr = base + 0x111CC90;
         } else if (is_readable((const void*)(base + 0x10FCBB0), sizeof(uintptr_t)) && *(uintptr_t*)(base + 0x10FCBB0) != 0) {
             g_global_ptr_addr = base + 0x10FCBB0;
         } else {
@@ -770,20 +817,26 @@ void cheats_init(const wchar_t* game_dir_w, const wchar_t* mod_dir_w, void (*log
 
 void cheats_tick(void)
 {
-    /* Check root game folder first, fallback to mod folder */
+    /* Check Mods\cheats.ini first, then Mods\TextDump\cheats.ini, then root game folder */
+    wchar_t mods_ini[MAX_PATH];
+    swprintf(mods_ini, MAX_PATH, L"%ls\\Mods\\cheats.ini", g_game_dir_w);
+    wchar_t textdump_ini[MAX_PATH];
+    swprintf(textdump_ini, MAX_PATH, L"%ls\\cheats.ini", g_mod_dir_w);
     wchar_t root_path[MAX_PATH];
     swprintf(root_path, MAX_PATH, L"%ls\\cheats.ini", g_game_dir_w);
+
     WIN32_FILE_ATTRIBUTE_DATA fad;
-    BOOL exists = GetFileAttributesExW(root_path, GetFileExInfoStandard, &fad);
-    if (exists) {
+    BOOL exists = FALSE;
+
+    if (GetFileAttributesExW(mods_ini, GetFileExInfoStandard, &fad)) {
+        wcscpy(g_cheats_ini_path_w, mods_ini);
+        exists = TRUE;
+    } else if (GetFileAttributesExW(textdump_ini, GetFileExInfoStandard, &fad)) {
+        wcscpy(g_cheats_ini_path_w, textdump_ini);
+        exists = TRUE;
+    } else if (GetFileAttributesExW(root_path, GetFileExInfoStandard, &fad)) {
         wcscpy(g_cheats_ini_path_w, root_path);
-    } else {
-        wchar_t mod_path[MAX_PATH];
-        swprintf(mod_path, MAX_PATH, L"%ls\\cheats.ini", g_mod_dir_w);
-        exists = GetFileAttributesExW(mod_path, GetFileExInfoStandard, &fad);
-        if (exists) {
-            wcscpy(g_cheats_ini_path_w, mod_path);
-        }
+        exists = TRUE;
     }
 
     if (!exists) {
@@ -801,27 +854,7 @@ void cheats_tick(void)
         return;
     }
 
-    /* Check if game save state is loaded and valid before touching memory */
-    uintptr_t state = 0;
-    if (g_global_ptr_addr && is_readable((const void*)g_global_ptr_addr, sizeof(uintptr_t))) {
-        uintptr_t gi = *(uintptr_t*)g_global_ptr_addr;
-        if (is_readable((const void*)gi, 0x210)) {
-            state = *(uintptr_t*)(gi + 0x208);
-            if (!is_readable((const void*)state, 0x3300)) {
-                state = 0;
-            }
-        }
-    }
-
-    /* If the game is still on Title Screen or loading (state == 0), don't patch yet to ensure clean startup */
-    if (!state) {
-        if (g_cheats_applied) {
-            restore_all_patches();
-        }
-        return;
-    }
-
-    /* File exists AND player is in-game: Check if INI was created or modified */
+    /* Check if INI was created or modified */
     if (!g_config.active || !g_cheats_applied || CompareFileTime(&g_last_ini_write_time, &fad.ftLastWriteTime) != 0) {
         g_last_ini_write_time = fad.ftLastWriteTime;
         load_cheats_ini();
@@ -845,17 +878,20 @@ void cheats_tick(void)
         cheat_log("[Cheats] ========================================================");
     }
 
+    /* Check if game save state is loaded and valid for value-locking cheats */
+    uintptr_t state = get_game_state();
+
     /* Apply pointer/value locks if cheats are active and state is valid */
     if (g_config.active && state) {
-        /* Infinite Stamina (v1.30: Stamina 0x3A0, Stamina Max 0x3AC) */
+        /* Infinite Stamina (v1.30: Stamina 0x398, Stamina Max 0x3A4) */
         if (g_config.infinite_stamina) {
             uintptr_t status = *(uintptr_t*)(state + 0x32B8);
-            if (is_readable((const void*)status, 0x3C0)) {
-                int32_t max_stamina = *(int32_t*)(status + 0x3AC);
+            if (status && is_readable((const void*)status, 0x3C0)) {
+                int32_t max_stamina = *(int32_t*)(status + 0x3A4);
                 if (max_stamina > 0 && max_stamina <= 10000) {
-                    int32_t cur = *(int32_t*)(status + 0x3A0);
+                    int32_t cur = *(int32_t*)(status + 0x398);
                     if (cur < max_stamina) {
-                        *(int32_t*)(status + 0x3A0) = max_stamina;
+                        *(int32_t*)(status + 0x398) = max_stamina;
                     }
                 }
             }
@@ -864,8 +900,14 @@ void cheats_tick(void)
         /* Infinite / High Money */
         if (g_config.infinite_money) {
             int64_t* pMoney = (int64_t*)(state + 0x32A0);
-            if (*pMoney < 999999) {
+            if (*pMoney > 0 && *pMoney < 999999) {
+                int64_t old_val = *pMoney;
                 *pMoney = 999999;
+                static int s_logged_money_tick = 0;
+                if (!s_logged_money_tick) {
+                    s_logged_money_tick = 1;
+                    cheat_log("[Cheats] Infinite Money applied: %lld -> 999,999 (state=0x%p)", (long long)old_val, (void*)state);
+                }
             }
         }
 

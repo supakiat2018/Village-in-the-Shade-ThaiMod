@@ -24,21 +24,22 @@ static void (*g_log)(const char* fmt, ...) = NULL;
 static BOOL WINAPI hk_QueryPerformanceCounter(LARGE_INTEGER* lpPerformanceCount)
 {
     if (!lpPerformanceCount) return FALSE;
-    LARGE_INTEGER real;
-    if (!fp_orig_QPC(&real)) return FALSE;
+    if (!fp_orig_QPC(lpPerformanceCount)) return FALSE;
 
-    if (!g_speed_cs_inited) {
-        *lpPerformanceCount = real;
+    /* Lockless fast-path: When at normal 1.0x speed and unshifted, bypass CriticalSection entirely */
+    if (g_speed_factor == 1.0 && g_qpc_base_real.QuadPart == 0) {
         return TRUE;
     }
+
+    if (!g_speed_cs_inited) return TRUE;
 
     EnterCriticalSection(&g_speed_cs);
     if (g_speed_factor == 1.0 && g_qpc_base_real.QuadPart == 0) {
         LeaveCriticalSection(&g_speed_cs);
-        *lpPerformanceCount = real;
         return TRUE;
     }
 
+    LARGE_INTEGER real = *lpPerformanceCount;
     if (g_qpc_base_real.QuadPart == 0) {
         g_qpc_base_real = real;
         g_qpc_base_virt = real;
@@ -55,6 +56,12 @@ static BOOL WINAPI hk_QueryPerformanceCounter(LARGE_INTEGER* lpPerformanceCount)
 static DWORD WINAPI hk_GetTickCount(void)
 {
     DWORD real = fp_orig_GTC();
+
+    /* Lockless fast-path: When at normal 1.0x speed and unshifted, bypass CriticalSection entirely */
+    if (g_speed_factor == 1.0 && g_gtc_base_real == 0) {
+        return real;
+    }
+
     if (!g_speed_cs_inited) return real;
 
     EnterCriticalSection(&g_speed_cs);

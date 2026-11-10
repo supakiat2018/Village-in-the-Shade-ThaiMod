@@ -1,4 +1,4 @@
-/* Auto-generated PUA mapping table for Village in the Shade */
+/* Auto-generated PUA mapping table from D:\Users\Supakiat\Desktop\Mover\สร้างฟ้อน\Mapping.json */
 #pragma once
 #include <windows.h>
 #include <wchar.h>
@@ -2233,18 +2233,32 @@ static wchar_t lookup_pua_entry(const wchar_t* sub) {
     return 0;
 }
 
-static void convert_thai_wstr_to_pua_utf8(const wchar_t* in_w, char* out_utf8, size_t out_max) {
-    if (!in_w || !out_utf8 || out_max == 0) return;
-    size_t in_len = wcslen(in_w);
-    wchar_t pua_w[512] = { 0 };
+static void convert_thai_utf8_to_pua_utf8(const char* in_utf8, char* out_utf8, size_t out_max) {
+    if (!in_utf8 || !out_utf8 || out_max == 0) return;
+    if (in_utf8[0] == '\0') {
+        out_utf8[0] = '\0';
+        return;
+    }
+
+    wchar_t in_w[8192];
+    int wlen = MultiByteToWideChar(CP_UTF8, 0, in_utf8, -1, in_w, 8192);
+    if (wlen <= 1) {
+        strncpy(out_utf8, in_utf8, out_max - 1);
+        out_utf8[out_max - 1] = '\0';
+        return;
+    }
+
+    size_t in_len = (size_t)(wlen - 1);
+    wchar_t pua_w[8192];
     size_t o = 0;
     size_t i = 0;
-    while (i < in_len && o < 510) {
+    while (i < in_len && o < 8190) {
         BOOL matched = FALSE;
         for (size_t len = 3; len >= 2; len--) {
             if (i + len <= in_len) {
                 wchar_t sub[4] = { 0 };
                 wcsncpy(sub, in_w + i, len);
+                sub[len] = L'\0';
                 wchar_t pua_val = lookup_pua_entry(sub);
                 if (pua_val != 0) {
                     pua_w[o++] = pua_val;
@@ -2260,37 +2274,4 @@ static void convert_thai_wstr_to_pua_utf8(const wchar_t* in_w, char* out_utf8, s
     }
     pua_w[o] = L'\0';
     WideCharToMultiByte(CP_UTF8, 0, pua_w, -1, out_utf8, (int)out_max, NULL, NULL);
-}
-
-static void convert_pua_utf8_to_thai_wstr(const char* in_utf8, wchar_t* out_w, size_t out_max) {
-    if (!in_utf8 || !out_w || out_max == 0) return;
-    out_w[0] = L'\0';
-    wchar_t temp_w[512] = { 0 };
-    int wlen = MultiByteToWideChar(CP_UTF8, 0, in_utf8, -1, temp_w, 510);
-    if (wlen <= 0) return;
-
-    size_t o = 0;
-    for (int i = 0; i < wlen && temp_w[i] != L'\0' && o < out_max - 4; i++) {
-        wchar_t ch = temp_w[i];
-        if (ch >= 0xF000 && ch <= 0xF8FF) {
-            BOOL found = FALSE;
-            for (int k = 0; k < PUA_MAP_COUNT; k++) {
-                if (g_pua_map[k].val == ch) {
-                    size_t klen = wcslen(g_pua_map[k].key);
-                    if (o + klen < out_max - 1) {
-                        wcscpy(out_w + o, g_pua_map[k].key);
-                        o += klen;
-                    }
-                    found = TRUE;
-                    break;
-                }
-            }
-            if (!found) {
-                out_w[o++] = ch;
-            }
-        } else {
-            out_w[o++] = ch;
-        }
-    }
-    out_w[o] = L'\0';
 }

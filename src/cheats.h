@@ -20,6 +20,7 @@ typedef struct {
     int enable_dat_override;      /* Internal resolved state: 1 if dat_en or dat_ja is active, 0 = disabled */
     int dat_en;                   /* 1 = English-based .dat database override */
     int dat_ja;                   /* 1 = Japanese-based .dat database override */
+    int force_jp_database;        /* 1 = force language 0 (Japanese) at boot, 0 = follow Steam */
     int enable_speedhack;         /* 1 = enable in-memory Speedhack (game speed multiplier), 0 = disable */
 } ModSettings;
 

@@ -79,3 +79,24 @@ steam_api64.dll
 
 *.pdb
 translation_backup_before_csv_import.txt
+
+# Release packages (upload via GitHub Releases because files > 100MB)
+output/
+
+# RE & Disassembly Scratch tools
+check_*.c
+scan_*.c
+read_*.c
+disasm_*.c
+find_*.c
+test_*.c
+search_*.c
+inspect_loop.py
+debug_run.py
+read_*.py
+scan_*.py
+scratch_*.py
+bin/crash_doctor.*
+bin/test_build.dll
+tools/lz4.*
+tools/*.py
